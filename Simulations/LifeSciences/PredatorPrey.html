@@ -38,7 +38,7 @@
         <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
             <h1 class="text-2xl font-bold mb-2 text-green-700">Predator-Prey Simulation</h1>
             <p class="text-sm text-gray-600 mb-6">
-                Investigate the population dynamics of an ecosystem. Adjust the variables below to see how they affect the balance between predators (wolves) and prey (rabbits).
+                Investigate the population dynamics of an ecosystem. Adjust the variables below to see how environmental limits (Carrying Capacity) and species traits affect the balance between predators (wolves) and prey (rabbits).
                 This aligns with NGSS High School Life Sciences (HS-LS2).
             </p>
 
@@ -73,9 +73,16 @@
 
                 <!-- Prey Variables -->
                 <div>
+                    <label class="block text-sm font-medium text-gray-700" for="preyCapacity">Prey Carrying Capacity: <span id="preyCapacityVal">1000</span></label>
+                    <input type="range" id="preyCapacity" min="100" max="2500" step="50" value="1000" class="w-full h-2 bg-blue-300 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-xs text-gray-500 mt-1">Maximum number of prey the environment's resources can support.</p>
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700" for="preyReproduction">Prey Reproduction Rate: <span id="preyReproductionVal">Medium</span></label>
                     <input type="range" id="preyReproduction" min="0.001" max="0.02" step="0.001" value="0.008" class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
                 </div>
+
+                <hr class="my-4 border-gray-200">
 
                 <!-- Predator Variables -->
                 <div>
@@ -132,12 +139,14 @@
         // Setup UI Elements and Event Listeners
         const initPreySlider = document.getElementById('initPrey');
         const initPredSlider = document.getElementById('initPred');
+        const preyCapacitySlider = document.getElementById('preyCapacity');
         const preyReproductionSlider = document.getElementById('preyReproduction');
         const predatorEfficiencySlider = document.getElementById('predatorEfficiency');
         const predatorStarvationSlider = document.getElementById('predatorStarvation');
 
         const initPreyVal = document.getElementById('initPreyVal');
         const initPredVal = document.getElementById('initPredVal');
+        const preyCapacityVal = document.getElementById('preyCapacityVal');
         const preyReproductionVal = document.getElementById('preyReproductionVal');
         const predatorEfficiencyVal = document.getElementById('predatorEfficiencyVal');
         const predatorStarvationVal = document.getElementById('predatorStarvationVal');
@@ -193,6 +202,7 @@
         function updateUI() {
             initPreyVal.textContent = initPreySlider.value;
             initPredVal.textContent = initPredSlider.value;
+            preyCapacityVal.textContent = preyCapacitySlider.value;
             preyReproductionVal.textContent = parseFloat(preyReproductionSlider.value).toFixed(3);
             predatorEfficiencyVal.textContent = parseFloat(predatorEfficiencySlider.value).toFixed(2);
             predatorStarvationVal.textContent = parseFloat(predatorStarvationSlider.value).toFixed(3);
@@ -201,6 +211,7 @@
         // Add Listeners
         initPreySlider.addEventListener('input', updateUI);
         initPredSlider.addEventListener('input', updateUI);
+        preyCapacitySlider.addEventListener('input', updateUI);
         preyReproductionSlider.addEventListener('input', updateUI);
         predatorEfficiencySlider.addEventListener('input', updateUI);
         predatorStarvationSlider.addEventListener('input', updateUI);
@@ -271,7 +282,6 @@
 
                     if (normalizedDistSq > 1) {
                         // Reflect the velocity vector off the ellipse normal
-                        // Normal vector of ellipse at point (dx, dy) relative to center is (2*dx/erx^2, 2*dy/ery^2)
                         let nx = dx / (erx * erx);
                         let ny = dy / (ery * ery);
 
@@ -291,7 +301,6 @@
 
                         // Pull agent back inside the ellipse to prevent getting stuck
                         let scale = 1 / Math.sqrt(normalizedDistSq);
-                        // Back off slightly more than exactly to the boundary to be safe
                         scale *= 0.99;
                         this.x = boundary.cx + dx * scale;
                         this.y = boundary.cy + dy * scale;
@@ -314,11 +323,14 @@
                 super(x, y, 4, 1.5, '#3b82f6');
             }
 
-            reproduce(reproductionRate) {
-                // Chance to reproduce based on rate
-                // Add a small chance of spontaneous generation if population is very low
-                // to keep the simulation running and allow cycles to restart
-                if (Math.random() < reproductionRate) {
+            reproduce(baseReproductionRate, currentPopSize, carryingCapacity) {
+                // Logistic Growth Implementation:
+                // Reproduction chance drops as population approaches carrying capacity.
+                // If current population >= carrying capacity, effective rate is 0.
+                let logisticModifier = Math.max(0, 1 - (currentPopSize / carryingCapacity));
+                let effectiveRate = baseReproductionRate * logisticModifier;
+
+                if (Math.random() < effectiveRate) {
                     return new Prey(this.x, this.y);
                 }
                 return null;
@@ -362,7 +374,6 @@
 
             starve(starvationRate) {
                 // Lose energy over time based on starvation rate
-                // Higher rate = faster starvation
                 this.energy -= (starvationRate * 50); // slow down starvation to balance
                 return this.energy <= 0;
             }
@@ -560,6 +571,7 @@
             }
             lastTime = timestamp;
 
+            const preyCap = parseInt(preyCapacitySlider.value);
             const preyRepRate = parseFloat(preyReproductionSlider.value);
             const predEff = parseFloat(predatorEfficiencySlider.value);
             const predStarve = parseFloat(predatorStarvationSlider.value);
@@ -570,22 +582,22 @@
             let newPrey = [];
             for (let p of preyPop) {
                 p.move(boundary);
-                const offspring = p.reproduce(preyRepRate);
+                // Pass current population size and capacity to reproduce function for logistic math
+                const offspring = p.reproduce(preyRepRate, preyPop.length, preyCap);
                 if (offspring) newPrey.push(offspring);
             }
             preyPop.push(...newPrey);
 
             // Environmental refuge / spontaneous generation
-            // To ensure the simulation doesn't just permanently end if all prey die out
             // ONLY if not isolated
             if (!isolatedEnvToggle.checked && preyPop.length < 5 && Math.random() < 0.05) {
                 let pos = getRandomPosition(boundary);
                 preyPop.push(new Prey(pos.x, pos.y));
             }
 
-            // Cap prey population to prevent browser crashing (carrying capacity)
-            if (preyPop.length > 2000) {
-                preyPop.splice(2000);
+            // Hard cap to prevent browser crashing in case of extreme parameter tuning
+            if (preyPop.length > 2500) {
+                preyPop.splice(2500);
             }
 
             // Update Predators
