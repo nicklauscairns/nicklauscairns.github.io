@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Boat River Crossing Simulation</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #475569;
+            --bg-color: #f8fafc;
+            --panel-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-radius: 12px;
+            
+            /* Vector Colors */
+            --vec-boat: #ef4444; /* Red */
+            --vec-river: #3b82f6; /* Blue */
+            --vec-resultant: #10b981; /* Green */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .main-panel, .side-panel {
+            background-color: var(--panel-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        .ngss-box {
+            grid-column: 1 / -1;
+            background-color: var(--panel-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            font-size: 0.95rem;
+        }
+
+        .ngss-box ul {
+            margin-left: 20px;
+            margin-top: 8px;
+            color: var(--text-muted);
+        }
+
+        .ngss-box li {
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .canvas-container {
+            width: 100%;
+            background-color: #e0f2fe; /* Light blue for water */
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #cbd5e1;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: white;
+            font-size: 1rem;
+        }
+
+        #playBtn {
+            background-color: var(--primary);
+        }
+
+        #playBtn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #resetBtn {
+            background-color: var(--secondary);
+        }
+
+        #resetBtn:hover {
+            background-color: #334155;
+        }
+
+        .data-display {
+            background-color: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .legend {
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+
+        .instructions {
+            grid-column: 1 / -1;
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 24px;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            color: #92400e;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* New Styles for General Utility */
+        .toggles { margin-top: 20px; }
+        .toggles label { font-weight: normal; cursor: pointer; display: flex; align-items: center; justify-content: flex-start; gap: 8px;}
+        
+        .data-table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #f8fafc; font-weight: 600; color: var(--secondary); }
+        tr:hover { background-color: #f1f5f9; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="main-panel">
+        <header>
+            <h1>Interactive Boat River Crossing Simulation</h1>
+        </header>
+
+        <div class="canvas-container">
+            <canvas id="simCanvas" width="800" height="500"></canvas>
+        </div>
+        
+        <div class="data-table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Boat (m/s)</th>
+                        <th>Angle (°)</th>
+                        <th>River (m/s)</th>
+                        <th>Resultant (m/s)</th>
+                        <th>Time (s)</th>
+                        <th>X Pos (m)</th>
+                        <th>Y Pos (m)</th>
+                        <th>Displacement (m)</th>
+                        <th>Distance (m)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data rows go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="side-panel">
+        <h2>Control Panel</h2>
+
+        <div class="control-group">
+            <label>
+                <span style="color: var(--vec-boat);">Boat Speed (relative to water)</span>
+                <span id="boatSpeedVal">4.0 m/s</span>
+            </label>
+            <input type="range" id="boatSpeedSlider" min="1" max="10" step="0.1" value="4.0">
+        </div>
+
+        <div class="control-group">
+            <label>
+                <span style="color: var(--vec-boat);">Boat Angle (Heading)</span>
+                <span id="boatAngleVal">0°</span>
+            </label>
+            <input type="range" id="boatAngleSlider" min="-90" max="90" step="1" value="0">
+            <small style="color: var(--text-muted); display: block; margin-top: 4px;">0° is straight across. &plusmn;90° points parallel to shore.</small>
+        </div>
+
+        <div class="control-group">
+            <label>
+                <span style="color: var(--vec-river);">River Speed (relative to shore)</span>
+                <span id="riverSpeedVal">2.0 m/s</span>
+            </label>
+            <input type="range" id="riverSpeedSlider" min="0" max="8" step="0.1" value="2.0">
+        </div>
+
+        <div class="button-group">
+            <button id="playBtn">Play / Pause</button>
+            <button id="resetBtn">Reset</button>
+            <button id="resetParamsBtn" style="background-color: #64748b;">Reset Params</button>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 12px;">
+            <button id="recordBtn" style="background-color: var(--vec-resultant);">Record Data</button>
+            <button id="clearDataBtn" style="background-color: #ef4444;">Clear Data</button>
+        </div>
+
+        <div class="toggles">
+            <label><input type="checkbox" id="showComponents" checked> Show Component Vectors</label>
+            <label><input type="checkbox" id="showResultant" checked> Show Resultant Vector</label>
+            <label><input type="checkbox" id="showPath" checked> Show Boat Path</label>
+        </div>
+
+        <div class="data-display">
+            <div class="data-row">
+                <span>Resultant Speed:</span>
+                <strong id="resSpeedOut" style="color: var(--vec-resultant);">0.0 m/s</strong>
+            </div>
+            <div class="data-row">
+                <span>Resultant Angle:</span>
+                <strong id="resAngleOut" style="color: var(--vec-resultant);">0.0°</strong>
+            </div>
+            <div class="data-row" style="margin-top: 10px; border-top: 1px solid #cbd5e1; padding-top: 10px;">
+                <span>Time Taken:</span>
+                <strong id="timeOut">0.0 s</strong>
+            </div>
+            <div class="data-row">
+                <span>X Position:</span>
+                <strong id="xPosOut">0.0 m</strong>
+            </div>
+            <div class="data-row">
+                <span>Y Position:</span>
+                <strong id="yPosOut">0.0 m</strong>
+            </div>
+            <div class="data-row">
+                <span>Displacement:</span>
+                <strong id="dispOut">0.0 m</strong>
+            </div>
+            <div class="data-row" style="margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+                <span>Total Distance:</span>
+                <strong id="distOut" style="color: #d97706;">0.0 m</strong>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>Vector Legend</h3>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: var(--vec-boat);"></div>
+                <span>Boat relative to Water (V<sub>bw</sub>)</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: var(--vec-river);"></div>
+                <span>Water relative to Shore (V<sub>ws</sub>)</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: var(--vec-resultant);"></div>
+                <span>Boat relative to Shore (Resultant V<sub>bs</sub>)</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="instructions">
+        <h2 style="border-bottom: none; margin-bottom: 8px; padding-bottom: 0; color: #92400e; font-size: 1.25rem;">Inquiry Challenges:</h2>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+            <li style="margin-bottom: 8px;"><strong>The Straight Crossing:</strong> If your boat speed is 5.0 m/s and the river speed is 3.0 m/s, what exact angle must you set to land perfectly straight across the river?</li>
+            <li style="margin-bottom: 8px;"><strong>The Time Paradox:</strong> Set your boat angle to 0° and speed to 4.0 m/s. Record data for three different river speeds. Does the speed of the river affect how long it takes to cross? Why or why not?</li>
+            <li style="margin-bottom: 8px;"><strong>Battling the Current:</strong> Try pointing the boat upstream (negative angles). Can you find a combination of boat speed, angle, and river speed where the boat doesn't move relative to the shore at all?</li>
+        </ul>
+    </div>
+
+    <div class="ngss-box">
+        <h2 style="border-bottom: none; margin-bottom: 8px; padding-bottom: 0;">NGSS 3-Dimensional Alignment (Foundational for HS-PS2-1 & HS-PS2-2):</h2>
+        <ul>
+            <li><strong>SEP (Science & Engineering Practices):</strong> <em>Using Mathematics and Computational Thinking</em> — Use mathematical representations to describe and support claims about the velocity and displacement of an object.</li>
+            <li><strong>DCI (Disciplinary Core Ideas):</strong> <em>PS2.A: Forces and Motion</em> — Understanding vectors and frames of reference is a prerequisite for analyzing how forces change macroscopic motion and how momentum is conserved.</li>
+            <li><strong>CCC (Crosscutting Concepts):</strong> <em>Systems and System Models</em> — Defining the boundaries of a system (the boat, the water, the shore) to analyze how independent components interact to produce a resultant effect.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // --- Simulation State & Physics Variables ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Scale: 1 meter = 4 pixels. 
+    // River is 100 meters wide -> 400 pixels
+    const SCALE = 4; 
+    const SHORE_HEIGHT = 50;
+    const RIVER_WIDTH_M = 100;
+    
+    let isPlaying = false;
+    let animationId;
+    
+    let time = 0; // seconds
+    let totalDistance_m = 0; // Accumulated path length (odometer)
+    
+    // Initial Boat Position
+    const startX = canvas.width / 2;
+    const startY = canvas.height - SHORE_HEIGHT;
+    
+    let boatPos = { x: startX, y: startY };
+    let boatPath = []; // Array to store path points
+    
+    // Observers
+    let shoreObserverPos = { x: startX - 120, y: canvas.height - 15 };
+    let riverObserverPos = { x: 100, y: canvas.height / 2 };
+    
+    // Inputs
+    let v_boat = 4.0; // magnitude, m/s
+    let theta_deg = 0; // angle in degrees, 0 is straight up
+    let v_river = 2.0; // magnitude, rightward, m/s
+    
+    // DOM Elements
+    const boatSpeedSlider = document.getElementById('boatSpeedSlider');
+    const boatSpeedVal = document.getElementById('boatSpeedVal');
+    const boatAngleSlider = document.getElementById('boatAngleSlider');
+    const boatAngleVal = document.getElementById('boatAngleVal');
+    const riverSpeedSlider = document.getElementById('riverSpeedSlider');
+    const riverSpeedVal = document.getElementById('riverSpeedVal');
+    
+    const playBtn = document.getElementById('playBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resetParamsBtn = document.getElementById('resetParamsBtn');
+    const recordBtn = document.getElementById('recordBtn');
+    const clearDataBtn = document.getElementById('clearDataBtn');
+    
+    const showComponents = document.getElementById('showComponents');
+    const showResultant = document.getElementById('showResultant');
+    const showPath = document.getElementById('showPath');
+    const tableBody = document.getElementById('tableBody');
+    
+    const resSpeedOut = document.getElementById('resSpeedOut');
+    const resAngleOut = document.getElementById('resAngleOut');
+    const timeOut = document.getElementById('timeOut');
+    const xPosOut = document.getElementById('xPosOut');
+    const yPosOut = document.getElementById('yPosOut');
+    const dispOut = document.getElementById('dispOut');
+    const distOut = document.getElementById('distOut');
+
+    // --- Event Listeners ---
+    boatSpeedSlider.addEventListener('input', (e) => {
+        v_boat = parseFloat(e.target.value);
+        boatSpeedVal.textContent = v_boat.toFixed(1) + ' m/s';
+        if (!isPlaying && time === 0) drawFrame();
+    });
+
+    boatAngleSlider.addEventListener('input', (e) => {
+        theta_deg = parseFloat(e.target.value);
+        boatAngleVal.textContent = theta_deg + '°';
+        if (!isPlaying && time === 0) drawFrame();
+    });
+
+    riverSpeedSlider.addEventListener('input', (e) => {
+        v_river = parseFloat(e.target.value);
+        riverSpeedVal.textContent = v_river.toFixed(1) + ' m/s';
+        if (!isPlaying && time === 0) drawFrame();
+    });
+
+    playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+            lastTime = performance.now();
+            animationId = requestAnimationFrame(gameLoop);
+        } else {
+            cancelAnimationFrame(animationId);
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        isPlaying = false;
+        cancelAnimationFrame(animationId);
+        time = 0;
+        totalDistance_m = 0;
+        boatPos = { x: startX, y: startY };
+        boatPath = [];
+        riverObserverPos.x = 100; // Reset river observer to starting position
+        updateDataPanel();
+        drawFrame();
+    });
+
+    resetParamsBtn.addEventListener('click', () => {
+        // Reset variables to defaults
+        v_boat = 4.0;
+        theta_deg = 0;
+        v_river = 2.0;
+
+        // Reset UI sliders
+        boatSpeedSlider.value = v_boat;
+        boatAngleSlider.value = theta_deg;
+        riverSpeedSlider.value = v_river;
+
+        // Reset UI text labels
+        boatSpeedVal.textContent = v_boat.toFixed(1) + ' m/s';
+        boatAngleVal.textContent = theta_deg + '°';
+        riverSpeedVal.textContent = v_river.toFixed(1) + ' m/s';
+
+        // Trigger a standard reset to apply the changes to the canvas
+        resetBtn.click();
+    });
+
+    recordBtn.addEventListener('click', () => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${v_boat.toFixed(1)}</td>
+            <td>${theta_deg}°</td>
+            <td>${v_river.toFixed(1)}</td>
+            <td>${resSpeedOut.textContent}</td>
+            <td>${timeOut.textContent}</td>
+            <td>${xPosOut.textContent}</td>
+            <td>${yPosOut.textContent}</td>
+            <td>${dispOut.textContent}</td>
+            <td style="font-weight:bold; color:#d97706;">${distOut.textContent}</td>
+        `;
+        tableBody.insertBefore(tr, tableBody.firstChild); // Adds newest data to the top
+    });
+
+    clearDataBtn.addEventListener('click', () => {
+        tableBody.innerHTML = ''; // Empties the data table
+    });
+
+    showComponents.addEventListener('change', drawFrame);
+    showResultant.addEventListener('change', drawFrame);
+    showPath.addEventListener('change', drawFrame);
+
+    // --- Physics Update ---
+    let lastTime = 0;
+    function gameLoop(timestamp) {
+        if (!isPlaying) return;
+        
+        let dt = (timestamp - lastTime) / 1000; // delta time in seconds
+        lastTime = timestamp;
+        
+        // Cap dt to prevent huge jumps if tab is inactive
+        if (dt > 0.1) dt = 0.1;
+        
+        // Calculate velocity components (in m/s)
+        // 0 degrees is straight UP (negative Y direction)
+        const theta_rad = theta_deg * Math.PI / 180;
+        
+        // V_boat relative to water
+        const v_bw_x = v_boat * Math.sin(theta_rad);
+        const v_bw_y = -v_boat * Math.cos(theta_rad); 
+        
+        // V_water relative to shore
+        const v_ws_x = v_river;
+        const v_ws_y = 0;
+        
+        // Resultant: V_boat relative to shore
+        const v_bs_x = v_bw_x + v_ws_x;
+        const v_bs_y = v_bw_y + v_ws_y;
+        
+        // Accumulate Total Distance mathematically (Odometer)
+        const currentSpeed = Math.sqrt(v_bs_x * v_bs_x + v_bs_y * v_bs_y);
+        totalDistance_m += currentSpeed * dt;
+        
+        // Update Position
+        boatPos.x += (v_bs_x * SCALE) * dt;
+        boatPos.y += (v_bs_y * SCALE) * dt;
+        
+        // Update River Observer Position (drifts with the water)
+        riverObserverPos.x += (v_river * SCALE) * dt;
+        // Wrap around if they float off screen
+        if (riverObserverPos.x > canvas.width + 40) {
+            riverObserverPos.x = -40;
+        }
+        
+        // Record path trail every few frames
+        if (time === 0 || time % 0.2 < dt) {
+            boatPath.push({x: boatPos.x, y: boatPos.y});
+        }
+
+        time += dt;
+        
+        // Check if reached the opposite shore
+        if (boatPos.y <= SHORE_HEIGHT) {
+            boatPos.y = SHORE_HEIGHT;
+            isPlaying = false;
+        }
+        
+        updateDataPanel();
+        drawFrame();
+        
+        if (isPlaying) {
+            animationId = requestAnimationFrame(gameLoop);
+        }
+    }
+
+    function updateDataPanel() {
+        const theta_rad = theta_deg * Math.PI / 180;
+        const v_bw_x = v_boat * Math.sin(theta_rad);
+        const v_bw_y = -v_boat * Math.cos(theta_rad); 
+        const v_bs_x = v_bw_x + v_river;
+        const v_bs_y = v_bw_y;
+        
+        const resSpeed = Math.sqrt(v_bs_x*v_bs_x + v_bs_y*v_bs_y);
+        
+        // Calculate angle relative to straight across (0 degrees)
+        let resAngle = Math.atan2(v_bs_x, -v_bs_y) * 180 / Math.PI;
+        
+        resSpeedOut.textContent = resSpeed.toFixed(2) + ' m/s';
+        resAngleOut.textContent = resAngle.toFixed(1) + '°';
+        timeOut.textContent = time.toFixed(1) + ' s';
+        
+        const xPos = (boatPos.x - startX) / SCALE;
+        const yPos = (startY - boatPos.y) / SCALE;
+        xPosOut.textContent = xPos.toFixed(1) + ' m';
+        yPosOut.textContent = yPos.toFixed(1) + ' m';
+        
+        // Calculate Displacement (Straight line from origin to current position)
+        const displacement = Math.sqrt(xPos * xPos + yPos * yPos);
+        dispOut.textContent = displacement.toFixed(1) + ' m';
+        
+        // Total Distance is the accumulated path integral
+        distOut.textContent = totalDistance_m.toFixed(1) + ' m';
+    }
+
+    // --- Drawing Functions ---
+    function drawFrame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw Shores
+        ctx.fillStyle = '#84cc16'; // Green shore
+        ctx.fillRect(0, 0, canvas.width, SHORE_HEIGHT);
+        ctx.fillRect(0, canvas.height - SHORE_HEIGHT, canvas.width, SHORE_HEIGHT);
+        
+        // Draw Shore Lines
+        ctx.strokeStyle = '#4d7c0f';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(0, SHORE_HEIGHT);
+        ctx.lineTo(canvas.width, SHORE_HEIGHT);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - SHORE_HEIGHT);
+        ctx.lineTo(canvas.width, canvas.height - SHORE_HEIGHT);
+        ctx.stroke();
+        
+        // Draw Target Line (Straight across)
+        ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+        ctx.setLineDash([10, 10]);
+        ctx.beginPath();
+        ctx.moveTo(startX, SHORE_HEIGHT);
+        ctx.lineTo(startX, canvas.height - SHORE_HEIGHT);
+        ctx.stroke();
+        ctx.setLineDash([]); // reset
+        
+        // Draw Observers
+        drawObserver(shoreObserverPos.x, shoreObserverPos.y, "Shore Observer", false);
+        drawObserver(riverObserverPos.x, riverObserverPos.y, "River Observer", true);
+        
+        // Draw Path
+        if (showPath.checked && boatPath.length > 0) {
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            boatPath.forEach(pt => ctx.lineTo(pt.x, pt.y));
+            ctx.lineTo(boatPos.x, boatPos.y);
+            ctx.stroke();
+        }
+
+        // Draw Boat
+        drawBoat(boatPos.x, boatPos.y, theta_deg);
+        
+        // Draw Vectors
+        drawVectors();
+    }
+
+    function drawBoat(x, y, angle_deg) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle_deg * Math.PI / 180);
+        
+        ctx.fillStyle = '#f59e0b';
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 2;
+        
+        // Simple boat shape
+        ctx.beginPath();
+        ctx.moveTo(0, -15);
+        ctx.lineTo(10, 0);
+        ctx.lineTo(8, 20);
+        ctx.lineTo(-8, 20);
+        ctx.lineTo(-10, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+
+    function drawVectors() {
+        const theta_rad = theta_deg * Math.PI / 180;
+        
+        // Scale for vector drawing (so they fit nicely on screen)
+        const VEC_SCALE = 15; 
+        
+        // V_boat relative to water (Red)
+        const v_bw_px_x = v_boat * Math.sin(theta_rad) * VEC_SCALE;
+        const v_bw_px_y = -v_boat * Math.cos(theta_rad) * VEC_SCALE;
+        
+        // V_water relative to shore (Blue)
+        const v_ws_px_x = v_river * VEC_SCALE;
+        const v_ws_px_y = 0;
+        
+        // Origin of vectors is the boat
+        const ox = boatPos.x;
+        const oy = boatPos.y;
+        
+        if (showComponents.checked) {
+            // Draw Component 1: Boat relative to water
+            drawArrow(ox, oy, ox + v_bw_px_x, oy + v_bw_px_y, '#ef4444', 'Vbw');
+            
+            // Draw Component 2: Water relative to shore (Head-to-tail method)
+            drawArrow(ox + v_bw_px_x, oy + v_bw_px_y, ox + v_bw_px_x + v_ws_px_x, oy + v_bw_px_y + v_ws_px_y, '#3b82f6', 'Vws');
+        }
+        
+        if (showResultant.checked) {
+            // Draw Resultant: Boat relative to shore (Green)
+            drawArrow(ox, oy, ox + v_bw_px_x + v_ws_px_x, oy + v_bw_px_y + v_ws_px_y, '#10b981', 'Resultant');
+        }
+    }
+
+    function drawArrow(fromx, fromy, tox, toy, color, label) {
+        const headlen = 10; // length of head in pixels
+        const dx = tox - fromx;
+        const dy = toy - fromy;
+        const angle = Math.atan2(dy, dx);
+        
+        // Don't draw if length is 0
+        if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) return;
+        
+        ctx.beginPath();
+        ctx.moveTo(fromx, fromy);
+        ctx.lineTo(tox, toy);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(tox, toy);
+        ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.lineTo(tox, toy);
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        // Text Label
+        ctx.font = "bold 16px sans-serif";
+        ctx.fillStyle = color;
+        
+        // Adjust label position to not overlap arrow
+        const offset = 18;
+        ctx.fillText(label, tox + offset * Math.cos(angle), toy + offset * Math.sin(angle));
+    }
+
+    function drawObserver(x, y, label, isFloating) {
+        ctx.save();
+        ctx.translate(x, y);
+        
+        if (isFloating) {
+            // Draw an inner tube
+            ctx.fillStyle = '#ef4444'; // Red tube
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 20, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#e0f2fe'; // water hole
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 10, 6, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Draw Stick Figure
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Head
+        ctx.arc(0, -15, 5, 0, Math.PI*2);
+        // Body
+        ctx.moveTo(0, -10);
+        ctx.lineTo(0, 5);
+        // Arms
+        ctx.moveTo(-10, -5);
+        ctx.lineTo(10, -5);
+        
+        if (!isFloating) {
+            // Legs (floating observer has legs hidden by the tube)
+            ctx.moveTo(0, 5);
+            ctx.lineTo(-8, 15);
+            ctx.moveTo(0, 5);
+            ctx.lineTo(8, 15);
+        }
+        ctx.stroke();
+        
+        // Label with background for readability
+        // Placed above the shore observer to prevent clipping off the bottom of the canvas
+        const textY = isFloating ? 24 : -28; 
+        ctx.font = "bold 14px sans-serif";
+        const textWidth = ctx.measureText(label).width;
+        
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillRect(-textWidth/2 - 4, textY - 14, textWidth + 8, 20);
+        
+        ctx.fillStyle = '#0f172a';
+        ctx.textAlign = "center";
+        ctx.fillText(label, 0, textY);
+        
+        ctx.restore();
+    }
+
+    // Initialize
+    updateDataPanel();
+    drawFrame();
+
+</script>
+</body>
+</html>
