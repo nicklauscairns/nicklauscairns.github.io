@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projectile Motion Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        canvas { background-color: #ffffff; cursor: crosshair; }
+        .slider-label { display: flex; justify-content: space-between; font-size: 0.875rem; font-weight: 500; color: #475569; margin-bottom: 0.25rem; }
+        input[type=range] { width: 100%; accent-color: #3b82f6; margin-bottom: 1rem; }
+        .data-box { background: #f1f5f9; border-radius: 0.5rem; padding: 0.75rem; font-family: monospace; font-size: 0.875rem; color: #1e293b; }
+        .vector-legend { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #64748b; }
+        .legend-color { width: 12px; height: 12px; border-radius: 2px; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row">
+
+    <!-- Sidebar Controls -->
+    <aside class="w-full md:w-80 bg-white border-r border-slate-200 shadow-sm flex flex-col h-full overflow-y-auto z-10">
+        <div class="p-5 border-b border-slate-100">
+            <h1 class="text-xl font-bold text-slate-800 tracking-tight mb-2">Projectile Motion Simulation</h1>
+        </div>
+
+        <div class="p-5 flex-1">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Initial Parameters</h2>
+                <button id="btn-reset-params" class="text-xs text-blue-500 hover:text-blue-700 font-semibold underline transition-colors cursor-pointer">Reset Defaults</button>
+            </div>
+            
+            <div class="slider-label">
+                <span>Launch Velocity (v₀)</span> <span id="val-v0">15 m/s</span>
+            </div>
+            <input type="range" id="param-v0" min="0" max="40" step="1" value="15">
+
+            <div class="slider-label">
+                <span>Launch Angle (θ) relative to cart</span> <span id="val-angle">60°</span>
+            </div>
+            <input type="range" id="param-angle" min="0" max="90" step="1" value="60">
+
+            <div class="slider-label">
+                <span>Initial Height (y₀)</span> <span id="val-h0">0 m</span>
+            </div>
+            <input type="range" id="param-h0" min="0" max="50" step="1" value="0">
+
+            <div class="slider-label">
+                <span>Cart Velocity (v_c)</span> <span id="val-vc">0 m/s</span>
+            </div>
+            <input type="range" id="param-vc" min="-20" max="20" step="1" value="0">
+
+            <div class="slider-label">
+                <span>Gravity (g)</span> <span id="val-g">9.8 m/s²</span>
+            </div>
+            <input type="range" id="param-g" min="1" max="25" step="0.1" value="9.8">
+
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mt-6 mb-4">Display Options</h2>
+            <label class="flex items-center space-x-2 text-sm text-slate-700 mb-2 cursor-pointer">
+                <input type="checkbox" id="opt-vectors" checked class="rounded text-blue-500 focus:ring-blue-500">
+                <span>Show Velocity Vectors</span>
+            </label>
+            <label class="flex items-center space-x-2 text-sm text-slate-700 mb-4 cursor-pointer">
+                <input type="checkbox" id="opt-path" checked class="rounded text-blue-500 focus:ring-blue-500">
+                <span>Show Trajectory Path</span>
+            </label>
+
+            <!-- Vector Legend -->
+            <div class="flex flex-col gap-1 mb-6 bg-slate-50 p-3 rounded-md border border-slate-100">
+                <div class="vector-legend"><div class="legend-color bg-green-500"></div> Total Velocity (v)</div>
+                <div class="vector-legend"><div class="legend-color bg-red-500"></div> X-Velocity (v_x)</div>
+                <div class="vector-legend"><div class="legend-color bg-blue-500"></div> Y-Velocity (v_y)</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-2">
+                <button id="btn-launch" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow-sm transition-colors">
+                    Launch
+                </button>
+                <button id="btn-pause" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold py-2 px-4 rounded shadow-sm transition-colors disabled:opacity-50">
+                    Pause
+                </button>
+                <button id="btn-reset" class="flex-1 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-2 px-4 rounded shadow-sm transition-colors">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <div class="p-5 border-t border-slate-100 bg-slate-50">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Live Telemetry (Ground Frame)</h2>
+            <div class="data-box grid grid-cols-2 gap-x-4 gap-y-2">
+                <div>Time (t): <br><span id="out-t" class="font-bold text-blue-600">0.00 s</span></div>
+                <div>Pos (y): <br><span id="out-y" class="font-bold text-slate-800">0.00 m</span></div>
+                <div>Pos (x): <br><span id="out-x" class="font-bold text-slate-800">0.00 m</span></div>
+                <div>Speed (v): <br><span id="out-v" class="font-bold text-green-600">0.00 m/s</span></div>
+                <div>v_x: <br><span id="out-vx" class="font-bold text-red-600">0.00 m/s</span></div>
+                <div>v_y: <br><span id="out-vy" class="font-bold text-blue-600">0.00 m/s</span></div>
+            </div>
+        </div>
+
+        <div class="p-5 border-t border-slate-100 bg-white flex flex-col gap-2">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recorded Data</h2>
+                <button id="btn-clear-data" class="text-xs text-red-500 hover:text-red-700 font-semibold underline transition-colors cursor-pointer">Clear</button>
+            </div>
+            <button id="btn-record" class="w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold py-1.5 px-3 rounded shadow-sm transition-colors text-sm border border-emerald-200">
+                Record Current Data
+            </button>
+            <div class="max-h-40 overflow-y-auto border border-slate-200 rounded mt-2">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-200 shadow-sm">
+                        <tr>
+                            <th class="p-1.5 font-semibold text-slate-600">t (s)</th>
+                            <th class="p-1.5 font-semibold text-slate-600">x (m)</th>
+                            <th class="p-1.5 font-semibold text-slate-600">y (m)</th>
+                            <th class="p-1.5 font-semibold text-slate-600">v_x (m/s)</th>
+                            <th class="p-1.5 font-semibold text-slate-600">v_y (m/s)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body" class="divide-y divide-slate-100">
+                        <!-- Data rows go here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Simulation Canvas -->
+    <main class="flex-1 relative w-full h-full bg-slate-100">
+        <canvas id="simCanvas" class="w-full h-full absolute inset-0"></canvas>
+    </main>
+
+    <script>
+        // --- DOM Elements ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const inputs = {
+            v0: document.getElementById('param-v0'),
+            angle: document.getElementById('param-angle'),
+            h0: document.getElementById('param-h0'),
+            vc: document.getElementById('param-vc'),
+            g: document.getElementById('param-g'),
+            showVectors: document.getElementById('opt-vectors'),
+            showPath: document.getElementById('opt-path')
+        };
+
+        const labels = {
+            v0: document.getElementById('val-v0'),
+            angle: document.getElementById('val-angle'),
+            h0: document.getElementById('val-h0'),
+            vc: document.getElementById('val-vc'),
+            g: document.getElementById('val-g')
+        };
+
+        const outputs = {
+            t: document.getElementById('out-t'),
+            x: document.getElementById('out-x'),
+            y: document.getElementById('out-y'),
+            v: document.getElementById('out-v'),
+            vx: document.getElementById('out-vx'),
+            vy: document.getElementById('out-vy')
+        };
+
+        const btnLaunch = document.getElementById('btn-launch');
+        const btnPause = document.getElementById('btn-pause');
+        const btnReset = document.getElementById('btn-reset');
+        const btnResetParams = document.getElementById('btn-reset-params');
+        const btnRecord = document.getElementById('btn-record');
+        const btnClearData = document.getElementById('btn-clear-data');
+        const dataTableBody = document.getElementById('data-table-body');
+
+        // --- Simulation State ---
+        let simState = {
+            isRunning: false,
+            time: 0,
+            lastTimestamp: 0,
+            pixelsPerMeter: 10,
+            pathPoints: [],
+            // Initial parameters latched at launch
+            params: { v0: 15, angle: 60, h0: 0, vc: 0, g: 9.8 }
+        };
+
+        // Resize Canvas robustly
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            // Adjust scale based on screen width to ensure visibility
+            simState.pixelsPerMeter = Math.max(5, canvas.width / 120); 
+            draw();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // --- Event Listeners for UI ---
+        function updateLabels() {
+            labels.v0.innerText = `${inputs.v0.value} m/s`;
+            labels.angle.innerText = `${inputs.angle.value}°`;
+            labels.h0.innerText = `${inputs.h0.value} m`;
+            labels.vc.innerText = `${inputs.vc.value} m/s`;
+            labels.g.innerText = `${inputs.g.value} m/s²`;
+            
+            // Redraw initial state if not running
+            if (!simState.isRunning && simState.time === 0) {
+                latchParams();
+                draw();
+                updateTelemetry();
+            }
+        }
+
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', updateLabels);
+        });
+
+        btnLaunch.addEventListener('click', () => {
+            if (simState.time === 0) {
+                latchParams();
+                simState.pathPoints = [];
+            }
+            simState.isRunning = true;
+            simState.lastTimestamp = performance.now();
+            btnPause.innerText = "Pause";
+            requestAnimationFrame(simLoop);
+        });
+
+        btnPause.addEventListener('click', () => {
+            if(simState.time === 0) return;
+            simState.isRunning = !simState.isRunning;
+            btnPause.innerText = simState.isRunning ? "Pause" : "Resume";
+            if (simState.isRunning) {
+                simState.lastTimestamp = performance.now();
+                requestAnimationFrame(simLoop);
+            }
+        });
+
+        btnReset.addEventListener('click', () => {
+            simState.isRunning = false;
+            simState.time = 0;
+            simState.pathPoints = [];
+            btnPause.innerText = "Pause";
+            latchParams();
+            draw();
+            updateTelemetry();
+        });
+
+        btnResetParams.addEventListener('click', () => {
+            // Reset UI inputs to defaults
+            inputs.v0.value = 15;
+            inputs.angle.value = 60;
+            inputs.h0.value = 0;
+            inputs.vc.value = 0;
+            inputs.g.value = 9.8;
+            inputs.showVectors.checked = true;
+            inputs.showPath.checked = true;
+
+            // Stop and reset simulation state
+            simState.isRunning = false;
+            simState.time = 0;
+            simState.pathPoints = [];
+            btnPause.innerText = "Pause";
+            
+            // This triggers latchParams(), draw(), and updateTelemetry() 
+            // since isRunning is false and time is 0
+            updateLabels(); 
+        });
+
+        btnRecord.addEventListener('click', () => {
+            const state = calculateKinematics(simState.time);
+            
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50";
+            tr.innerHTML = `
+                <td class="p-1.5 font-mono text-blue-600 font-medium">${simState.time.toFixed(2)}</td>
+                <td class="p-1.5 font-mono">${Math.max(0, state.x).toFixed(2)}</td>
+                <td class="p-1.5 font-mono">${Math.max(0, state.y).toFixed(2)}</td>
+                <td class="p-1.5 font-mono text-red-600">${state.vx.toFixed(2)}</td>
+                <td class="p-1.5 font-mono text-blue-600">${state.vy.toFixed(2)}</td>
+            `;
+            dataTableBody.appendChild(tr);
+            
+            // Scroll to the bottom of the table container so new data is visible
+            const tableContainer = dataTableBody.parentElement.parentElement;
+            tableContainer.scrollTop = tableContainer.scrollHeight;
+        });
+
+        btnClearData.addEventListener('click', () => {
+            dataTableBody.innerHTML = '';
+        });
+
+        // --- Physics Logic ---
+        function latchParams() {
+            simState.params = {
+                v0: parseFloat(inputs.v0.value),
+                angle: parseFloat(inputs.angle.value),
+                h0: parseFloat(inputs.h0.value),
+                vc: parseFloat(inputs.vc.value),
+                g: parseFloat(inputs.g.value)
+            };
+        }
+
+        function calculateKinematics(t) {
+            const p = simState.params;
+            const thetaRad = p.angle * Math.PI / 180;
+            
+            // Independence of motion & relativity: 
+            // V_x initial is cart velocity + horizontal launch velocity
+            const vx0 = p.vc + p.v0 * Math.cos(thetaRad);
+            const vy0 = p.v0 * Math.sin(thetaRad);
+
+            // Ground frame coordinates
+            const x = vx0 * t;
+            const y = p.h0 + vy0 * t - 0.5 * p.g * t * t;
+            
+            // Ground frame velocities
+            const vx = vx0;
+            const vy = vy0 - p.g * t;
+
+            // Cart position
+            const cart_x = p.vc * t;
+
+            return { x, y, vx, vy, cart_x };
+        }
+
+        // --- Main Loop ---
+        function simLoop(timestamp) {
+            if (!simState.isRunning) return;
+
+            // Calculate dt in seconds (capped to avoid huge jumps if tab was inactive)
+            let dt = (timestamp - simState.lastTimestamp) / 1000;
+            if (dt > 0.1) dt = 0.1; 
+            simState.lastTimestamp = timestamp;
+
+            // Advance time
+            simState.time += dt;
+
+            // Check ground collision
+            const state = calculateKinematics(simState.time);
+            if (state.y <= 0 && simState.time > 0) {
+                // Exact time of impact using quadratic formula: 0 = h0 + vy0*t - 0.5*g*t^2
+                const p = simState.params;
+                const vy0 = p.v0 * Math.sin(p.angle * Math.PI / 180);
+                const a = -0.5 * p.g;
+                const b = vy0;
+                const c = p.h0;
+                
+                const discriminant = b*b - 4*a*c;
+                if(discriminant >= 0) {
+                    const t_impact = (-b - Math.sqrt(discriminant)) / (2*a);
+                    if(t_impact > 0) simState.time = t_impact;
+                }
+                
+                simState.isRunning = false; // Stop simulation
+            }
+
+            // Save path point for trailing line
+            const finalState = calculateKinematics(simState.time);
+            simState.pathPoints.push({ x: finalState.x, y: finalState.y });
+
+            draw();
+            updateTelemetry();
+
+            if (simState.isRunning) {
+                requestAnimationFrame(simLoop);
+            }
+        }
+
+        // --- Rendering ---
+        function drawArrow(context, fromX, fromY, toX, toY, color, width = 2) {
+            const headlen = 10; 
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            const angle = Math.atan2(dy, dx);
+            
+            context.beginPath();
+            context.moveTo(fromX, fromY);
+            context.lineTo(toX, toY);
+            context.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+            context.moveTo(toX, toY);
+            context.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+            context.strokeStyle = color;
+            context.lineWidth = width;
+            context.stroke();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const ppm = simState.params.g < 5 ? simState.pixelsPerMeter * 0.5 : simState.pixelsPerMeter; // zoom out if low gravity to see long arcs
+            const groundY = canvas.height - 50;
+            const originX = 50;
+
+            // Coordinate transform helpers
+            const toCanvasX = (meters) => originX + meters * ppm;
+            const toCanvasY = (meters) => groundY - meters * ppm;
+
+            // Draw Sky / Grid
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            // Vertical grid lines (every 10m)
+            for(let x = 0; x < canvas.width/ppm; x += 10) {
+                ctx.moveTo(toCanvasX(x), 0);
+                ctx.lineTo(toCanvasX(x), groundY);
+            }
+            // Horizontal grid lines (every 10m)
+            for(let y = 0; y < canvas.height/ppm; y += 10) {
+                ctx.moveTo(0, toCanvasY(y));
+                ctx.lineTo(canvas.width, toCanvasY(y));
+            }
+            ctx.stroke();
+
+            // Draw Ground
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+            ctx.strokeStyle = '#047857';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(0, groundY);
+            ctx.lineTo(canvas.width, groundY);
+            ctx.stroke();
+
+            // Get Current Physics State
+            const state = calculateKinematics(simState.time);
+            const cx = toCanvasX(state.x);
+            const cy = toCanvasY(state.y);
+            const cartCanvasX = toCanvasX(state.cart_x);
+            
+            // Draw Trajectory Path
+            if (inputs.showPath.checked && simState.pathPoints.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(toCanvasX(simState.pathPoints[0].x), toCanvasY(simState.pathPoints[0].y));
+                for (let i = 1; i < simState.pathPoints.length; i++) {
+                    ctx.lineTo(toCanvasX(simState.pathPoints[i].x), toCanvasY(simState.pathPoints[i].y));
+                }
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw Cart
+            const cartW = 40;
+            const cartH = 20;
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(cartCanvasX - cartW/2, groundY - cartH, cartW, cartH);
+            // Cart wheels
+            ctx.fillStyle = '#334155';
+            ctx.beginPath(); ctx.arc(cartCanvasX - 10, groundY, 5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cartCanvasX + 10, groundY, 5, 0, Math.PI*2); ctx.fill();
+
+            // Draw Relativity Guide (line connecting cart to projectile X)
+            ctx.beginPath();
+            ctx.moveTo(cartCanvasX, groundY - cartH);
+            ctx.lineTo(cartCanvasX, cy);
+            ctx.strokeStyle = 'rgba(100, 116, 139, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Draw Projectile
+            ctx.beginPath();
+            ctx.arc(cx, cy, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = '#eab308';
+            ctx.fill();
+            ctx.strokeStyle = '#ca8a04';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Launch Angle Indicator before launch
+            if (simState.time === 0) {
+                const thetaRad = simState.params.angle * Math.PI / 180;
+                // Scale length with v0, keeping a minimum length for visibility
+                const arrowLength = Math.max(40, simState.params.v0 * 3);
+                
+                const endX = cx + arrowLength * Math.cos(thetaRad);
+                const endY = cy - arrowLength * Math.sin(thetaRad); // Canvas Y is inverted
+
+                // Draw the angle arc
+                if (simState.params.angle > 0) {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 20, 0, -thetaRad, true);
+                    ctx.strokeStyle = '#9333ea';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+
+                // Draw the arrow
+                drawArrow(ctx, cx, cy, endX, endY, '#9333ea', 3);
+            }
+
+            // Draw Vectors
+            if (inputs.showVectors.checked && state.y > 0) {
+                const vectorScale = 3; // pixels per m/s
+                
+                const vxEnd = cx + state.vx * vectorScale;
+                const vyEnd = cy - state.vy * vectorScale; // Canvas Y is inverted
+
+                // Vx (Red)
+                drawArrow(ctx, cx, cy, vxEnd, cy, '#ef4444', 3);
+                
+                // Vy (Blue)
+                drawArrow(ctx, cx, cy, cx, vyEnd, '#3b82f6', 3);
+                
+                // Total V (Green)
+                drawArrow(ctx, cx, cy, vxEnd, vyEnd, '#22c55e', 3);
+            }
+        }
+
+        function updateTelemetry() {
+            const state = calculateKinematics(simState.time);
+            const totalV = Math.sqrt(state.vx*state.vx + state.vy*state.vy);
+
+            outputs.t.innerText = `${simState.time.toFixed(2)} s`;
+            outputs.x.innerText = `${Math.max(0, state.x).toFixed(2)} m`;
+            outputs.y.innerText = `${Math.max(0, state.y).toFixed(2)} m`;
+            outputs.vx.innerText = `${state.vx.toFixed(2)} m/s`;
+            outputs.vy.innerText = `${state.vy.toFixed(2)} m/s`;
+            outputs.v.innerText = `${totalV.toFixed(2)} m/s`;
+        }
+
+        // Initialize
+        resizeCanvas();
+        latchParams();
+        updateLabels();
+    </script>
+</body>
+</html>
