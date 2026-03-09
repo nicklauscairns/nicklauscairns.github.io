@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greenhouse Effect & Earth's Energy Budget Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #macroCanvas, #microCanvas { border: 1px solid #ccc; border-radius: 4px; background-color: #0f172a; }
+        .tab-btn { padding: 0.5rem 1rem; cursor: pointer; border-bottom: 2px solid transparent; }
+        .tab-btn.active { border-bottom-color: #3b82f6; font-weight: bold; color: #3b82f6; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4 min-h-screen">
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col h-[95vh]">
+        <header class="mb-4">
+            <h1 class="text-3xl font-bold text-blue-700">Earth's Energy Budget & Greenhouse Effect</h1>
+            <p class="text-sm text-gray-600 mt-1">Investigate how solar intensity, albedo, clouds, and greenhouse gases affect global temperature.</p>
+        </header>
+
+        <div class="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden">
+            <!-- Left Panel: Visual Models -->
+            <div class="w-full lg:w-1/2 flex flex-col gap-4 h-full">
+                <!-- Tabs for Macro/Micro View -->
+                <div class="flex border-b border-gray-200">
+                    <button id="btn-macro" class="tab-btn active">Macroscopic View</button>
+                    <button id="btn-micro" class="tab-btn">Microscopic View (Photons)</button>
+                </div>
+
+                <div class="relative flex-1 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center border border-gray-300">
+                    <!-- Macroscopic Canvas -->
+                    <canvas id="macroCanvas" width="500" height="500" class="absolute top-0 left-0 w-full h-full object-contain"></canvas>
+                    <!-- Microscopic Canvas -->
+                    <canvas id="microCanvas" width="500" height="500" class="absolute top-0 left-0 w-full h-full object-contain hidden"></canvas>
+                </div>
+
+                <!-- Simulation Info / Live Readout -->
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h3 class="font-bold text-blue-800 mb-2">Live System State</h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div>Simulated Time: <span id="simTime" class="font-mono font-bold">Year 0.0</span></div>
+                        <div>Global Temp: <span id="globalTemp" class="font-mono font-bold text-red-600">15.0 °C</span></div>
+                        <div>Incoming Solar: <span id="incomingSolar" class="font-mono">340 W/m²</span></div>
+                        <div>Outgoing Energy: <span id="outgoingEnergy" class="font-mono">340 W/m²</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Controls & Data -->
+            <div class="w-full lg:w-1/2 flex flex-col gap-4 h-full overflow-y-auto pr-2">
+                <!-- Controls Box -->
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-gray-800 text-lg">Simulation Controls</h3>
+                        <div class="flex gap-2">
+                            <button id="btn-play-pause" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">Play</button>
+                            <button id="btn-reset" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Greenhouse Gases -->
+                        <div>
+                            <div class="flex justify-between">
+                                <label for="ghgSlider" class="text-sm font-semibold">Greenhouse Gas Conc. (ppm CO₂ eq)</label>
+                                <span id="ghgValue" class="text-sm font-mono">400</span>
+                            </div>
+                            <input type="range" id="ghgSlider" min="100" max="1000" value="400" class="w-full accent-blue-600">
+                        </div>
+
+                        <!-- Albedo (Ice/Surface reflectivity) -->
+                        <div>
+                            <div class="flex justify-between">
+                                <label for="albedoSlider" class="text-sm font-semibold">Surface Albedo (Reflectivity %)</label>
+                                <span id="albedoValue" class="text-sm font-mono">30%</span>
+                            </div>
+                            <input type="range" id="albedoSlider" min="5" max="80" value="30" class="w-full accent-blue-600">
+                        </div>
+
+                        <!-- Solar Intensity -->
+                        <div>
+                            <div class="flex justify-between">
+                                <label for="solarSlider" class="text-sm font-semibold">Solar Intensity (%)</label>
+                                <span id="solarValue" class="text-sm font-mono">100%</span>
+                            </div>
+                            <input type="range" id="solarSlider" min="80" max="120" value="100" class="w-full accent-blue-600">
+                        </div>
+
+                        <!-- Cloud Cover -->
+                        <div>
+                            <div class="flex justify-between">
+                                <label for="cloudSlider" class="text-sm font-semibold">Cloud Cover (%)</label>
+                                <span id="cloudValue" class="text-sm font-mono">50%</span>
+                            </div>
+                            <input type="range" id="cloudSlider" min="0" max="100" value="50" class="w-full accent-blue-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Logging Tabs -->
+                <div class="bg-white border border-gray-200 rounded-lg flex-1 flex flex-col min-h-[300px]">
+                    <div class="flex border-b border-gray-200 bg-gray-50 rounded-t-lg">
+                        <button id="btn-chart" class="tab-btn active flex-1">Temperature Graph</button>
+                        <button id="btn-table" class="tab-btn flex-1">Data Table</button>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col relative">
+                        <!-- Chart Content -->
+                        <div id="content-chart" class="tab-content active h-full w-full">
+                            <canvas id="tempChart" class="w-full h-full"></canvas>
+                        </div>
+
+                        <!-- Table Content -->
+                        <div id="content-table" class="tab-content h-full hidden overflow-hidden flex flex-col">
+                            <div class="overflow-y-auto flex-1">
+                                <table class="w-full text-sm text-left text-gray-500">
+                                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+                                        <tr>
+                                            <th class="px-3 py-2">Year</th>
+                                            <th class="px-3 py-2">GHG (ppm)</th>
+                                            <th class="px-3 py-2">Albedo (%)</th>
+                                            <th class="px-3 py-2">Solar (%)</th>
+                                            <th class="px-3 py-2">Clouds (%)</th>
+                                            <th class="px-3 py-2">Temp (°C)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dataTableBody">
+                                        <!-- Rows injected by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 border-t border-gray-200 bg-gray-50 flex justify-between items-center rounded-b-lg">
+                        <button id="btn-record" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold shadow transition-colors">Record Current State</button>
+                        <button id="btn-export" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded text-sm font-semibold shadow transition-colors">Export CSV</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab logic
+        function setupTabs(btnIds, contentIds, activeClass) {
+            btnIds.forEach((btnId, index) => {
+                const btn = document.getElementById(btnId);
+                btn.addEventListener('click', () => {
+                    // Remove active from all
+                    btnIds.forEach(id => document.getElementById(id).classList.remove(activeClass));
+                    if (contentIds) {
+                        contentIds.forEach(id => {
+                            const el = document.getElementById(id);
+                            if(el) { el.classList.remove('active'); el.classList.add('hidden'); }
+                        });
+                    }
+
+                    // Add active to clicked
+                    btn.classList.add(activeClass);
+                    if (contentIds && contentIds[index]) {
+                        const contentEl = document.getElementById(contentIds[index]);
+                        if(contentEl) {
+                            contentEl.classList.add('active');
+                            contentEl.classList.remove('hidden');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Setup Main View Tabs
+        setupTabs(['btn-macro', 'btn-micro'], null, 'active');
+        document.getElementById('btn-macro').addEventListener('click', () => {
+            document.getElementById('macroCanvas').classList.remove('hidden');
+            document.getElementById('microCanvas').classList.add('hidden');
+        });
+        document.getElementById('btn-micro').addEventListener('click', () => {
+            document.getElementById('macroCanvas').classList.add('hidden');
+            document.getElementById('microCanvas').classList.remove('hidden');
+        });
+
+        // Setup Data Tabs
+        setupTabs(['btn-chart', 'btn-table'], ['content-chart', 'content-table'], 'active');
+        document.getElementById('btn-table').addEventListener('click', () => {
+            document.getElementById('content-chart').classList.add('hidden');
+            document.getElementById('content-table').classList.remove('hidden');
+        });
+        document.getElementById('btn-chart').addEventListener('click', () => {
+            document.getElementById('content-chart').classList.remove('hidden');
+            document.getElementById('content-table').classList.add('hidden');
+        });
+
+        // -------------------------------------------------------------
+        // Simulation Physics and Logic
+        // -------------------------------------------------------------
+        const SIM_SPEED = 0.1; // Years per tick
+
+        let state = {
+            isRunning: false,
+            time: 0,
+            temp: 15.0, // Celsius
+
+            // Interactive variables
+            ghgPpm: 400,
+            albedoPercent: 30,
+            solarPercent: 100,
+            cloudPercent: 50,
+
+            // Computed energy
+            incomingEnergy: 340, // W/m^2
+            outgoingEnergy: 340
+        };
+
+        // DOM Elements
+        const els = {
+            time: document.getElementById('simTime'),
+            temp: document.getElementById('globalTemp'),
+            incoming: document.getElementById('incomingSolar'),
+            outgoing: document.getElementById('outgoingEnergy'),
+
+            ghgSlider: document.getElementById('ghgSlider'),
+            ghgVal: document.getElementById('ghgValue'),
+
+            albedoSlider: document.getElementById('albedoSlider'),
+            albedoVal: document.getElementById('albedoValue'),
+
+            solarSlider: document.getElementById('solarSlider'),
+            solarVal: document.getElementById('solarValue'),
+
+            cloudSlider: document.getElementById('cloudSlider'),
+            cloudVal: document.getElementById('cloudValue'),
+
+            playBtn: document.getElementById('btn-play-pause'),
+            resetBtn: document.getElementById('btn-reset'),
+        };
+
+        // Base physics constants (simplified for high school simulation)
+        // Stefan-Boltzmann constant (sigma) = 5.67e-8
+        // Base incoming solar = 340 W/m2 (at 100% solar)
+        // Base Earth emission (T = 288K) = sigma * 288^4 ≈ 390 W/m2
+        // Base atmospheric window (amount escaping) depends on GHG and clouds
+
+        function updatePhysics() {
+            // 1. Calculate Incoming Solar Radiation
+            // Base is 340 W/m^2. Adjusted by solar percentage.
+            const baseIncoming = 340 * (state.solarPercent / 100.0);
+
+            // 2. Calculate reflection (Albedo + Clouds)
+            // Clouds contribute to reflection. Base albedo is surface.
+            // Simplified: Total reflection = Surface Albedo + (Cloud Cover * factor)
+            // Let's assume total planetary albedo is around 30%.
+            // Surface might be 15%, Clouds might add 15%.
+            const surfaceAlbedoFrac = state.albedoPercent / 100.0;
+            const cloudReflectionFrac = (state.cloudPercent / 100.0) * 0.20; // Max 20% extra reflection from clouds
+
+            // Total albedo is bounded between 0 and 0.9
+            const totalAlbedo = Math.min(0.9, surfaceAlbedoFrac + cloudReflectionFrac);
+
+            // Net incoming is what gets absorbed by Earth
+            state.incomingEnergy = baseIncoming * (1 - totalAlbedo);
+
+            // 3. Calculate Outgoing Longwave Radiation (OLR)
+            // T is in Kelvin
+            const tempK = state.temp + 273.15;
+
+            // Earth surface emits = sigma * T^4
+            const sigma = 5.67e-8;
+            const surfaceEmission = sigma * Math.pow(tempK, 4);
+
+            // Atmosphere absorbs some of this.
+            // More GHG = less escaping. More clouds = less escaping.
+            // Emissivity (epsilon) of the Earth system to space.
+            // If epsilon = 1, all escapes. If epsilon = 0.6, 60% escapes.
+
+            // Base emissivity roughly 0.61 for current Earth (340 out / 390 surface emit ≈ 0.87, but standard zero-D models use ~0.61 multiplier on sigma T^4)
+            // Let's construct a simple emissivity function:
+            // GHG effect: log-based scaling for CO2.
+            // Doubling CO2 reduces OLR by ~3.7 W/m2.
+            const ghgForcing = 5.35 * Math.log(state.ghgPpm / 278); // Radiative forcing relative to pre-industrial (278 ppm)
+
+            // Cloud effect on OLR: Clouds trap heat.
+            // Let's say 100% clouds trap an extra 20 W/m2.
+            const cloudForcing = (state.cloudPercent - 50) / 50 * 10;
+
+            // Outgoing energy is the surface emission minus the trapped heat
+            // (We tune this so at base state, incoming ≈ outgoing)
+            // Base state: temp = 15C (288.15K). Surface emission ≈ 390.
+            // Base incoming ≈ 340 * (1 - 0.3) = 238.
+            // Wait, standard 0-D model: S/4 * (1-albedo) = 340 * (1 - 0.3) = 238 W/m2 absorbed.
+            // Outgoing = 238 W/m2.
+            // If we want temp to be 15C, we need an emissivity `e` where e * sigma * 288.15^4 = 238.
+            // e * 390 ≈ 238 -> e ≈ 0.61.
+
+            let currentEmissivity = 0.61;
+
+            // Adjust emissivity based on GHG
+            // If GHG increases, emissivity drops (less heat escapes).
+            // For a doubling of CO2 (e.g. 278 to 556), forcing is 3.7 W/m2.
+            // This is roughly equivalent to dropping emissivity by ~0.01.
+            const ghgRatio = state.ghgPpm / 400; // relative to 400
+            currentEmissivity -= Math.log2(ghgRatio) * 0.012;
+
+            // Adjust emissivity based on clouds (clouds trap heat)
+            const cloudRatio = (state.cloudPercent - 50) / 100; // -0.5 to +0.5
+            currentEmissivity -= cloudRatio * 0.02;
+
+            // Ensure emissivity stays reasonable
+            currentEmissivity = Math.max(0.1, Math.min(1.0, currentEmissivity));
+
+            state.outgoingEnergy = currentEmissivity * sigma * Math.pow(tempK, 4);
+
+            // 4. Update Temperature
+            // Energy imbalance = Incoming - Outgoing
+            // Net energy = state.incomingEnergy - state.outgoingEnergy
+            // (Note: in reality incoming solar is ~340 but net absorbed is ~238. Let's make the UI show NET absorbed for simplicity, or show total solar and let the user figure it out).
+            // Actually, showing 340 for incoming is confusing if outgoing is 238.
+            // Let's make "Incoming" represent NET absorbed solar energy.
+            state.incomingEnergy = baseIncoming * (1 - totalAlbedo);
+
+            const netEnergy = state.incomingEnergy - state.outgoingEnergy;
+
+            // Heat capacity of the Earth system (ocean + atmosphere)
+            // To make simulation responsive, we use an arbitrary heat capacity.
+            const heatCapacity = 100; // Tuning parameter
+
+            if (state.isRunning) {
+                const tempChange = (netEnergy / heatCapacity) * SIM_SPEED;
+                state.temp += tempChange;
+                state.time += SIM_SPEED;
+            }
+        }
+
+        function updateUI() {
+            // Inputs
+            els.ghgVal.textContent = state.ghgPpm;
+            els.albedoVal.textContent = state.albedoPercent + '%';
+            els.solarVal.textContent = state.solarPercent + '%';
+            els.cloudVal.textContent = state.cloudPercent + '%';
+
+            // Outputs
+            els.time.textContent = `Year ${state.time.toFixed(1)}`;
+            els.temp.textContent = `${state.temp.toFixed(1)} °C`;
+
+            // Color temp
+            if (state.temp > 16) els.temp.className = "font-mono font-bold text-red-600";
+            else if (state.temp < 14) els.temp.className = "font-mono font-bold text-blue-600";
+            else els.temp.className = "font-mono font-bold text-green-600";
+
+            els.incoming.textContent = `${state.incomingEnergy.toFixed(1)} W/m²`;
+            els.outgoing.textContent = `${state.outgoingEnergy.toFixed(1)} W/m²`;
+
+            els.playBtn.textContent = state.isRunning ? "Pause" : "Play";
+            els.playBtn.className = state.isRunning
+                ? "bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors"
+                : "bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-semibold transition-colors";
+        }
+
+        // Input Listeners
+        els.ghgSlider.addEventListener('input', (e) => { state.ghgPpm = parseInt(e.target.value); updatePhysics(); updateUI(); });
+        els.albedoSlider.addEventListener('input', (e) => { state.albedoPercent = parseInt(e.target.value); updatePhysics(); updateUI(); });
+        els.solarSlider.addEventListener('input', (e) => { state.solarPercent = parseInt(e.target.value); updatePhysics(); updateUI(); });
+        els.cloudSlider.addEventListener('input', (e) => { state.cloudPercent = parseInt(e.target.value); updatePhysics(); updateUI(); });
+
+        els.playBtn.addEventListener('click', () => {
+            state.isRunning = !state.isRunning;
+            updateUI();
+        });
+
+        els.resetBtn.addEventListener('click', () => {
+            state.isRunning = false;
+            state.time = 0;
+            state.temp = 15.0;
+
+            state.ghgPpm = 400; els.ghgSlider.value = 400;
+            state.albedoPercent = 30; els.albedoSlider.value = 30;
+            state.solarPercent = 100; els.solarSlider.value = 100;
+            state.cloudPercent = 50; els.cloudSlider.value = 50;
+
+            updatePhysics();
+            updateUI();
+        });
+
+        // Initial setup
+        updatePhysics();
+        updateUI();
+
+        // -------------------------------------------------------------
+        // Data Logging (Chart & Table)
+        // -------------------------------------------------------------
+        let recordedData = [];
+        const dataTableBody = document.getElementById('dataTableBody');
+        const btnRecord = document.getElementById('btn-record');
+        const btnExport = document.getElementById('btn-export');
+
+        // Initialize Chart.js
+        const ctxChart = document.getElementById('tempChart').getContext('2d');
+        const tempChart = new Chart(ctxChart, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Global Temp (°C)',
+                    data: [],
+                    borderColor: 'rgb(239, 68, 68)', // red-500
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointBackgroundColor: 'rgb(239, 68, 68)',
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Year' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Temperature (°C)' },
+                        suggestedMin: 10,
+                        suggestedMax: 20
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        btnRecord.addEventListener('click', () => {
+            // Log current state
+            const currentRecord = {
+                year: state.time.toFixed(1),
+                ghg: state.ghgPpm,
+                albedo: state.albedoPercent,
+                solar: state.solarPercent,
+                cloud: state.cloudPercent,
+                temp: state.temp.toFixed(2)
+            };
+
+            recordedData.push(currentRecord);
+
+            // Update Table
+            const tr = document.createElement('tr');
+            tr.className = "bg-white border-b hover:bg-gray-50";
+            tr.innerHTML = `
+                <td class="px-3 py-2 font-mono">${currentRecord.year}</td>
+                <td class="px-3 py-2">${currentRecord.ghg}</td>
+                <td class="px-3 py-2">${currentRecord.albedo}</td>
+                <td class="px-3 py-2">${currentRecord.solar}</td>
+                <td class="px-3 py-2">${currentRecord.cloud}</td>
+                <td class="px-3 py-2 font-bold">${currentRecord.temp}</td>
+            `;
+            dataTableBody.appendChild(tr);
+
+            // Update Chart
+            tempChart.data.labels.push(currentRecord.year);
+            tempChart.data.datasets[0].data.push(currentRecord.temp);
+            tempChart.update();
+
+            // Visual feedback
+            btnRecord.textContent = "Recorded!";
+            btnRecord.classList.replace('bg-green-600', 'bg-green-400');
+            setTimeout(() => {
+                btnRecord.textContent = "Record Current State";
+                btnRecord.classList.replace('bg-green-400', 'bg-green-600');
+            }, 1000);
+        });
+
+        btnExport.addEventListener('click', () => {
+            if (recordedData.length === 0) {
+                alert("No data recorded yet! Click 'Record Current State' first.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            // Header
+            csvContent += "Year,GHG_ppm,Albedo_percent,Solar_percent,Cloud_percent,Temp_C\n";
+            // Rows
+            recordedData.forEach(row => {
+                csvContent += `${row.year},${row.ghg},${row.albedo},${row.solar},${row.cloud},${row.temp}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "greenhouse_simulation_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Extend Reset to also clear data
+        els.resetBtn.addEventListener('click', () => {
+            // Existing reset logic handles state, we just add data clearing
+            recordedData = [];
+            dataTableBody.innerHTML = '';
+
+            tempChart.data.labels = [];
+            tempChart.data.datasets[0].data = [];
+            tempChart.update();
+        });
+
+
+        // -------------------------------------------------------------
+        // Canvas Drawing (Visual Models)
+        // -------------------------------------------------------------
+        const macroCtx = document.getElementById('macroCanvas').getContext('2d');
+        const microCtx = document.getElementById('microCanvas').getContext('2d');
+
+        let photons = [];
+
+        function drawMacroscopic() {
+            macroCtx.clearRect(0, 0, 500, 500);
+
+            // Draw space background (dark blue/black)
+            macroCtx.fillStyle = '#0f172a';
+            macroCtx.fillRect(0, 0, 500, 500);
+
+            // Sun
+            macroCtx.fillStyle = '#fef08a'; // yellow-200
+            macroCtx.beginPath();
+            macroCtx.arc(50, 50, 30 + (state.solarPercent - 100) * 0.5, 0, Math.PI * 2);
+            macroCtx.fill();
+
+            // Earth (center)
+            const centerX = 250;
+            const centerY = 300;
+            const radius = 120;
+
+            // Earth color changes based on temp
+            // 15C is base (blue-green). >15C shifts red. <15C shifts white/blue.
+            let r = 50, g = 150, b = 200; // Base ocean blue-ish
+            if (state.temp > 15) {
+                const shift = Math.min((state.temp - 15) * 15, 205);
+                r += shift;
+                g -= shift * 0.5;
+            } else if (state.temp < 15) {
+                const shift = Math.min((15 - state.temp) * 15, 100);
+                r -= shift * 0.5;
+                g += shift * 0.5;
+                b += shift;
+            }
+            macroCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            macroCtx.beginPath();
+            macroCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            macroCtx.fill();
+
+            // Ice Caps (Albedo)
+            const iceThickness = radius * (state.albedoPercent / 100);
+            macroCtx.fillStyle = '#ffffff';
+            // Top ice
+            macroCtx.beginPath();
+            macroCtx.arc(centerX, centerY - radius + iceThickness/2, iceThickness, 0, Math.PI * 2);
+            macroCtx.fill();
+            // Bottom ice
+            macroCtx.beginPath();
+            macroCtx.arc(centerX, centerY + radius - iceThickness/2, iceThickness, 0, Math.PI * 2);
+            macroCtx.fill();
+
+            // Atmosphere (GHG)
+            // Thickness/opacity based on GHG ppm
+            const atmOpacity = Math.min(0.8, state.ghgPpm / 1500);
+            macroCtx.strokeStyle = `rgba(150, 200, 255, ${atmOpacity})`;
+            macroCtx.lineWidth = 15;
+            macroCtx.beginPath();
+            macroCtx.arc(centerX, centerY, radius + 20, 0, Math.PI * 2);
+            macroCtx.stroke();
+
+            // Clouds
+            const numClouds = Math.floor(state.cloudPercent / 10);
+            macroCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            for (let i = 0; i < numClouds; i++) {
+                const angle = (Math.PI * 2 * i) / numClouds;
+                const cx = centerX + (radius + 10) * Math.cos(angle);
+                const cy = centerY + (radius + 10) * Math.sin(angle);
+                macroCtx.beginPath();
+                macroCtx.arc(cx, cy, 15, 0, Math.PI * 2);
+                macroCtx.arc(cx - 10, cy + 5, 12, 0, Math.PI * 2);
+                macroCtx.arc(cx + 10, cy + 5, 12, 0, Math.PI * 2);
+                macroCtx.fill();
+            }
+
+            // Energy Arrows
+            // Incoming (Yellow)
+            macroCtx.strokeStyle = '#fef08a';
+            macroCtx.lineWidth = 4;
+            macroCtx.beginPath();
+            macroCtx.moveTo(80, 80);
+            macroCtx.lineTo(centerX - 40, centerY - 40);
+            macroCtx.stroke();
+
+            // Outgoing (Red)
+            macroCtx.strokeStyle = '#ef4444';
+            // Width based on outgoing energy
+            macroCtx.lineWidth = Math.max(1, state.outgoingEnergy / 50);
+            macroCtx.beginPath();
+            macroCtx.moveTo(centerX + 40, centerY - 40);
+            macroCtx.lineTo(400, 100);
+            macroCtx.stroke();
+        }
+
+        function drawMicroscopic() {
+            microCtx.clearRect(0, 0, 500, 500);
+
+            // Background
+            microCtx.fillStyle = '#1e293b'; // slate-800
+            microCtx.fillRect(0, 0, 500, 500);
+
+            // Ground
+            // Color based on temp
+            let r = 100, g = 80, b = 60;
+            if (state.temp > 15) r += 50;
+            if (state.temp < 15) { r -= 20; b += 50; }
+            microCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            microCtx.fillRect(0, 450, 500, 50);
+
+            // Ice (Albedo)
+            microCtx.fillStyle = '#ffffff';
+            microCtx.fillRect(0, 440, (state.albedoPercent / 100) * 500, 10);
+
+            // Clouds
+            microCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            microCtx.fillRect(0, 100, (state.cloudPercent / 100) * 500, 40);
+
+            // GHG Molecules (random dots in atmosphere)
+            const numMolecules = Math.floor(state.ghgPpm / 10);
+            microCtx.fillStyle = '#94a3b8'; // slate-400
+            for(let i=0; i<numMolecules; i++) {
+                // Static seed for consistent visual
+                let x = (Math.sin(i * 123) * 0.5 + 0.5) * 500;
+                let y = (Math.cos(i * 321) * 0.5 + 0.5) * 300 + 150;
+                microCtx.beginPath();
+                microCtx.arc(x, y, 3, 0, Math.PI * 2);
+                microCtx.fill();
+            }
+
+            // Manage Photons
+            if (state.isRunning) {
+                // Spawn incoming photons (shortwave - yellow)
+                if (Math.random() < (state.solarPercent / 100) * 0.5) {
+                    photons.push({
+                        x: Math.random() * 500,
+                        y: 0,
+                        type: 'short', // shortwave
+                        vy: 5,
+                        active: true
+                    });
+                }
+
+                // Ground emits outgoing photons (longwave - red) based on temp
+                if (Math.random() < (state.temp + 20) / 100) {
+                    photons.push({
+                        x: Math.random() * 500,
+                        y: 450,
+                        type: 'long', // longwave
+                        vy: -4,
+                        active: true
+                    });
+                }
+            }
+
+            // Update and draw photons
+            for (let i = photons.length - 1; i >= 0; i--) {
+                let p = photons[i];
+                if (!p.active) {
+                    photons.splice(i, 1);
+                    continue;
+                }
+
+                if (state.isRunning) {
+                    p.y += p.vy;
+                }
+
+                // Collision Logic
+                if (p.type === 'short') {
+                    // Hit cloud?
+                    if (p.y > 100 && p.y < 140 && p.x < (state.cloudPercent / 100) * 500) {
+                        if (Math.random() < 0.2) { // 20% reflection from clouds
+                            p.vy = -p.vy; // Reflect
+                            p.type = 'reflected';
+                        }
+                    }
+                    // Hit ground
+                    if (p.y > 450) {
+                        // Hit ice?
+                        if (p.x < (state.albedoPercent / 100) * 500) {
+                            p.vy = -p.vy; // Reflect
+                            p.type = 'reflected';
+                        } else {
+                            p.active = false; // Absorbed
+                        }
+                    }
+                } else if (p.type === 'long') {
+                    // Hit cloud?
+                    if (p.y > 100 && p.y < 140 && p.x < (state.cloudPercent / 100) * 500) {
+                         if (Math.random() < 0.5) { // clouds absorb/reflect longwave heavily
+                             p.vy = -p.vy; // Send back down
+                         }
+                    }
+                    // Hit GHG? (Probability based on ppm)
+                    // Simplify: chance per frame to hit a molecule
+                    if (p.y > 150 && p.y < 450) {
+                        let hitChance = state.ghgPpm / 10000;
+                        if (Math.random() < hitChance) {
+                            p.vy = -p.vy; // Re-emit downwards (Greenhouse effect)
+                        }
+                    }
+                    // Hit space
+                    if (p.y < 0) p.active = false;
+                    // Hit ground again
+                    if (p.y > 450) p.active = false;
+                } else if (p.type === 'reflected') {
+                    if (p.y < 0) p.active = false;
+                }
+
+                // Draw
+                if (p.type === 'short' || p.type === 'reflected') {
+                    microCtx.fillStyle = '#fef08a'; // yellow
+                    microCtx.beginPath();
+                    microCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    microCtx.fill();
+                } else if (p.type === 'long') {
+                    microCtx.fillStyle = '#ef4444'; // red
+                    microCtx.beginPath();
+                    microCtx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                    microCtx.fill();
+                }
+            }
+        }
+
+        // -------------------------------------------------------------
+        // Main Loop
+        // -------------------------------------------------------------
+        function loop() {
+            if (state.isRunning) {
+                updatePhysics();
+                updateUI();
+            }
+
+            // Always draw to show state changes even when paused
+            drawMacroscopic();
+            drawMicroscopic();
+
+            requestAnimationFrame(loop);
+        }
+
+        // Start Loop
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
