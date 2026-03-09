@@ -55,6 +55,22 @@
 
                 <hr class="my-4 border-gray-200">
 
+                <!-- Environment Setting -->
+                <div class="flex items-center justify-between mb-4">
+                    <label class="flex items-center text-sm font-medium text-gray-700 cursor-pointer">
+                        <input type="checkbox" id="isolatedEnvToggle" class="mr-2 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                        Isolated Environment (Island)
+                    </label>
+                    <div class="group relative flex justify-center">
+                         <span class="text-xs text-gray-500 cursor-help">ⓘ</span>
+                         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden w-48 rounded bg-gray-800 p-2 text-xs text-white group-hover:block z-10">
+                            When checked, the environment is isolated like an island. Populations cannot migrate in and can permanently die out.
+                         </div>
+                    </div>
+                </div>
+
+                <hr class="my-4 border-gray-200">
+
                 <!-- Prey Variables -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700" for="preyReproduction">Prey Reproduction Rate: <span id="preyReproductionVal">Medium</span></label>
@@ -132,17 +148,38 @@
         const currentPreyDisplay = document.getElementById('currentPrey');
         const currentPredDisplay = document.getElementById('currentPred');
 
+        const isolatedEnvToggle = document.getElementById('isolatedEnvToggle');
+
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
+
+        // Draw the environment background based on the toggle state
+        function drawEnvironment() {
+            if (isolatedEnvToggle.checked) {
+                // Ocean background
+                ctx.fillStyle = '#bfdbfe'; // light blue
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Island in the center
+                ctx.fillStyle = '#ecfdf5'; // light green
+                ctx.beginPath();
+                ctx.ellipse(canvas.width / 2, canvas.height / 2, canvas.width * 0.45, canvas.height * 0.45, 0, 0, 2 * Math.PI);
+                ctx.fill();
+            } else {
+                // Continuous Field
+                ctx.fillStyle = '#ecfdf5'; // light green
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
 
         // Initial setup for the canvas to make sure it scales properly
         function resizeCanvas() {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
 
-            // Re-draw agents on resize so they don't disappear
+            // Re-draw environment and agents on resize so they don't disappear
             if (preyPop && predPop) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawEnvironment();
                 preyPop.forEach(p => p.draw(ctx));
                 predPop.forEach(p => p.draw(ctx));
             }
@@ -199,7 +236,7 @@
                 this.vy = (Math.random() - 0.5) * 2 * this.speed;
             }
 
-            move(width, height) {
+            move(boundary) {
                 // Occasional random change in direction
                 if (Math.random() < 0.05) {
                     let angle = Math.atan2(this.vy, this.vx);
@@ -211,11 +248,55 @@
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Bounce off walls
-                if (this.x < this.radius) { this.x = this.radius; this.vx *= -1; }
-                if (this.x > width - this.radius) { this.x = width - this.radius; this.vx *= -1; }
-                if (this.y < this.radius) { this.y = this.radius; this.vy *= -1; }
-                if (this.y > height - this.radius) { this.y = height - this.radius; this.vy *= -1; }
+                // Bounce off boundaries
+                if (boundary.type === 'rectangle') {
+                    if (this.x < boundary.xMin + this.radius) { this.x = boundary.xMin + this.radius; this.vx *= -1; }
+                    if (this.x > boundary.xMax - this.radius) { this.x = boundary.xMax - this.radius; this.vx *= -1; }
+                    if (this.y < boundary.yMin + this.radius) { this.y = boundary.yMin + this.radius; this.vy *= -1; }
+                    if (this.y > boundary.yMax - this.radius) { this.y = boundary.yMax - this.radius; this.vy *= -1; }
+                } else if (boundary.type === 'ellipse') {
+                    // Check if outside the ellipse: (x-cx)^2 / (rx - radius)^2 + (y-cy)^2 / (ry - radius)^2 > 1
+                    let dx = this.x - boundary.cx;
+                    let dy = this.y - boundary.cy;
+
+                    // Effective radii (shrink by agent radius so they don't clip over the edge)
+                    let erx = boundary.rx - this.radius;
+                    let ery = boundary.ry - this.radius;
+
+                    // Prevent division by zero if canvas is too small
+                    if (erx <= 0) erx = 1;
+                    if (ery <= 0) ery = 1;
+
+                    let normalizedDistSq = (dx * dx) / (erx * erx) + (dy * dy) / (ery * ery);
+
+                    if (normalizedDistSq > 1) {
+                        // Reflect the velocity vector off the ellipse normal
+                        // Normal vector of ellipse at point (dx, dy) relative to center is (2*dx/erx^2, 2*dy/ery^2)
+                        let nx = dx / (erx * erx);
+                        let ny = dy / (ery * ery);
+
+                        // Normalize the normal vector
+                        let len = Math.sqrt(nx * nx + ny * ny);
+                        nx /= len;
+                        ny /= len;
+
+                        // Dot product of velocity and normal
+                        let dot = this.vx * nx + this.vy * ny;
+
+                        // If moving towards the outside, reflect
+                        if (dot > 0) {
+                            this.vx = this.vx - 2 * dot * nx;
+                            this.vy = this.vy - 2 * dot * ny;
+                        }
+
+                        // Pull agent back inside the ellipse to prevent getting stuck
+                        let scale = 1 / Math.sqrt(normalizedDistSq);
+                        // Back off slightly more than exactly to the boundary to be safe
+                        scale *= 0.99;
+                        this.x = boundary.cx + dx * scale;
+                        this.y = boundary.cy + dy * scale;
+                    }
+                }
             }
 
             draw(ctx) {
@@ -382,6 +463,15 @@
             }
         }
 
+        // Initial setup when changing toggles but not resetting time
+        isolatedEnvToggle.addEventListener('change', () => {
+             drawEnvironment();
+             if (!isRunning && preyPop && predPop) {
+                 preyPop.forEach(p => p.draw(ctx));
+                 predPop.forEach(p => p.draw(ctx));
+             }
+        });
+
         function initSimulation() {
             updateUI();
 
@@ -394,22 +484,70 @@
             preyPop = [];
             predPop = [];
 
+            let boundary = getBoundary();
+
             for(let i=0; i<numPrey; i++) {
-                preyPop.push(new Prey(Math.random() * canvas.width, Math.random() * canvas.height));
+                let pos = getRandomPosition(boundary);
+                preyPop.push(new Prey(pos.x, pos.y));
             }
 
             for(let i=0; i<numPred; i++) {
-                predPop.push(new Predator(Math.random() * canvas.width, Math.random() * canvas.height));
+                let pos = getRandomPosition(boundary);
+                predPop.push(new Predator(pos.x, pos.y));
             }
 
             currentPreyDisplay.textContent = preyPop.length;
             currentPredDisplay.textContent = predPop.length;
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawEnvironment();
             preyPop.forEach(p => p.draw(ctx));
             predPop.forEach(p => p.draw(ctx));
 
             initChart();
+        }
+
+        function getBoundary() {
+            if (isolatedEnvToggle.checked) {
+                 // Ellipse boundaries
+                 const cx = canvas.width / 2;
+                 const cy = canvas.height / 2;
+                 const rx = canvas.width * 0.45;
+                 const ry = canvas.height * 0.45;
+                 return {
+                     type: 'ellipse',
+                     cx: cx,
+                     cy: cy,
+                     rx: rx,
+                     ry: ry
+                 }
+            } else {
+                 return {
+                     type: 'rectangle',
+                     xMin: 0,
+                     xMax: canvas.width,
+                     yMin: 0,
+                     yMax: canvas.height
+                 }
+            }
+        }
+
+        function getRandomPosition(boundary) {
+            if (boundary.type === 'rectangle') {
+                return {
+                    x: boundary.xMin + Math.random() * (boundary.xMax - boundary.xMin),
+                    y: boundary.yMin + Math.random() * (boundary.yMax - boundary.yMin)
+                };
+            } else if (boundary.type === 'ellipse') {
+                // Generate point in ellipse using polar coordinates
+                let r = Math.sqrt(Math.random()); // sqrt to ensure uniform distribution
+                let theta = Math.random() * 2 * Math.PI;
+                // Keep agents slightly inside the actual boundary edge initially
+                let scale = 0.95;
+                return {
+                    x: boundary.cx + r * boundary.rx * scale * Math.cos(theta),
+                    y: boundary.cy + r * boundary.ry * scale * Math.sin(theta)
+                };
+            }
         }
 
         function updateSimulation(timestamp) {
@@ -426,10 +564,12 @@
             const predEff = parseFloat(predatorEfficiencySlider.value);
             const predStarve = parseFloat(predatorStarvationSlider.value);
 
+            let boundary = getBoundary();
+
             // Update Prey
             let newPrey = [];
             for (let p of preyPop) {
-                p.move(canvas.width, canvas.height);
+                p.move(boundary);
                 const offspring = p.reproduce(preyRepRate);
                 if (offspring) newPrey.push(offspring);
             }
@@ -437,8 +577,10 @@
 
             // Environmental refuge / spontaneous generation
             // To ensure the simulation doesn't just permanently end if all prey die out
-            if (preyPop.length < 5 && Math.random() < 0.05) {
-                preyPop.push(new Prey(Math.random() * canvas.width, Math.random() * canvas.height));
+            // ONLY if not isolated
+            if (!isolatedEnvToggle.checked && preyPop.length < 5 && Math.random() < 0.05) {
+                let pos = getRandomPosition(boundary);
+                preyPop.push(new Prey(pos.x, pos.y));
             }
 
             // Cap prey population to prevent browser crashing (carrying capacity)
@@ -450,7 +592,7 @@
             let newPredators = [];
             for (let i = predPop.length - 1; i >= 0; i--) {
                 const pred = predPop[i];
-                pred.move(canvas.width, canvas.height);
+                pred.move(boundary);
 
                 const offspring = pred.hunt(preyPop, predEff);
                 if (offspring) newPredators.push(offspring);
@@ -462,12 +604,14 @@
             predPop.push(...newPredators);
 
             // Spontaneous generation for predators as well to keep cycle alive
-            if (predPop.length < 2 && preyPop.length > 50 && Math.random() < 0.05) {
-                predPop.push(new Predator(Math.random() * canvas.width, Math.random() * canvas.height));
+            // ONLY if not isolated
+            if (!isolatedEnvToggle.checked && predPop.length < 2 && preyPop.length > 50 && Math.random() < 0.05) {
+                let pos = getRandomPosition(boundary);
+                predPop.push(new Predator(pos.x, pos.y));
             }
 
             // Draw
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawEnvironment();
             preyPop.forEach(p => p.draw(ctx));
             predPop.forEach(p => p.draw(ctx));
 
