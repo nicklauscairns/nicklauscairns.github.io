@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wind Turbine Optimization Simulation</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .turbine-container {
+            position: relative;
+            width: 200px;
+            height: 250px;
+            margin: 0 auto;
+        }
+        .tower {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 150px;
+            background-color: #6b7280; /* text-gray-500 */
+            border-radius: 4px 4px 0 0;
+        }
+        .rotor-hub {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background-color: #1f2937; /* text-gray-800 */
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .blades-container {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            z-index: 5;
+        }
+        .blade {
+            position: absolute;
+            bottom: 0;
+            left: -6px;
+            width: 12px;
+            background-color: #9ca3af; /* text-gray-400 */
+            border-radius: 5px 5px 0 0;
+            transform-origin: bottom center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Wind Turbine Design Optimization</h1>
+            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-xl font-semibold mb-2 text-blue-800">NGSS Alignment</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                        <strong class="text-blue-900 block mb-1">HS-ETS1-2</strong>
+                        <p class="text-xs text-blue-800">Design a solution to a complex real-world problem by breaking it down into smaller, more manageable problems.</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                        <strong class="text-blue-900 block mb-1">HS-ETS1-3</strong>
+                        <p class="text-xs text-blue-800">Evaluate a solution to a complex real-world problem based on prioritized criteria and trade-offs that account for a range of constraints.</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                        <strong class="text-blue-900 block mb-1">HS-PS3-3</strong>
+                        <p class="text-xs text-blue-800">Design, build, and refine a device that works within given constraints to convert one form of energy into another form of energy.</p>
+                    </div>
+                </div>
+                <h2 class="text-xl font-semibold mb-2 text-green-800">Phenomenon & Task</h2>
+                <p class="text-sm">Wind turbines convert the kinetic energy of wind into electrical energy. However, extracting maximum energy depends on the design. How can we optimize blade length, pitch angle, and the number of blades to maximize power output at a specific wind speed? Use the simulation to conduct trials, log data, and find the optimal configuration.</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Controls Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 h-full flex flex-col">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Turbine Controls</h3>
+
+                <div class="space-y-5 flex-grow">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Wind Speed</label>
+                            <span class="text-sm font-bold text-blue-600"><span id="wind-speed-val">10</span> m/s</span>
+                        </div>
+                        <input type="range" id="wind-speed" min="0" max="25" step="0.5" value="10" class="w-full cursor-pointer">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Blade Length</label>
+                            <span class="text-sm font-bold text-blue-600"><span id="blade-length-val">50</span> m</span>
+                        </div>
+                        <input type="range" id="blade-length" min="20" max="100" step="1" value="50" class="w-full cursor-pointer">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Pitch Angle</label>
+                            <span class="text-sm font-bold text-blue-600"><span id="pitch-angle-val">10</span>°</span>
+                        </div>
+                        <input type="range" id="pitch-angle" min="0" max="30" step="1" value="10" class="w-full cursor-pointer">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Number of Blades</label>
+                            <span class="text-sm font-bold text-blue-600"><span id="num-blades-val">3</span></span>
+                        </div>
+                        <input type="range" id="num-blades" min="1" max="6" step="1" value="3" class="w-full cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-gray-100">
+                    <button id="record-data" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Record Trial
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visualization & Live Output -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col items-center">
+                <h3 class="text-lg font-semibold mb-4 w-full border-b pb-2 text-left">Live Output & Visualization</h3>
+
+                <div class="grid grid-cols-2 gap-4 w-full mb-8 text-center">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 shadow-inner">
+                        <p class="text-xs text-blue-800 font-semibold uppercase tracking-wider mb-1">Power Output</p>
+                        <p class="text-3xl font-bold text-blue-900"><span id="power-output">0.0</span> <span class="text-lg font-normal">kW</span></p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-100 shadow-inner">
+                        <p class="text-xs text-green-800 font-semibold uppercase tracking-wider mb-1">Efficiency (C<sub>p</sub>)</p>
+                        <p class="text-3xl font-bold text-green-900"><span id="efficiency-output">0.00</span></p>
+                    </div>
+                </div>
+
+                <div class="turbine-container">
+                    <div class="tower"></div>
+                    <div class="rotor-hub"></div>
+                    <div class="blades-container" id="turbine-blades">
+                        <!-- Blades will be injected here by JS -->
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 text-center">Visual representation only. Blade size and rotational speed are scaled.</p>
+            </div>
+
+            <!-- Data & Graphing -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Trial Data</h3>
+
+                <div class="mb-4 flex-grow-0" style="position: relative; height: 200px; width: 100%">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+
+                <div class="overflow-y-auto h-48 border border-gray-200 rounded mb-4 mt-2">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tr#</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wind</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Len</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pitch</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blds</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Power</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Data rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex space-x-3 mt-auto">
+                    <button id="clear-data" class="flex-1 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-semibold py-2 px-3 rounded text-sm transition">Clear Data</button>
+                    <button id="export-data" class="flex-1 bg-green-50 hover:bg-green-100 border border-green-200 text-green-700 font-semibold py-2 px-3 rounded text-sm transition">Export CSV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State and Constants ---
+        const CONSTANTS = {
+            AIR_DENSITY: 1.225, // kg/m^3 at sea level and 15C
+            MAX_CP: 0.593, // Betz Limit
+            GENERATOR_EFFICIENCY: 0.85, // Mechanical to Electrical conversion
+            GEARBOX_EFFICIENCY: 0.95
+        };
+
+        const state = {
+            windSpeed: 10, // m/s
+            bladeLength: 50, // m
+            pitchAngle: 10, // degrees
+            numBlades: 3,
+            trials: [],
+            currentPower: 0,
+            currentCp: 0,
+            rpm: 0
+        };
+
+        // --- DOM Elements ---
+        const els = {
+            // Inputs
+            windSpeed: document.getElementById('wind-speed'),
+            bladeLength: document.getElementById('blade-length'),
+            pitchAngle: document.getElementById('pitch-angle'),
+            numBlades: document.getElementById('num-blades'),
+            // Values display
+            windSpeedVal: document.getElementById('wind-speed-val'),
+            bladeLengthVal: document.getElementById('blade-length-val'),
+            pitchAngleVal: document.getElementById('pitch-angle-val'),
+            numBladesVal: document.getElementById('num-blades-val'),
+            // Outputs
+            powerOutput: document.getElementById('power-output'),
+            efficiencyOutput: document.getElementById('efficiency-output'),
+            turbineBlades: document.getElementById('turbine-blades'),
+            // Buttons
+            recordData: document.getElementById('record-data'),
+            clearData: document.getElementById('clear-data'),
+            exportData: document.getElementById('export-data'),
+            // Table
+            dataTableBody: document.getElementById('data-table-body')
+        };
+
+        // --- Physics & Math Model ---
+
+        /**
+         * Calculate Tip Speed Ratio (Lambda).
+         * For the simulation to be interactive and discoverable, we approximate an optimal RPM
+         * based on wind speed and blade length, then calculate the actual TSR.
+         */
+        function calculateTSR(windSpeed, rpm, radius) {
+            if (windSpeed === 0) return 0;
+            const omega = (rpm * 2 * Math.PI) / 60; // Angular velocity (rad/s)
+            return (omega * radius) / windSpeed;
+        }
+
+        /**
+         * Model the Power Coefficient (Cp) based on TSR, Pitch, and Blade Count.
+         * This creates a peak curve that students need to find.
+         *
+         * Equation loosely based on analytical models for wind turbine Cp curves:
+         * Cp = c1 * (c2/lambda_i - c3*pitch - c4) * exp(-c5/lambda_i) + c6*lambda
+         */
+        function calculateCp(tsr, pitch, numBlades) {
+            if (tsr === 0) return 0;
+
+            // Penalty for having too many or too few blades relative to optimal (usually 3)
+            const bladePenalty = 1 - Math.abs(numBlades - 3) * 0.05;
+
+            // Empirical constants to create a nice curve that peaks around TSR=7-8, Pitch=0-5
+            const c1 = 0.5176;
+            const c2 = 116;
+            const c3 = 0.4;
+            const c4 = 5;
+            const c5 = 21;
+            const c6 = 0.0068;
+
+            // lambda_i calculation (correction factor)
+            // Prevent division by zero or negative values
+            const lambda_i_inv = (1 / (tsr + 0.08 * pitch)) - (0.035 / (Math.pow(pitch, 3) + 1));
+
+            if (lambda_i_inv <= 0) return 0;
+
+            let cp = c1 * (c2 * lambda_i_inv - c3 * pitch - c4) * Math.exp(-c5 * lambda_i_inv) + c6 * tsr;
+
+            // Apply blade penalty and restrict to theoretical limits
+            cp = cp * bladePenalty;
+
+            // Ensure Cp is realistic (bounded between 0 and Betz limit)
+            if (cp < 0) cp = 0;
+            if (cp > CONSTANTS.MAX_CP) cp = CONSTANTS.MAX_CP;
+
+            return cp;
+        }
+
+        /**
+         * Main simulation update loop
+         */
+        function updateSimulation() {
+            // Update state from UI
+            state.windSpeed = parseFloat(els.windSpeed.value);
+            state.bladeLength = parseFloat(els.bladeLength.value);
+            state.pitchAngle = parseFloat(els.pitchAngle.value);
+            state.numBlades = parseInt(els.numBlades.value);
+
+            // Update UI text values
+            els.windSpeedVal.textContent = state.windSpeed.toFixed(1);
+            els.bladeLengthVal.textContent = state.bladeLength;
+            els.pitchAngleVal.textContent = state.pitchAngle;
+            els.numBladesVal.textContent = state.numBlades;
+
+            // --- Calculations ---
+            const area = Math.PI * Math.pow(state.bladeLength, 2); // Swept area (m^2)
+
+            // Assume the generator tries to maintain an RPM relative to wind speed and blade length
+            // Smaller blades spin faster, higher wind spins faster.
+            // A simple heuristic for simulation purposes:
+            let targetTsr = 7.5; // Optimal TSR for a 3-blade turbine
+
+            // Calculate an approximated operating RPM
+            if (state.windSpeed > 0) {
+                 // RPM = (TSR * WindSpeed * 60) / (2 * PI * R)
+                 // We add some drag based on blade count and pitch
+                 const dragFactor = 1 + (state.numBlades * 0.02) + (state.pitchAngle * 0.05);
+                 state.rpm = (targetTsr * state.windSpeed * 60) / (2 * Math.PI * state.bladeLength * dragFactor);
+            } else {
+                 state.rpm = 0;
+            }
+
+            // Calculate actual TSR based on the operating RPM
+            const actualTsr = calculateTSR(state.windSpeed, state.rpm, state.bladeLength);
+
+            // Calculate Cp
+            state.currentCp = calculateCp(actualTsr, state.pitchAngle, state.numBlades);
+
+            // Calculate Power: P = 0.5 * rho * A * V^3 * Cp * efficiency_factors
+            // Note: Power in Watts, divide by 1000 for kW
+            const powerWatts = 0.5 * CONSTANTS.AIR_DENSITY * area * Math.pow(state.windSpeed, 3) * state.currentCp * CONSTANTS.GENERATOR_EFFICIENCY * CONSTANTS.GEARBOX_EFFICIENCY;
+
+            state.currentPower = powerWatts / 1000; // Convert to kW
+
+            // Update Outputs
+            els.powerOutput.textContent = state.currentPower.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+            els.efficiencyOutput.textContent = state.currentCp.toFixed(3);
+
+            // Update Visualization
+            updateVisuals();
+        }
+
+        // --- Visualization & Animation ---
+        let animationId;
+        let currentRotation = 0;
+
+        function updateVisuals() {
+            // Rebuild blades if count changed
+            if (els.turbineBlades.children.length !== state.numBlades) {
+                els.turbineBlades.innerHTML = '';
+                for (let i = 0; i < state.numBlades; i++) {
+                    const blade = document.createElement('div');
+                    blade.className = 'blade';
+                    els.turbineBlades.appendChild(blade);
+                }
+            }
+
+            // Position and scale blades
+            const blades = els.turbineBlades.children;
+            const angleStep = 360 / state.numBlades;
+
+            // Visual scaling: base height is 100px for 50m blade
+            const visualHeight = state.bladeLength * 2;
+
+            for (let i = 0; i < blades.length; i++) {
+                const baseAngle = i * angleStep;
+                // We add currentRotation to animate
+                blades[i].style.height = `${visualHeight}px`;
+                blades[i].style.top = `-${visualHeight}px`;
+
+                // Add a visual indication of pitch by skewing or narrowing the blade slightly
+                // Just a subtle CSS effect
+                const pitchVisual = 1 - (state.pitchAngle / 60);
+                blades[i].style.width = `${12 * pitchVisual}px`;
+
+                blades[i].style.transform = `rotate(${baseAngle + currentRotation}deg)`;
+            }
+        }
+
+        function animate(time) {
+            // Convert RPM to degrees per frame (assuming 60fps)
+            // RPM * 360 degrees / 60 seconds / 60 frames = degrees per frame
+            // More accurately: RPM * 360 / 60 = degrees per second.
+            // Frame delta time should be used, but for a simple visual, we approximate:
+            const degPerSec = state.rpm * 6; // (rpm * 360 / 60)
+
+            // Since requestAnimationFrame varies, a simple fixed increment based on RPM looks okay
+            // visually scale down RPM because real turbines look slow (often 10-20 RPM)
+            const visualRotationSpeed = state.rpm * 0.1;
+
+            currentRotation = (currentRotation + visualRotationSpeed) % 360;
+
+            // Apply rotation to blades without rebuilding the DOM
+            const blades = els.turbineBlades.children;
+            const angleStep = 360 / state.numBlades;
+            for (let i = 0; i < blades.length; i++) {
+                blades[i].style.transform = `rotate(${i * angleStep + currentRotation}deg)`;
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // --- Event Listeners ---
+        els.windSpeed.addEventListener('input', updateSimulation);
+        els.bladeLength.addEventListener('input', updateSimulation);
+        els.pitchAngle.addEventListener('input', updateSimulation);
+        els.numBlades.addEventListener('input', updateSimulation);
+
+        // --- Data Logging & Charting ---
+        let chartInstance = null;
+
+        function initChart() {
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Trials (Power Output)',
+                        data: [],
+                        backgroundColor: 'rgba(37, 99, 235, 0.6)', // blue-600
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 1,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Trial Number'
+                            },
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Power (kW)'
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const data = context.raw;
+                                    return `Power: ${data.y.toFixed(1)} kW (Wind: ${data.wind} m/s, Len: ${data.len} m, Pitch: ${data.pitch}°, Blds: ${data.blades})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function recordTrial() {
+            const trialNum = state.trials.length + 1;
+            const trialData = {
+                id: trialNum,
+                wind: state.windSpeed,
+                len: state.bladeLength,
+                pitch: state.pitchAngle,
+                blades: state.numBlades,
+                power: state.currentPower,
+                cp: state.currentCp
+            };
+
+            state.trials.push(trialData);
+
+            // Add to Table
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900">${trialNum}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.wind}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.len}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.pitch}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.blades}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-blue-600 font-bold">${trialData.power.toFixed(1)}</td>
+            `;
+            els.dataTableBody.appendChild(tr);
+
+            // Auto-scroll to bottom of table
+            els.dataTableBody.parentElement.parentElement.scrollTop = els.dataTableBody.parentElement.parentElement.scrollHeight;
+
+            // Update Chart
+            chartInstance.data.datasets[0].data.push({
+                x: trialNum,
+                y: trialData.power,
+                wind: trialData.wind,
+                len: trialData.len,
+                pitch: trialData.pitch,
+                blades: trialData.blades
+            });
+
+            // Adjust X-axis to fit all points nicely if we have many
+            if (trialNum > 10) {
+                 chartInstance.options.scales.x.min = trialNum - 10;
+                 chartInstance.options.scales.x.max = trialNum + 1;
+            } else {
+                 chartInstance.options.scales.x.min = 0;
+                 chartInstance.options.scales.x.max = Math.max(5, trialNum + 1);
+            }
+
+            chartInstance.update();
+        }
+
+        function clearData() {
+            if (confirm("Are you sure you want to clear all recorded trial data?")) {
+                state.trials = [];
+                els.dataTableBody.innerHTML = '';
+
+                chartInstance.data.datasets[0].data = [];
+                chartInstance.options.scales.x.min = 0;
+                chartInstance.options.scales.x.max = 5;
+                chartInstance.update();
+            }
+        }
+
+        function exportData() {
+            if (state.trials.length === 0) {
+                alert("No data to export. Record some trials first.");
+                return;
+            }
+
+            // Create CSV content
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Trial Number,Wind Speed (m/s),Blade Length (m),Pitch Angle (deg),Number of Blades,Power Coefficient (Cp),Power Output (kW)\n";
+
+            state.trials.forEach(trial => {
+                const row = `${trial.id},${trial.wind},${trial.len},${trial.pitch},${trial.blades},${trial.cp.toFixed(4)},${trial.power.toFixed(2)}`;
+                csvContent += row + "\n";
+            });
+
+            // Trigger download
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "wind_turbine_optimization_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- Additional Event Listeners ---
+        els.recordData.addEventListener('click', recordTrial);
+        els.clearData.addEventListener('click', clearData);
+        els.exportData.addEventListener('click', exportData);
+
+        // Initialize
+        updateSimulation();
+        initChart();
+        requestAnimationFrame(animate);
+
+    </script>
+</body>
+</html>
