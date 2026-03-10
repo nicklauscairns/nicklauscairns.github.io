@@ -1,4 +1,5 @@
 # NGSS High School Physical Sciences Performance Expectations
+
 ## HS-PS1-1
 Students who demonstrate understanding can:
 ### Use the periodic table as a model to predict the relative properties of elements based on the patterns of electrons in the outermost energy level of atoms.
@@ -22,6 +23,7 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 
 ##### Patterns
 * Different patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena.
+
 
 ## HS-PS1-2
 Students who demonstrate understanding can:
@@ -49,6 +51,7 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 ##### Patterns
 * Different patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena.
 
+
 ## HS-PS1-3
 Students who demonstrate understanding can:
 ### Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
@@ -71,6 +74,7 @@ Planning and carrying out investigations in 9-12 builds on K-8 experiences and p
 
 ##### Patterns
 * Different patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena.
+
 
 ## HS-PS1-4
 Students who demonstrate understanding can:
@@ -98,6 +102,7 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 ##### Energy and Matter
 * Changes of energy and matter in a system can be described in terms of energy and matter flows into, out of, and within that system.
 
+
 ## HS-PS1-5
 Students who demonstrate understanding can:
 ### Apply scientific principles and evidence to provide an explanation about the effects of changing the temperature or concentration of the reacting particles on the rate at which a reaction occurs.
@@ -120,6 +125,7 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 
 ##### Patterns
 * Different patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena.
+
 
 ## HS-PS1-6
 Students who demonstrate understanding can:
@@ -147,6 +153,7 @@ Constructing explanations and designing solutions in 9–12 builds on K– 8 exp
 ##### Stability and Change
 * Much of science deals with constructing explanations of how things change and how they remain stable.
 
+
 ## HS-PS1-7
 Students who demonstrate understanding can:
 ### Use mathematical representations to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
@@ -172,6 +179,7 @@ Simple computational simulations are created and used based on mathematical mode
 * The total amount of energy and matter in closed systems is conserved.
 * Science assumes the universe is a vast single system in which basic laws are consistent.
 
+
 ## HS-PS1-8
 Students who demonstrate understanding can:
 ### Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during the processes of fission, fusion, and radioactive decay.
@@ -194,6 +202,7 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 
 ##### Energy and Matter
 * In nuclear processes, atoms are not conserved, but the total number of protons plus neutrons is conserved.
+
 
 ## HS-PS2-1
 Students who demonstrate understanding can:
@@ -223,6 +232,7 @@ Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
 ##### Cause and Effect
 * Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects.
 
+
 ## HS-PS2-2
 Students who demonstrate understanding can:
 ### Use mathematical representations to support the claim that the total momentum of a system of objects is conserved when there is no net force on the system.
@@ -246,6 +256,7 @@ Mathematical and computational thinking at the 9–12 level builds on K–8 and 
 
 ##### Systems and System Models
 * When investigating or describing a system, the boundaries and initial conditions of the system need to be defined.
+
 
 ## HS-PS2-3
 Students who demonstrate understanding can:
@@ -276,6 +287,7 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 ##### Cause and Effect
 * Systems can be designed to cause a desired effect.
 
+
 ## HS-PS2-4
 Students who demonstrate understanding can:
 ### Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.
@@ -305,6 +317,7 @@ Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
 ##### Patterns
 * Different patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena.
 
+
 ## HS-PS2-5
 Students who demonstrate understanding can:
 ### Plan and conduct an investigation to provide evidence that an electric current can produce a magnetic field and that a changing magnetic field can produce an electric current.
@@ -331,6 +344,7 @@ Planning and carrying out investigations to answer questions or test solutions t
 ##### Cause and Effect
 * Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects.
 
+
 ## HS-PS2-6
 Students who demonstrate understanding can:
 ### Communicate scientific and technical information about why the molecular-level structure is important in the functioning of designed materials.
@@ -353,6 +367,7 @@ Obtaining, evaluating, and communicating information in 9–12 builds on K–8 a
 
 ##### Structure and Function
 * Investigating or designing new systems or structures requires a detailed examination of the properties of different materials, the structures of different components, and connections of components to reveal its function and/or solve a problem.
+
 
 ## HS-PS3-1
 Students who demonstrate understanding can:
@@ -384,6 +399,7 @@ Mathematical and computational thinking at the 9–12 level builds on K–8 and 
 * Models can be used to predict the behavior of a system, but these predictions have limited precision and reliability due to the assumptions and approximations inherent in models.
 * Science assumes the universe is a vast single system in which basic laws are consistent.
 
+
 ## HS-PS3-2
 Students who demonstrate understanding can:
 ### Develop and use models to illustrate that energy at the macroscopic scale can be accounted for as a combination of energy associated with the motions of particles (objects) and energy associated with the relative position of particles (objects).
@@ -408,6 +424,7 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 
 ##### Energy and Matter
 * Energy cannot be created or destroyed; it only moves between one place and another place, between objects and/or fields, or between systems.
+
 
 ## HS-PS3-3
 Students who demonstrate understanding can:
@@ -439,6 +456,7 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 * Changes of energy and matter in a system can be described in terms of energy and matter flows into, out of, and within that system.
 * Modern civilization depends on major technological systems. Engineers continuously modify these technological systems by applying scientific knowledge and engineering design practices to increase benefits while decreasing costs and risks.
 
+
 ## HS-PS3-4
 Students who demonstrate understanding can:
 ### Plan and conduct an investigation to provide evidence that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
@@ -466,6 +484,7 @@ Planning and carrying out investigations to answer questions or test solutions t
 ##### Systems and System Models
 * When investigating or describing a system, the boundaries and initial conditions of the system need to be defined and their inputs and outputs analyzed and described using models.
 
+
 ## HS-PS3-5
 Students who demonstrate understanding can:
 ### Develop and use a model of two objects interacting through electric or magnetic fields to illustrate the forces between objects and the changes in energy of the objects due to the interaction.
@@ -488,6 +507,7 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 
 ##### Cause and Effect
 * Cause and effect relationships can be suggested and predicted for complex natural and human-designed systems by examining what is known about smaller scale mechanisms within the system.
+
 
 ## HS-PS4-1
 Students who demonstrate understanding can:
@@ -512,6 +532,7 @@ Mathematical and computational thinking at the 9-12 level builds on K-8 and prog
 ##### Cause and Effect
 * Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects.
 
+
 ## HS-PS4-2
 Students who demonstrate understanding can:
 ### Evaluate questions about the advantages of using a digital transmission and storage of information.
@@ -534,6 +555,7 @@ Asking questions and defining problems in grades 9–12 builds from grades K–8
 * Systems can be designed for greater or lesser stability.
 * Modern civilization depends on major technological systems.
 * Engineers continuously modify these technological systems by applying scientific knowledge and engineering design practices to increase benefits while decreasing costs and risks.
+
 
 ## HS-PS4-3
 Students who demonstrate understanding can:
@@ -565,6 +587,7 @@ Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
 ##### Systems and System Models
 * Models (e.g., physical, mathematical, and computer models) can be used to simulate systems and interactions — including energy, matter and information flows — within and between systems at different scales.
 
+
 ## HS-PS4-4
 Students who demonstrate understanding can:
 ### Evaluate the validity and reliability of claims in published materials of the effects that different frequencies of electromagnetic radiation have when absorbed by matter.
@@ -587,6 +610,7 @@ Obtaining, evaluating, and communicating information in 9–12 builds on K–8 a
 
 ##### Cause and Effect
 * Cause and effect relationships can be suggested and predicted for complex natural and human-designed systems by examining what is known about smaller scale mechanisms within the system.
+
 
 ## HS-PS4-5
 Students who demonstrate understanding can:
