@@ -3,3 +3,4 @@
 ## Simulations
 
 - [Wind Turbine Optimization Simulation](WindTurbineSimulation.html) - An engineering simulation challenging users to optimize wind turbine parameters to maximize energy output.
+- [Spacecraft Reentry Optimization Simulation](SpacecraftReentrySimulation.html) - An interactive simulation challenging users to design a reentry vehicle by balancing mass, shield diameter, angle, and material to survive atmospheric entry.

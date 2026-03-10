@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spacecraft Reentry Optimization Simulation</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .reentry-container {
+            position: relative;
+            width: 300px;
+            height: 250px;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #0f172a 0%, #1e3a8a 50%, #38bdf8 100%);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .capsule {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%) rotate(0deg);
+            width: 60px;
+            height: 50px;
+            background-color: #e5e7eb;
+            border-radius: 50% 50% 10% 10% / 60% 60% 20% 20%;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .heat-shield {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 10px;
+            background-color: #4b5563;
+            border-radius: 0 0 50% 50%;
+            z-index: 11;
+            transition: all 0.3s ease;
+        }
+        .plasma-trail {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 150px;
+            background: radial-gradient(ellipse at top, rgba(239, 68, 68, 0.8) 0%, rgba(245, 158, 11, 0.4) 40%, transparent 70%);
+            z-index: 5;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+        .atmosphere-layers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto" id="app-content">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Spacecraft Reentry Optimization</h1>
+            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-xl font-semibold mb-2 text-blue-800">NGSS Alignment</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                        <strong class="text-blue-900 block mb-1">HS-ETS1-2</strong>
+                        <p class="text-xs text-blue-800">Design a solution to a complex real-world problem by breaking it down into smaller, more manageable problems.</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                        <strong class="text-blue-900 block mb-1">HS-ETS1-4</strong>
+                        <p class="text-xs text-blue-800">Use a computer simulation to model the impact of proposed solutions to a complex real-world problem with numerous criteria and constraints on interactions within and between systems relevant to the problem.</p>
+                    </div>
+                </div>
+                <h2 class="text-xl font-semibold mb-2 text-red-800">Phenomenon & Task</h2>
+                <p class="text-sm text-gray-700">Returning a spacecraft to Earth is one of the most difficult engineering challenges. As a spacecraft hits the atmosphere at orbital velocities, immense kinetic energy is converted into heat, creating a superheated plasma. Concurrently, the spacecraft experiences massive deceleration (G-forces). If the heat shield fails, the spacecraft burns up. If the deceleration is too severe, the crew or sensitive payload will not survive. How can you design a reentry vehicle by optimizing mass, heat shield size, entry angle, and material to ensure survival within constraints?</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Controls Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 h-full flex flex-col">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Vehicle Parameters</h3>
+
+                <div class="space-y-5 flex-grow">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Payload Mass</label>
+                            <span class="text-sm font-bold text-blue-600"><span id="mass-val">3000</span> kg</span>
+                        </div>
+                        <input type="range" id="mass" min="1000" max="6000" step="100" value="3000" class="w-full cursor-pointer">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Heat Shield Diameter</label>
+                            <span class="text-sm font-bold text-blue-600"><span id="diameter-val">3.5</span> m</span>
+                        </div>
+                        <input type="range" id="diameter" min="2.0" max="6.0" step="0.1" value="3.5" class="w-full cursor-pointer">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Entry Angle (from horizontal)</label>
+                            <span class="text-sm font-bold text-blue-600">-<span id="angle-val">5.0</span>&deg;</span>
+                        </div>
+                        <input type="range" id="angle" min="1.0" max="15.0" step="0.5" value="5.0" class="w-full cursor-pointer">
+                        <p class="text-xs text-gray-500 mt-1">Steeper angles = deeper atmosphere faster.</p>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-sm font-medium text-gray-700">Shield Material</label>
+                        </div>
+                        <select id="material" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2">
+                            <option value="pica">PICA-X (High Heat, Low Mass)</option>
+                            <option value="carbon">Carbon-Carbon (Extreme Heat, High Cost)</option>
+                            <option value="ablative">Standard Ablator (Med Heat, High Mass)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-gray-100 flex gap-3">
+                    <button id="run-simulation" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Simulate
+                    </button>
+                    <button id="record-data" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center" disabled>
+                        Record Trial
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visualization & Live Output -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col items-center">
+                <h3 class="text-lg font-semibold mb-4 w-full border-b pb-2 text-left">Telemetry & Visualization</h3>
+
+                <div class="grid grid-cols-2 gap-4 w-full mb-6 text-center">
+                    <div id="temp-panel" class="bg-red-50 p-4 rounded-lg border border-red-100 shadow-inner transition-colors">
+                        <p class="text-xs text-red-800 font-semibold uppercase tracking-wider mb-1">Peak Temp</p>
+                        <p class="text-3xl font-bold text-red-900"><span id="temp-output">---</span> <span class="text-lg font-normal">&deg;C</span></p>
+                        <p class="text-xs mt-1" id="temp-status">Limit: 2500&deg;C</p>
+                    </div>
+                    <div id="gforce-panel" class="bg-yellow-50 p-4 rounded-lg border border-yellow-100 shadow-inner transition-colors">
+                        <p class="text-xs text-yellow-800 font-semibold uppercase tracking-wider mb-1">Max G-Force</p>
+                        <p class="text-3xl font-bold text-yellow-900"><span id="gforce-output">---</span> <span class="text-lg font-normal">G</span></p>
+                        <p class="text-xs mt-1" id="gforce-status">Limit: 8.0 G</p>
+                    </div>
+                </div>
+
+                <div class="w-full flex justify-center mb-4">
+                    <span id="mission-status" class="px-4 py-1 rounded-full text-sm font-bold bg-gray-200 text-gray-700">Awaiting Simulation</span>
+                </div>
+
+                <div class="reentry-container" id="reentry-scene">
+                    <div class="atmosphere-layers"></div>
+                    <div class="capsule" id="sim-capsule">
+                        <div class="heat-shield" id="sim-shield"></div>
+                        <div class="plasma-trail" id="sim-plasma"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data & Graphing -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Trial Data</h3>
+
+                <div class="mb-4 flex-grow-0" style="position: relative; height: 200px; width: 100%">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+
+                <div class="overflow-y-auto h-48 border border-gray-200 rounded mb-4 mt-2">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50 sticky top-0 z-10">
+                            <tr>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tr#</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mass</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diam</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ang</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temp</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">G's</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Res</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Data rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex space-x-3 mt-auto">
+                    <button id="clear-data" class="flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-semibold py-2 px-3 rounded text-sm transition">Clear Data</button>
+                    <button id="export-data" class="flex-1 bg-green-50 hover:bg-green-100 border border-green-200 text-green-700 font-semibold py-2 px-3 rounded text-sm transition">Export CSV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State and Constants ---
+        const CONSTANTS = {
+            GRAVITY: 9.81, // m/s^2
+            ENTRY_VELOCITY: 7800, // m/s (approx LEO reentry)
+            MAX_SAFE_G: 8.0,
+            MATERIALS: {
+                'pica': { name: 'PICA-X', maxTemp: 2800, massFactor: 1.0 },
+                'carbon': { name: 'Carbon-Carbon', maxTemp: 3200, massFactor: 1.2 },
+                'ablative': { name: 'Standard Ablator', maxTemp: 2000, massFactor: 1.5 }
+            }
+        };
+
+        const state = {
+            mass: 3000,
+            diameter: 3.5,
+            angle: 5.0,
+            material: 'pica',
+            trials: [],
+            currentResult: null,
+            isSimulating: false
+        };
+
+        // --- DOM Elements ---
+        const els = {
+            // Inputs
+            mass: document.getElementById('mass'),
+            diameter: document.getElementById('diameter'),
+            angle: document.getElementById('angle'),
+            material: document.getElementById('material'),
+            // Values display
+            massVal: document.getElementById('mass-val'),
+            diameterVal: document.getElementById('diameter-val'),
+            angleVal: document.getElementById('angle-val'),
+            // Outputs
+            tempOutput: document.getElementById('temp-output'),
+            tempStatus: document.getElementById('temp-status'),
+            tempPanel: document.getElementById('temp-panel'),
+            gforceOutput: document.getElementById('gforce-output'),
+            gforceStatus: document.getElementById('gforce-status'),
+            gforcePanel: document.getElementById('gforce-panel'),
+            missionStatus: document.getElementById('mission-status'),
+            // Visuals
+            capsule: document.getElementById('sim-capsule'),
+            shield: document.getElementById('sim-shield'),
+            plasma: document.getElementById('sim-plasma'),
+            // Buttons
+            runSimulation: document.getElementById('run-simulation'),
+            recordData: document.getElementById('record-data'),
+            clearData: document.getElementById('clear-data'),
+            exportData: document.getElementById('export-data'),
+            // Table
+            dataTableBody: document.getElementById('data-table-body')
+        };
+
+        // --- Event Listeners for Input Updates ---
+        function updateInputDisplays() {
+            els.massVal.textContent = els.mass.value;
+            els.diameterVal.textContent = els.diameter.value;
+            els.angleVal.textContent = els.angle.value;
+
+            // Visual update for size
+            const scale = els.diameter.value / 4.0; // 4.0 is base size
+            els.capsule.style.transform = `translateX(-50%) rotate(${els.angle.value * -2}deg) scale(${scale})`;
+
+            // Reset simulation state if inputs change
+            if (state.currentResult) {
+                els.recordData.disabled = true;
+                els.runSimulation.classList.remove('bg-gray-400');
+                els.runSimulation.classList.add('bg-red-600', 'hover:bg-red-700');
+                els.runSimulation.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Simulate';
+
+                els.tempOutput.textContent = '---';
+                els.gforceOutput.textContent = '---';
+                els.missionStatus.textContent = 'Inputs Changed - Run Simulation';
+                els.missionStatus.className = 'px-4 py-1 rounded-full text-sm font-bold bg-yellow-100 text-yellow-800';
+
+                resetPanels();
+            }
+        }
+
+        els.mass.addEventListener('input', updateInputDisplays);
+        els.diameter.addEventListener('input', updateInputDisplays);
+        els.angle.addEventListener('input', updateInputDisplays);
+        els.material.addEventListener('change', updateInputDisplays);
+
+        function resetPanels() {
+            els.tempPanel.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-inner transition-colors';
+            els.gforcePanel.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-inner transition-colors';
+            els.capsule.style.top = '50px';
+            els.plasma.style.opacity = '0';
+        }
+
+        // --- Physics Engine Approximation ---
+        function calculateReentry(mass, diameter, angleDeg, materialId) {
+            const area = Math.PI * Math.pow(diameter / 2, 2);
+            // Ballistic coefficient: Mass / (Cd * Area). Higher = plunges deeper before slowing down
+            const cd = 1.2; // Drag coefficient of blunt body
+            const ballisticCoefficient = mass / (cd * area);
+
+            const angleRad = angleDeg * (Math.PI / 180);
+
+            // Maximum Deceleration (G-force)
+            // Simplified approximation: G_max is roughly proportional to V^2 * sin(angle) / (BC * constant)
+            // Actually, in standard simplified analytical models, max G is independent of BC,
+            // but depends heavily on entry angle and velocity: G_max ~ V^2 * sin(angle) / (2 * e * g * H)
+            // We use a simplified empirical model for educational purposes
+            const gForce = (Math.pow(CONSTANTS.ENTRY_VELOCITY / 1000, 2) * Math.sin(angleRad) * 4.5);
+
+            // Peak Heating Rate / Temperature
+            // Convective heating rate is proportional to sqrt(density) * V^3
+            // Max heating occurs at higher altitudes for lower BC (larger shields)
+            // Empirical model for peak temp in Celsius
+            // Higher angle = deeper atmosphere = higher temp spike
+            // Larger diameter = lower BC = slows down higher up = lower peak temp
+            const baseTemp = 1800;
+            const angleEffect = angleDeg * 80;
+            const bcEffect = ballisticCoefficient * 0.5;
+
+            let peakTemp = baseTemp + angleEffect + bcEffect;
+
+            const materialData = CONSTANTS.MATERIALS[materialId];
+
+            // Determine success
+            const tempSuccess = peakTemp <= materialData.maxTemp;
+            const gForceSuccess = gForce <= CONSTANTS.MAX_SAFE_G;
+
+            let resultStatus = 'Success';
+            let resultClass = 'bg-green-100 text-green-800';
+
+            if (!tempSuccess && !gForceSuccess) {
+                resultStatus = 'Catastrophic Failure (Burn up & Fatal Gs)';
+                resultClass = 'bg-red-100 text-red-800';
+            } else if (!tempSuccess) {
+                resultStatus = 'Shield Failure (Burn up)';
+                resultClass = 'bg-red-100 text-red-800';
+            } else if (!gForceSuccess) {
+                resultStatus = 'Fatal G-Forces';
+                resultClass = 'bg-orange-100 text-orange-800';
+            }
+
+            return {
+                peakTemp: peakTemp,
+                gForce: gForce,
+                maxTempLimit: materialData.maxTemp,
+                tempSuccess: tempSuccess,
+                gForceSuccess: gForceSuccess,
+                status: resultStatus,
+                statusClass: resultClass
+            };
+        }
+
+        // --- Simulation Execution ---
+        function runSimulation() {
+            if (state.isSimulating) return;
+            state.isSimulating = true;
+
+            els.runSimulation.disabled = true;
+            els.runSimulation.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Simulating...';
+
+            // Get current inputs
+            const mass = parseFloat(els.mass.value);
+            const diameter = parseFloat(els.diameter.value);
+            const angle = parseFloat(els.angle.value);
+            const material = els.material.value;
+
+            // Calculate physics
+            const result = calculateReentry(mass, diameter, angle, material);
+            state.currentResult = result;
+
+            // Animation sequence
+            els.missionStatus.textContent = 'Entering Atmosphere...';
+            els.missionStatus.className = 'px-4 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-800';
+
+            // Move capsule down
+            els.capsule.style.top = '120px';
+
+            // Show plasma based on temperature
+            setTimeout(() => {
+                els.plasma.style.opacity = Math.min(1, result.peakTemp / 3000).toString();
+                if (!result.tempSuccess) {
+                    els.capsule.style.backgroundColor = '#ef4444'; // Red glowing
+                    els.shield.style.backgroundColor = '#7f1d1d';
+                }
+            }, 500);
+
+            // Finish animation and show results
+            setTimeout(() => {
+                els.capsule.style.top = '180px';
+                els.plasma.style.opacity = '0';
+
+                // Show telemetry
+                els.tempOutput.textContent = result.peakTemp.toFixed(0);
+                els.tempStatus.textContent = `Limit: ${result.maxTempLimit}°C`;
+                els.tempPanel.className = result.tempSuccess ? 'bg-green-50 p-4 rounded-lg border border-green-200 shadow-inner transition-colors' : 'bg-red-100 p-4 rounded-lg border border-red-300 shadow-inner transition-colors animate-pulse';
+
+                els.gforceOutput.textContent = result.gForce.toFixed(1);
+                els.gforcePanel.className = result.gForceSuccess ? 'bg-green-50 p-4 rounded-lg border border-green-200 shadow-inner transition-colors' : 'bg-orange-100 p-4 rounded-lg border border-orange-300 shadow-inner transition-colors animate-pulse';
+
+                els.missionStatus.textContent = result.status;
+                els.missionStatus.className = `px-4 py-1 rounded-full text-sm font-bold ${result.statusClass}`;
+
+                // Reset button and enable recording
+                els.runSimulation.disabled = false;
+                els.runSimulation.className = 'flex-1 bg-gray-400 text-white font-bold py-3 px-4 rounded shadow flex items-center justify-center cursor-not-allowed';
+                els.runSimulation.innerHTML = 'Simulated';
+
+                els.recordData.disabled = false;
+                els.recordData.className = 'flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center cursor-pointer';
+
+                state.isSimulating = false;
+
+                // Reset visual state after a moment if it failed, so they can run again
+                if (!result.tempSuccess) {
+                    setTimeout(() => {
+                        els.capsule.style.backgroundColor = '#e5e7eb';
+                        els.shield.style.backgroundColor = '#4b5563';
+                    }, 2000);
+                }
+            }, 1500);
+        }
+
+        els.runSimulation.addEventListener('click', runSimulation);
+
+        // --- Data Logging & Charting ---
+        let chartInstance = null;
+
+        function initChart() {
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Success',
+                            data: [],
+                            backgroundColor: 'rgba(34, 197, 94, 0.8)', // green
+                            pointRadius: 6,
+                            pointStyle: 'circle'
+                        },
+                        {
+                            label: 'Failure',
+                            data: [],
+                            backgroundColor: 'rgba(239, 68, 68, 0.8)', // red
+                            pointRadius: 6,
+                            pointStyle: 'crossRot'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Max G-Force (G)' },
+                            min: 0,
+                            suggestedMax: 15,
+                            grid: {
+                                color: (ctx) => ctx.tick.value === CONSTANTS.MAX_SAFE_G ? 'rgba(234, 179, 8, 0.5)' : 'rgba(0,0,0,0.1)',
+                                lineWidth: (ctx) => ctx.tick.value === CONSTANTS.MAX_SAFE_G ? 2 : 1
+                            }
+                        },
+                        y: {
+                            title: { display: true, text: 'Peak Temp (°C)' },
+                            min: 1000,
+                            suggestedMax: 4000
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const d = context.raw;
+                                    return `Tr#${d.id}: ${d.y.toFixed(0)}°C, ${d.x.toFixed(1)}G (M:${d.mass}, D:${d.diam}, A:${d.ang})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function recordTrial() {
+            if (!state.currentResult) return;
+
+            const trialNum = state.trials.length + 1;
+            const res = state.currentResult;
+
+            const trialData = {
+                id: trialNum,
+                mass: els.mass.value,
+                diam: els.diameter.value,
+                ang: els.angle.value,
+                mat: els.material.options[els.material.selectedIndex].text,
+                temp: res.peakTemp,
+                gforce: res.gForce,
+                success: res.tempSuccess && res.gForceSuccess,
+                status: res.status
+            };
+
+            state.trials.push(trialData);
+
+            // Add to Table
+            const tr = document.createElement('tr');
+            const statusColor = trialData.success ? 'text-green-600' : 'text-red-600';
+            tr.innerHTML = `
+                <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900">${trialNum}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.mass}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.diam}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.ang}°</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm ${res.tempSuccess ? 'text-gray-500' : 'text-red-500 font-bold'}">${trialData.temp.toFixed(0)}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm ${res.gForceSuccess ? 'text-gray-500' : 'text-red-500 font-bold'}">${trialData.gforce.toFixed(1)}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-xs font-bold ${statusColor}">${trialData.success ? 'PASS' : 'FAIL'}</td>
+            `;
+            els.dataTableBody.appendChild(tr);
+            els.dataTableBody.parentElement.parentElement.scrollTop = els.dataTableBody.parentElement.parentElement.scrollHeight;
+
+            // Update Chart
+            const datasetIndex = trialData.success ? 0 : 1;
+            chartInstance.data.datasets[datasetIndex].data.push({
+                x: trialData.gforce,
+                y: trialData.temp,
+                id: trialData.id,
+                mass: trialData.mass,
+                diam: trialData.diam,
+                ang: trialData.ang
+            });
+            chartInstance.update();
+
+            // Disable record button until next sim run
+            els.recordData.disabled = true;
+            els.recordData.className = 'flex-1 bg-blue-300 text-white font-bold py-3 px-4 rounded shadow flex items-center justify-center cursor-not-allowed';
+            els.recordData.textContent = 'Recorded';
+        }
+
+        function clearData() {
+            if (confirm("Are you sure you want to clear all recorded trial data?")) {
+                state.trials = [];
+                els.dataTableBody.innerHTML = '';
+                chartInstance.data.datasets[0].data = [];
+                chartInstance.data.datasets[1].data = [];
+                chartInstance.update();
+            }
+        }
+
+        function exportData() {
+            if (state.trials.length === 0) {
+                alert("No data to export. Record some trials first.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Trial,Mass (kg),Diameter (m),Angle (deg),Material,Peak Temp (C),Max G-Force,Result\n";
+
+            state.trials.forEach(t => {
+                const row = `${t.id},${t.mass},${t.diam},${t.ang},${t.mat},${t.temp.toFixed(1)},${t.gforce.toFixed(2)},${t.success ? 'Success' : 'Failure'}`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "reentry_simulation_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        els.recordData.addEventListener('click', recordTrial);
+        els.clearData.addEventListener('click', clearData);
+        els.exportData.addEventListener('click', exportData);
+
+        // Initialize display
+        updateInputDisplays();
+        initChart();
+        resetPanels();
+
+    </script>
+</body>
+</html>
