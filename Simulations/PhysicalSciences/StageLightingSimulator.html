@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage Lighting Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glow {
+            transition: all 0.3s ease;
+        }
+        .wire {
+            background-color: #4b5563; /* Tailwind gray-600 */
+        }
+        .tripped-overlay {
+            background-color: rgba(239, 68, 68, 0.2); /* Red tint */
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-6 font-sans">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 border-b border-slate-700 pb-4">
+            <h1 class="text-3xl font-bold text-blue-400">Stage Lighting Simulator</h1>
+            <p class="text-slate-400 mt-2">Investigate the energy transfer and circuit topography of two stage lighting tracks.</p>
+            <div class="mt-4 flex gap-6 text-sm bg-slate-800 p-3 rounded-lg inline-flex border border-slate-700">
+                <div><span class="text-slate-400">Source Voltage:</span> <span class="font-mono text-green-400">120 V</span></div>
+                <div><span class="text-slate-400">Bulb Resistance:</span> <span class="font-mono text-green-400">24 Ω</span></div>
+                <div><span class="text-slate-400">Track B Breaker Limit:</span> <span class="font-mono text-red-400">20.0 A</span></div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- TRACK A -->
+            <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl flex flex-col">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-white">Track A <span class="text-sm font-normal text-slate-400 ml-2">(Mystery Topography)</span></h2>
+                    <div class="flex gap-2">
+                        <button onclick="updateBulbs('A', -1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded transition-colors">-</button>
+                        <span id="count-A" class="font-mono w-6 text-center text-lg">1</span>
+                        <button onclick="updateBulbs('A', 1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded transition-colors">+</button>
+                    </div>
+                </div>
+
+                <!-- Visualization Area -->
+                <div class="bg-slate-950 h-64 rounded-lg relative overflow-hidden flex items-center justify-center p-4 border border-slate-700 mb-6">
+                    <div class="absolute top-1/2 left-0 w-full h-1 wire -translate-y-1/2"></div>
+                    <div id="visual-A" class="relative z-10 flex gap-8">
+                        <!-- Bulbs injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Meters -->
+                <div class="mt-auto grid grid-cols-3 gap-4">
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-center">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Current</div>
+                        <div id="current-A" class="font-mono text-xl text-blue-400">0.00 A</div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-center">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Voltage / Bulb</div>
+                        <div id="voltage-A" class="font-mono text-xl text-purple-400">0.0 V</div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-center">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Power / Bulb</div>
+                        <div id="power-A" class="font-mono text-xl text-yellow-400">0 W</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRACK B -->
+            <div id="container-B" class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl flex flex-col relative transition-colors">
+                <div id="tripped-banner" class="hidden absolute top-0 left-0 w-full bg-red-600 text-white text-center py-1 text-sm font-bold tracking-widest uppercase rounded-t-xl z-20">
+                    Circuit Breaker Tripped
+                </div>
+                
+                <div class="flex justify-between items-center mb-6 mt-2">
+                    <h2 class="text-xl font-semibold text-white">Track B <span class="text-sm font-normal text-slate-400 ml-2">(Mystery Topography)</span></h2>
+                    <div class="flex gap-2">
+                        <button onclick="updateBulbs('B', -1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded transition-colors">-</button>
+                        <span id="count-B" class="font-mono w-6 text-center text-lg">1</span>
+                        <button onclick="updateBulbs('B', 1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded transition-colors">+</button>
+                    </div>
+                </div>
+
+                <!-- Visualization Area -->
+                <div class="bg-slate-950 h-64 rounded-lg relative overflow-hidden flex items-center justify-center p-4 border border-slate-700 mb-6">
+                    <div class="absolute top-10 left-4 right-4 h-1 wire"></div>
+                    <div class="absolute bottom-10 left-4 right-4 h-1 wire"></div>
+                    <div class="absolute top-10 bottom-10 left-4 w-1 wire"></div>
+                    <div class="absolute top-10 bottom-10 right-4 w-1 wire"></div>
+                    
+                    <div id="visual-B" class="relative z-10 flex gap-6 w-full px-8 justify-around items-center h-full">
+                        <!-- Bulbs injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Meters -->
+                <div class="mt-auto grid grid-cols-3 gap-4">
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-center relative overflow-hidden">
+                        <div id="meter-current-B-bg" class="absolute inset-0 bg-red-900/0 transition-colors"></div>
+                        <div class="relative z-10">
+                            <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Current</div>
+                            <div id="current-B" class="font-mono text-xl text-blue-400">0.00 A</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-center">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Voltage / Bulb</div>
+                        <div id="voltage-B" class="font-mono text-xl text-purple-400">0.0 V</div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-center">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Power / Bulb</div>
+                        <div id="power-B" class="font-mono text-xl text-yellow-400">0 W</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const V_SOURCE = 120;
+        const R_BULB = 24;
+        const I_MAX_B = 20;
+
+        let state = {
+            A: 1, // Number of bulbs on Track A
+            B: 1  // Number of bulbs on Track B
+        };
+
+        // Bulb SVG Template
+        const getBulbSVG = (power, maxPower = 600) => {
+            const intensity = Math.min(Math.max(power / maxPower, 0), 1);
+            const isOn = intensity > 0.01;
+            const color = isOn ? '#fbbf24' : '#475569'; // amber-400 vs slate-600
+            const dropShadow = isOn ? `drop-shadow(0 0 ${intensity * 15}px rgba(251, 191, 36, ${intensity}))` : 'none';
+            const opacity = isOn ? 0.3 + (0.7 * intensity) : 0.3;
+
+            return `
+                <div class="flex flex-col items-center glow" style="filter: ${dropShadow}; opacity: ${opacity}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="${isOn ? color : 'none'}" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/>
+                        <path d="M9 18h6"/>
+                        <path d="M10 22h4"/>
+                    </svg>
+                </div>
+            `;
+        };
+
+        function updateBulbs(track, change) {
+            const newVal = state[track] + change;
+            if (newVal >= 1 && newVal <= 6) {
+                state[track] = newVal;
+                calculatePhysics();
+            }
+        }
+
+        function calculatePhysics() {
+            // Track A Physics (Series)
+            const countA = state.A;
+            const reqA = countA * R_BULB;
+            const iA = V_SOURCE / reqA;
+            const vBulbA = V_SOURCE / countA;
+            const pBulbA = Math.pow(iA, 2) * R_BULB;
+
+            // Update Track A DOM
+            document.getElementById('count-A').innerText = countA;
+            document.getElementById('current-A').innerText = iA.toFixed(2) + ' A';
+            document.getElementById('voltage-A').innerText = vBulbA.toFixed(1) + ' V';
+            document.getElementById('power-A').innerText = Math.round(pBulbA) + ' W';
+            
+            let visualA = '';
+            for(let i=0; i<countA; i++) {
+                visualA += getBulbSVG(pBulbA);
+            }
+            document.getElementById('visual-A').innerHTML = visualA;
+
+            // Track B Physics (Parallel)
+            const countB = state.B;
+            const iPerBulbB = V_SOURCE / R_BULB;
+            const iTotalB = countB * iPerBulbB;
+            const isTripped = iTotalB > I_MAX_B;
+
+            let vBulbB = isTripped ? 0 : V_SOURCE;
+            let pBulbB = isTripped ? 0 : (vBulbB * iPerBulbB);
+
+            // Update Track B DOM
+            document.getElementById('count-B').innerText = countB;
+            document.getElementById('current-B').innerText = iTotalB.toFixed(2) + ' A';
+            document.getElementById('voltage-B').innerText = vBulbB.toFixed(1) + ' V';
+            document.getElementById('power-B').innerText = Math.round(pBulbB) + ' W';
+
+            const containerB = document.getElementById('container-B');
+            const trippedBanner = document.getElementById('tripped-banner');
+            const currentBg = document.getElementById('meter-current-B-bg');
+            const currentText = document.getElementById('current-B');
+
+            if (isTripped) {
+                containerB.classList.add('border-red-600');
+                trippedBanner.classList.remove('hidden');
+                currentBg.classList.replace('bg-red-900/0', 'bg-red-900/50');
+                currentText.classList.replace('text-blue-400', 'text-red-400');
+            } else {
+                containerB.classList.remove('border-red-600');
+                trippedBanner.classList.add('hidden');
+                currentBg.classList.replace('bg-red-900/50', 'bg-red-900/0');
+                currentText.classList.replace('text-red-400', 'text-blue-400');
+            }
+
+            let visualB = '';
+            for(let i=0; i<countB; i++) {
+                // For parallel, wrap bulb in vertical wires
+                visualB += `
+                    <div class="relative flex flex-col items-center justify-center h-full">
+                        <div class="absolute top-0 bottom-0 w-1 wire -z-10"></div>
+                        <div class="bg-slate-950 py-2">
+                            ${getBulbSVG(pBulbB)}
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('visual-B').innerHTML = visualB;
+        }
+
+        // Initialize
+        calculatePhysics();
+    </script>
+</body>
+</html>

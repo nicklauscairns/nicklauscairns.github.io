@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alkali Metals Reaction Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        canvas { display: block; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col p-4 overflow-hidden">
+
+    <header class="text-center mb-4">
+        <h1 class="text-3xl font-bold text-gray-800">Alkali Metals Phenomenon</h1>
+        <p class="text-gray-600">Observe the reaction patterns and atomic structures of different elements.</p>
+    </header>
+
+    <main class="flex-1 flex flex-col md:flex-row gap-4 max-w-6xl mx-auto w-full">
+        
+        <!-- Simulation Canvas Area -->
+        <div class="glass-panel flex-1 flex flex-col relative overflow-hidden border border-gray-200">
+            <div class="bg-gray-800 text-white text-sm font-semibold p-2 rounded-t-xl text-center z-10">
+                Macroscopic View: Reaction Beaker
+            </div>
+            <canvas id="reactionCanvas" class="w-full h-full bg-white"></canvas>
+            
+            <!-- Controls Overlay -->
+            <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white to-transparent flex justify-center flex-wrap gap-2 z-20">
+                <button onclick="dropMetal('Li')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded shadow transition">Drop Lithium (Li)</button>
+                <button onclick="dropMetal('Na')" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded shadow transition">Drop Sodium (Na)</button>
+                <button onclick="dropMetal('K')" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded shadow transition">Drop Potassium (K)</button>
+                <button onclick="dropMetal('Ca')" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded shadow transition">Drop Calcium (Ca)</button>
+                <button onclick="dropMetal('Al')" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded shadow transition">Drop Aluminum (Al)</button>
+                <button onclick="dropMetal('X')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded shadow transition animate-pulse">Drop Mystery (X)</button>
+            </div>
+        </div>
+
+        <!-- Atomic Model Area -->
+        <div class="glass-panel w-full md:w-1/3 flex flex-col border border-gray-200">
+            <div class="bg-indigo-700 text-white text-sm font-semibold p-2 rounded-t-xl text-center">
+                Microscopic View: Atomic Structure
+            </div>
+            <div class="p-4 flex-1 flex flex-col items-center justify-start">
+                <h2 id="elementName" class="text-2xl font-bold text-gray-800 mb-2">Select a Metal</h2>
+                <div class="text-sm text-gray-600 mb-4 text-center h-16" id="elementDesc">
+                    Click a button to the left to see the metal react in water and view its atomic model.
+                </div>
+                
+                <canvas id="atomCanvas" width="250" height="250" class="bg-gray-50 rounded-full border border-gray-200 shadow-inner"></canvas>
+                
+                <!-- NEW SENSOR PANEL -->
+                <div class="mt-4 w-full bg-black p-3 rounded border-2 border-gray-700 text-green-400 font-mono text-sm shadow-inner">
+                    <div class="font-bold text-white mb-1 border-b border-gray-700 pb-1">🧪 SENSOR READOUT</div>
+                    <div>Peak Temp: <span id="tempReadout">--</span> °C</div>
+                    <div>Reaction Time: <span id="timeReadout">--</span> s</div>
+                </div>
+
+                <div class="mt-4 w-full bg-blue-50 p-3 rounded border border-blue-100 text-sm text-blue-800">
+                    <p><strong>Notice:</strong> Pay attention to the outermost ring (energy level). The red dots represent the valence electrons.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+<script>
+    // --- Data Models ---
+    const elementData = {
+        Li: { 
+            name: 'Lithium (Li)', 
+            desc: 'Lithium reacts steadily. It fizzes and darts around the surface of the water as hydrogen gas is produced.',
+            shells: [2, 1],
+            reactDuration: 250,
+            speed: 1.5,
+            color: '#a0a0a0',
+            flameColor: null,
+            sparks: false,
+            sinks: false,
+            peakTemp: 185,
+            simTime: 2.4
+        },
+        Na: { 
+            name: 'Sodium (Na)', 
+            desc: 'Sodium is more reactive. It melts into a sphere due to heat, fizzes violently, and occasionally sparks orange.',
+            shells: [2, 8, 1],
+            reactDuration: 150,
+            speed: 3,
+            color: '#d3d3d3',
+            flameColor: '#ffa500', // Orange spark
+            sparks: true,
+            sinks: false,
+            peakTemp: 380,
+            simTime: 1.2
+        },
+        K: { 
+            name: 'Potassium (K)', 
+            desc: 'Potassium is highly reactive. It immediately ignites the hydrogen gas, producing a purple flame, and ends with a "pop".',
+            shells: [2, 8, 8, 1],
+            reactDuration: 80,
+            speed: 5,
+            color: '#b0b0b0',
+            flameColor: '#dda0dd', // Lilac flame
+            sparks: true,
+            explosive: true,
+            sinks: false,
+            peakTemp: 760,
+            simTime: 0.5
+        },
+        Ca: {
+            name: 'Calcium (Ca)',
+            desc: 'Calcium reacts slowly. It sinks to the bottom and steadily produces bubbles of hydrogen gas.',
+            shells: [2, 8, 8, 2],
+            reactDuration: 500,
+            speed: 0,
+            color: '#d1d5db',
+            flameColor: null,
+            sparks: false,
+            sinks: true,
+            noReaction: false,
+            peakTemp: 45,
+            simTime: 15.0
+        },
+        Al: {
+            name: 'Aluminum (Al)',
+            desc: 'Aluminum does not noticeably react with plain water under normal conditions.',
+            shells: [2, 8, 3],
+            reactDuration: 1000,
+            speed: 0,
+            color: '#9ca3af',
+            flameColor: null,
+            sparks: false,
+            sinks: true,
+            noReaction: true,
+            peakTemp: 22,
+            simTime: 0.0
+        },
+        X: {
+            name: 'Mystery Metal (X)',
+            desc: 'UNKNOWN ELEMENT. Extreme caution advised. High reactivity detected.',
+            shells: [2, 8, 18, 8, 1],
+            reactDuration: 40,
+            speed: 7,
+            color: '#ff9999',
+            flameColor: '#ff0000', // Red flame
+            sparks: true,
+            explosive: true,
+            sinks: false,
+            peakTemp: 1250,
+            simTime: 0.1
+        }
+    };
+
+    // --- Reaction Canvas Setup ---
+    const rCanvas = document.getElementById('reactionCanvas');
+    const rCtx = rCanvas.getContext('2d');
+    
+    let canvasWidth, canvasHeight;
+    let waterY;
+    
+    function resizeCanvas() {
+        const rect = rCanvas.parentElement.getBoundingClientRect();
+        rCanvas.width = rect.width;
+        rCanvas.height = rect.height - 40; // Adjust for header
+        canvasWidth = rCanvas.width;
+        canvasHeight = rCanvas.height;
+        waterY = canvasHeight * 0.4;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    
+    // --- Simulation State ---
+    let activeMetal = null;
+    let particles = [];
+
+    class Metal {
+        constructor(type) {
+            this.type = type;
+            this.data = elementData[type];
+            this.x = canvasWidth / 2;
+            this.y = -20;
+            this.vx = (Math.random() - 0.5) * 2;
+            this.vy = 5;
+            this.radius = 12;
+            this.life = this.data.reactDuration;
+            this.inWater = false;
+        }
+
+        update() {
+            if (!this.inWater) {
+                this.y += this.vy;
+                if (this.y + this.radius >= waterY) {
+                    this.inWater = true;
+                    if (!this.data.sinks) {
+                        this.y = waterY; // Float on surface
+                        this.vy = 0;
+                    }
+                }
+            } else {
+                if (this.data.sinks && this.y + this.radius < canvasHeight - 20) {
+                     this.y += 2; // Sinking speed
+                } else if (this.data.sinks) {
+                     this.y = canvasHeight - 20 - this.radius; // At the bottom
+                     this.vx = 0;
+                } else {
+                    // Dart around on surface
+                    this.x += this.vx;
+                    if (this.x - this.radius < 50 || this.x + this.radius > canvasWidth - 50) {
+                        this.vx *= -1;
+                    }
+                    
+                    // Randomly change direction slightly
+                    if (Math.random() < 0.1) {
+                        this.vx += (Math.random() - 0.5) * this.data.speed;
+                        // Cap speed
+                        if (this.vx > this.data.speed) this.vx = this.data.speed;
+                        if (this.vx < -this.data.speed) this.vx = -this.data.speed;
+                    }
+                }
+
+                if (!this.data.noReaction) {
+                    this.life--;
+                    // Shrink
+                    this.radius = Math.max(0, (this.life / this.data.reactDuration) * 12);
+                }
+
+                // Spawn effects
+                if (this.life > 0 && !this.data.noReaction) {
+                    // Bubbles
+                    if (Math.random() < (this.data.sinks ? 0.1 : 0.6)) {
+                        particles.push(new Particle(this.x, this.y + (this.data.sinks ? -this.radius : 5), 'bubble'));
+                    }
+                    // Fire/Sparks
+                    if (this.data.flameColor && Math.random() < (this.type === 'K' ? 0.8 : 0.2)) {
+                        particles.push(new Particle(this.x, this.y - 5, 'flame', this.data.flameColor));
+                    }
+                } else if (this.life === 0 && this.data.explosive) {
+                    // Explosion
+                    for (let i = 0; i < 40; i++) {
+                        particles.push(new Particle(this.x, this.y, 'spark', '#ffffff'));
+                        particles.push(new Particle(this.x, this.y, 'spark', '#dda0dd'));
+                    }
+                }
+            }
+        }
+
+        draw(ctx) {
+            if (this.life <= 0 && (!this.data.explosive || this.life < -10)) return;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.type === 'Na' && this.inWater ? '#ffcc00' : this.data.color; // Na glows
+            ctx.fill();
+            ctx.strokeStyle = '#555';
+            ctx.stroke();
+        }
+    }
+
+    class Particle {
+        constructor(x, y, type, color = null) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+            this.color = color;
+            this.life = 1.0;
+
+            if (type === 'bubble') {
+                this.vx = (Math.random() - 0.5);
+                this.vy = Math.random() * -2 - 1;
+                this.radius = Math.random() * 3 + 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+            } else if (type === 'flame') {
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = Math.random() * -3 - 2;
+                this.radius = Math.random() * 5 + 3;
+                this.decay = Math.random() * 0.05 + 0.02;
+            } else if (type === 'spark') {
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10 - 2;
+                this.radius = Math.random() * 2 + 1;
+                this.decay = Math.random() * 0.05 + 0.02;
+            }
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life -= this.decay;
+        }
+
+        draw(ctx) {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            
+            if (this.type === 'bubble') {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
+
+    function dropMetal(type) {
+        activeMetal = new Metal(type);
+        particles = [];
+        updateAtomicView(type);
+    }
+
+    function animate() {
+        rCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        // Draw Water Beaker
+        const beakerMargin = 40;
+        
+        // Water
+        rCtx.fillStyle = 'rgba(173, 216, 230, 0.5)';
+        rCtx.fillRect(beakerMargin, waterY, canvasWidth - beakerMargin*2, canvasHeight - waterY - 20);
+        
+        // Water surface line
+        rCtx.beginPath();
+        rCtx.moveTo(beakerMargin, waterY);
+        rCtx.lineTo(canvasWidth - beakerMargin, waterY);
+        rCtx.strokeStyle = 'rgba(100, 150, 200, 0.8)';
+        rCtx.lineWidth = 2;
+        rCtx.stroke();
+
+        // Beaker Glass
+        rCtx.beginPath();
+        rCtx.moveTo(beakerMargin, 50);
+        rCtx.lineTo(beakerMargin, canvasHeight - 20);
+        rCtx.lineTo(canvasWidth - beakerMargin, canvasHeight - 20);
+        rCtx.lineTo(canvasWidth - beakerMargin, 50);
+        rCtx.strokeStyle = 'rgba(200, 200, 200, 0.8)';
+        rCtx.lineWidth = 4;
+        rCtx.stroke();
+
+        // Update and draw metal
+        if (activeMetal) {
+            activeMetal.update();
+            activeMetal.draw(rCtx);
+        }
+
+        // Update and draw particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw(rCtx);
+            if (particles[i].life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    // --- Atomic Model View ---
+    const aCanvas = document.getElementById('atomCanvas');
+    const aCtx = aCanvas.getContext('2d');
+
+    function updateAtomicView(type) {
+        const data = elementData[type];
+        document.getElementById('elementName').innerText = data.name;
+        document.getElementById('elementDesc').innerText = data.desc;
+
+        // Update Sensor Readout
+        document.getElementById('tempReadout').innerText = data.peakTemp;
+        document.getElementById('timeReadout').innerText = data.simTime;
+
+        aCtx.clearRect(0, 0, aCanvas.width, aCanvas.height);
+        
+        const centerX = aCanvas.width / 2;
+        const centerY = aCanvas.height / 2;
+        
+        // Draw Nucleus
+        aCtx.beginPath();
+        aCtx.arc(centerX, centerY, 15, 0, Math.PI * 2);
+        aCtx.fillStyle = '#ef4444'; // Red-ish nucleus
+        aCtx.fill();
+        aCtx.fillStyle = 'white';
+        aCtx.font = 'bold 12px Arial';
+        aCtx.textAlign = 'center';
+        aCtx.textBaseline = 'middle';
+        aCtx.fillText(type, centerX, centerY);
+
+        // Draw Shells and Electrons
+        const maxRadius = 110;
+        const shellSpacing = maxRadius / data.shells.length;
+
+        data.shells.forEach((electronCount, shellIndex) => {
+            const radius = 25 + (shellIndex * shellSpacing);
+            
+            // Draw orbit
+            aCtx.beginPath();
+            aCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            aCtx.strokeStyle = '#cbd5e1';
+            aCtx.lineWidth = 2;
+            aCtx.stroke();
+
+            // Is it the valence shell?
+            const isValence = shellIndex === data.shells.length - 1;
+
+            // Draw electrons
+            for (let e = 0; e < electronCount; e++) {
+                const angle = (Math.PI * 2 / electronCount) * e;
+                const ex = centerX + Math.cos(angle) * radius;
+                const ey = centerY + Math.sin(angle) * radius;
+
+                aCtx.beginPath();
+                aCtx.arc(ex, ey, 5, 0, Math.PI * 2);
+                
+                // Highlight valence electron in bright red, others in blue
+                if (isValence) {
+                    aCtx.fillStyle = '#ef4444'; // Red for valence
+                    aCtx.shadowColor = '#ef4444';
+                    aCtx.shadowBlur = 5;
+                } else {
+                    aCtx.fillStyle = '#3b82f6'; // Blue for inner
+                    aCtx.shadowBlur = 0;
+                }
+                
+                aCtx.fill();
+                aCtx.shadowBlur = 0; // reset
+            }
+        });
+    }
+
+    // Initialize
+    window.onload = () => {
+        resizeCanvas();
+        animate();
+        // Draw an empty atom prompt initially
+        aCtx.fillStyle = '#9ca3af';
+        aCtx.font = '14px sans-serif';
+        aCtx.textAlign = 'center';
+        aCtx.fillText("Waiting for selection...", aCanvas.width/2, aCanvas.height/2);
+    };
+
+</script>
+</body>
+</html>

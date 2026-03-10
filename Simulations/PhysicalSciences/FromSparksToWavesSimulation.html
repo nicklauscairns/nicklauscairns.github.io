@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Sparks to Waves: Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { display: block; width: 100%; height: 100%; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-blue-900 p-4 shadow-lg flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-white">From Sparks to Waves</h1>
+            <p class="text-blue-200 text-sm">Interactive Lightning & Wave Oscilloscope</p>
+        </div>
+        <div class="flex space-x-4">
+            <button id="btn-prop" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-semibold transition">Propagation Model</button>
+            <button id="btn-osc" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded font-semibold transition">Oscilloscope Model</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 relative">
+        
+        <!-- View 1: Propagation -->
+        <div id="view-propagation" class="absolute inset-0 flex flex-col p-6 bg-gray-800">
+            <div class="mb-4 flex justify-between items-end">
+                <div>
+                    <h2 class="text-xl font-semibold text-blue-300">Part 1: Propagation of Light & Sound</h2>
+                    <p class="text-sm text-gray-400">Observe the difference in speed between electromagnetic (light) and mechanical (sound) waves.</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <label class="flex items-center space-x-2 cursor-pointer bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition border border-gray-600 shadow-sm">
+                        <input type="checkbox" id="check-slowmo" class="w-4 h-4 text-blue-600 bg-gray-900 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer">
+                        <span class="text-sm font-semibold text-gray-300">Super Slow-Mo (10<sup>-6</sup>x)</span>
+                    </label>
+                    <button id="btn-strike" class="bg-yellow-500 hover:bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-bold shadow-lg transform transition hover:scale-105">⚡ TRIGGER LIGHTNING</button>
+                </div>
+            </div>
+            <div class="flex-1 bg-black rounded-xl border border-gray-700 relative overflow-hidden flex items-center justify-center">
+                <canvas id="canvas-prop"></canvas>
+                <!-- HUD Overlay -->
+                <div class="absolute top-4 left-4 bg-gray-900/80 p-3 rounded text-sm font-mono text-green-400 border border-gray-700">
+                    <div>Time: <span id="prop-time">0.00</span> s</div>
+                    <div class="text-yellow-400 mt-1">Light Speed: ~300,000,000 m/s</div>
+                    <div class="text-blue-400">Sound Speed: 343 m/s</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 2: Oscilloscope -->
+        <div id="view-oscilloscope" class="absolute inset-0 flex flex-col p-6 bg-gray-800 hidden">
+            <div class="mb-4">
+                <h2 class="text-xl font-semibold text-blue-300">Part 2: The Anatomy of a Wave</h2>
+                <p class="text-sm text-gray-400">Compare a transverse light wave with a longitudinal sound wave by adjusting their frequencies.</p>
+            </div>
+            
+            <div class="flex flex-1 gap-6">
+                <!-- Controls -->
+                <div class="w-1/3 flex flex-col space-y-4">
+                    
+                    <!-- Light Controls -->
+                    <div class="bg-gray-900 rounded-xl border border-gray-700 p-5 flex flex-col shadow-lg">
+                        <h3 class="text-yellow-400 font-bold mb-4 border-b border-gray-700 pb-2">Light (Transverse Wave)</h3>
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2" for="light-freq-slider">
+                                Frequency (<i>f</i>)
+                            </label>
+                            <input type="range" id="light-freq-slider" min="400" max="750" value="500" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-right text-yellow-400 font-mono mt-2 flex flex-col items-end">
+                                <span class="text-lg"><span id="light-freq-val">500</span> THz</span>
+                                <span class="text-sm text-gray-500"><span id="light-freq-hz-val">5.00 &times; 10<sup>14</sup></span> Hz</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4 mt-4">
+                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+                                <div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
+                                <div class="text-sm font-mono text-green-400">3 &times; 10<sup>8</sup> m/s</div>
+                            </div>
+                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+                                <div class="text-xs text-gray-400 mb-1">Wavelength (&lambda;)</div>
+                                <div class="text-xl font-mono text-yellow-400 flex flex-col">
+                                    <span><span id="light-wave-val">600</span> nm</span>
+                                    <span class="text-sm text-gray-500"><span id="light-wave-m-val">6.00 &times; 10<sup>-7</sup></span> m</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sound Controls -->
+                    <div class="bg-gray-900 rounded-xl border border-gray-700 p-5 flex flex-col shadow-lg">
+                        <div class="flex justify-between items-center border-b border-gray-700 pb-2 mb-4">
+                            <h3 class="text-blue-400 font-bold">Sound (Longitudinal Wave)</h3>
+                            <button id="btn-sound-toggle" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1 rounded transition border border-gray-600 shadow-sm">🔈 Tone: OFF</button>
+                        </div>
+                        
+                        <!-- Frequency Range Selector -->
+                        <div class="mb-3">
+                            <div class="flex gap-2">
+                                <button id="btn-range-low" class="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded border border-blue-500 transition">20-200</button>
+                                <button id="btn-range-mid" class="flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition">200-2k</button>
+                                <button id="btn-range-high" class="flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition">2k-20k</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2" for="freq-slider">
+                                Frequency (<i>f</i>) - Hz
+                            </label>
+                            <input type="range" id="freq-slider" min="20" max="200" value="85" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-right text-blue-400 font-mono mt-2 text-lg"><span id="freq-val">85</span> Hz</div>
+                        </div>
+                        
+                        <div class="flex gap-4 mt-4">
+                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+                                <div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
+                                <div class="text-sm font-mono text-green-400">343 m/s</div>
+                            </div>
+                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+                                <div class="text-xs text-gray-400 mb-1">Wavelength (&lambda;)</div>
+                                <div class="text-xl font-mono text-blue-400"><span id="wave-val">4.04</span> m</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oscilloscope Canvas -->
+                <div class="w-2/3 bg-black rounded-xl border border-gray-700 relative overflow-hidden flex flex-col">
+                    <div class="absolute top-4 left-4 text-green-500 font-mono text-sm z-10 opacity-70">COMPARISON VIEW</div>
+                    <canvas id="canvas-osc" class="flex-1"></canvas>
+                    <div class="h-8 bg-gray-900 border-t border-gray-700 flex items-center justify-between px-4 text-xs font-mono text-gray-500">
+                        <span>Properties</span>
+                        <span>Scales Adjust Dynamically</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        window.onload = function() {
+            // --- Audio State ---
+            let soundEnabled = false;
+            let audioCtx, oscillator, gainNode;
+
+            // --- Navigation Logic ---
+            const btnProp = document.getElementById('btn-prop');
+            const btnOsc = document.getElementById('btn-osc');
+            const viewProp = document.getElementById('view-propagation');
+            const viewOsc = document.getElementById('view-oscilloscope');
+
+            btnProp.addEventListener('click', () => {
+                viewProp.classList.remove('hidden');
+                viewOsc.classList.add('hidden');
+                btnProp.classList.replace('bg-gray-700', 'bg-blue-600');
+                btnOsc.classList.replace('bg-blue-600', 'bg-gray-700');
+                if (soundEnabled) {
+                    document.getElementById('btn-sound-toggle').click(); // Auto-mute when leaving tab
+                }
+                resizeCanvas();
+            });
+
+            btnOsc.addEventListener('click', () => {
+                viewOsc.classList.remove('hidden');
+                viewProp.classList.add('hidden');
+                btnOsc.classList.replace('bg-gray-700', 'bg-blue-600');
+                btnProp.classList.replace('bg-blue-600', 'bg-gray-700');
+                resizeCanvas();
+            });
+
+            // --- Part 1: Propagation Simulation ---
+            const canvasProp = document.getElementById('canvas-prop');
+            const ctxProp = canvasProp.getContext('2d');
+            const btnStrike = document.getElementById('btn-strike');
+            const timeDisplay = document.getElementById('prop-time');
+            const checkSlowMo = document.getElementById('check-slowmo');
+            
+            let propWidth, propHeight;
+            let strikeActive = false;
+            let simTime = 0; // Simulation time in seconds
+            let lastTimestamp = 0;
+            let lightRadius = 0;
+            let soundRadius = 0;
+            
+            // Simulation scale: 1 pixel = X meters. Let's make 1715m (Station D) fit well.
+            let metersPerPixel = 5; 
+            const speedOfSound = 343; // m/s
+            const speedOfLight = 300000000; // m/s (using standard approx for visual dramatic effect)
+
+            const stations = [
+                { name: 'A', distance: 343, color: '#f87171' },
+                { name: 'B', distance: 686, color: '#fb923c' },
+                { name: 'C', distance: 1029, color: '#facc15' },
+                { name: 'D', distance: 1715, color: '#4ade80' }
+            ];
+
+            function initProp() {
+                strikeActive = false;
+                simTime = 0;
+                lightRadius = 0;
+                soundRadius = 0;
+                timeDisplay.innerText = "0.00";
+                drawPropEnvironment();
+            }
+
+            // Reset simulation if slow-mo toggle is changed
+            checkSlowMo.addEventListener('change', initProp);
+
+            btnStrike.addEventListener('click', () => {
+                initProp();
+                strikeActive = true;
+                lastTimestamp = performance.now();
+                requestAnimationFrame(animateProp);
+            });
+
+            function drawPropEnvironment() {
+                ctxProp.clearRect(0, 0, propWidth, propHeight);
+                
+                const centerX = 50; // Strike on the left side
+                const centerY = propHeight / 2;
+
+                // Draw Ground
+                ctxProp.fillStyle = '#1f2937';
+                ctxProp.fillRect(0, centerY, propWidth, propHeight / 2);
+
+                // Draw Stations
+                stations.forEach(station => {
+                    const x = centerX + (station.distance / metersPerPixel);
+                    
+                    // Station marker
+                    ctxProp.fillStyle = station.color;
+                    ctxProp.fillRect(x - 5, centerY - 20, 10, 20);
+                    
+                    // Station Label
+                    ctxProp.fillStyle = '#fff';
+                    ctxProp.font = '12px monospace';
+                    ctxProp.fillText(`Stn ${station.name}`, x - 15, centerY + 20);
+                    ctxProp.fillText(`${station.distance}m`, x - 15, centerY + 35);
+                });
+
+                // Draw Strike Marker (Epicenter)
+                ctxProp.fillStyle = '#fff';
+                ctxProp.beginPath();
+                ctxProp.arc(centerX, centerY, 5, 0, Math.PI * 2);
+                ctxProp.fill();
+            }
+
+            function animateProp(timestamp) {
+                if (!strikeActive) return;
+
+                const deltaTime = (timestamp - lastTimestamp) / 1000; // Convert to seconds
+                lastTimestamp = timestamp;
+                
+                const isSlowMo = checkSlowMo.checked;
+                // In slow-mo, time passes 1,000,000 times slower
+                const timeScale = isSlowMo ? 0.000001 : 1;
+                
+                simTime += deltaTime * timeScale; 
+                
+                // Update time display dynamically based on mode
+                if (isSlowMo) {
+                    timeDisplay.innerText = simTime.toFixed(6); // Show microseconds
+                } else {
+                    timeDisplay.innerText = simTime.toFixed(2);
+                }
+
+                drawPropEnvironment();
+
+                const centerX = 50;
+                const centerY = propHeight / 2;
+
+                // 1. Light Effect (Electromagnetic Wave)
+                // Flash the whole background rapidly in normal speed
+                if (!isSlowMo && simTime < 0.1) {
+                    ctxProp.fillStyle = `rgba(255, 255, 200, ${1 - simTime*10})`;
+                    ctxProp.fillRect(0, 0, propWidth, propHeight);
+                }
+
+                // Draw Lightning Bolt at the epicenter for a brief duration
+                if (simTime < (isSlowMo ? 0.00001 : 0.1)) {
+                    ctxProp.strokeStyle = '#fef08a';
+                    ctxProp.lineWidth = 4;
+                    ctxProp.beginPath();
+                    ctxProp.moveTo(centerX, 0);
+                    ctxProp.lineTo(centerX - 10, centerY / 3);
+                    ctxProp.lineTo(centerX + 10, centerY * 0.6);
+                    ctxProp.lineTo(centerX, centerY);
+                    ctxProp.stroke();
+                }
+
+                // Draw expanding Light Wavefront (only visibly expands across frames in slow-mo)
+                lightRadius = (speedOfLight * simTime) / metersPerPixel;
+                if (lightRadius < propWidth * 5) {
+                    ctxProp.beginPath();
+                    ctxProp.arc(centerX, centerY, lightRadius, 0, Math.PI * 2);
+                    ctxProp.fillStyle = 'rgba(253, 224, 71, 0.15)'; 
+                    ctxProp.fill();
+                    ctxProp.strokeStyle = 'rgba(253, 224, 71, 0.9)'; 
+                    ctxProp.lineWidth = 4;
+                    ctxProp.stroke();
+                }
+
+                // 2. Sound Effect (Mechanical Wave)
+                soundRadius = (speedOfSound * simTime) / metersPerPixel;
+                ctxProp.beginPath();
+                ctxProp.arc(centerX, centerY, soundRadius, 0, Math.PI * 2);
+                ctxProp.strokeStyle = 'rgba(96, 165, 250, 0.8)'; // Blueish
+                ctxProp.lineWidth = 3;
+                ctxProp.stroke();
+
+                // Stop condition (shorter max time if in slow mo to prevent infinite looping)
+                const maxSimTime = isSlowMo ? 0.000015 : 6; 
+                if (simTime < maxSimTime) {
+                    requestAnimationFrame(animateProp);
+                } else {
+                    strikeActive = false;
+                }
+            }
+
+
+            // --- Part 2: Oscilloscope Simulation ---
+            const canvasOsc = document.getElementById('canvas-osc');
+            const ctxOsc = canvasOsc.getContext('2d');
+            const freqSlider = document.getElementById('freq-slider');
+            const freqVal = document.getElementById('freq-val');
+            const waveVal = document.getElementById('wave-val');
+            const btnSoundToggle = document.getElementById('btn-sound-toggle');
+            
+            const btnRangeLow = document.getElementById('btn-range-low');
+            const btnRangeMid = document.getElementById('btn-range-mid');
+            const btnRangeHigh = document.getElementById('btn-range-high');
+            
+            let currentSoundRange = 'low';
+
+            const lightFreqSlider = document.getElementById('light-freq-slider');
+            const lightFreqVal = document.getElementById('light-freq-val');
+            const lightFreqHzVal = document.getElementById('light-freq-hz-val');
+            const lightWaveVal = document.getElementById('light-wave-val');
+            const lightWaveMVal = document.getElementById('light-wave-m-val');
+
+            let oscWidth, oscHeight;
+            let oscTime = 0; // Used to animate the wave moving
+
+            // Initialize Audio toggle behavior
+            btnSoundToggle.addEventListener('click', () => {
+                if (!audioCtx) {
+                    // Initialize Audio Context on first user interaction
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    oscillator = audioCtx.createOscillator();
+                    gainNode = audioCtx.createGain();
+
+                    oscillator.type = 'sine'; // pure tone
+                    oscillator.frequency.value = parseFloat(freqSlider.value);
+                    gainNode.gain.value = 0.1; // keep volume comfortably low (10%)
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    oscillator.start();
+                }
+
+                soundEnabled = !soundEnabled;
+
+                if (soundEnabled) {
+                    audioCtx.resume();
+                    btnSoundToggle.innerHTML = "🔊 Tone: ON";
+                    btnSoundToggle.classList.replace("bg-gray-700", "bg-green-600");
+                    btnSoundToggle.classList.replace("text-gray-300", "text-white");
+                    btnSoundToggle.classList.replace("hover:bg-gray-600", "hover:bg-green-500");
+                } else {
+                    audioCtx.suspend();
+                    btnSoundToggle.innerHTML = "🔈 Tone: OFF";
+                    btnSoundToggle.classList.replace("bg-green-600", "bg-gray-700");
+                    btnSoundToggle.classList.replace("text-white", "text-gray-300");
+                    btnSoundToggle.classList.replace("hover:bg-green-500", "hover:bg-gray-600");
+                }
+            });
+
+            // Setup Range Toggles
+            function setSoundRange(range) {
+                currentSoundRange = range;
+                
+                const activeClasses = 'flex-1 bg-blue-600 text-white text-xs py-1.5 rounded border border-blue-500 transition';
+                const inactiveClasses = 'flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition';
+                
+                btnRangeLow.className = range === 'low' ? activeClasses : inactiveClasses;
+                btnRangeMid.className = range === 'mid' ? activeClasses : inactiveClasses;
+                btnRangeHigh.className = range === 'high' ? activeClasses : inactiveClasses;
+
+                if (range === 'low') {
+                    freqSlider.min = 20;
+                    freqSlider.max = 200;
+                    freqSlider.step = 1;
+                    freqSlider.value = 85;
+                } else if (range === 'mid') {
+                    freqSlider.min = 200;
+                    freqSlider.max = 2000;
+                    freqSlider.step = 10;
+                    freqSlider.value = 1000;
+                } else if (range === 'high') {
+                    freqSlider.min = 2000;
+                    freqSlider.max = 20000;
+                    freqSlider.step = 100;
+                    freqSlider.value = 10000;
+                }
+                updateOscillator();
+            }
+
+            btnRangeLow.addEventListener('click', () => setSoundRange('low'));
+            btnRangeMid.addEventListener('click', () => setSoundRange('mid'));
+            btnRangeHigh.addEventListener('click', () => setSoundRange('high'));
+
+            function updateOscillator() {
+                // Sound
+                const fSound = parseFloat(freqSlider.value);
+                const vSound = 343; // Speed of sound
+                const lambdaSound = vSound / fSound; 
+                
+                freqVal.innerText = fSound.toLocaleString();
+                
+                if (currentSoundRange === 'high') {
+                    waveVal.innerText = lambdaSound.toFixed(4);
+                } else if (currentSoundRange === 'mid') {
+                    waveVal.innerText = lambdaSound.toFixed(3);
+                } else {
+                    waveVal.innerText = lambdaSound.toFixed(2);
+                }
+
+                if (oscillator) {
+                    oscillator.frequency.value = fSound; // Update tone live as slider moves
+                }
+
+                // Light
+                const fLightTHz = parseFloat(lightFreqSlider.value); // in THz
+                const lambdaLightNm = 300000 / fLightTHz; // in nm
+                
+                const fLightHz = fLightTHz * 1e12; // convert THz to Hz
+                const lambdaLightM = lambdaLightNm * 1e-9; // convert nm to m
+                
+                lightFreqVal.innerText = fLightTHz.toFixed(0);
+                lightWaveVal.innerText = lambdaLightNm.toFixed(0);
+
+                // Helper to format large/small numbers dynamically in scientific notation (e.g., 5.00 x 10^14)
+                const formatSci = (num) => {
+                    let parts = num.toExponential(2).replace('e+', 'e').split('e');
+                    return `${parts[0]} &times; 10<sup>${parts[1]}</sup>`;
+                };
+
+                lightFreqHzVal.innerHTML = formatSci(fLightHz);
+                lightWaveMVal.innerHTML = formatSci(lambdaLightM);
+            }
+
+            freqSlider.addEventListener('input', updateOscillator);
+            lightFreqSlider.addEventListener('input', updateOscillator);
+
+            function wavelengthToColor(wavelength) {
+                let R, G, B;
+                if (wavelength >= 380 && wavelength < 440) {
+                    R = -(wavelength - 440) / (440 - 380);
+                    G = 0.0; B = 1.0;
+                } else if (wavelength >= 440 && wavelength < 490) {
+                    R = 0.0;
+                    G = (wavelength - 440) / (490 - 440);
+                    B = 1.0;
+                } else if (wavelength >= 490 && wavelength < 510) {
+                    R = 0.0; G = 1.0;
+                    B = -(wavelength - 510) / (510 - 490);
+                } else if (wavelength >= 510 && wavelength < 580) {
+                    R = (wavelength - 510) / (580 - 510);
+                    G = 1.0; B = 0.0;
+                } else if (wavelength >= 580 && wavelength < 645) {
+                    R = 1.0;
+                    G = -(wavelength - 645) / (645 - 580);
+                    B = 0.0;
+                } else if (wavelength >= 645 && wavelength <= 780) {
+                    R = 1.0; G = 0.0; B = 0.0;
+                } else {
+                    R = 0.0; G = 0.0; B = 0.0;
+                }
+                return `rgb(${Math.round(R * 255)}, ${Math.round(G * 255)}, ${Math.round(B * 255)})`;
+            }
+
+            function animateOsc() {
+                if (viewOsc.classList.contains('hidden')) {
+                    requestAnimationFrame(animateOsc);
+                    return;
+                }
+
+                oscTime += 0.02; // Speed of wave sliding animation
+                
+                ctxOsc.clearRect(0, 0, oscWidth, oscHeight);
+                
+                const centerY_Light = oscHeight * 0.25; 
+                const centerY_Sound = oscHeight * 0.75;  
+                const amplitude_Light = oscHeight * 0.15; 
+                
+                // Draw Divider
+                ctxOsc.strokeStyle = '#374151';
+                ctxOsc.lineWidth = 2;
+                ctxOsc.beginPath(); ctxOsc.moveTo(0, oscHeight / 2); ctxOsc.lineTo(oscWidth, oscHeight / 2); ctxOsc.stroke();
+
+                // Calculate Sound Parameters
+                const fSound = parseFloat(freqSlider.value);
+                const lambdaSound = 343 / fSound; 
+                
+                // Dynamically scale the visual representation so high frequencies don't turn into invisible static
+                let pixelsPerMeterSound = 50;
+                if (currentSoundRange === 'mid') pixelsPerMeterSound = 500;
+                else if (currentSoundRange === 'high') pixelsPerMeterSound = 5000;
+                
+                const pixelWavelengthSound = lambdaSound * pixelsPerMeterSound;
+
+                // Calculate Light Parameters
+                const fLight = parseFloat(lightFreqSlider.value);
+                const lambdaLightNm = 300000 / fLight; 
+                const pixelWavelengthLight = lambdaLightNm * 0.15; 
+                const lightColor = wavelengthToColor(lambdaLightNm);
+
+                // --- 1. Draw Transverse Light Wave ---
+                ctxOsc.beginPath();
+                ctxOsc.strokeStyle = lightColor; 
+                ctxOsc.lineWidth = 4;
+                ctxOsc.shadowBlur = 15;
+                ctxOsc.shadowColor = lightColor;
+                
+                for (let x = 0; x < oscWidth; x++) {
+                    const normalizedX = x / pixelWavelengthLight;
+                    const y = centerY_Light + amplitude_Light * Math.sin((normalizedX - oscTime*2) * Math.PI * 2);
+                    if (x === 0) ctxOsc.moveTo(x, y);
+                    else ctxOsc.lineTo(x, y);
+                }
+                ctxOsc.stroke();
+                ctxOsc.shadowBlur = 0; // Reset shadow
+
+                // --- 2. Draw Longitudinal Sound Wave (Particles) ---
+                ctxOsc.fillStyle = '#60a5fa'; // Light blue
+                const amplitude_Sound = pixelWavelengthSound * 0.12; 
+                const numRows = 9;
+                const spacingX = 12;
+                const spacingY = 12;
+
+                for(let r=0; r<numRows; r++) {
+                    const y_eq = centerY_Sound - (numRows*spacingY)/2 + r*spacingY + spacingY/2;
+                    for (let x_eq = 0; x_eq < oscWidth; x_eq += spacingX) {
+                        const normalizedX = x_eq / pixelWavelengthSound;
+                        const dx = amplitude_Sound * Math.cos((normalizedX - oscTime) * Math.PI * 2);
+                        ctxOsc.beginPath();
+                        ctxOsc.arc(x_eq + dx, y_eq, 2, 0, Math.PI * 2);
+                        ctxOsc.fill();
+                    }
+                }
+
+                // Labels
+                ctxOsc.fillStyle = '#9ca3af';
+                ctxOsc.font = '12px monospace';
+                ctxOsc.textAlign = 'right';
+                ctxOsc.fillText("Light: Transverse Electromagnetic Wave", oscWidth - 10, 20);
+                ctxOsc.fillText("Sound: Longitudinal Mechanical Wave", oscWidth - 10, oscHeight / 2 + 20);
+
+                // Wavelength Markers
+                // Sound Marker
+                if (pixelWavelengthSound < oscWidth) {
+                    const startX = (oscTime % 1) * pixelWavelengthSound;
+                    const endX = startX + pixelWavelengthSound;
+                    const markerY = oscHeight - 30; 
+
+                    ctxOsc.strokeStyle = '#60a5fa';
+                    ctxOsc.lineWidth = 2;
+                    ctxOsc.beginPath();
+                    ctxOsc.moveTo(startX, markerY - 10);
+                    ctxOsc.lineTo(startX, markerY);
+                    ctxOsc.lineTo(endX, markerY);
+                    ctxOsc.lineTo(endX, markerY - 10);
+                    ctxOsc.stroke();
+                    
+                    const labelPrecision = currentSoundRange === 'high' ? 4 : (currentSoundRange === 'mid' ? 3 : 2);
+                    ctxOsc.fillStyle = '#60a5fa';
+                    ctxOsc.font = '14px monospace';
+                    ctxOsc.textAlign = 'center';
+                    ctxOsc.fillText(`λ = ${lambdaSound.toFixed(labelPrecision)} m`, startX + (pixelWavelengthSound/2), markerY + 15);
+                }
+                
+                // Light Marker
+                if (pixelWavelengthLight < oscWidth) {
+                    const startX = ((oscTime*2) % 1) * pixelWavelengthLight;
+                    const endX = startX + pixelWavelengthLight;
+                    const markerY = oscHeight / 2 - 20;
+
+                    ctxOsc.strokeStyle = lightColor;
+                    ctxOsc.lineWidth = 2;
+                    ctxOsc.beginPath();
+                    ctxOsc.moveTo(startX, markerY + 10);
+                    ctxOsc.lineTo(startX, markerY);
+                    ctxOsc.lineTo(endX, markerY);
+                    ctxOsc.lineTo(endX, markerY + 10);
+                    ctxOsc.stroke();
+                    
+                    ctxOsc.fillStyle = lightColor;
+                    ctxOsc.font = '14px monospace';
+                    ctxOsc.textAlign = 'center';
+                    ctxOsc.fillText(`λ = ${lambdaLightNm.toFixed(0)} nm`, startX + (pixelWavelengthLight/2), markerY - 8);
+                }
+
+                requestAnimationFrame(animateOsc);
+            }
+
+            // --- Global Canvas Resizing ---
+            function resizeCanvas() {
+                // Prop
+                const propRect = canvasProp.parentElement.getBoundingClientRect();
+                canvasProp.width = propRect.width;
+                canvasProp.height = propRect.height;
+                propWidth = propRect.width;
+                propHeight = propRect.height;
+                metersPerPixel = 1800 / propWidth; // Ensure 1800 meters fits on screen
+                drawPropEnvironment();
+
+                // Osc
+                const oscRect = canvasOsc.parentElement.getBoundingClientRect();
+                canvasOsc.width = oscRect.width;
+                canvasOsc.height = oscRect.height;
+                oscWidth = oscRect.width;
+                oscHeight = oscRect.height;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Initialization
+            resizeCanvas();
+            updateOscillator();
+            initProp();
+            drawPropEnvironment();
+            animateOsc(); // Start continuous osc loop
+        };
+    </script>
+</body>
+</html>
