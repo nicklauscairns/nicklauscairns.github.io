@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photosynthesis Rate Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0fdf4; /* Light green background */
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 75%; /* 4:3 aspect ratio */
+            overflow: hidden;
+            background-color: #e0f2fe; /* Light blue background for water */
+            border-radius: 0.5rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Slider styling */
+        input[type=range] {
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #166534;
+            cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #166534;
+            cursor: pointer;
+            border: none;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased p-4">
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Header & Controls -->
+        <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
+            <h1 class="text-2xl font-bold mb-2 text-green-700">Photosynthesis Rate Lab</h1>
+            <p class="text-sm text-gray-600 mb-6">
+                Investigate how environmental factors affect the rate of photosynthesis in an aquatic plant (Elodea). Adjust the independent variables below and record the rate of oxygen production (bubbles/min).
+                Aligns with NGSS HS-LS1-5.
+            </p>
+
+            <div class="space-y-5 flex-grow">
+                <!-- Variables -->
+                <div>
+                    <div class="flex justify-between">
+                        <label class="block text-sm font-medium text-gray-700" for="lightIntensity">Light Intensity (%)</label>
+                        <span id="lightIntensityVal" class="text-sm font-semibold text-yellow-600">50</span>
+                    </div>
+                    <input type="range" id="lightIntensity" min="0" max="100" value="50" class="w-full mt-1 bg-yellow-200">
+                    <p class="text-xs text-gray-500 mt-1">Distance from light source affects intensity.</p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between">
+                        <label class="block text-sm font-medium text-gray-700" for="temperature">Temperature (&deg;C)</label>
+                        <span id="temperatureVal" class="text-sm font-semibold text-red-600">22</span>
+                    </div>
+                    <input type="range" id="temperature" min="0" max="50" value="22" class="w-full mt-1 bg-red-200">
+                </div>
+
+                <div>
+                    <div class="flex justify-between">
+                        <label class="block text-sm font-medium text-gray-700" for="co2Level">CO<sub>2</sub> Concentration (%)</label>
+                        <span id="co2LevelVal" class="text-sm font-semibold text-gray-600">0.04</span>
+                    </div>
+                    <input type="range" id="co2Level" min="0.00" max="0.50" step="0.01" value="0.04" class="w-full mt-1 bg-gray-200">
+                    <p class="text-xs text-gray-500 mt-1">Atmospheric average is ~0.04%.</p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between">
+                        <label class="block text-sm font-medium text-gray-700" for="wavelength">Light Wavelength (nm)</label>
+                        <span id="wavelengthVal" class="text-sm font-semibold" style="color: #10b981;">550 (Green)</span>
+                    </div>
+                    <input type="range" id="wavelength" min="400" max="700" step="10" value="550" class="w-full mt-1" style="background: linear-gradient(to right, violet, blue, green, yellow, orange, red);">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-6 flex flex-col space-y-3">
+                <div class="p-3 bg-green-50 rounded-md border border-green-200 text-center">
+                    <span class="block text-xs text-green-800 uppercase font-semibold">Current Rate</span>
+                    <span id="currentRateDisplay" class="text-2xl font-bold text-green-600">0.0</span>
+                    <span class="text-sm text-green-700"> O<sub>2</sub> bubbles / min</span>
+                </div>
+
+                <button id="recordBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition flex justify-center items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    Record Data Point
+                </button>
+            </div>
+        </div>
+
+        <!-- Simulation View & Data/Graphing -->
+        <div class="lg:col-span-2 flex flex-col space-y-6">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Visual Simulation -->
+                <div class="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col">
+                    <h2 class="text-lg font-semibold mb-2 text-gray-700">Experiment View</h2>
+                    <div class="canvas-container relative flex-grow">
+                        <canvas id="simCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col max-h-80 md:max-h-full">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-lg font-semibold text-gray-700">Data Table</h2>
+                        <button id="clearDataBtn" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 py-1 px-2 rounded transition">Clear Data</button>
+                    </div>
+                    <div class="overflow-y-auto flex-grow border border-gray-200 rounded">
+                        <table class="min-w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th scope="col" class="px-3 py-2">Trial</th>
+                                    <th scope="col" class="px-3 py-2">Light</th>
+                                    <th scope="col" class="px-3 py-2">Temp</th>
+                                    <th scope="col" class="px-3 py-2">CO<sub>2</sub></th>
+                                    <th scope="col" class="px-3 py-2">Wave</th>
+                                    <th scope="col" class="px-3 py-2 font-bold text-black">Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody">
+                                <!-- Data rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button id="exportCsvBtn" class="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1.5 px-4 border border-gray-300 rounded shadow-sm text-sm transition">
+                        Export to CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Graph Analysis -->
+            <div class="bg-white p-4 rounded-lg shadow-md h-72 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-semibold text-gray-700">Graph Analysis</h2>
+                    <div class="flex items-center space-x-2">
+                        <label for="xAxisSelect" class="text-sm text-gray-600">X-Axis:</label>
+                        <select id="xAxisSelect" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 p-1">
+                            <option value="light">Light Intensity (%)</option>
+                            <option value="temp">Temperature (&deg;C)</option>
+                            <option value="co2">CO2 Conc. (%)</option>
+                            <option value="wave">Wavelength (nm)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="relative w-full h-full pb-4 flex-grow">
+                    <canvas id="analysisChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Canvas Setup & Visuals ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        let bubbles = [];
+        let lastTime = 0;
+        let bubbleTimer = 0;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Bubble {
+            constructor(x, y) {
+                this.x = x + (Math.random() * 20 - 10);
+                this.y = y;
+                this.radius = Math.random() * 3 + 2;
+                this.speed = Math.random() * 1.5 + 1;
+                this.wobble = Math.random() * Math.PI * 2;
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.x += Math.sin(this.wobble) * 0.5;
+                this.wobble += 0.1;
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(200, 200, 255, 0.9)';
+                ctx.stroke();
+                ctx.closePath();
+
+                // Little reflection
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        function drawPlant(ctx, cx, cy, plantHeight) {
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            // Stem
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(5, -plantHeight/2, 0, -plantHeight);
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#15803d'; // green-700
+            ctx.stroke();
+
+            // Leaves
+            ctx.fillStyle = '#16a34a'; // green-600
+            const leafSpacing = 15;
+            for(let y = -20; y > -plantHeight; y -= leafSpacing) {
+                // Right leaf
+                ctx.beginPath();
+                ctx.ellipse(8, y, 10, 4, Math.PI / 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Left leaf
+                ctx.beginPath();
+                ctx.ellipse(-8, y - 5, 10, 4, -Math.PI / 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawBeaker(ctx) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const beakerWidth = width * 0.6;
+            const beakerHeight = height * 0.8;
+            const cx = width / 2;
+            const bottomY = height * 0.9;
+            const topY = height * 0.1;
+
+            // Water Level
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.6)'; // sky-200
+            ctx.fillRect(cx - beakerWidth/2 + 2, topY + 20, beakerWidth - 4, beakerHeight - 22);
+
+            // Beaker Outline
+            ctx.beginPath();
+            ctx.moveTo(cx - beakerWidth/2, topY);
+            ctx.lineTo(cx - beakerWidth/2, bottomY);
+            ctx.lineTo(cx + beakerWidth/2, bottomY);
+            ctx.lineTo(cx + beakerWidth/2, topY);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#94a3b8'; // slate-400
+            ctx.stroke();
+
+            // Lip
+            ctx.beginPath();
+            ctx.moveTo(cx - beakerWidth/2 - 5, topY);
+            ctx.lineTo(cx + beakerWidth/2 + 5, topY);
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            return { cx: cx, bottomY: bottomY, waterTop: topY + 20, plantTop: bottomY - (beakerHeight * 0.6) };
+        }
+
+        function animate(timestamp) {
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const beakerProps = drawBeaker(ctx);
+            drawPlant(ctx, beakerProps.cx, beakerProps.bottomY, beakerProps.bottomY - beakerProps.plantTop);
+
+            // Currently hardcoded rate, will be replaced with actual calculation
+            let currentRate = window.currentRate || 0;
+
+            if (currentRate > 0) {
+                // Higher rate = lower timer threshold
+                const threshold = 1000 / (currentRate / 60 * 5); // visually scale down real count for screen
+                bubbleTimer += deltaTime;
+                if (bubbleTimer > threshold) {
+                    bubbles.push(new Bubble(beakerProps.cx, beakerProps.plantTop + Math.random() * 50));
+                    bubbleTimer = 0;
+                }
+            }
+
+            // Update and draw bubbles
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                bubbles[i].update();
+                bubbles[i].draw(ctx);
+
+                // Remove if out of water
+                if (bubbles[i].y < beakerProps.waterTop) {
+                    bubbles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+
+        // --- Math Model & Logic ---
+
+        // UI Elements
+        const lightSlider = document.getElementById('lightIntensity');
+        const tempSlider = document.getElementById('temperature');
+        const co2Slider = document.getElementById('co2Level');
+        const waveSlider = document.getElementById('wavelength');
+
+        const lightVal = document.getElementById('lightIntensityVal');
+        const tempVal = document.getElementById('temperatureVal');
+        const co2Val = document.getElementById('co2LevelVal');
+        const waveVal = document.getElementById('wavelengthVal');
+
+        const currentRateDisplay = document.getElementById('currentRateDisplay');
+
+        function getWavelengthColor(nm) {
+            if (nm >= 400 && nm < 450) return "Violet";
+            if (nm >= 450 && nm < 500) return "Blue";
+            if (nm >= 500 && nm < 570) return "Green";
+            if (nm >= 570 && nm < 590) return "Yellow";
+            if (nm >= 590 && nm < 620) return "Orange";
+            if (nm >= 620 && nm <= 700) return "Red";
+            return "";
+        }
+
+        function calculatePhotosynthesisRate(light, temp, co2, wave) {
+            // 1. Light Effect (Limiting Factor Curve)
+            // Starts linear, levels off at a maximum (saturation point)
+            const maxLightRate = 1.0;
+            const lightEffect = maxLightRate * (1 - Math.exp(-0.05 * light));
+
+            // 2. CO2 Effect (Limiting Factor Curve)
+            const maxCo2Rate = 1.0;
+            const co2Effect = maxCo2Rate * (1 - Math.exp(-20 * co2));
+
+            // 3. Temperature Effect (Bell Curve / Enzyme Activity)
+            // Optimum around 25-30 C. Drops sharply after due to enzyme denaturation.
+            const optTemp = 28;
+            let tempEffect = 0;
+            if (temp <= optTemp) {
+                // Rising phase (Q10 rule approximation)
+                tempEffect = Math.exp(-Math.pow((temp - optTemp) / 12, 2));
+            } else {
+                // Denaturation phase (drops faster)
+                tempEffect = Math.exp(-Math.pow((temp - optTemp) / 5, 2));
+            }
+
+            // 4. Wavelength Effect (Action Spectrum)
+            // Peaks at Blue (~450nm) and Red (~660nm). Drops at Green (~550nm).
+            let waveEffect = 0;
+            // Blue peak
+            waveEffect += 0.8 * Math.exp(-Math.pow((wave - 440) / 40, 2));
+            // Red peak
+            waveEffect += 1.0 * Math.exp(-Math.pow((wave - 660) / 30, 2));
+            // Baseline
+            waveEffect += 0.1;
+            waveEffect = Math.min(1.0, waveEffect); // Cap at 1.0
+
+            // Combine factors
+            // Under Blackman's Law of Limiting Factors, the rate is often limited by the lowest factor
+            // Here we use a multiplicative model for smooth interactive simulation, but bounded.
+
+            // Base maximum rate (bubbles per minute)
+            const maxRate = 120;
+
+            let rate = maxRate * lightEffect * co2Effect * tempEffect * waveEffect;
+
+            // Add tiny bit of noise for realism
+            if (rate > 0.5) {
+                rate += (Math.random() - 0.5) * (rate * 0.05);
+            }
+
+            return Math.max(0, rate);
+        }
+
+        function updateSimulation() {
+            const light = parseFloat(lightSlider.value);
+            const temp = parseFloat(tempSlider.value);
+            const co2 = parseFloat(co2Slider.value);
+            const wave = parseFloat(waveSlider.value);
+
+            // Update UI Labels
+            lightVal.textContent = light;
+            tempVal.textContent = temp;
+            co2Val.textContent = co2.toFixed(2);
+
+            const colorName = getWavelengthColor(wave);
+            waveVal.textContent = `${wave} (${colorName})`;
+
+            // Update rate
+            window.currentRate = calculatePhotosynthesisRate(light, temp, co2, wave);
+            currentRateDisplay.textContent = window.currentRate.toFixed(1);
+        }
+
+        // Add Listeners
+        lightSlider.addEventListener('input', updateSimulation);
+        tempSlider.addEventListener('input', updateSimulation);
+        co2Slider.addEventListener('input', updateSimulation);
+        waveSlider.addEventListener('input', updateSimulation);
+
+        // Initial update
+        updateSimulation();
+
+        // --- Data Logging & Graphing ---
+        const recordBtn = document.getElementById('recordBtn');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const dataTableBody = document.getElementById('dataTableBody');
+        const xAxisSelect = document.getElementById('xAxisSelect');
+        const chartCtx = document.getElementById('analysisChart').getContext('2d');
+
+        let recordedData = [];
+        let trialCounter = 1;
+        let scatterChart;
+
+        function initChart() {
+            if (scatterChart) {
+                scatterChart.destroy();
+            }
+            scatterChart = new Chart(chartCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Photosynthesis Rate',
+                        data: [],
+                        backgroundColor: '#2563eb', // blue-600
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: getXAxisTitle()
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Rate (Bubbles / min)'
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `(${context.parsed.x}, ${context.parsed.y.toFixed(1)})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function getXAxisTitle() {
+            const val = xAxisSelect.value;
+            if (val === 'light') return 'Light Intensity (%)';
+            if (val === 'temp') return 'Temperature (°C)';
+            if (val === 'co2') return 'CO2 Concentration (%)';
+            if (val === 'wave') return 'Wavelength (nm)';
+            return '';
+        }
+
+        function updateChart() {
+            const xAxisVal = xAxisSelect.value;
+
+            const chartData = recordedData.map(d => {
+                let xVal = 0;
+                if (xAxisVal === 'light') xVal = d.light;
+                if (xAxisVal === 'temp') xVal = d.temp;
+                if (xAxisVal === 'co2') xVal = d.co2;
+                if (xAxisVal === 'wave') xVal = d.wave;
+
+                return { x: xVal, y: d.rate };
+            });
+
+            scatterChart.data.datasets[0].data = chartData;
+            scatterChart.options.scales.x.title.text = getXAxisTitle();
+            scatterChart.update();
+        }
+
+        function renderTable() {
+            dataTableBody.innerHTML = '';
+            recordedData.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.className = 'bg-white border-b hover:bg-gray-50';
+
+                tr.innerHTML = `
+                    <td class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">${d.trial}</td>
+                    <td class="px-3 py-2">${d.light}</td>
+                    <td class="px-3 py-2">${d.temp}</td>
+                    <td class="px-3 py-2">${d.co2.toFixed(2)}</td>
+                    <td class="px-3 py-2">${d.wave}</td>
+                    <td class="px-3 py-2 font-bold text-black">${d.rate.toFixed(1)}</td>
+                `;
+                dataTableBody.appendChild(tr);
+            });
+        }
+
+        recordBtn.addEventListener('click', () => {
+            const light = parseFloat(lightSlider.value);
+            const temp = parseFloat(tempSlider.value);
+            const co2 = parseFloat(co2Slider.value);
+            const wave = parseFloat(waveSlider.value);
+            const rate = window.currentRate;
+
+            recordedData.push({
+                trial: trialCounter++,
+                light: light,
+                temp: temp,
+                co2: co2,
+                wave: wave,
+                rate: rate
+            });
+
+            renderTable();
+            updateChart();
+
+            // Visual feedback for recording
+            recordBtn.classList.remove('bg-blue-600');
+            recordBtn.classList.add('bg-green-600');
+            setTimeout(() => {
+                recordBtn.classList.remove('bg-green-600');
+                recordBtn.classList.add('bg-blue-600');
+            }, 300);
+        });
+
+        clearDataBtn.addEventListener('click', () => {
+            recordedData = [];
+            trialCounter = 1;
+            renderTable();
+            updateChart();
+        });
+
+        xAxisSelect.addEventListener('change', updateChart);
+
+        exportCsvBtn.addEventListener('click', () => {
+            if (recordedData.length === 0) {
+                alert("No data to export!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Trial,Light(%),Temp(C),CO2(%),Wavelength(nm),Rate(bubbles/min)\n";
+
+            recordedData.forEach(d => {
+                csvContent += `${d.trial},${d.light},${d.temp},${d.co2.toFixed(2)},${d.wave},${d.rate.toFixed(1)}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "photosynthesis_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Initialize Chart
+        initChart();
+
+    </script>
+</body>
+</html>
