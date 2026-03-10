@@ -1,4 +1,4 @@
-# Simulations aligned to NGSS High School Physical Sciences Standards belong here
+# NGSS High School Physical Sciences Standards Aligned Content
 
 ## Simulations
 
