@@ -527,13 +527,7 @@
     showPath.addEventListener('change', drawFrame);
 
     // --- Physics Update ---
-    let lastTime = 0;
-    function gameLoop(timestamp) {
-        if (!isPlaying) return;
-        
-        let dt = (timestamp - lastTime) / 1000; // delta time in seconds
-        lastTime = timestamp;
-        
+    function calculatePhysics(dt, v_boat, v_river, theta_deg, boatPos, riverObserverPos, totalDistance_m, time, canvasWidth, scale) {
         // Cap dt to prevent huge jumps if tab is inactive
         if (dt > 0.1) dt = 0.1;
         
@@ -555,25 +549,65 @@
         
         // Accumulate Total Distance mathematically (Odometer)
         const currentSpeed = Math.sqrt(v_bs_x * v_bs_x + v_bs_y * v_bs_y);
-        totalDistance_m += currentSpeed * dt;
+        const newTotalDistance_m = totalDistance_m + currentSpeed * dt;
         
         // Update Position
-        boatPos.x += (v_bs_x * SCALE) * dt;
-        boatPos.y += (v_bs_y * SCALE) * dt;
+        const newBoatPos = {
+            x: boatPos.x + (v_bs_x * scale) * dt,
+            y: boatPos.y + (v_bs_y * scale) * dt
+        };
         
         // Update River Observer Position (drifts with the water)
-        riverObserverPos.x += (v_river * SCALE) * dt;
+        let newRiverObserverPos = {
+            x: riverObserverPos.x + (v_river * scale) * dt,
+            y: riverObserverPos.y
+        };
         // Wrap around if they float off screen
-        if (riverObserverPos.x > canvas.width + 40) {
-            riverObserverPos.x = -40;
+        if (newRiverObserverPos.x > canvasWidth + 40) {
+            newRiverObserverPos.x = -40;
         }
         
-        // Record path trail every few frames
-        if (time === 0 || time % 0.2 < dt) {
+        const newTime = time + dt;
+
+        return {
+            dt: dt,
+            newTotalDistance_m: newTotalDistance_m,
+            newBoatPos: newBoatPos,
+            newRiverObserverPos: newRiverObserverPos,
+            newTime: newTime,
+            v_bs_x: v_bs_x,
+            v_bs_y: v_bs_y
+        };
+    }
+
+    // Expose for testing
+    window.calculatePhysics = calculatePhysics;
+
+    let lastTime = 0;
+    function gameLoop(timestamp) {
+        if (!isPlaying) return;
+
+        let dt = (timestamp - lastTime) / 1000; // delta time in seconds
+        lastTime = timestamp;
+
+        const physicsResult = calculatePhysics(
+            dt, v_boat, v_river, theta_deg,
+            boatPos, riverObserverPos,
+            totalDistance_m, time,
+            canvas.width, SCALE
+        );
+
+        // Record path trail every few frames (using old time to preserve first frame recording)
+        if (time === 0 || time % 0.2 < physicsResult.dt) {
             boatPath.push({x: boatPos.x, y: boatPos.y});
         }
 
-        time += dt;
+        dt = physicsResult.dt;
+        totalDistance_m = physicsResult.newTotalDistance_m;
+        boatPos.x = physicsResult.newBoatPos.x;
+        boatPos.y = physicsResult.newBoatPos.y;
+        riverObserverPos.x = physicsResult.newRiverObserverPos.x;
+        time = physicsResult.newTime;
         
         // Check if reached the opposite shore
         if (boatPos.y <= SHORE_HEIGHT) {
