@@ -81,6 +81,8 @@ Design, build, and refine a device that works within given constraints to conver
 ### HS-PS3-4
 Plan and conduct an investigation to provide evidence that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
 
+- [Thermal Equilibrium Sandbox](ThermalEquilibriumSandbox.html) - An interactive closed-system sandbox to investigate how components of different materials, masses, and initial temperatures transfer heat until reaching a uniform energy distribution (thermal equilibrium).
+
 ### HS-PS3-5
 Develop and use a model of two objects interacting through electric or magnetic fields to illustrate the forces between objects and the changes in energy of the objects due to the interaction.
 

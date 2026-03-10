@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermal Equilibrium Sandbox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles if necessary, but mostly using Tailwind */
+        .container-box {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: #f3f4f6; /* Gray-100 */
+            border: 4px solid #9ca3af; /* Gray-400 */
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .substance-a, .substance-b {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.25rem;
+            transition: background-color 0.5s, width 0.5s;
+        }
+
+        .substance-a {
+            background-color: #ef4444; /* Red-500 default */
+            border-right: 2px dashed #9ca3af;
+        }
+
+        .substance-b {
+            background-color: #3b82f6; /* Blue-500 default */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-6 min-h-screen flex flex-col items-center">
+
+    <div class="max-w-6xl w-full">
+        <!-- Header Section -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Thermal Equilibrium Sandbox</h1>
+            <h2 class="text-2xl font-semibold text-gray-600 mb-4">HS-PS3-4: Energy Distribution in a Closed System</h2>
+            <p class="text-lg text-gray-700 max-w-4xl mx-auto">
+                Plan and conduct an investigation to provide evidence that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
+            </p>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Controls Panel (Left) -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h3 class="text-xl font-bold mb-4 border-b pb-2">Simulation Controls</h3>
+
+                <!-- Substance A Controls -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-lg text-red-600 mb-2">Substance A</h4>
+
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
+                        <select id="materialA" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option value="water">Water (C: 4.18 J/g°C)</option>
+                            <option value="aluminum">Aluminum (C: 0.90 J/g°C)</option>
+                            <option value="iron">Iron (C: 0.45 J/g°C)</option>
+                            <option value="copper" selected>Copper (C: 0.39 J/g°C)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mass (g): <span id="massAVal">100</span></label>
+                        <input type="range" id="massA" min="10" max="500" value="100" class="w-full accent-red-500">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Initial Temp (°C): <span id="tempAVal">90</span></label>
+                        <input type="range" id="tempA" min="0" max="100" value="90" class="w-full accent-red-500">
+                    </div>
+                </div>
+
+                <!-- Substance B Controls -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-lg text-blue-600 mb-2">Substance B</h4>
+
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
+                        <select id="materialB" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option value="water" selected>Water (C: 4.18 J/g°C)</option>
+                            <option value="aluminum">Aluminum (C: 0.90 J/g°C)</option>
+                            <option value="iron">Iron (C: 0.45 J/g°C)</option>
+                            <option value="copper">Copper (C: 0.39 J/g°C)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mass (g): <span id="massBVal">200</span></label>
+                        <input type="range" id="massB" min="10" max="500" value="200" class="w-full accent-blue-500">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Initial Temp (°C): <span id="tempBVal">20</span></label>
+                        <input type="range" id="tempB" min="0" max="100" value="20" class="w-full accent-blue-500">
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button id="startBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors">Start</button>
+                    <button id="resetBtn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors">Reset</button>
+                </div>
+            </div>
+
+            <!-- Visualization & Graph Panel (Right) -->
+            <div class="lg:col-span-2 flex flex-col gap-6">
+
+                <!-- Visual Container -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Closed System (Insulated Container)</h3>
+                    <div class="container-box shadow-inner">
+                        <div id="visA" class="substance-a" style="width: 33.33%;">
+                            <span id="visLabelA">Copper<br>90.0°C</span>
+                        </div>
+                        <div id="visB" class="substance-b" style="width: 66.67%;">
+                            <span id="visLabelB">Water<br>20.0°C</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center text-sm text-gray-600 italic">
+                        Thermal energy flows from the hotter substance to the colder substance until equilibrium is reached.
+                    </div>
+                </div>
+
+                <!-- Chart Canvas -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex-grow" style="max-height: 400px;">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Temperature vs. Time</h3>
+                    <div class="relative h-full w-full" style="min-height: 250px;">
+                        <canvas id="tempChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Educational Context Section -->
+        <div class="mt-8 bg-blue-50 p-6 rounded-xl shadow-md border border-blue-200">
+            <h3 class="text-2xl font-bold text-blue-900 mb-4">NGSS Three-Dimensional Learning</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Science & Engineering Practices</h4>
+                    <p class="text-sm text-gray-700"><strong>Planning and Carrying Out Investigations:</strong> Use this sandbox to plan an investigation. Change the mass or material of one component and observe how it affects the final equilibrium temperature. Collect data from the graph to support your evidence.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Disciplinary Core Ideas</h4>
+                    <p class="text-sm text-gray-700"><strong>PS3.B: Conservation of Energy and Energy Transfer:</strong> Energy cannot be created or destroyed. Uncontrolled systems always evolve toward more stable states—that is, toward a more uniform energy distribution (thermal equilibrium).</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Crosscutting Concepts</h4>
+                    <p class="text-sm text-gray-700"><strong>Systems and System Models:</strong> This simulation models a closed system (an insulated container). We define the boundaries such that no thermal energy escapes to the environment, allowing us to analyze the inputs, outputs, and internal energy transfer.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Constants and Data
+        const materials = {
+            water: { name: 'Water', c: 4.18, color: '#3b82f6' },      // Blue
+            aluminum: { name: 'Aluminum', c: 0.90, color: '#9ca3af' }, // Gray
+            iron: { name: 'Iron', c: 0.45, color: '#6b7280' },         // Dark Gray
+            copper: { name: 'Copper', c: 0.39, color: '#f59e0b' }      // Amber/Orange
+        };
+
+        // DOM Elements
+        const matASelect = document.getElementById('materialA');
+        const massAInput = document.getElementById('massA');
+        const tempAInput = document.getElementById('tempA');
+        const massAVal = document.getElementById('massAVal');
+        const tempAVal = document.getElementById('tempAVal');
+
+        const matBSelect = document.getElementById('materialB');
+        const massBInput = document.getElementById('massB');
+        const tempBInput = document.getElementById('tempB');
+        const massBVal = document.getElementById('massBVal');
+        const tempBVal = document.getElementById('tempBVal');
+
+        const visA = document.getElementById('visA');
+        const visB = document.getElementById('visB');
+        const visLabelA = document.getElementById('visLabelA');
+        const visLabelB = document.getElementById('visLabelB');
+
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Chart Setup
+        const ctx = document.getElementById('tempChart').getContext('2d');
+        let tempChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Substance A Temp (°C)',
+                        data: [],
+                        borderColor: materials.copper.color,
+                        backgroundColor: materials.copper.color,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Substance B Temp (°C)',
+                        data: [],
+                        borderColor: materials.water.color,
+                        backgroundColor: materials.water.color,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Time (Arbitrary Units)' },
+                        ticks: { display: false } // Hide x-axis ticks for smoother look
+                    },
+                    y: {
+                        title: { display: true, text: 'Temperature (°C)' },
+                        min: 0,
+                        suggestedMax: 100
+                    }
+                },
+                animation: false,
+                plugins: {
+                    legend: { position: 'top' }
+                }
+            }
+        });
+
+        // Simulation State
+        let isRunning = false;
+        let animationId;
+        let timeStep = 0;
+
+        let currentTempA = 90;
+        let currentTempB = 20;
+        let massA = 100;
+        let massB = 200;
+        let cA = materials.copper.c;
+        let cB = materials.water.c;
+
+        // The heat transfer coefficient dictates how fast equilibrium is reached.
+        // It's arbitrary for this visual simulation, but scaled to make a nice curve.
+        const heatTransferCoeff = 0.5;
+
+        // Helper to update colors and labels based on selections
+        function updateVisuals() {
+            if (isRunning) return; // Don't update inputs while running
+
+            const matAKey = matASelect.value;
+            const matBKey = matBSelect.value;
+
+            massA = parseFloat(massAInput.value);
+            massB = parseFloat(massBInput.value);
+            currentTempA = parseFloat(tempAInput.value);
+            currentTempB = parseFloat(tempBInput.value);
+            cA = materials[matAKey].c;
+            cB = materials[matBKey].c;
+
+            // Update Labels
+            massAVal.textContent = massA;
+            tempAVal.textContent = currentTempA;
+            massBVal.textContent = massB;
+            tempBVal.textContent = currentTempB;
+
+            // Update Visual Container
+            const totalMass = massA + massB;
+            const percentA = (massA / totalMass) * 100;
+            const percentB = 100 - percentA;
+
+            visA.style.width = `${percentA}%`;
+            visB.style.width = `${percentB}%`;
+
+            visA.style.backgroundColor = materials[matAKey].color;
+            visB.style.backgroundColor = materials[matBKey].color;
+
+            visLabelA.innerHTML = `${materials[matAKey].name}<br>${currentTempA.toFixed(1)}°C`;
+            visLabelB.innerHTML = `${materials[matBKey].name}<br>${currentTempB.toFixed(1)}°C`;
+
+            // Update Chart Colors & Labels
+            tempChart.data.datasets[0].borderColor = materials[matAKey].color;
+            tempChart.data.datasets[0].backgroundColor = materials[matAKey].color;
+            tempChart.data.datasets[0].label = `${materials[matAKey].name} Temp (°C)`;
+
+            tempChart.data.datasets[1].borderColor = materials[matBKey].color;
+            tempChart.data.datasets[1].backgroundColor = materials[matBKey].color;
+            tempChart.data.datasets[1].label = `${materials[matBKey].name} Temp (°C)`;
+
+            // Calculate overall max and min for graph bounds
+            tempChart.options.scales.y.min = Math.max(0, Math.min(currentTempA, currentTempB) - 10);
+            tempChart.options.scales.y.suggestedMax = Math.max(currentTempA, currentTempB) + 10;
+
+            resetChartData();
+            tempChart.update();
+        }
+
+        function resetChartData() {
+            tempChart.data.labels = [0];
+            tempChart.data.datasets[0].data = [currentTempA];
+            tempChart.data.datasets[1].data = [currentTempB];
+            timeStep = 0;
+        }
+
+        // Event Listeners for Controls
+        const inputs = [matASelect, massAInput, tempAInput, matBSelect, massBInput, tempBInput];
+        inputs.forEach(input => {
+            input.addEventListener('input', updateVisuals);
+        });
+
+        // The Simulation Loop
+        function simulationStep() {
+            if (!isRunning) return;
+
+            // Q = mcΔT
+            // Rate of heat transfer dq/dt = k * (T_hot - T_cold)
+            // Here we just use a simple discrete step.
+
+            const deltaT = currentTempA - currentTempB;
+
+            // If they are practically at the same temperature, stop.
+            if (Math.abs(deltaT) < 0.05) {
+                currentTempA = currentTempB = (currentTempA + currentTempB) / 2; // Snap to exact average
+                updateVisLabels();
+                pushChartData();
+                stopSimulation();
+                return;
+            }
+
+            // Calculate heat transferred in this tick
+            // q = h * (Ta - Tb)
+            const q = heatTransferCoeff * deltaT;
+
+            // Update temperatures: ΔT = q / (m * c)
+            // If Ta > Tb, Ta loses heat (q is pos, subtract), Tb gains heat (q is pos, add)
+            currentTempA -= q / (massA * cA);
+            currentTempB += q / (massB * cB);
+
+            timeStep++;
+
+            // Throttle updates for performance / visual smoothness
+            if (timeStep % 2 === 0) {
+                updateVisLabels();
+                pushChartData();
+            }
+
+            animationId = requestAnimationFrame(simulationStep);
+        }
+
+        function updateVisLabels() {
+            const matAKey = matASelect.value;
+            const matBKey = matBSelect.value;
+
+            // To simulate visual blending, we could adjust colors towards a middle purple,
+            // but for scientific clarity, keeping distinct colors and updating text is better.
+            visLabelA.innerHTML = `${materials[matAKey].name}<br>${currentTempA.toFixed(1)}°C`;
+            visLabelB.innerHTML = `${materials[matBKey].name}<br>${currentTempB.toFixed(1)}°C`;
+        }
+
+        function pushChartData() {
+            tempChart.data.labels.push(timeStep);
+            tempChart.data.datasets[0].data.push(currentTempA);
+            tempChart.data.datasets[1].data.push(currentTempB);
+
+            // Keep chart from getting too long if equilibrium takes forever
+            if (tempChart.data.labels.length > 500) {
+                tempChart.data.labels.shift();
+                tempChart.data.datasets[0].data.shift();
+                tempChart.data.datasets[1].data.shift();
+            }
+
+            tempChart.update();
+        }
+
+        function startSimulation() {
+            if (isRunning) return;
+
+            // Lock inputs
+            inputs.forEach(input => input.disabled = true);
+            startBtn.disabled = true;
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            isRunning = true;
+
+            // Explicitly set document.hidden to false for Playwright headless mode if needed
+            // This is a common trick to ensure rAF fires
+            if (document.hidden !== undefined) {
+                Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+            }
+
+            // Calculate Theoretical Final Temp for comparison/logging (Optional, good for verification)
+            // m1c1(T1 - Tf) = m2c2(Tf - T2)  -> Tf = (m1c1T1 + m2c2T2) / (m1c1 + m2c2)
+            const tFinal = (massA * cA * currentTempA + massB * cB * currentTempB) / (massA * cA + massB * cB);
+            console.log(`Theoretical Final Temperature: ${tFinal.toFixed(2)} °C`);
+
+            // Start loop
+            animationId = requestAnimationFrame(simulationStep);
+        }
+
+        function stopSimulation() {
+            isRunning = false;
+            cancelAnimationFrame(animationId);
+
+            // Re-enable start button to allow running again if wanted without full reset
+            // but usually a reset is better. Let's force reset to run again.
+        }
+
+        function resetSimulation() {
+            stopSimulation();
+
+            // Unlock inputs
+            inputs.forEach(input => input.disabled = false);
+            startBtn.disabled = false;
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            updateVisuals();
+        }
+
+        startBtn.addEventListener('click', startSimulation);
+        resetBtn.addEventListener('click', resetSimulation);
+
+        // Initial setup
+        updateVisuals();
+
+        // Expose functions globally for Playwright testing
+        window.simulationState = {
+            get isRunning() { return isRunning; },
+            get currentTempA() { return currentTempA; },
+            get currentTempB() { return currentTempB; }
+        };
+    </script>
+</body>
+</html>
