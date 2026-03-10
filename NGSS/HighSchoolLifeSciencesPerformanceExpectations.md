@@ -1,6 +1,5 @@
 # NGSS High School Life Sciences Performance Expectations
 
-
 ## HS-LS1-1
 Students who demonstrate understanding can:
 ### Construct an explanation based on evidence for how the structure of DNA determines the structure of proteins which carry out the essential functions of life through systems of specialized cells.
@@ -9,9 +8,8 @@ Assessment Boundary: Assessment does not include identification of specific cell
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
-
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
 * Construct an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, models, theories, simulations, peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future.
 
@@ -38,9 +36,8 @@ Assessment Boundary: Assessment does not include interactions and functions at t
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
 
 * Develop and use a model based on evidence to illustrate the relationships between systems or between components of a system.
 
@@ -66,11 +63,15 @@ Assessment Boundary: Assessment does not include the cellular processes involved
 
 #### Science and Engineering Practices
 
-##### Planning and Carrying Out Investigations Planning
+##### Planning and Carrying Out Investigations
+Planning and carrying out investigations in 9- 12 builds on K-8 experiences and progresses to include investigations that provide evidence for and test conceptual, mathematical, physical, and empirical models.
 
-and carrying out investigations in 9- 12 builds on K-8 experiences and progresses to include investigations that provide evidence for and test conceptual, mathematical, physical, and empirical models.
+* Plan and conduct an investigation individually and collaboratively to produce data to serve as the basis for evidence, and in the design: decide on types, how much, and accuracy of data needed to produce reliable measurements and consider limitations on the precision of the data (e.g., number of trials, cost, risk, time), and refine the design accordingly.
 
-* Plan and conduct an investigation individually and collaboratively to produce data to serve as the basis for evidence, and in the design: decide on types, how much, and accuracy of data needed to produce reliable measurements and consider limitations on the precision of the data (e.g., number of trials, cost, risk, time), and refine the design accordingly. --------------------------------
+##### Connections to Nature of Science
+Scientific Investigations Use a Variety of Methods
+
+* Scientific inquiry is characterized by a common set of values that include: logical thinking, precision, open-mindedness, objectivity, skepticism, replicability of results, and honest and ethical reporting of findings.
 
 #### Disciplinary Core Ideas
 
@@ -93,17 +94,14 @@ Assessment Boundary: Assessment does not include specific gene control mechanism
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
 
 * Use a model based on evidence to illustrate the relationships between systems or between components of a system.
 
 #### Disciplinary Core Ideas
 
-##### LS1.B: Growth and Development of
-
-* Organisms
+##### LS1.B: Growth and Development of Organisms
 
 * In multicellular organisms individual cells grow and then divide via a process called mitosis, thereby allowing the organism to grow. The organism begins as a single cell (fertilized egg) that divides successively to produce many cells, with each parent cell passing identical genetic material (two variants of each chromosome pair) to both daughter cells. Cellular division and differentiation produce and maintain a complex organism, composed of systems of tissues and organs that work together to meet the needs of the whole organism.
 
@@ -123,16 +121,14 @@ Assessment Boundary: Assessment does not include specific biochemical steps.
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
 
 * Use a model based on evidence to illustrate the relationships between systems or between components of a system.
 
 #### Disciplinary Core Ideas
 
 ##### LS1.C: Organization for Matter and Energy Flow in Organisms
-
 
 * The process of photosynthesis converts light energy to stored chemical energy by converting carbon dioxide plus water into sugars plus released oxygen.
 
@@ -150,16 +146,14 @@ Clarification Statement: Emphasis is on using evidence from models and simulatio
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
-
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
 * Construct and revise an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, models, theories, simulations, peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future.
 
 #### Disciplinary Core Ideas
 
 ##### LS1.C: Organization for Matter and Energy Flow in Organisms
-
 
 * The sugar molecules thus formed contain carbon, hydrogen, and oxygen: their hydrocarbon backbones are used to make amino acids and other carbon-based molecules that can be assembled into larger molecules (such as proteins or DNA), used for example to form new cells.
 
@@ -181,16 +175,14 @@ Assessment Boundary: Assessment should not include identification of the steps o
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.
 
 * Use a model based on evidence to illustrate the relationships between systems or between components of a system.
 
 #### Disciplinary Core Ideas
 
 ##### LS1.C: Organization for Matter and Energy Flow in Organisms
-
 
 * As matter and energy flow through different organizational levels of living systems, chemical elements are recombined in different ways to form different products.
 
@@ -211,17 +203,14 @@ Assessment Boundary: Assessment does not include deriving mathematical equations
 
 #### Science and Engineering Practices
 
-##### Using Mathematics and Computational Thinking Mathematical
-
-and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
+##### Using Mathematics and Computational Thinking
+Mathematical and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
 
 * Use mathematical and/or computational representations of phenomena or design solutions to support explanations.
 
 #### Disciplinary Core Ideas
 
-##### LS2.A: Interdependent Relationships in
-
-* Ecosystems
+##### LS2.A: Interdependent Relationships in Ecosystems
 
 * Ecosystems have carrying capacities, which are limits to the numbers of organisms and populations they can support. These limits result from such factors as the availability of living and nonliving resources and from such challenges such as predation, competition, and disease. Organisms would have the capacity to produce populations of great size were it not for the fact that environments and resources are finite. This fundamental tension affects the abundance (number of individuals) of species in any given ecosystem.
 
@@ -241,19 +230,26 @@ Assessment Boundary: Assessment is limited to provided data.
 
 #### Science and Engineering Practices
 
-##### Using Mathematics and Computational Thinking Mathematical
+##### Using Mathematics and Computational Thinking
+Mathematical and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
 
-and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
+* Use mathematical representations of phenomena or design solutions to support and revise explanations.
 
-* Use mathematical representations of phenomena or design solutions to support and revise explanations. --------------------------------
+##### Connections to Nature of Science
+Scientific Knowledge is Open to Revision in Light of New Evidence
+
+* Most scientific knowledge is quite durable, but is, in principle, subject to change based on new evidence and/or reinterpretation of existing evidence.
 
 #### Disciplinary Core Ideas
 
-##### LS2.A: Interdependent Relationships in
+##### LS2.A: Interdependent Relationships in Ecosystems
 
-* Ecosystems
+* Ecosystems have carrying capacities, which are limits to the numbers of organisms and populations they can support. These limits result from such factors as the availability of living and nonliving resources and from such challenges such as predation, competition, and disease. Organisms would have the capacity to produce populations of great size were it not for the fact that environments and resources are finite. This fundamental tension affects the abundance (number of individuals) of species in any given ecosystem.
 
-* Ecosystems have carrying capacities, which are limits to the numbers of organisms and populations they can support. These limits result from such factors as the availability of living and nonliving resources and from such challenges such as predation, competition, and disease. Organisms would have the capacity to produce populations of great size were it not for the fact that environments and resources are finite. This fundamental tension affects the
+##### LS2.C: Ecosystem Dynamics, Functioning, and Resilience
+
+
+* A complex set of interactions within an ecosystem can keep its numbers and types of organisms relatively constant over long periods of time under stable conditions. If a modest biological or physical disturbance to an ecosystem occurs, it may return to its more or less original status (i.e., the ecosystem is resilient), as opposed to becoming a very different ecosystem. Extreme fluctuations in conditions or the size of any population, however, can challenge the functioning of ecosystems in terms of resources and habitat availability.
 
 #### Crosscutting Concepts
 
@@ -271,17 +267,19 @@ Assessment Boundary: Assessment does not include the specific chemical processes
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
+* Construct and revise an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, models, theories, simulations, and peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future.
 
-* Construct and revise an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, models, theories, simulations, and peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future. --------------------------------
+##### Connections to Nature of Science
+Scientific Knowledge is Open to Revision in Light of New Evidence
+
+* Most scientific knowledge is quite durable, but is, in principle, subject to change based on new evidence and/or reinterpretation of existing evidence.
 
 #### Disciplinary Core Ideas
 
-##### LS2.B: Cycles of Matter and Energy Transfer in
-
-* Ecosystems
+##### LS2.B: Cycles of Matter and Energy Transfer in Ecosystems
 
 * Photosynthesis and cellular respiration (including anaerobic processes) provide most of the energy for life processes.
 
@@ -301,17 +299,14 @@ Assessment Boundary: Assessment is limited to proportional reasoning to describe
 
 #### Science and Engineering Practices
 
-##### Using Mathematical and Computational Thinking Mathematical
-
-and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
+##### Using Mathematics and Computational Thinking
+Mathematical and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
 
 * Use mathematical representations of phenomena or design solutions to support claims.
 
 #### Disciplinary Core Ideas
 
-##### LS2.B: Cycles of Matter and Energy Transfer in
-
-* Ecosystems
+##### LS2.B: Cycles of Matter and Energy Transfer in Ecosystems
 
 * Plants or algae form the lowest level of the food web. At each link upward in a food web, only a small fraction of the matter consumed at the lower level is transferred upward, to produce growth and release energy in cellular respiration at the higher level. Given this inefficiency, there are generally fewer organisms at higher levels of a food web. Some matter reacts to release energy for life functions, some matter is stored in newly made structures, and much is discarded. The chemical elements that make up the molecules of organisms pass through food webs and into and out of the atmosphere and soil, and they are combined and recombined in different ways. At each link in an ecosystem, matter and energy are conserved.
 
@@ -331,19 +326,19 @@ Assessment Boundary: Assessment does not include the specific chemical steps of 
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
 
 * Develop a model based on evidence to illustrate the relationships between systems or components of a system.
 
 #### Disciplinary Core Ideas
 
-##### LS2.B: Cycles of Matter and Energy Transfer in
+##### LS2.B: Cycles of Matter and Energy Transfer in Ecosystems
 
-* Ecosystems
+* Photosynthesis and cellular respiration are important components of the carbon cycle, in which carbon is exchanged among the biosphere, atmosphere, oceans, and geosphere through chemical, physical, geological, and biological processes.
 
-* Photosynthesis and cellular respiration are important components of the carbon cycle, in which carbon is exchanged among the biosphere, atmosphere, oceans, and geosphere through chemical, physical, geological, and biological processes. PS3.D: Energy in Chemical Processes
+##### PS3.D: Energy in Chemical Processes
+
 
 * The main way that solar energy is captured and stored on Earth is through the complex chemical process known as photosynthesis. (secondary)
 
@@ -360,19 +355,21 @@ Students who demonstrate understanding can:
 
 #### Science and Engineering Practices
 
-##### Engaging in Argument
+##### Engaging in Argument from Evidence
+Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
 
-from Evidence Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
+* Evaluate the claims, evidence, and reasoning behind currently accepted explanations or solutions to determine the merits of arguments.
 
-* Evaluate the claims, evidence, and reasoning behind currently accepted explanations or solutions to determine the merits of arguments. --------------------------------
+##### Connections to Nature of Science
+Scientific Knowledge is Open to Revision in Light of New Evidence
+
+* Scientific argumentation is a mode of logical discourse used to clarify the strength of relationships between ideas and evidence that may result in revision of an explanation.
 
 #### Disciplinary Core Ideas
 
-##### LS2.C: Ecosystem Dynamics, Functioning, and
+##### LS2.C: Ecosystem Dynamics, Functioning, and Resilience
 
-* Resilience
-
-* A complex set of interactions within an ecosystem can keep its numbers and types of organisms relatively constant over long periods of time under stable conditions. If a modest biological or physical disturbance to an ecosystem occurs, it may return to its more or less original status (i.e., the ecosystem is resilient), as opposed to becoming a very different ecosystem. Extreme
+* A complex set of interactions within an ecosystem can keep its numbers and types of organisms relatively constant over long periods of time under stable conditions. If a modest biological or physical disturbance to an ecosystem occurs, it may return to its more or less original status (i.e., the ecosystem is resilient), as opposed to becoming a very different ecosystem. Extreme fluctuations in conditions or the size of any population, however, can challenge the functioning of ecosystems in terms of resources and habitat availability.
 
 #### Crosscutting Concepts
 
@@ -388,23 +385,26 @@ Clarification Statement: Examples of human activities can include urbanization, 
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
-
-* Design, evaluate, and refine a solution to a complex real-world problem, based on scientific knowledge, student-generated sources of evidence, prioritized criteria, and tradeoff considerations.
+* Design, evaluate, and refine a solution to a complex real-world problem, based on scientific knowledge, student-generated sources of evidence, prioritized criteria, and tradeoff considerations. June 2015
 
 #### Disciplinary Core Ideas
 
-##### LS2.C: Ecosystem Dynamics, Functioning, and
+##### LS2.C: Ecosystem Dynamics, Functioning, and Resilience
 
-* Resilience
+* Moreover, anthropogenic changes (induced by human activity) in the environment — including habitat destruction, pollution, introduction of invasive species, overexploitation, and climate change — can disrupt an ecosystem and threaten the survival of some species.
 
-* Moreover, anthropogenic changes (induced by human activity) in the environment — including habitat destruction, pollution, introduction of invasive species, overexploitation, and climate change — can disrupt an ecosystem and threaten the survival of some species. LS4.D: Biodiversity and Humans
+##### LS4.D: Biodiversity and Humans
+
 
 * Biodiversity is increased by the formation of new species (speciation) and decreased by the loss of species (extinction). (secondary)
 
-* Humans depend on the living world for the resources and other benefits provided by biodiversity. But human activity is also having adverse impacts on biodiversity through overpopulation, overexploitation, habitat destruction, pollution, introduction of invasive species, and climate change. Thus sustaining biodiversity so that ecosystem functioning and productivity are maintained is essential to supporting and enhancing life on Earth. Sustaining biodiversity also aids humanity by preserving landscapes of recreational or inspirational value. (secondary) (Note: This Disciplinary Core Idea is also addressed by HS- LS4-6.) ETS1.B: Developing Possible Solutions
+* Humans depend on the living world for the resources and other benefits provided by biodiversity. But human activity is also having adverse impacts on biodiversity through overpopulation, overexploitation, habitat destruction, pollution, introduction of invasive species, and climate change. Thus sustaining biodiversity so that ecosystem functioning and productivity are maintained is essential to supporting and enhancing life on Earth. Sustaining biodiversity also aids humanity by preserving landscapes of recreational or inspirational value. (secondary) (Note: This Disciplinary Core Idea is also addressed by HS- LS4-6.)
+
+##### ETS1.B: Developing Possible Solutions
+
 
 * When evaluating solutions it is important to take into account a range of constraints including cost, safety, reliability and aesthetics and to consider social, cultural and environmental impacts. (secondary)
 
@@ -412,7 +412,7 @@ explanations and designing solutions in 9–12 builds on K–8 experiences and p
 
 ##### Stability and Change
 
-* Much of science deals with constructing explanations of how things change and how they remain stable.
+* Much of science deals with constructing explanations of how things change and how they remain stable. Page 22 of 41
 
 
 ## HS-LS2-8
@@ -422,17 +422,19 @@ Clarification Statement: Emphasis is on: (1) distinguishing between group and in
 
 #### Science and Engineering Practices
 
-##### Engaging in Argument
+##### Engaging in Argument from Evidence
+Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
 
-from Evidence Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
+* Evaluate the evidence behind currently accepted explanations to determine the merits of arguments.
 
-* Evaluate the evidence behind currently accepted explanations to determine the merits of arguments. -------------------------------
+##### Connections to Nature of Science
+Scientific Knowledge is Open to Revision in Light of New Evidence
+
+* Scientific argumentation is a mode of logical discourse used to clarify the strength of relationships between ideas and evidence that may result in revision of an explanation.
 
 #### Disciplinary Core Ideas
 
-##### LS2.D: Social Interactions and Group
-
-* Behavior
+##### LS2.D: Social Interactions and Group Behavior
 
 * Group behavior has evolved because membership can increase the chances of survival for individuals and their genetic relatives.
 
@@ -451,9 +453,8 @@ Assessment Boundary: Assessment does not include the phases of meiosis or the bi
 
 #### Science and Engineering Practices
 
-##### Asking Questions and Defining Problems Asking
-
-questions and defining problems in 9-12 builds on K-8 experiences and progresses to formulating, refining and evaluating empirically testable questions and design problems using models and simulations.
+##### Asking Questions and Defining Problems
+Asking questions and defining problems in 9-12 builds on K-8 experiences and progresses to formulating, refining and evaluating empirically testable questions and design problems using models and simulations.
 
 * Ask questions that arise from examining models or a theory to clarify relationships.
 
@@ -461,7 +462,10 @@ questions and defining problems in 9-12 builds on K-8 experiences and progresses
 
 ##### LS1.A: Structure and Function
 
-* All cells contain genetic information in the form of DNA molecules. Genes are regions in the DNA that contain the instructions that code for the formation of proteins. (secondary) (Note: This Disciplinary Core Idea is also addressed by HS-LS1-1.) LS3.A: Inheritance of Traits
+* All cells contain genetic information in the form of DNA molecules. Genes are regions in the DNA that contain the instructions that code for the formation of proteins. (secondary) (Note: This Disciplinary Core Idea is also addressed by HS-LS1-1.)
+
+##### LS3.A: Inheritance of Traits
+
 
 * Each chromosome consists of a single very long DNA molecule, and each gene on the chromosome is a particular segment of that DNA. The instructions for forming species’ characteristics are carried in DNA. All cells in an organism have the same genetic content, but the genes used (expressed) by the cell may be regulated in different ways. Not all DNA codes for a protein; some segments of DNA are involved in regulatory or structural functions, and some have no as-yet known function.
 
@@ -480,17 +484,14 @@ Assessment Boundary: Assessment does not include the phases of meiosis or the bi
 
 #### Science and Engineering Practices
 
-##### Engaging in Argument
-
-from Evidence Engaging in argument from evidence in 9-12 builds on K-8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
+##### Engaging in Argument from Evidence
+Engaging in argument from evidence in 9-12 builds on K-8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
 
 * Make and defend a claim based on evidence about the natural world that reflects scientific knowledge and student-generated evidence.
 
 #### Disciplinary Core Ideas
 
-##### LS3.B: Variation of
-
-* Traits
+##### LS3.B: Variation of Traits
 
 * In sexual reproduction, chromosomes can sometimes swap sections during the process of meiosis (cell division), thereby creating new genetic combinations and thus more genetic variation. Although DNA replication is tightly regulated and remarkably accurate, errors do occur and result in mutations, which are also a source of genetic variation. Environmental factors can also cause mutations in genes, and viable mutations are inherited.
 
@@ -512,23 +513,28 @@ Assessment Boundary: Assessment does not include Hardy-Weinberg calculations.
 
 #### Science and Engineering Practices
 
-##### Analyzing and Interpreting Data Analyzing
+##### Analyzing and Interpreting Data
+Analyzing data in 9-12 builds on K-8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models to generate and analyze data.
 
-data in 9-12 builds on K-8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models
+* Apply concepts of statistics and probability (including determining function fits to data, slope, intercept, and correlation coefficient for linear fits) to scientific and engineering questions and problems, using digital tools when feasible.
 
 #### Disciplinary Core Ideas
 
-##### LS3.B: Variation of
+##### LS3.B: Variation of Traits
 
-* Traits
-
-* Environmental factors also affect expression of traits, and hence affect the probability of occurrences of traits in a population.
+* Environmental factors also affect expression of traits, and hence affect the probability of occurrences of traits in a population. Thus, the variation and distribution of traits observed depends on both genetic and environmental factors.
 
 #### Crosscutting Concepts
 
-##### Scale, Proportion, and Quantity Algebraic
+##### Scale, Proportion, and Quantity
+Algebraic thinking is used to examine scientific data and predict the effect of a change in one variable on another (e.g., linear growth vs. exponential growth).
 
-thinking is used to examine scientific data and predict the effect of a change in one variable on another (e.g., linear growth vs. exponential growth). ------------------------
+##### Connections to Nature of Science
+Science is a Human Endeavor
+
+* Technological advances have influenced the progress of science and science has influenced advances in technology.
+
+* Science and engineering are influenced by society and society is influenced by science and engineering.
 
 
 ## HS-LS4-1
@@ -538,27 +544,31 @@ Clarification Statement: Emphasis is on a conceptual understanding of the role e
 
 #### Science and Engineering Practices
 
-##### Obtaining, Evaluating, and Communicating Information Obtaining,
+##### Obtaining, Evaluating, and Communicating Information
+Obtaining, evaluating, and communicating information in 9–12 builds on K–8 experiences and progresses to evaluating the validity and reliability of the claims, methods, and designs.
 
-evaluating, and communicating information in 9–12 builds on K–8 experiences and progresses to evaluating the validity and reliability of the claims, methods, and designs.
+* Communicate scientific information (e.g., about phenomena and/or the process of development and the design and performance of a proposed process or system) in multiple formats (including orally, graphically, textually, and mathematically).
 
-* Communicate scientific information (e.g., about phenomena and/or the process of development and the design and performance of a proposed process or system) in multiple formats (including orally, graphically, textually, and mathematically). --------------------------------
+##### Connections to Nature of Science
+Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
+
+* A scientific theory is a substantiated explanation of some aspect of the natural world, based on a body of facts that have been repeatedly confirmed through observation and experiment and the science community validates each theory before it is accepted. If new evidence is discovered that the theory does not accommodate, the theory is generally modified in light of this new evidence.
 
 #### Disciplinary Core Ideas
 
-##### LS4.A: Evidence of Common Ancestry and
+##### LS4.A: Evidence of Common Ancestry and Diversity
 
-* Diversity
-
-* Genetic information, like the fossil record, provides evidence of evolution. DNA sequences vary among species, but there are many overlaps; in fact, the ongoing branching that produces multiple lines of descent can be inferred by comparing the DNA sequences of different organisms. Such information is also derivable from the similarities and differences in
+* Genetic information, like the fossil record, provides evidence of evolution. DNA sequences vary among species, but there are many overlaps; in fact, the ongoing branching that produces multiple lines of descent can be inferred by comparing the DNA sequences of different organisms. Such information is also derivable from the similarities and differences in amino acid sequences and from anatomical and embryological evidence.
 
 #### Crosscutting Concepts
 
-##### Patterns Different
+##### Patterns
+Different patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena.
 
-patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena. ----------------------- Connections to Nature of Science
-
+##### Connections to Nature of Science
 Scientific Knowledge Assumes an Order and Consistency in Natural Systems
+
+* Scientific knowledge is based on the assumption that natural laws operate today as they did in the past and they will continue to do so in the future.
 
 
 ## HS-LS4-2
@@ -568,19 +578,19 @@ Clarification Statement: Emphasis is on using evidence to explain the influence 
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
-
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
 * Construct an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, models, theories, simulations, peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future.
 
 #### Disciplinary Core Ideas
 
-##### LS4.B: Natural
+##### LS4.B: Natural Selection
 
-* Selection
+* Natural selection occurs only if there is both (1) variation in the genetic information between organisms in a population and (2) variation in the expression of that genetic information — that is, trait variation — that leads to differences in performance among individuals.
 
-* Natural selection occurs only if there is both (1) variation in the genetic information between organisms in a population and (2) variation in the expression of that genetic information — that is, trait variation — that leads to differences in performance among individuals. LS4.C: Adaptation
+##### LS4.C: Adaptation
+
 
 * Evolution is a consequence of the interaction of four factors: (1) the potential for a species to increase in number, (2) the genetic variation of individuals in a species due to mutation and sexual reproduction, (3) competition for an environment’s limited supply of the resources that individuals need in order to survive and reproduce, and (4) the ensuing proliferation of those organisms that are better able to survive and reproduce in that environment.
 
@@ -598,21 +608,21 @@ Clarification Statement: Emphasis is on analyzing shifts in numerical distributi
 
 #### Science and Engineering Practices
 
-##### Analyzing and Interpreting Data Analyzing
-
-data in 9–12 builds on K–8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models to generate and analyze data.
+##### Analyzing and Interpreting Data
+Analyzing data in 9–12 builds on K–8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models to generate and analyze data.
 
 * Apply concepts of statistics and probability (including determining function fits to data, slope, intercept, and correlation coefficient for linear fits) to scientific and engineering questions and problems, using digital tools when feasible.
 
 #### Disciplinary Core Ideas
 
-##### LS4.B: Natural
-
-* Selection
+##### LS4.B: Natural Selection
 
 * Natural selection occurs only if there is both (1) variation in the genetic information between organisms in a population and (2) variation in the expression of that genetic information — that is, trait variation — that leads to differences in performance among individuals.
 
-* The traits that positively affect survival are more likely to be reproduced, and thus are more common in the population. LS4.C: Adaptation
+* The traits that positively affect survival are more likely to be reproduced, and thus are more common in the population.
+
+##### LS4.C: Adaptation
+
 
 * Natural selection leads to adaptation, that is, to a population dominated by organisms that are anatomically, behaviorally, and physiologically well suited to survive and reproduce in a specific environment. That is, the differential survival and reproduction of organisms in a population that have an advantageous heritable trait leads to an increase in the proportion of individuals in future generations that have the trait and to a decrease in the proportion of individuals that do not.
 
@@ -632,9 +642,8 @@ Clarification Statement: Emphasis is on using data to provide evidence for how s
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
-
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
 * Construct an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, models, theories, simulations, peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future.
 
@@ -648,8 +657,9 @@ explanations and designing solutions in 9–12 builds on K–8 experiences and p
 
 ##### Cause and Effect
 
-* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects. ------------------------ Connections to Nature of Science
+* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects.
 
+##### Connections to Nature of Science
 Scientific Knowledge Assumes an Order and Consistency in Natural Systems
 
 * Scientific knowledge is based on the assumption that natural laws operate today as they did in the past and they will continue to do so in the future.
@@ -662,9 +672,8 @@ Clarification Statement: Emphasis is on determining cause and effect relationshi
 
 #### Science and Engineering Practices
 
-##### Engaging in Argument
-
-from Evidence Engaging in argument from evidence in 9- 12 builds on K-8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current or historical episodes in science.
+##### Engaging in Argument from Evidence
+Engaging in argument from evidence in 9- 12 builds on K-8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current or historical episodes in science.
 
 * Evaluate the evidence behind currently accepted explanations or solutions to determine the merits of arguments.
 
@@ -690,19 +699,24 @@ Clarification Statement: Emphasis is on designing solutions for a proposed probl
 
 #### Science and Engineering Practices
 
-##### Using Mathematics and Computational Thinking Mathematical
+##### Using Mathematics and Computational Thinking
+Mathematical and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis, a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms, and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
 
-and computational thinking in 9-12 builds on K-8 experiences and progresses to using algebraic thinking and analysis, a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms, and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
-
-* Create or revise a simulation of a phenomenon, designed device, process, or system.
+* Create or revise a simulation of a phenomenon, designed device, process, or system. June 2015
 
 #### Disciplinary Core Ideas
 
 ##### LS4.C: Adaptation
 
-* Changes in the physical environment, whether naturally occurring or human induced, have thus contributed to the expansion of some species, the emergence of new distinct species as populations diverge under different conditions, and the decline — and sometimes the extinction — of some species. LS4.D: Biodiversity and Humans
+* Changes in the physical environment, whether naturally occurring or human induced, have thus contributed to the expansion of some species, the emergence of new distinct species as populations diverge under different conditions, and the decline — and sometimes the extinction — of some species.
 
-* Humans depend on the living world for the resources and other benefits provided by biodiversity. But human activity is also having adverse impacts on biodiversity through overpopulation, overexploitation, habitat destruction, pollution, introduction of invasive species, and climate change. Thus sustaining biodiversity so that ecosystem functioning and productivity are maintained is essential to supporting and enhancing life on Earth. Sustaining biodiversity also aids humanity by preserving landscapes of recreational or inspirational value. (Note: This Disciplinary Core Idea is also addressed by HS-LS2-7.) ETS1.B: Developing Possible Solutions
+##### LS4.D: Biodiversity and Humans
+
+
+* Humans depend on the living world for the resources and other benefits provided by biodiversity. But human activity is also having adverse impacts on biodiversity through overpopulation, overexploitation, habitat destruction, pollution, introduction of invasive species, and climate change. Thus sustaining biodiversity so that ecosystem functioning and productivity are maintained is essential to supporting and enhancing life on Earth. Sustaining biodiversity also aids humanity by preserving landscapes of recreational or inspirational value. (Note: This Disciplinary Core Idea is also addressed by HS-LS2-7.)
+
+##### ETS1.B: Developing Possible Solutions
+
 
 * When evaluating solutions, it is important to take into account a range of constraints, including cost, safety, reliability, and aesthetics, and to consider social, cultural, and environmental impacts. (secondary)
 
@@ -712,4 +726,4 @@ and computational thinking in 9-12 builds on K-8 experiences and progresses to u
 
 ##### Cause and Effect
 
-* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects.
+* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects. Page 40 of 41

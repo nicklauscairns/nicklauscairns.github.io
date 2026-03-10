@@ -1,6 +1,5 @@
 # NGSS High School Earth and Space Sciences Performance Expectations
 
-
 ## HS-ESS1-1
 Students who demonstrate understanding can:
 ### Develop a model based on evidence to illustrate the life span of the sun and the role of nuclear fusion in the sun’s core to release energy in the form of radiation.
@@ -10,19 +9,19 @@ Assessment Boundary: Assessment does not include details of the atomic and sub-a
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
 
 * Develop a model based on evidence to illustrate the relationships between systems or between components of a system.
 
 #### Disciplinary Core Ideas
 
-##### ESS1.A: The Universe and Its
+##### ESS1.A: The Universe and Its Stars
 
-* Stars
+* The star called the sun is changing and will burn out over a lifespan of approximately 10 billion years.
 
-* The star called the sun is changing and will burn out over a lifespan of approximately 10 billion years. PS3.D: Energy in Chemical Processes and Everyday Life
+##### PS3.D: Energy in Chemical Processes and Everyday Life
+
 
 * Nuclear fusion processes in the center of the sun release the energy that ultimately reaches Earth as radiation. (secondary)
 
@@ -40,33 +39,48 @@ Clarification Statement: Emphasis is on the astronomical evidence of the red shi
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
+* Construct an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, theories, simulations, peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future.
 
-* Construct an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, theories, simulations, peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future. --------------------------------
+##### Connections to Nature of Science
+Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
+
+* A scientific theory is a substantiated explanation of some aspect of the natural world, based on a body of facts that have been repeatedly confirmed through observation and experiment and the science community validates each theory before it is accepted. If new evidence is discovered that the theory does not accommodate, the theory is generally modified in light of this new evidence. June 2015
 
 #### Disciplinary Core Ideas
 
-##### ESS1.A: The Universe and Its
-
-* Stars
+##### ESS1.A: The Universe and Its Stars
 
 * The study of stars’ light spectra and brightness is used to identify compositional elements of stars, their movements, and their distances from Earth.
 
 * The Big Bang theory is supported by observations of distant galaxies receding from our own, of the measured composition of stars and non- stellar gases, and of the maps of spectra of the primordial radiation (cosmic microwave background) that still fills the universe.
 
-* Other than the hydrogen and helium formed at the time of the Big Bang, nuclear fusion within
+* Other than the hydrogen and helium formed at the time of the Big Bang, nuclear fusion within stars produces all atomic nuclei lighter than and including iron, and the process releases electromagnetic energy. Heavier elements are produced when certain massive stars achieve a supernova stage and explode.
+
+##### PS4.B: Electromagnetic Radiation
+
+
+* Atoms of each element emit and absorb characteristic frequencies of light. These characteristics allow identification of the presence of an element, even in microscopic quantities. (secondary)
 
 #### Crosscutting Concepts
 
 ##### Energy and Matter
 
-* Energy cannot be created or destroyed–only moved between one place and another place, between objects and/or fields, or between systems. ------------------------ Connections to Engineering, Technology, and Applications of Science
+* Energy cannot be created or destroyed–only moved between one place and another place, between objects and/or fields, or between systems.
 
+##### Connections to Engineering, Technology, and Applications of Science
 Interdependence of Science, Engineering, and Technology
 
-* Science and engineering complement each other in the cycle known as research and development (R&D). Many R&D projects may involve scientists, engineers,
+* Science and engineering complement each other in the cycle known as research and development (R&D). Many R&D projects may involve scientists, engineers, and others with wide ranges of expertise.
+
+##### Connections to Nature of Science
+Scientific Knowledge Assumes an Order and Consistency in Natural Systems
+
+* Scientific knowledge is based on the assumption that natural laws operate today as they did in the past and they will continue to do so in the future.
+
+* Science assumes the universe is a vast single system in which basic laws are consistent. Page 2 of 34
 
 
 ## HS-ESS1-3
@@ -78,17 +92,14 @@ Assessment Boundary: Details of the many different nucleosynthesis pathways for 
 
 #### Science and Engineering Practices
 
-##### Obtaining, Evaluating, and Communicating Information Obtaining,
-
-evaluating, and communicating information in 9–12 builds on K–8 experiences and progresses to evaluating the validity and reliability of the claims, methods, and designs.
+##### Obtaining, Evaluating, and Communicating Information
+Obtaining, evaluating, and communicating information in 9–12 builds on K–8 experiences and progresses to evaluating the validity and reliability of the claims, methods, and designs.
 
 * Communicate scientific ideas (e.g., about phenomena and/or the process of development and the design and performance of a proposed process or system) in multiple formats (including orally, graphically, textually, and mathematically).
 
 #### Disciplinary Core Ideas
 
-##### ESS1.A: The Universe and Its
-
-* Stars
+##### ESS1.A: The Universe and Its Stars
 
 * The study of stars’ light spectra and brightness is used to identify compositional elements of stars, their movements, and their distances from Earth.
 
@@ -110,17 +121,14 @@ Assessment Boundary: Mathematical representations for the gravitational attracti
 
 #### Science and Engineering Practices
 
-##### Using Mathematical and Computational Thinking Mathematical
-
-and computational thinking in 9–12 builds on K–8 experiences and progresses to using algebraic thinking and analysis, a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms, and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
+##### Using Mathematics and Computational Thinking
+Mathematical and computational thinking in 9–12 builds on K–8 experiences and progresses to using algebraic thinking and analysis, a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms, and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
 
 * Use mathematical or computational representations of phenomena to describe explanations.
 
 #### Disciplinary Core Ideas
 
-##### ESS1.B: Earth and the Solar
-
-* System
+##### ESS1.B: Earth and the Solar System
 
 * Kepler’s laws describe common features of the motions of orbiting objects, including their elliptical paths around the sun. Orbits may change due to the gravitational effects from, or collisions with, other objects in the solar system.
 
@@ -128,8 +136,9 @@ and computational thinking in 9–12 builds on K–8 experiences and progresses 
 
 ##### Scale, Proportion, and Quantity
 
-* Algebraic thinking is used to examine scientific data and predict the effect of a change in one variable on another (e.g., linear growth vs. exponential growth). ------------------------ Connections to Engineering, Technology, and Applications of Science
+* Algebraic thinking is used to examine scientific data and predict the effect of a change in one variable on another (e.g., linear growth vs. exponential growth).
 
+##### Connections to Engineering, Technology, and Applications of Science
 Interdependence of Science, Engineering, and Technology
 
 * Science and engineering complement each other in the cycle known as research and development (R&D). Many R&D projects may involve scientists, engineers, and others with wide ranges of expertise.
@@ -142,21 +151,24 @@ Clarification Statement: Emphasis is on the ability of plate tectonics to explai
 
 #### Science and Engineering Practices
 
-##### Engaging in Argument
-
-from Evidence Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
+##### Engaging in Argument from Evidence
+Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
 
 * Evaluate evidence behind currently accepted explanations or solutions to determine the merits of arguments.
 
 #### Disciplinary Core Ideas
 
-##### ESS1.C: The History of Planet
+##### ESS1.C: The History of Planet Earth
 
-* Earth
+* Continental rocks, which can be older than 4 billion years, are generally much older than the rocks of the ocean floor, which are less than 200 million years old.
 
-* Continental rocks, which can be older than 4 billion years, are generally much older than the rocks of the ocean floor, which are less than 200 million years old. ESS2.B: Plate Tectonics and Large-Scale System Interactions
+##### ESS2.B: Plate Tectonics and Large-Scale System Interactions
 
-* Plate tectonics is the unifying theory that explains the past and current movements of the rocks at Earth’s surface and provides a framework for understanding its geologic history. (ESS2.B Grade 8 GBE) (secondary) PS1.C: Nuclear Processes
+
+* Plate tectonics is the unifying theory that explains the past and current movements of the rocks at Earth’s surface and provides a framework for understanding its geologic history. (ESS2.B Grade 8 GBE) (secondary)
+
+##### PS1.C: Nuclear Processes
+
 
 * Spontaneous radioactive decays follow a characteristic exponential decay law. Nuclear lifetimes allow radiometric dating to be used to determine the ages of rocks and other materials. (secondary)
 
@@ -174,19 +186,28 @@ Clarification Statement: Emphasis is on using available evidence within the sola
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
 
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific ideas, principles, and theories.
+* Apply scientific reasoning to link evidence to the claims to assess the extent to which the reasoning and data support the explanation or conclusion.
 
-* Apply scientific reasoning to link evidence to the claims to assess the extent to which the reasoning and data support the explanation or conclusion. --------------------------------
+##### Connections to Nature of Science
+Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
+
+* A scientific theory is a substantiated explanation of some aspect of the natural world, based on a body of facts that have been repeatedly confirmed through observation and experiment, and the science community validates each theory before it is accepted. If new evidence is discovered that the theory does not accommodate, the theory is generally modified in light of this new evidence.
+
+* Models, mechanisms, and explanations collectively serve as tools in the development of a scientific theory.
 
 #### Disciplinary Core Ideas
 
-##### ESS1.C: The History of Planet
+##### ESS1.C: The History of Planet Earth
 
-* Earth
+* Although active geologic processes, such as plate tectonics and erosion, have destroyed or altered most of the very early rock record on Earth, other objects in the solar system, such as lunar rocks, asteroids, and meteorites, have changed little over billions of years. Studying these objects can provide information about Earth’s formation and early history.
 
-* Although active geologic processes, such as plate tectonics and erosion, have destroyed or altered most of the very early rock record on Earth, other objects in the solar system, such as lunar rocks, asteroids, and meteorites, have changed little over billions of years. Studying these objects can provide information about Earth’s formation and early
+##### PS1.C: Nuclear Processes
+
+
+* Spontaneous radioactive decays follow a characteristic exponential decay law. Nuclear lifetimes allow radiometric dating to be used to determine the ages of rocks and other materials. (secondary)
 
 #### Crosscutting Concepts
 
@@ -204,19 +225,19 @@ Assessment Boundary: Assessment does not include memorization of the details of 
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
 
 * Develop a model based on evidence to illustrate the relationships between systems or between components of a system.
 
 #### Disciplinary Core Ideas
 
-##### ESS2.A: Earth Materials and
+##### ESS2.A: Earth Materials and Systems
 
-* Systems
+* Earth’s systems, being dynamic and interacting, cause feedback effects that can increase or decrease the original changes.
 
-* Earth’s systems, being dynamic and interacting, cause feedback effects that can increase or decrease the original changes. ESS2.B: Plate Tectonics and Large-Scale System Interactions
+##### ESS2.B: Plate Tectonics and Large-Scale System Interactions
+
 
 * Plate tectonics is the unifying theory that explains the past and current movements of the rocks at Earth’s surface and provides a framework for understanding its geologic history. Plate movements are responsible for most continental and ocean-floor features and for the distribution of most rocks and minerals within Earth’s crust. (ESS2.B Grade 8 GBE)
 
@@ -234,19 +255,19 @@ Clarification Statement: Examples should include climate feedbacks, such as how 
 
 #### Science and Engineering Practices
 
-##### Analyzing and Interpreting Data Analyzing
-
-data in 9–12 builds on K–8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models to generate and analyze data.
+##### Analyzing and Interpreting Data
+Analyzing data in 9–12 builds on K–8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models to generate and analyze data.
 
 * Analyze data using tools, technologies, and/or models (e.g., computational, mathematical) in order to make valid and reliable scientific claims or determine an optimal design solution.
 
 #### Disciplinary Core Ideas
 
-##### ESS2.A: Earth Materials and
+##### ESS2.A: Earth Materials and Systems
 
-* Systems
+* Earth’s systems, being dynamic and interacting, cause feedback effects that can increase or decrease the original changes.
 
-* Earth’s systems, being dynamic and interacting, cause feedback effects that can increase or decrease the original changes. ESS2.D: Weather and Climate
+##### ESS2.D: Weather and Climate
+
 
 * The foundation for Earth’s global climate systems is the electromagnetic radiation from the sun, as well as its reflection, absorption, storage, and redistribution among the atmosphere, ocean, and land systems, and this energy’s re- radiation into space.
 
@@ -254,8 +275,9 @@ data in 9–12 builds on K–8 experiences and progresses to introducing more de
 
 ##### Stability and Change
 
-* Feedback (negative or positive) can stabilize or destabilize a system. ------------------------ Connections to Engineering, Technology, and Applications of Science
+* Feedback (negative or positive) can stabilize or destabilize a system.
 
+##### Connections to Engineering, Technology, and Applications of Science
 Influence of Engineering, Technology, and Science on Society and the Natural World
 
 * New technologies can have deep impacts on society and the environment, including some that were not anticipated. Analysis of costs and benefits is a critical aspect of decisions about technology.
@@ -268,29 +290,40 @@ Clarification Statement: Emphasis is on both a one- dimensional model of Earth, 
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
 
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
+* Develop a model based on evidence to illustrate the relationships between systems or between components of a system.
 
-* Develop a model based on evidence to illustrate the relationships between systems or between components of a system. ------------------------------- --
+##### Connections to Nature of Science
+Scientific Knowledge is Based on Empirical Evidence
+
+* Science knowledge is based on empirical evidence.
+
+* Science disciplines share common rules of evidence used to evaluate explanations about natural systems.
+
+* Science includes the process of coordinating patterns of evidence with current theory.
 
 #### Disciplinary Core Ideas
 
-##### ESS2.A: Earth Materials and
+##### ESS2.A: Earth Materials and Systems
 
-* Systems
+* Evidence from deep probes and seismic waves, reconstructions of historical changes in Earth’s surface and its magnetic field, and an understanding of physical and chemical processes lead to a model of Earth with a hot but solid inner core, a liquid outer core, a solid mantle and crust. Motions of the mantle and its plates occur primarily through thermal convection, which involves the cycling of matter due to the outward flow of energy from Earth’s interior and gravitational movement of denser materials toward the interior.
 
-* Evidence from deep probes and seismic waves, reconstructions of historical changes in Earth’s surface and its magnetic field, and an understanding of physical and chemical processes lead to a model of Earth with a hot but solid inner core, a liquid outer core, a solid mantle and crust. Motions of the mantle and its plates occur primarily through
+##### ESS2.B: Plate Tectonics and Large-Scale System Interactions
+
+
+* The radioactive decay of unstable isotopes continually generates new energy within Earth’s crust and mantle, providing the primary source of the heat that drives mantle convection. Plate tectonics can be viewed as the surface expression of mantle convection.
 
 #### Crosscutting Concepts
 
-##### Energy and Matter Energy
+##### Energy and Matter
+Energy drives the cycling of matter within and between systems.
 
-drives the cycling of matter within and between systems. ------------------------- Connections to Engineering, Technology, and Applications of Science
-
+##### Connections to Engineering, Technology, and Applications of Science
 Interdependence of Science, Engineering, and Technology
 
-* Science and engineering complement each other in the cycle known as research and
+* Science and engineering complement each other in the cycle known as research and development (R&D). Many R&D projects may involve scientists, engineers, and others with wide ranges of expertise.
 
 
 ## HS-ESS2-4
@@ -300,25 +333,37 @@ Clarification Statement: Examples of the causes of climate change differ by time
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
 
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
+* Use a model to provide mechanistic accounts of phenomena.
 
-* Use a model to provide mechanistic accounts of phenomena. -------------------------------- -
+##### Connections to Nature of Science
+Scientific Knowledge is Based on Empirical Evidence
+
+* Science arguments are strengthened by multiple lines of evidence supporting a single explanation. June 2015
 
 #### Disciplinary Core Ideas
 
-##### ESS1.B: Earth and the Solar
+##### ESS1.B: Earth and the Solar System
 
-* System
+* Cyclical changes in the shape of Earth’s orbit around the sun, together with changes in the tilt of the planet’s axis of rotation, both occurring over hundreds of thousands of years, have altered the intensity and distribution of sunlight falling on the earth. These phenomena cause a cycle of ice ages and other gradual climate changes. (secondary)
 
-* Cyclical changes in the shape of Earth’s orbit around the sun, together with changes in the tilt of the planet’s axis of rotation, both occurring over hundreds of thousands of years, have altered the intensity and distribution of sunlight falling on the earth. These phenomena cause a cycle of ice ages and other gradual
+##### ESS2.A: Earth Materials and System
+
+
+* The geological record shows that changes to global and regional climate can be caused by interactions among changes in the sun’s energy output or Earth’s orbit, tectonic events, ocean circulation, volcanic activity, glaciers, vegetation, and human activities. These changes can occur on a variety of time scales from sudden (e.g., volcanic ash clouds) to intermediate (ice ages) to very long-term tectonic cycles.
+
+##### ESS2.D: Weather and Climate
+
+
+* The foundation for Earth’s global climate systems is the electromagnetic radiation from the sun, as well as its reflection, absorption, storage, and redistribution among the atmosphere, ocean, and land systems, and this energy’s re- radiation into space.
 
 #### Crosscutting Concepts
 
 ##### Cause and Effect
 
-* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects.
+* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects. Page 17 of 34
 
 
 ## HS-ESS2-5
@@ -328,17 +373,15 @@ Clarification Statement: Emphasis is on mechanical and chemical investigations w
 
 #### Science and Engineering Practices
 
-##### Planning and Carrying Out Investigations Planning
-
-and carrying out investigations in 9-12 builds on K-8 experiences and progresses to include investigations that provide evidence for and test conceptual, mathematical, physical, and empirical models.
+##### Planning and Carrying Out Investigations
+Planning and carrying out investigations in 9-12 builds on K-8 experiences and progresses to include investigations that provide evidence for and test conceptual, mathematical, physical, and empirical models.
 
 * Plan and conduct an investigation individually and collaboratively to produce data to serve as the basis for evidence, and in the design: decide on types, how much, and accuracy of data needed to produce reliable measurements and consider limitations on the precision of the data (e.g., number of trials, cost, risk, time), and refine the design accordingly.
 
 #### Disciplinary Core Ideas
 
-##### ESS2.C: The Roles of Water in Earth's Surface
+##### ESS2.C: The Roles of Water in Earth's Surface Processes
 
-* Processes
 
 * The abundance of liquid water on Earth’s surface and its unique combination of physical and chemical properties are central to the planet’s dynamics. These properties include water’s exceptional capacity to absorb, store, and release large amounts of energy, transmit sunlight, expand upon freezing, dissolve and transport materials, and lower the viscosities and melting points of rocks.
 
@@ -356,17 +399,14 @@ Clarification Statement: Emphasis is on modeling biogeochemical cycles that incl
 
 #### Science and Engineering Practices
 
-##### Developing and Using Models Modeling
-
-in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
+##### Developing and Using Models
+Modeling in 9–12 builds on K–8 experiences and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed world(s).
 
 * Develop a model based on evidence to illustrate the relationships between systems or between components of a system.
 
 #### Disciplinary Core Ideas
 
-##### ESS2.D: Weather and
-
-* Climate
+##### ESS2.D: Weather and Climate
 
 * Gradual atmospheric changes were due to plants and other organisms that captured carbon dioxide and released oxygen.
 
@@ -388,17 +428,14 @@ Assessment Boundary: Assessment does not include a comprehensive understanding o
 
 #### Science and Engineering Practices
 
-##### Engaging in Argument
-
-from Evidence Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
+##### Engaging in Argument from Evidence
+Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about the natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
 
 * Construct an oral and written argument or counter-arguments based on data and evidence.
 
 #### Disciplinary Core Ideas
 
-##### ESS2.D: Weather and
-
-* Climate
+##### ESS2.D: Weather and Climate
 
 * Gradual atmospheric changes were due to plants and other organisms that captured carbon dioxide and released oxygen. ESS2.E Biogeology
 
@@ -418,19 +455,19 @@ Clarification Statement: Examples of key natural resources include access to fre
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
-
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific knowledge, principles, and theories.
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific knowledge, principles, and theories.
 
 * Construct an explanation based on valid and reliable evidence obtained from a variety of sources (including students’ own investigations, models, theories, simulations, peer review) and the assumption that theories and laws that describe the natural world operate today as they did in the past and will continue to do so in the future.
 
 #### Disciplinary Core Ideas
 
-##### ESS3.A: Natural
+##### ESS3.A: Natural Resources
 
-* Resources
+* Resource availability has guided the development of human society.
 
-* Resource availability has guided the development of human society. ESS3.B: Natural Hazards
+##### ESS3.B: Natural Hazards
+
 
 * Natural hazards and other geologic events have shaped the course of human history; [they] have significantly altered the sizes of human populations and have driven human migrations.
 
@@ -438,8 +475,9 @@ explanations and designing solutions in 9–12 builds on K–8 experiences and p
 
 ##### Cause and Effect
 
-* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects. ------------------------ Connections to Engineering, Technology, and Applications of Science
+* Empirical evidence is required to differentiate between cause and correlation and make claims about specific causes and effects.
 
+##### Connections to Engineering, Technology, and Applications of Science
 Influence of Science, Engineering, and Technology on Society and the Natural World
 
 * Modern civilization depends on major technological systems.
@@ -452,39 +490,39 @@ Clarification Statement: Emphasis is on the conservation, recycling, and reuse o
 
 #### Science and Engineering Practices
 
-##### Engaging in Argument
+##### Engaging in Argument from Evidence
+Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
 
-from Evidence Engaging in argument from evidence in 9– 12 builds on K–8 experiences and progresses to using appropriate and sufficient evidence and scientific reasoning to defend and critique claims and explanations about natural and designed world(s). Arguments may also come from current scientific or historical episodes in science.
-
-* Evaluate competing design solutions to a real-world problem based on scientific ideas and principles, empirical evidence, and logical arguments regarding relevant factors (e.g., economic, societal, environmental, ethical considerations).
+* Evaluate competing design solutions to a real-world problem based on scientific ideas and principles, empirical evidence, and logical arguments regarding relevant factors (e.g., economic, societal, environmental, ethical considerations). June 2015
 
 #### Disciplinary Core Ideas
 
-##### ESS3.A: Natural
+##### ESS3.A: Natural Resources
 
-* Resources
+* All forms of energy production and other resource extraction have associated economic, social, environmental, and geopolitical costs and risks as well as benefits. New technologies and social regulations can change the balance of these factors.
 
-* All forms of energy production and other resource extraction have associated economic, social, environmental, and geopolitical costs and risks as well as benefits. New technologies and social regulations can change the balance of these factors. ETS1.B: Developing Possible Solutions
+##### ETS1.B: Developing Possible Solutions
+
 
 * When evaluating solutions, it is important to take into account a range of constraints, including cost, safety, reliability, and aesthetics, and to consider social, cultural, and environmental impacts. (secondary)
 
 #### Crosscutting Concepts
 
-##### ----------------------- Connections to Engineering, Technology, and Applications of Science
-
+##### Connections to Engineering, Technology, and Applications of Science
 Influence of Science, Engineering, and Technology on Society and the Natural World
 
 * Engineers continuously modify these technological systems by applying scientific knowledge and engineering design practices to increase benefits while decreasing costs and risks.
 
-* Analysis of costs and benefits is a critical aspect of decisions about technology. ----------------------- Connections to Nature of Science
+* Analysis of costs and benefits is a critical aspect of decisions about technology.
 
+##### Connections to Nature of Science
 Science Addresses Questions About the Natural and Material World
 
 * Science and technology may raise ethical issues for which science, by itself, does not provide answers and solutions.
 
 * Science knowledge indicates what can happen in natural systems — not what should happen. The latter involves ethics, values, and human decisions about the use of knowledge.
 
-* Many decisions are not made using science alone, but rely on social and cultural contexts to resolve issues.
+* Many decisions are not made using science alone, but rely on social and cultural contexts to resolve issues. Page 26 of 34
 
 
 ## HS-ESS3-3
@@ -496,17 +534,14 @@ Assessment Boundary: Assessment for computational simulations is limited to usin
 
 #### Science and Engineering Practices
 
-##### Using Mathematics and Computational Thinking Mathematical
-
-and computational thinking in 9–12 builds on K–8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
+##### Using Mathematics and Computational Thinking
+Mathematical and computational thinking in 9–12 builds on K–8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
 
 * Create a computational model or simulation of a phenomenon, designed device, process, or system.
 
 #### Disciplinary Core Ideas
 
-##### ESS3.C: Human Impacts on Earth
-
-* Systems
+##### ESS3.C: Human Impacts on Earth Systems
 
 * The sustainability of human societies and the biodiversity that supports them requires responsible management of natural resources.
 
@@ -514,14 +549,16 @@ and computational thinking in 9–12 builds on K–8 experiences and progresses 
 
 ##### Stability and Change
 
-* Change and rates of change can be quantified and modeled over very short or very long periods of time. Some system changes are irreversible. ----------------------- Connections to Engineering, Technology, and Applications of Science
+* Change and rates of change can be quantified and modeled over very short or very long periods of time. Some system changes are irreversible.
 
+##### Connections to Engineering, Technology, and Applications of Science
 Influence of Science, Engineering, and Technology on Society and the Natural World
 
 * Modern civilization depends on major technological systems.
 
-* New technologies can have deep impacts on society and the environment, including some that were not anticipated. ------------------------ Connections to Nature of Science
+* New technologies can have deep impacts on society and the environment, including some that were not anticipated.
 
+##### Connections to Nature of Science
 Science is a Human Endeavor
 
 * Science is a result of human endeavors, imagination, and creativity.
@@ -534,32 +571,29 @@ Clarification Statement: Examples of data on the impacts of human activities cou
 
 #### Science and Engineering Practices
 
-##### Constructing Explanations and Designing Solutions Constructing
+##### Constructing Explanations and Designing Solutions
+Constructing explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific knowledge, principles and theories.
 
-explanations and designing solutions in 9–12 builds on K–8 experiences and progresses to explanations and designs that are supported by multiple and independent student-generated sources of evidence consistent with scientific knowledge, principles and theories.
-
-* Design or refine a solution to a complex real-world problem based on scientific knowledge, student- generated sources of evidence, prioritized criteria, and tradeoff
-
-considerations.
+* Design or refine a solution to a complex real-world problem based on scientific knowledge, student- generated sources of evidence, prioritized criteria, and tradeoff considerations.
 
 #### Disciplinary Core Ideas
 
-##### ESS3.C: Human Impacts on Earth
+##### ESS3.C: Human Impacts on Earth Systems
 
-* Systems
+* Scientists and engineers can make major contributions by developing technologies that produce less pollution and waste and that preclude ecosystem degradation.
 
-* Scientists and engineers can make major contributions by developing technologies that produce less pollution and waste and that preclude ecosystem degradation. ETS1.B: Developing Possible Solutions
+##### ETS1.B: Developing Possible Solutions
 
-* When evaluating solutions, it is important to take into account a range of constraints, including
 
-cost, safety, reliability, and aesthetics, and to consider social, cultural, and environmental impacts. (secondary)
+* When evaluating solutions, it is important to take into account a range of constraints, including cost, safety, reliability, and aesthetics, and to consider social, cultural, and environmental impacts. (secondary)
 
 #### Crosscutting Concepts
 
 ##### Stability and Change
 
-* Feedback (negative or positive) can stabilize or destabilize a system. ------------------------ Connections to Engineering, Technology, and Applications of Science
+* Feedback (negative or positive) can stabilize or destabilize a system.
 
+##### Connections to Engineering, Technology, and Applications of Science
 Influence of Science, Engineering, and Technology on Society and the Natural World
 
 * Engineers continuously modify these technological systems by applying scientific knowledge and engineering design practices to increase benefits while decreasing costs and risks.
@@ -574,17 +608,25 @@ Assessment Boundary: Assessment is limited to one example of a climate change an
 
 #### Science and Engineering Practices
 
-##### Analyzing and Interpreting Data Analyzing
+##### Analyzing and Interpreting Data
+Analyzing data in 9–12 builds on K–8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models to generate and analyze data.
 
-data in 9–12 builds on K–8 experiences and progresses to introducing more detailed statistical analysis, the comparison of data sets for consistency, and the use of models to generate and analyze data.
+* Analyze data using computational models in order to make valid and reliable scientific claims.
 
-* Analyze data using computational models in order to make valid and reliable scientific claims. --------------------------------
+##### Connections to Nature of Science
+Scientific Investigations Use a Variety of Methods
+
+* Science investigations use diverse methods and do not always use the same set of procedures to obtain data.
+
+* New technologies advance scientific knowledge. Scientific Knowledge is Based on Empirical Evidence
+
+* Science knowledge is based on empirical evidence.
+
+* Science arguments are strengthened by multiple lines of evidence supporting a single explanation.
 
 #### Disciplinary Core Ideas
 
-##### ESS3.D: Global Climate
-
-* Change
+##### ESS3.D: Global Climate Change
 
 * Though the magnitudes of human impacts are greater than they have ever been, so too are human abilities to model, predict, and manage current and future impacts.
 
@@ -604,19 +646,19 @@ Assessment Boundary: Assessment does not include running computational represent
 
 #### Science and Engineering Practices
 
-##### Using Mathematics and Computational Thinking Mathematical
-
-and computational thinking in 9–12 builds on K–8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
+##### Using Mathematics and Computational Thinking
+Mathematical and computational thinking in 9–12 builds on K–8 experiences and progresses to using algebraic thinking and analysis; a range of linear and nonlinear functions including trigonometric functions, exponentials and logarithms; and computational tools for statistical analysis to analyze, represent, and model data. Simple computational simulations are created and used based on mathematical models of basic assumptions.
 
 * Use a computational representation of phenomena or design solutions to describe and/or support claims and/or explanations.
 
 #### Disciplinary Core Ideas
 
-##### ESS2.D: Weather and
+##### ESS2.D: Weather and Climate
 
-* Climate
+* Current models predict that, although future regional climate changes will be complex and varied, average global temperatures will continue to rise. The outcomes predicted by global climate models strongly depend on the amounts of human-generated greenhouse gases added to the atmosphere each year and by the ways in which these gases are absorbed by the ocean and biosphere. (secondary)
 
-* Current models predict that, although future regional climate changes will be complex and varied, average global temperatures will continue to rise. The outcomes predicted by global climate models strongly depend on the amounts of human-generated greenhouse gases added to the atmosphere each year and by the ways in which these gases are absorbed by the ocean and biosphere. (secondary) ESS3.D: Global Climate Change
+##### ESS3.D: Global Climate Change
+
 
 * Through computer simulations and other studies, important discoveries are still being made about how the ocean, the atmosphere, and the biosphere interact and are modified in response to human activities.
 
