@@ -492,17 +492,29 @@
 
     recordBtn.addEventListener('click', () => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${v_boat.toFixed(1)}</td>
-            <td>${theta_deg}°</td>
-            <td>${v_river.toFixed(1)}</td>
-            <td>${resSpeedOut.textContent}</td>
-            <td>${timeOut.textContent}</td>
-            <td>${xPosOut.textContent}</td>
-            <td>${yPosOut.textContent}</td>
-            <td>${dispOut.textContent}</td>
-            <td style="font-weight:bold; color:#d97706;">${distOut.textContent}</td>
-        `;
+
+        const data = [
+            v_boat.toFixed(1),
+            theta_deg + '°',
+            v_river.toFixed(1),
+            resSpeedOut.textContent,
+            timeOut.textContent,
+            xPosOut.textContent,
+            yPosOut.textContent,
+            dispOut.textContent,
+            distOut.textContent
+        ];
+
+        data.forEach((text, index) => {
+            const td = document.createElement('td');
+            td.textContent = text;
+            if (index === 8) {
+                td.style.fontWeight = 'bold';
+                td.style.color = '#d97706';
+            }
+            tr.appendChild(td);
+        });
+
         tableBody.insertBefore(tr, tableBody.firstChild); // Adds newest data to the top
     });
 
