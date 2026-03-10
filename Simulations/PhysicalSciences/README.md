@@ -56,6 +56,8 @@ Use mathematical representations to support the claim that the total momentum of
 ### HS-PS2-3
 Apply scientific and engineering ideas to design, evaluate, and refine a device that minimizes the force on a macroscopic object during a collision.
 
+- [Collision Force Minimizer](EggDropCrashCushion.html) - An interactive physics sandbox where users engineer the thickness and material stiffness of a crash cushion to minimize impact forces and protect a fragile payload during a drop.
+
 ### HS-PS2-4
 Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.
 

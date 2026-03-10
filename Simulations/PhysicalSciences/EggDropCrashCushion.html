@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collision Force Minimizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sim-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-color: #e0f2fe;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        #egg {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 50px;
+            background-color: #fef08a; /* yellow egg */
+            border: 2px solid #ca8a04;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            bottom: 350px; /* Starting high */
+            transition: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        #cushion {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #94a3b8;
+            border-top: 2px dashed #475569;
+            z-index: 5;
+            transition: height 0.1s ease-out;
+        }
+
+        .status-broken {
+            background-color: #fca5a5 !important;
+            border-color: #b91c1c !important;
+            border-radius: 10px !important;
+            height: 20px !important;
+            bottom: 50px !important; /* Will be set via JS anyway */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-6 min-h-screen flex flex-col items-center">
+
+    <div class="max-w-6xl w-full">
+        <!-- Header Section -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Collision Force Minimizer</h1>
+            <h2 class="text-2xl font-semibold text-gray-600 mb-4">HS-PS2-3: Minimizing Force During a Collision</h2>
+            <p class="text-lg text-gray-700 max-w-4xl mx-auto">
+                Apply scientific and engineering ideas to design, evaluate, and refine a device that minimizes the force on a macroscopic object during a collision.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Controls Panel -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h3 class="text-xl font-bold mb-4 border-b pb-2">Engineering Controls</h3>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Drop Height (m): <span id="heightVal">5.0</span></label>
+                    <input type="range" id="dropHeight" min="1.0" max="10.0" step="0.5" value="5.0" class="w-full accent-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Payload Mass (kg): <span id="massVal">0.1</span></label>
+                    <input type="range" id="payloadMass" min="0.05" max="1.0" step="0.05" value="0.1" class="w-full accent-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cushion Material (Stiffness)</label>
+                    <select id="materialType" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                        <option value="airbag">Airbag (Soft, k=500 N/m)</option>
+                        <option value="foam" selected>Foam (Medium, k=2000 N/m)</option>
+                        <option value="rubber">Rubber (Hard, k=10000 N/m)</option>
+                        <option value="concrete">Concrete (Solid, k=500000 N/m)</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cushion Thickness (m): <span id="thicknessVal">0.2</span></label>
+                    <input type="range" id="cushionThickness" min="0.05" max="0.5" step="0.05" value="0.2" class="w-full accent-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">If compression exceeds thickness, the payload hits the hard ground!</p>
+                </div>
+
+                <div class="flex gap-4 mb-4">
+                    <button id="dropBtn" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">Drop Payload</button>
+                    <button id="resetBtn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors">Reset</button>
+                </div>
+
+                <div id="resultsPanel" class="hidden mt-4 p-4 rounded-lg bg-gray-100 border border-gray-300 text-sm">
+                    <h4 class="font-bold mb-2">Impact Results</h4>
+                    <p>Impact Velocity: <span id="resVel" class="font-mono">0</span> m/s</p>
+                    <p>Max Compression: <span id="resComp" class="font-mono">0</span> m</p>
+                    <p>Peak Force: <span id="resForce" class="font-mono font-bold">0</span> N</p>
+                    <p class="mt-2 text-lg font-bold text-center" id="resStatus">STATUS</p>
+                </div>
+            </div>
+
+            <!-- Visualization & Graph Panel -->
+            <div class="lg:col-span-2 flex flex-col gap-6">
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Drop Simulation</h3>
+                    <div class="sim-container" id="simContainer">
+                        <div id="egg">🥚</div>
+                        <div id="cushion"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex-grow" style="max-height: 350px;">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Force Profile Over Time (During Impact)</h3>
+                    <div class="relative h-full w-full" style="min-height: 200px;">
+                        <canvas id="forceChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Educational Context Section -->
+        <div class="mt-8 bg-blue-50 p-6 rounded-xl shadow-md border border-blue-200">
+            <h3 class="text-2xl font-bold text-blue-900 mb-4">NGSS Three-Dimensional Learning</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Science & Engineering Practices</h4>
+                    <p class="text-sm text-gray-700"><strong>Constructing Explanations and Designing Solutions:</strong> Apply scientific ideas to solve a design problem. Test different materials and thicknesses to refine a device that minimizes impact force to keep the payload under its breaking threshold (approx 50 N).</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Disciplinary Core Ideas</h4>
+                    <p class="text-sm text-gray-700"><strong>PS2.A & ETS1:</strong> Total momentum changes are balanced by forces. By increasing the stopping distance (cushion compression) and time, the average impact force is reduced. Engineering criteria involve constraints like limited cushion thickness.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Crosscutting Concepts</h4>
+                    <p class="text-sm text-gray-700"><strong>Cause and Effect:</strong> Systems can be designed to cause a desired effect. Changing the stiffness (cause) alters the deceleration profile and peak force (effect), determining if the payload survives.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Constants
+        const g = 9.81; // Gravity m/s^2
+        const BREAK_FORCE = 50; // Newtons to break the payload (like an egg)
+
+        const materials = {
+            airbag: { k: 500, color: '#bae6fd', name: 'Airbag' },
+            foam: { k: 2000, color: '#fcd34d', name: 'Foam' },
+            rubber: { k: 10000, color: '#334155', name: 'Rubber' },
+            concrete: { k: 500000, color: '#94a3b8', name: 'Concrete' }
+        };
+
+        // DOM Elements
+        const heightInput = document.getElementById('dropHeight');
+        const massInput = document.getElementById('payloadMass');
+        const matSelect = document.getElementById('materialType');
+        const thicknessInput = document.getElementById('cushionThickness');
+
+        const heightVal = document.getElementById('heightVal');
+        const massVal = document.getElementById('massVal');
+        const thicknessVal = document.getElementById('thicknessVal');
+
+        const dropBtn = document.getElementById('dropBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const eggEl = document.getElementById('egg');
+        const cushionEl = document.getElementById('cushion');
+        const simContainer = document.getElementById('simContainer');
+
+        const resultsPanel = document.getElementById('resultsPanel');
+        const resVel = document.getElementById('resVel');
+        const resComp = document.getElementById('resComp');
+        const resForce = document.getElementById('resForce');
+        const resStatus = document.getElementById('resStatus');
+
+        // State
+        let isRunning = false;
+        let mass, height, thickness, k;
+        let animationId;
+
+        let simTime = 0;
+        let positionY = 0; // Starts from height
+        let velocity = 0;
+        let impactStarted = false;
+        let impactFinished = false;
+        let maxForce = 0;
+        let maxComp = 0;
+        let chartTime = [];
+        let chartForce = [];
+
+        // Chart
+        const ctx = document.getElementById('forceChart').getContext('2d');
+        let forceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Impact Force (N)',
+                    data: [],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                    fill: true,
+                    tension: 0.1,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Time during impact (s)' } },
+                    y: {
+                        title: { display: true, text: 'Force (N)' },
+                        min: 0,
+                        suggestedMax: 100
+                    }
+                },
+                animation: false
+            }
+        });
+
+        function updateVisuals() {
+            if (isRunning) return;
+
+            mass = parseFloat(massInput.value);
+            height = parseFloat(heightInput.value);
+            thickness = parseFloat(thicknessInput.value);
+            const mat = materials[matSelect.value];
+            k = mat.k;
+
+            heightVal.textContent = height.toFixed(1);
+            massVal.textContent = mass.toFixed(2);
+            thicknessVal.textContent = thickness.toFixed(2);
+
+            cushionEl.style.backgroundColor = mat.color;
+
+            // Visual scale mapping
+            // Height: 10m maps to ~ 350px. 1m = 35px.
+            const pxPerMeter = 35;
+
+            // Cushion thickness visual: let's map it exaggerated slightly for visibility
+            // 0.5m -> 50px. So 1m = 100px for cushion visual height.
+            cushionEl.style.height = `${thickness * 100}px`;
+
+            // Egg starting position
+            // Container is 400px high. Cushion is at bottom.
+            // Let's place egg relative to bottom
+            const startingPxFromBottom = (thickness * 100) + (height * pxPerMeter);
+            eggEl.style.bottom = `${startingPxFromBottom}px`;
+
+            eggEl.className = ''; // Reset classes
+            eggEl.innerHTML = '🥚';
+            eggEl.style.transform = `translateX(-50%)`;
+
+            resultsPanel.classList.add('hidden');
+
+            forceChart.data.labels = [];
+            forceChart.data.datasets[0].data = [];
+            forceChart.update();
+        }
+
+        const inputs = [heightInput, massInput, matSelect, thicknessInput];
+        inputs.forEach(input => input.addEventListener('input', updateVisuals));
+
+        function runSimulation() {
+            if (isRunning) return;
+            isRunning = true;
+
+            inputs.forEach(i => i.disabled = true);
+            dropBtn.disabled = true;
+
+            if (document.hidden !== undefined) {
+                Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+            }
+
+            positionY = height;
+            velocity = 0;
+            simTime = 0;
+            impactStarted = false;
+            impactFinished = false;
+            maxForce = 0;
+            maxComp = 0;
+            chartTime = [];
+            chartForce = [];
+
+            let lastTimestamp = performance.now();
+
+            function simLoop(timestamp) {
+                if (!isRunning) return;
+
+                // Use a fixed small time step for stable physics integration instead of actual dt
+                // Because visual dt might be 16ms, but we want finer resolution for stiff impacts
+                const dt = 0.001;
+                // We'll process multiple physics steps per visual frame to catch up to real time
+                const stepsPerFrame = 16;
+
+                for (let i = 0; i < stepsPerFrame; i++) {
+                    if (impactFinished) break;
+
+                    simTime += dt;
+
+                    if (!impactStarted) {
+                        // Free fall
+                        velocity += g * dt;
+                        positionY -= velocity * dt;
+
+                        if (positionY <= 0) {
+                            impactStarted = true;
+                            positionY = 0; // Reset exactly to cushion surface
+                            resVel.textContent = velocity.toFixed(2);
+                        }
+                    } else {
+                        // Impact phase
+                        // positionY is now compression (negative value)
+                        let compression = -positionY;
+
+                        // Spring force: F = kx
+                        let springForce = k * compression;
+
+                        // Bottoming out (exceeding thickness)
+                        if (compression >= thickness) {
+                            // Hit solid ground. Extremely high force.
+                            springForce = 1000000;
+                            velocity = 0;
+                        }
+
+                        // Net force (upwards is positive for acceleration here)
+                        // Actually, gravity is still acting downwards (m*g).
+                        // Upward force = springForce. Downward force = mg.
+                        // Net upward force = springForce - m*g
+                        let netForceUp = springForce - (mass * g);
+
+                        let accelerationUp = netForceUp / mass;
+
+                        // Velocity is downward (positive). So upward acceleration reduces it.
+                        velocity -= accelerationUp * dt;
+                        positionY -= velocity * dt; // If velocity is neg (bouncing up), positionY increases
+
+                        let currentTotalForce = Math.abs(springForce); // Force experienced by payload
+                        if (currentTotalForce > maxForce) maxForce = currentTotalForce;
+                        if (compression > maxComp) maxComp = compression;
+
+                        // Log data for chart every few ms to avoid huge arrays
+                        if (Math.floor(simTime * 1000) % 2 === 0) {
+                            chartTime.push((simTime - (height/velocity)).toFixed(3)); // roughly align to 0
+                            chartForce.push(currentTotalForce);
+                        }
+
+                        // Stop condition: Bounced back up or settled (velocity ~ 0 and accel ~ 0)
+                        if (positionY > 0 && velocity < 0) {
+                            impactFinished = true;
+                            positionY = 0; // Leave on surface
+                        } else if (Math.abs(velocity) < 0.01 && Math.abs(accelerationUp) < 0.1) {
+                            impactFinished = true;
+                        }
+                    }
+                }
+
+                updateVisualPosition();
+
+                if (impactFinished) {
+                    finishSimulation();
+                } else {
+                    animationId = requestAnimationFrame(simLoop);
+                }
+            }
+
+            animationId = requestAnimationFrame(simLoop);
+        }
+
+        function updateVisualPosition() {
+            const pxPerMeter = 35;
+            let currentVisualBottom;
+
+            if (!impactStarted) {
+                // Above cushion
+                currentVisualBottom = (thickness * 100) + (positionY * pxPerMeter);
+            } else {
+                // Inside cushion (compression).
+                let comp = -positionY;
+                // Cap visual compression at thickness
+                let visualComp = Math.min(comp, thickness);
+                currentVisualBottom = (thickness * 100) - (visualComp * 100);
+            }
+
+            eggEl.style.bottom = `${currentVisualBottom}px`;
+        }
+
+        function finishSimulation() {
+            isRunning = false;
+
+            // Reconstruct chart times properly relative to 0
+            const n = chartTime.length;
+            const newTimes = Array.from({length: n}, (_, i) => (i * 0.002).toFixed(3));
+
+            forceChart.data.labels = newTimes;
+            forceChart.data.datasets[0].data = chartForce;
+
+            // Dynamically scale graph so it's readable
+            forceChart.options.scales.y.suggestedMax = Math.max(100, maxForce * 1.1);
+            forceChart.update();
+
+            // Populate Results
+            resComp.textContent = maxComp.toFixed(3);
+            resForce.textContent = maxForce.toFixed(1);
+            resultsPanel.classList.remove('hidden');
+
+            if (maxForce > BREAK_FORCE) {
+                resStatus.textContent = "PAYLOAD DESTROYED!";
+                resStatus.className = "mt-2 text-xl font-bold text-center text-red-600";
+                eggEl.className = 'status-broken';
+                eggEl.innerHTML = '🍳';
+                eggEl.style.transform = `translateX(-50%) scale(1.2)`;
+            } else {
+                resStatus.textContent = "PAYLOAD SURVIVED!";
+                resStatus.className = "mt-2 text-xl font-bold text-center text-green-600";
+            }
+
+            inputs.forEach(i => i.disabled = false);
+            dropBtn.disabled = false;
+        }
+
+        function resetSimulation() {
+            if (isRunning) {
+                cancelAnimationFrame(animationId);
+                isRunning = false;
+                inputs.forEach(i => i.disabled = false);
+                dropBtn.disabled = false;
+            }
+            updateVisuals();
+        }
+
+        dropBtn.addEventListener('click', runSimulation);
+        resetBtn.addEventListener('click', resetSimulation);
+
+        // Init
+        updateVisuals();
+
+        // Export for testing
+        window.simulationState = {
+            get isRunning() { return isRunning; },
+            get maxForce() { return maxForce; },
+            get isBroken() { return maxForce > BREAK_FORCE; }
+        };
+
+    </script>
+</body>
+</html>
