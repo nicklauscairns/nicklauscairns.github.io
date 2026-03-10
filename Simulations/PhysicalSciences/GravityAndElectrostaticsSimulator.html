@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravity & Electrostatics Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .slider { appearance: none; width: 100%; height: 8px; border-radius: 5px; background: #d1d5db; outline: none; opacity: 0.9; transition: opacity .2s; }
+        .slider:hover { opacity: 1; }
+        .slider::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
+        .slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
+
+        /* Canvas styles */
+        .sim-canvas { position: relative; width: 100%; height: 200px; background-color: #f3f4f6; border-radius: 0.5rem; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .object { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; transition: all 0.1s; }
+        .obj-m1, .obj-m2 { background-color: #10b981; }
+        .obj-q1, .obj-q2 { } /* Set dynamically based on charge */
+        .vector-line { position: absolute; height: 4px; background-color: #ef4444; top: 50%; transform-origin: left center; z-index: 10; transition: width 0.1s; }
+        .vector-head { position: absolute; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid #ef4444; top: -4px; right: -10px; }
+        .vector-head-reverse { border-left: none; border-right: 10px solid #ef4444; right: auto; left: -10px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8">
+
+<div class="max-w-6xl mx-auto space-y-6">
+    <!-- Header -->
+    <header class="bg-white p-6 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-blue-900">Gravity & Electrostatics Simulator</h1>
+            <p class="text-gray-600 mt-2">Explore Newton's Law of Gravitation and Coulomb's Law (HS-PS2-4)</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex space-x-2 bg-gray-100 p-1 rounded-lg">
+            <button id="btn-single-view" class="px-4 py-2 rounded-md bg-white shadow-sm font-semibold text-blue-600 transition-colors">Single View</button>
+            <button id="btn-compare-view" class="px-4 py-2 rounded-md font-semibold text-gray-600 hover:text-blue-600 transition-colors">Compare View</button>
+        </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="bg-white p-6 rounded-lg shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Distance -->
+        <div class="col-span-1 md:col-span-3 bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <label class="block font-semibold mb-2">Distance (r): <span id="val-r">5.0</span> m</label>
+            <input type="range" id="slider-r" class="slider" min="1" max="10" step="0.1" value="5">
+        </div>
+
+        <!-- Mass Controls -->
+        <div class="space-y-4 bg-green-50 p-4 rounded-lg border border-green-100" id="mass-controls">
+            <h3 class="font-bold text-green-800 border-b border-green-200 pb-2">Gravity Controls</h3>
+            <div>
+                <label class="block font-medium mb-1">Mass 1 (m₁): <span id="val-m1">1000</span> kg</label>
+                <input type="range" id="slider-m1" class="slider" min="10" max="5000" step="10" value="1000">
+            </div>
+            <div>
+                <label class="block font-medium mb-1">Mass 2 (m₂): <span id="val-m2">1000</span> kg</label>
+                <input type="range" id="slider-m2" class="slider" min="10" max="5000" step="10" value="1000">
+            </div>
+        </div>
+
+        <!-- Charge Controls -->
+        <div class="space-y-4 bg-purple-50 p-4 rounded-lg border border-purple-100" id="charge-controls">
+            <h3 class="font-bold text-purple-800 border-b border-purple-200 pb-2">Electrostatics Controls</h3>
+            <div>
+                <label class="block font-medium mb-1">Charge 1 (q₁): <span id="val-q1">5.0</span> &mu;C</label>
+                <input type="range" id="slider-q1" class="slider" min="-10" max="10" step="0.1" value="5">
+            </div>
+            <div>
+                <label class="block font-medium mb-1">Charge 2 (q₂): <span id="val-q2">-5.0</span> &mu;C</label>
+                <input type="range" id="slider-q2" class="slider" min="-10" max="10" step="0.1" value="-5">
+            </div>
+        </div>
+
+        <!-- View Toggle (Single Mode Only) -->
+        <div class="flex flex-col justify-center items-center p-4" id="single-view-toggle-container">
+            <p class="font-semibold mb-3 text-gray-700">Current Simulation:</p>
+            <div class="flex bg-gray-200 rounded-lg p-1 w-full max-w-xs">
+                <button id="btn-show-gravity" class="flex-1 py-2 rounded-md bg-white shadow-sm font-semibold text-green-700">Gravity</button>
+                <button id="btn-show-electro" class="flex-1 py-2 rounded-md font-semibold text-gray-500 hover:text-purple-700">Electrostatics</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simulation Canvas Area -->
+    <div id="sim-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Gravity Simulation -->
+        <div id="panel-gravity" class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+            <h2 class="text-xl font-bold text-green-800 mb-4 text-center">Gravitational Force</h2>
+            <div class="sim-canvas mb-4" id="canvas-gravity">
+                <!-- Objects and Vectors will be injected here by JS -->
+                <div id="obj-m1" class="object obj-m1 shadow-md">m₁</div>
+                <div id="obj-m2" class="object obj-m2 shadow-md">m₂</div>
+                <!-- Force vectors on M1 and M2 -->
+                <div id="vec-m1" class="vector-line bg-green-600"><div class="vector-head border-l-[10px] border-l-green-600"></div></div>
+                <div id="vec-m2" class="vector-line bg-green-600"><div class="vector-head vector-head-reverse border-r-[10px] border-r-green-600"></div></div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded border font-mono text-sm overflow-x-auto">
+                <p class="font-bold mb-2 text-green-700">Newton's Law of Gravitation:</p>
+                <p class="text-lg">F<sub>g</sub> = G &middot; (m₁ &middot; m₂) / r²</p>
+                <p class="mt-2 text-gray-600">G = 6.674 &times; 10<sup>-11</sup> N&middot;m²/kg²</p>
+                <p class="mt-2 text-blue-800 font-bold">Calculation:</p>
+                <p id="math-gravity">Fg = ...</p>
+            </div>
+        </div>
+
+        <!-- Electrostatics Simulation -->
+        <div id="panel-electro" class="bg-white p-6 rounded-lg shadow-sm flex flex-col hidden">
+            <h2 class="text-xl font-bold text-purple-800 mb-4 text-center">Electrostatic Force</h2>
+            <div class="sim-canvas mb-4" id="canvas-electro">
+                <div id="obj-q1" class="object shadow-md text-sm">q₁</div>
+                <div id="obj-q2" class="object shadow-md text-sm">q₂</div>
+                <div id="vec-q1" class="vector-line bg-purple-600"><div id="vec-head-q1" class="vector-head border-l-[10px] border-l-purple-600"></div></div>
+                <div id="vec-q2" class="vector-line bg-purple-600"><div id="vec-head-q2" class="vector-head vector-head-reverse border-r-[10px] border-r-purple-600"></div></div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded border font-mono text-sm overflow-x-auto">
+                <p class="font-bold mb-2 text-purple-700">Coulomb's Law:</p>
+                <p class="text-lg">F<sub>e</sub> = k &middot; (|q₁ &middot; q₂|) / r²</p>
+                <p class="mt-2 text-gray-600">k = 8.987 &times; 10<sup>9</sup> N&middot;m²/C²</p>
+                <p class="mt-2 text-blue-800 font-bold">Calculation:</p>
+                <p id="math-electro">Fe = ...</p>
+                <p id="math-electro-dir" class="mt-1 font-bold"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Data & Patterns -->
+    <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">Data & Patterns</h2>
+            <div class="flex space-x-2">
+                <button id="btn-record-data" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition-colors font-semibold">Record Data Point</button>
+                <button id="btn-clear-data" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded transition-colors">Clear Data</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">r (m)</th>
+                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">m₁ (kg)</th>
+                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">m₂ (kg)</th>
+                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">Fg (N)</th>
+                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">q₁ (&mu;C)</th>
+                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">q₂ (&mu;C)</th>
+                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">Fe (N)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body" class="text-sm">
+                        <!-- Data rows will appear here -->
+                    </tbody>
+                </table>
+                <p id="no-data-msg" class="text-gray-500 text-center py-4 italic">No data recorded yet. Adjust sliders and click "Record Data Point".</p>
+            </div>
+
+            <!-- Chart -->
+            <div class="bg-gray-50 p-2 border rounded h-[400px] flex flex-col">
+                <div class="flex justify-between items-center mb-2 px-2">
+                    <label class="font-semibold text-sm">X-Axis:</label>
+                    <select id="chart-x-axis" class="border rounded p-1 text-sm bg-white">
+                        <option value="r">Distance (r)</option>
+                        <option value="m1">Mass 1 (m₁)</option>
+                        <option value="q1">Charge 1 (q₁)</option>
+                    </select>
+                </div>
+                <div class="flex-1 relative w-full h-full">
+                    <canvas id="dataChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NGSS Info -->
+    <div class="bg-gray-200 p-6 rounded-lg text-sm text-gray-700">
+        <h3 class="font-bold text-lg mb-2">About This Simulation</h3>
+        <p class="mb-2">Designed for <strong>NGSS HS-PS2-4</strong>: <em>Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.</em></p>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>Patterns:</strong> Observe how force changes inversely with the square of distance. Record data points to graph and visualize this nonlinear relationship.</li>
+            <li><strong>Using Mathematics:</strong> View the live calculations derived from the mathematical models of basic assumptions.</li>
+            <li><strong>Types of Interactions:</strong> Compare the differences (attraction vs repulsion) and similarities (inverse-square laws) of gravitational and electrostatic fields.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Constants
+    const G = 6.674e-11;
+    const K = 8.987e9;
+
+    // State
+    const state = {
+        viewMode: 'single', // 'single' or 'compare'
+        activeSim: 'gravity', // 'gravity' or 'electrostatics'
+        r: 5.0,
+        m1: 1000,
+        m2: 1000,
+        q1: 5.0,
+        q2: -5.0,
+        fg: 0,
+        fe: 0,
+        data: []
+    };
+
+    // DOM Elements
+    const els = {
+        btnSingle: document.getElementById('btn-single-view'),
+        btnCompare: document.getElementById('btn-compare-view'),
+        btnShowGrav: document.getElementById('btn-show-gravity'),
+        btnShowElec: document.getElementById('btn-show-electro'),
+        simContainer: document.getElementById('sim-container'),
+        panelGravity: document.getElementById('panel-gravity'),
+        panelElectro: document.getElementById('panel-electro'),
+        singleViewToggleContainer: document.getElementById('single-view-toggle-container'),
+
+        sliderR: document.getElementById('slider-r'),
+        sliderM1: document.getElementById('slider-m1'),
+        sliderM2: document.getElementById('slider-m2'),
+        sliderQ1: document.getElementById('slider-q1'),
+        sliderQ2: document.getElementById('slider-q2'),
+
+        valR: document.getElementById('val-r'),
+        valM1: document.getElementById('val-m1'),
+        valM2: document.getElementById('val-m2'),
+        valQ1: document.getElementById('val-q1'),
+        valQ2: document.getElementById('val-q2'),
+
+        objM1: document.getElementById('obj-m1'),
+        objM2: document.getElementById('obj-m2'),
+        objQ1: document.getElementById('obj-q1'),
+        objQ2: document.getElementById('obj-q2'),
+
+        vecM1: document.getElementById('vec-m1'),
+        vecM2: document.getElementById('vec-m2'),
+        vecQ1: document.getElementById('vec-q1'),
+        vecQ2: document.getElementById('vec-q2'),
+        vecHeadQ1: document.getElementById('vec-head-q1'),
+        vecHeadQ2: document.getElementById('vec-head-q2'),
+
+        mathGravity: document.getElementById('math-gravity'),
+        mathElectro: document.getElementById('math-electro'),
+        mathElectroDir: document.getElementById('math-electro-dir'),
+
+        btnRecord: document.getElementById('btn-record-data'),
+        btnClear: document.getElementById('btn-clear-data'),
+        tableBody: document.getElementById('data-table-body'),
+        noDataMsg: document.getElementById('no-data-msg'),
+        chartXAxis: document.getElementById('chart-x-axis')
+    };
+
+    // Chart Initialization
+    const ctx = document.getElementById('dataChart').getContext('2d');
+    let dataChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Gravity Force (N) x 10¹¹',
+                    data: [],
+                    backgroundColor: '#10b981',
+                    borderColor: '#10b981',
+                    showLine: true
+                },
+                {
+                    label: 'Electrostatic Force (N) x 10²',
+                    data: [],
+                    backgroundColor: '#8b5cf6',
+                    borderColor: '#8b5cf6',
+                    showLine: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: { display: true, text: 'Distance (m)' }
+                },
+                y: {
+                    title: { display: true, text: 'Force (Scaled)' },
+                    suggestedMin: 0
+                }
+            }
+        }
+    });
+
+    // Format numbers for display (scientific notation if needed)
+    function formatSci(num) {
+        if (num === 0) return "0";
+        if (Math.abs(num) < 0.001 || Math.abs(num) > 10000) {
+            return num.toExponential(3).replace('e', ' &times; 10<sup>') + '</sup>';
+        }
+        return num.toPrecision(4);
+    }
+
+    function formatSciPlain(num) {
+        if (num === 0) return "0";
+        return num.toExponential(3);
+    }
+
+    // Update UI based on View Mode
+    function updateViewMode() {
+        if (state.viewMode === 'single') {
+            els.btnSingle.classList.replace('text-gray-600', 'text-blue-600');
+            els.btnSingle.classList.replace('bg-transparent', 'bg-white');
+            els.btnSingle.classList.add('shadow-sm');
+
+            els.btnCompare.classList.replace('text-blue-600', 'text-gray-600');
+            els.btnCompare.classList.replace('bg-white', 'bg-transparent');
+            els.btnCompare.classList.remove('shadow-sm');
+
+            els.simContainer.classList.remove('md:grid-cols-2');
+            els.simContainer.classList.add('md:grid-cols-1');
+            els.singleViewToggleContainer.classList.remove('hidden');
+
+            if (state.activeSim === 'gravity') {
+                els.panelGravity.classList.remove('hidden');
+                els.panelElectro.classList.add('hidden');
+            } else {
+                els.panelGravity.classList.add('hidden');
+                els.panelElectro.classList.remove('hidden');
+            }
+        } else {
+            els.btnCompare.classList.replace('text-gray-600', 'text-blue-600');
+            els.btnCompare.classList.replace('bg-transparent', 'bg-white');
+            els.btnCompare.classList.add('shadow-sm');
+
+            els.btnSingle.classList.replace('text-blue-600', 'text-gray-600');
+            els.btnSingle.classList.replace('bg-white', 'bg-transparent');
+            els.btnSingle.classList.remove('shadow-sm');
+
+            els.simContainer.classList.add('md:grid-cols-2');
+            els.simContainer.classList.remove('md:grid-cols-1');
+            els.singleViewToggleContainer.classList.add('hidden');
+
+            els.panelGravity.classList.remove('hidden');
+            els.panelElectro.classList.remove('hidden');
+        }
+
+        updateActiveSimToggleUI();
+        renderCanvas();
+    }
+
+    function updateActiveSimToggleUI() {
+        if (state.activeSim === 'gravity') {
+            els.btnShowGrav.classList.add('bg-white', 'shadow-sm', 'text-green-700');
+            els.btnShowGrav.classList.remove('text-gray-500');
+            els.btnShowElec.classList.remove('bg-white', 'shadow-sm', 'text-purple-700');
+            els.btnShowElec.classList.add('text-gray-500');
+        } else {
+            els.btnShowElec.classList.add('bg-white', 'shadow-sm', 'text-purple-700');
+            els.btnShowElec.classList.remove('text-gray-500');
+            els.btnShowGrav.classList.remove('bg-white', 'shadow-sm', 'text-green-700');
+            els.btnShowGrav.classList.add('text-gray-500');
+        }
+    }
+
+    // Main physics and UI update
+    function updateSimulation() {
+        // Update State from sliders
+        state.r = parseFloat(els.sliderR.value);
+        state.m1 = parseFloat(els.sliderM1.value);
+        state.m2 = parseFloat(els.sliderM2.value);
+        state.q1 = parseFloat(els.sliderQ1.value);
+        state.q2 = parseFloat(els.sliderQ2.value);
+
+        // Update labels
+        els.valR.textContent = state.r.toFixed(1);
+        els.valM1.textContent = state.m1;
+        els.valM2.textContent = state.m2;
+        els.valQ1.textContent = state.q1.toFixed(1);
+        els.valQ2.textContent = state.q2.toFixed(1);
+
+        // Calculate Forces
+        // Fg = G * m1 * m2 / r^2
+        state.fg = G * state.m1 * state.m2 / (state.r * state.r);
+
+        // Fe = k * |q1| * |q2| / r^2 (convert microCoulombs to Coulombs)
+        const q1C = state.q1 * 1e-6;
+        const q2C = state.q2 * 1e-6;
+        state.fe = K * Math.abs(q1C * q2C) / (state.r * state.r);
+
+        const isRepulsive = (state.q1 * state.q2) > 0;
+
+        // Math Text Updates
+        els.mathGravity.innerHTML = `F<sub>g</sub> = (6.674 &times; 10<sup>-11</sup>) &middot; (${state.m1}) &middot; (${state.m2}) / (${state.r.toFixed(1)})<sup>2</sup> <br>= <span class="text-green-700 font-bold">${formatSci(state.fg)} N</span>`;
+
+        els.mathElectro.innerHTML = `F<sub>e</sub> = (8.987 &times; 10<sup>9</sup>) &middot; |${formatSci(q1C)}| &middot; |${formatSci(q2C)}| / (${state.r.toFixed(1)})<sup>2</sup> <br>= <span class="text-purple-700 font-bold">${formatSci(state.fe)} N</span>`;
+
+        if (state.q1 === 0 || state.q2 === 0) {
+            els.mathElectroDir.textContent = "No force (Zero charge)";
+            els.mathElectroDir.className = "mt-1 font-bold text-gray-500";
+        } else if (isRepulsive) {
+            els.mathElectroDir.textContent = "Direction: Repulsive (Like charges)";
+            els.mathElectroDir.className = "mt-1 font-bold text-red-600";
+        } else {
+            els.mathElectroDir.textContent = "Direction: Attractive (Opposite charges)";
+            els.mathElectroDir.className = "mt-1 font-bold text-blue-600";
+        }
+
+        renderCanvas(isRepulsive);
+    }
+
+    function renderCanvas(isRepulsive) {
+        // Canvas is roughly 100% wide. Max r = 10. Center is 50%.
+        // Let's use percentage positioning to keep it responsive.
+        // If max distance is 10, let's map r=10 to 80% width.
+        // So distance px = (state.r / 10) * 80%
+
+        const maxDistPercent = 80;
+        const distPercent = (state.r / 10) * maxDistPercent;
+
+        const leftPos = 50 - (distPercent / 2);
+        const rightPos = 50 + (distPercent / 2);
+
+        // Sizes based on magnitude
+        const sM1 = Math.max(20, Math.min(60, 20 + (state.m1 / 5000) * 40));
+        const sM2 = Math.max(20, Math.min(60, 20 + (state.m2 / 5000) * 40));
+
+        const sQ1 = Math.max(20, Math.min(50, 20 + (Math.abs(state.q1) / 10) * 30));
+        const sQ2 = Math.max(20, Math.min(50, 20 + (Math.abs(state.q2) / 10) * 30));
+
+        // Colors for charges
+        const getQColor = (q) => {
+            if (q > 0) return '#ef4444'; // Red for positive
+            if (q < 0) return '#3b82f6'; // Blue for negative
+            return '#9ca3af'; // Gray for neutral
+        };
+
+        // Set styles for objects
+        els.objM1.style.width = `${sM1}px`; els.objM1.style.height = `${sM1}px`;
+        els.objM1.style.left = `calc(${leftPos}% - ${sM1/2}px)`;
+
+        els.objM2.style.width = `${sM2}px`; els.objM2.style.height = `${sM2}px`;
+        els.objM2.style.left = `calc(${rightPos}% - ${sM2/2}px)`;
+
+        els.objQ1.style.width = `${sQ1}px`; els.objQ1.style.height = `${sQ1}px`;
+        els.objQ1.style.left = `calc(${leftPos}% - ${sQ1/2}px)`;
+        els.objQ1.style.backgroundColor = getQColor(state.q1);
+        els.objQ1.textContent = state.q1 > 0 ? '+' : (state.q1 < 0 ? '-' : '0');
+
+        els.objQ2.style.width = `${sQ2}px`; els.objQ2.style.height = `${sQ2}px`;
+        els.objQ2.style.left = `calc(${rightPos}% - ${sQ2/2}px)`;
+        els.objQ2.style.backgroundColor = getQColor(state.q2);
+        els.objQ2.textContent = state.q2 > 0 ? '+' : (state.q2 < 0 ? '-' : '0');
+
+        // Vector arrows logic
+        // Gravity is always attractive
+        // Scale vector length logarithmically or linearly for visibility
+        const maxFg = G * 5000 * 5000 / (1 * 1); // 0.00166 N
+        const lenFg = state.fg === 0 ? 0 : Math.max(10, Math.min(100, (state.fg / maxFg) * 200 + 20)); // Base length
+
+        els.vecM1.style.width = `${lenFg}px`;
+        els.vecM1.style.left = `calc(${leftPos}% + ${sM1/2}px)`; // points right
+
+        els.vecM2.style.width = `${lenFg}px`;
+        els.vecM2.style.left = `calc(${rightPos}% - ${sM2/2}px - ${lenFg}px)`; // points left
+
+        // Electrostatics
+        const maxFe = K * (10e-6) * (10e-6) / (1 * 1); // ~0.898 N
+        const lenFe = state.fe === 0 ? 0 : Math.max(10, Math.min(100, (state.fe / maxFe) * 200 + 20));
+
+        if (state.q1 === 0 || state.q2 === 0) {
+            els.vecQ1.style.display = 'none';
+            els.vecQ2.style.display = 'none';
+        } else {
+            els.vecQ1.style.display = 'block';
+            els.vecQ2.style.display = 'block';
+
+            els.vecQ1.style.width = `${lenFe}px`;
+            els.vecQ2.style.width = `${lenFe}px`;
+
+            if (isRepulsive) {
+                // q1 points left
+                els.vecQ1.style.left = `calc(${leftPos}% - ${sQ1/2}px - ${lenFe}px)`;
+                els.vecHeadQ1.className = "vector-head vector-head-reverse border-r-[10px] border-r-purple-600";
+
+                // q2 points right
+                els.vecQ2.style.left = `calc(${rightPos}% + ${sQ2/2}px)`;
+                els.vecHeadQ2.className = "vector-head border-l-[10px] border-l-purple-600";
+            } else {
+                // Attractive: q1 points right
+                els.vecQ1.style.left = `calc(${leftPos}% + ${sQ1/2}px)`;
+                els.vecHeadQ1.className = "vector-head border-l-[10px] border-l-purple-600";
+
+                // q2 points left
+                els.vecQ2.style.left = `calc(${rightPos}% - ${sQ2/2}px - ${lenFe}px)`;
+                els.vecHeadQ2.className = "vector-head vector-head-reverse border-r-[10px] border-r-purple-600";
+            }
+        }
+    }
+
+    // Data Management
+    function recordData() {
+        const point = {
+            r: state.r,
+            m1: state.m1,
+            m2: state.m2,
+            fg: state.fg,
+            q1: state.q1,
+            q2: state.q2,
+            fe: state.fe
+        };
+
+        state.data.push(point);
+        updateTable();
+        updateChart();
+    }
+
+    function clearData() {
+        state.data = [];
+        updateTable();
+        updateChart();
+    }
+
+    function updateTable() {
+        if (state.data.length === 0) {
+            els.tableBody.innerHTML = '';
+            els.noDataMsg.style.display = 'block';
+            return;
+        }
+
+        els.noDataMsg.style.display = 'none';
+        els.tableBody.innerHTML = '';
+
+        // Show newest first
+        const reversedData = [...state.data].reverse();
+
+        reversedData.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b hover:bg-gray-50';
+
+            const cols = [
+                p.r.toFixed(1),
+                p.m1,
+                p.m2,
+                formatSciPlain(p.fg),
+                p.q1.toFixed(1),
+                p.q2.toFixed(1),
+                formatSciPlain(p.fe)
+            ];
+
+            cols.forEach(val => {
+                const td = document.createElement('td');
+                td.className = 'py-2 px-3 text-gray-700';
+                td.textContent = val;
+                tr.appendChild(td);
+            });
+
+            els.tableBody.appendChild(tr);
+        });
+    }
+
+    function updateChart() {
+        const xAxisKey = els.chartXAxis.value;
+        let xLabel = 'Distance (m)';
+        if (xAxisKey === 'm1') xLabel = 'Mass 1 (kg)';
+        if (xAxisKey === 'q1') xLabel = 'Charge 1 (μC)';
+
+        dataChart.options.scales.x.title.text = xLabel;
+
+        // Sort data by X axis to ensure lines draw correctly
+        const sortedData = [...state.data].sort((a, b) => a[xAxisKey] - b[xAxisKey]);
+
+        const gPoints = [];
+        const ePoints = [];
+
+        sortedData.forEach(p => {
+            // Scale forces for the chart so they are somewhat comparable visually
+            // Fg is ~10^-9 to 10^-6, multiply by 10^11
+            gPoints.push({ x: p[xAxisKey], y: p.fg * 1e11 });
+            // Fe is ~10^-3 to 1, multiply by 10^2
+            ePoints.push({ x: p[xAxisKey], y: p.fe * 1e2 });
+        });
+
+        dataChart.data.datasets[0].data = gPoints;
+        dataChart.data.datasets[1].data = ePoints;
+        dataChart.update();
+    }
+
+    // Event Listeners
+    els.sliderR.addEventListener('input', updateSimulation);
+    els.sliderM1.addEventListener('input', updateSimulation);
+    els.sliderM2.addEventListener('input', updateSimulation);
+    els.sliderQ1.addEventListener('input', updateSimulation);
+    els.sliderQ2.addEventListener('input', updateSimulation);
+
+    els.btnSingle.addEventListener('click', () => { state.viewMode = 'single'; updateViewMode(); });
+    els.btnCompare.addEventListener('click', () => { state.viewMode = 'compare'; updateViewMode(); });
+
+    els.btnShowGrav.addEventListener('click', () => { state.activeSim = 'gravity'; updateViewMode(); });
+    els.btnShowElec.addEventListener('click', () => { state.activeSim = 'electrostatics'; updateViewMode(); });
+
+    els.btnRecord.addEventListener('click', recordData);
+    els.btnClear.addEventListener('click', clearData);
+    els.chartXAxis.addEventListener('change', updateChart);
+
+    // Initial setup
+    updateSimulation();
+    updateViewMode();
+
+</script>
+</body>
+</html>

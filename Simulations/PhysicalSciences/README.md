@@ -45,6 +45,8 @@ Apply scientific and engineering ideas to design, evaluate, and refine a device 
 ### HS-PS2-4
 Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.
 
+- [Gravity and Electrostatics Simulator](GravityAndElectrostaticsSimulator.html) - An interactive simulation to compare gravitational and electrostatic forces, manipulate mass/charge/distance, and explore the inverse-square law through data logging and graphing.
+
 ### HS-PS2-5
 Plan and conduct an investigation to provide evidence that an electric current can produce a magnetic field and that a changing magnetic field can produce an electric current.
 
