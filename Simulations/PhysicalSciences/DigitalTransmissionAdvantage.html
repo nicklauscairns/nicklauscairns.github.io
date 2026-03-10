@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital vs. Analog Transmission Advantages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .pixel-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 1px;
+            background-color: #e5e7eb;
+            border: 2px solid #9ca3af;
+        }
+        .pixel {
+            aspect-ratio: 1 / 1;
+            transition: background-color 0.2s;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+
+<div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-indigo-600 text-white p-6">
+        <h1 class="text-3xl font-bold">Advantages of Digital Transmission</h1>
+        <p class="mt-2 text-indigo-100">Explore how digitizing information (into discrete arrays or binary values) allows it to be reliably stored, transmitted, and perfectly reconstructed even through a noisy environment (HS-PS4-2).</p>
+    </div>
+
+    <div class="p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Controls -->
+        <div class="lg:col-span-1 bg-gray-50 p-4 rounded-lg border">
+            <h2 class="text-xl font-bold mb-4">Transmission Controls</h2>
+
+            <div class="mb-6">
+                <label class="block font-semibold text-gray-700 mb-2">Distance / Interference (Noise): <span id="noise-val">10</span>%</label>
+                <input type="range" id="noise-slider" min="0" max="100" value="10" class="w-full" oninput="updateNoise(this.value)">
+                <p class="text-xs text-gray-500 mt-1">As a signal travels further, it picks up random background noise.</p>
+            </div>
+
+            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded transition-colors" onclick="transmitSignal()">
+                Transmit Image
+            </button>
+
+            <div class="mt-6 p-4 bg-white border border-gray-200 rounded">
+                <h3 class="font-bold text-gray-800 text-sm mb-2">Scientific Principle:</h3>
+                <p class="text-xs text-gray-700 mb-2"><strong>Analog</strong> signals use continuous values. Any noise added permanently alters the exact value.</p>
+                <p class="text-xs text-gray-700"><strong>Digital</strong> signals use discrete values (e.g., 0 or 1). Because there's a large gap between valid states, a receiver can easily round off the noise and perfectly reconstruct the original signal.</p>
+            </div>
+        </div>
+
+        <!-- Displays -->
+        <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+
+            <!-- Original -->
+            <div class="flex flex-col items-center">
+                <h3 class="font-bold text-lg mb-2 text-gray-700">Original Data</h3>
+                <div id="grid-original" class="pixel-grid w-full max-w-[200px] shadow-sm"></div>
+                <p class="text-xs text-gray-500 mt-2">Clean, uncorrupted source.</p>
+            </div>
+
+            <!-- Analog Received -->
+            <div class="flex flex-col items-center">
+                <h3 class="font-bold text-lg mb-2 text-red-700">Analog Transmission</h3>
+                <div id="grid-analog" class="pixel-grid w-full max-w-[200px] shadow-sm"></div>
+                <div class="mt-2 text-left bg-red-50 p-2 rounded border border-red-200 w-full text-xs">
+                    <strong>Result:</strong> <span id="analog-status" class="text-red-700">Degraded</span><br>
+                    <span class="text-red-800">Noise is permanently baked into the continuous color values. The image is blurry and corrupted.</span>
+                </div>
+            </div>
+
+            <!-- Digital Received -->
+            <div class="flex flex-col items-center">
+                <h3 class="font-bold text-lg mb-2 text-green-700">Digital Transmission</h3>
+                <div id="grid-digital" class="pixel-grid w-full max-w-[200px] shadow-sm"></div>
+                <div class="mt-2 text-left bg-green-50 p-2 rounded border border-green-200 w-full text-xs">
+                    <strong>Result:</strong> <span id="digital-status" class="text-green-700">Perfectly Reconstructed</span><br>
+                    <span class="text-green-800">The receiver reads values > 50% as White, and < 50% as Black. The noise is discarded!</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const GRID_SIZE = 16;
+    const TOTAL_PIXELS = GRID_SIZE * GRID_SIZE;
+
+    // Abstract "Smiley Face" Image (0 = black, 255 = white)
+    const originalImage = new Array(TOTAL_PIXELS).fill(255); // White background
+
+    // Draw Eyes
+    originalImage[4*16 + 4] = 0; originalImage[4*16 + 5] = 0;
+    originalImage[5*16 + 4] = 0; originalImage[5*16 + 5] = 0;
+
+    originalImage[4*16 + 10] = 0; originalImage[4*16 + 11] = 0;
+    originalImage[5*16 + 10] = 0; originalImage[5*16 + 11] = 0;
+
+    // Draw Smile
+    originalImage[10*16 + 3] = 0; originalImage[10*16 + 12] = 0;
+    originalImage[11*16 + 4] = 0; originalImage[11*16 + 11] = 0;
+    originalImage[12*16 + 5] = 0; originalImage[12*16 + 6] = 0;
+    originalImage[12*16 + 7] = 0; originalImage[12*16 + 8] = 0;
+    originalImage[12*16 + 9] = 0; originalImage[12*16 + 10] = 0;
+
+    let noiseLevel = 10; // 0 to 100
+
+    // State arrays
+    let analogReceived = [...originalImage];
+    let digitalReceived = [...originalImage];
+
+    function initGrids() {
+        const createPixels = (containerId) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for (let i = 0; i < TOTAL_PIXELS; i++) {
+                const p = document.createElement('div');
+                p.className = 'pixel';
+                p.id = `${containerId}-px-${i}`;
+                container.appendChild(p);
+            }
+        };
+
+        createPixels('grid-original');
+        createPixels('grid-analog');
+        createPixels('grid-digital');
+
+        renderGrid('grid-original', originalImage);
+        renderGrid('grid-analog', originalImage);
+        renderGrid('grid-digital', originalImage);
+    }
+
+    function renderGrid(containerId, dataArray) {
+        for (let i = 0; i < TOTAL_PIXELS; i++) {
+            const p = document.getElementById(`${containerId}-px-${i}`);
+            const val = Math.max(0, Math.min(255, Math.round(dataArray[i])));
+            p.style.backgroundColor = `rgb(${val}, ${val}, ${val})`;
+        }
+    }
+
+    window.updateNoise = function(val) {
+        noiseLevel = parseInt(val);
+        document.getElementById('noise-val').textContent = noiseLevel;
+    }
+
+    window.transmitSignal = function() {
+        // Apply noise (amplitude of random fluctuation)
+        const maxNoiseAmplitude = (noiseLevel / 100) * 255;
+
+        let digitalErrors = 0;
+
+        for (let i = 0; i < TOTAL_PIXELS; i++) {
+            // Analog picks up continuous noise
+            const noise = (Math.random() - 0.5) * 2 * maxNoiseAmplitude;
+            const analogVal = originalImage[i] + noise;
+            analogReceived[i] = analogVal;
+
+            // Digital picks up the exact same noise over the wire...
+            const noisyDigitalSignal = originalImage[i] + noise;
+
+            // ...but the Digital Receiver uses a THRESHOLD to reconstruct the bit (0 or 255)
+            // Threshold is exactly half-way (127.5)
+            let reconstructedBit = noisyDigitalSignal > 127.5 ? 255 : 0;
+            digitalReceived[i] = reconstructedBit;
+
+            if (reconstructedBit !== originalImage[i]) {
+                digitalErrors++;
+            }
+        }
+
+        renderGrid('grid-analog', analogReceived);
+        renderGrid('grid-digital', digitalReceived);
+
+        // Update Status Text
+        if (noiseLevel === 0) {
+            document.getElementById('analog-status').textContent = "Perfect Match";
+            document.getElementById('analog-status').className = "text-green-700 font-bold";
+        } else {
+            document.getElementById('analog-status').textContent = "Degraded (Loss of Quality)";
+            document.getElementById('analog-status').className = "text-red-700 font-bold";
+        }
+
+        if (digitalErrors > 0) {
+            document.getElementById('digital-status').textContent = `Corrupted (${digitalErrors} errors)`;
+            document.getElementById('digital-status').className = "text-red-700 font-bold";
+        } else {
+            document.getElementById('digital-status').textContent = "Perfectly Reconstructed";
+            document.getElementById('digital-status').className = "text-green-700 font-bold";
+        }
+    }
+
+    // Expose for testing
+    window.testingTools = {
+        getNoiseLevel: () => noiseLevel,
+        getAnalogData: () => analogReceived,
+        getDigitalData: () => digitalReceived,
+        getOriginalData: () => originalImage
+    };
+
+    // Start
+    initGrids();
+
+</script>
+</body>
+</html>

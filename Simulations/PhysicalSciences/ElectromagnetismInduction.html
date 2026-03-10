@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electromagnetism & Induction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-btn {
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #2563eb; /* Blue 600 */
+            color: #1e3a8a; /* Blue 900 */
+            font-weight: bold;
+        }
+        .sim-area {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            background-color: #f8fafc; /* Slate 50 */
+            border: 2px solid #cbd5e1; /* Slate 300 */
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        /* Magnet styling */
+        .magnet {
+            position: absolute;
+            width: 120px;
+            height: 40px;
+            display: flex;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 2px solid #334155;
+            cursor: grab;
+            z-index: 10;
+        }
+        .magnet:active {
+            cursor: grabbing;
+        }
+        .mag-north {
+            flex: 1;
+            background-color: #ef4444; /* Red 500 */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .mag-south {
+            flex: 1;
+            background-color: #3b82f6; /* Blue 500 */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Coil styling */
+        .coil-container {
+            position: absolute;
+            width: 160px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .coil-loop {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 8px solid #b45309; /* Bronze/Copper color */
+            border-radius: 50%;
+            opacity: 0.8;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2) inset;
+        }
+        /* pseudo-3D effect */
+        .coil-loop-back {
+            border-color: #78350f;
+            z-index: 5;
+        }
+        .coil-loop-front {
+            border-color: #d97706;
+            z-index: 15;
+            clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+        }
+
+        /* Compass */
+        .compass {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid #64748b;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .compass-needle {
+            width: 4px;
+            height: 48px;
+            position: relative;
+            transition: transform 0.1s;
+        }
+        .compass-needle-n {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: red;
+            clip-path: polygon(50% 0, 100% 100%, 0 100%);
+        }
+        .compass-needle-s {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #cbd5e1;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+
+        /* Meter */
+        .meter {
+            position: absolute;
+            top: 20px;
+            width: 200px;
+            height: 100px;
+            background: white;
+            border: 3px solid #334155;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10px;
+        }
+        .meter-scale {
+            width: 160px;
+            height: 40px;
+            border: 1px solid #cbd5e1;
+            border-bottom: none;
+            border-radius: 80px 80px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .meter-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            height: 38px;
+            background: red;
+            transform-origin: bottom center;
+            transform: rotate(0deg);
+            transition: transform 0.1s linear;
+        }
+
+        /* Circuit Wires */
+        .wire {
+            position: absolute;
+            border: 4px solid #334155;
+            z-index: 1;
+        }
+
+        /* Field line canvas */
+        #fieldCanvas1, #fieldCanvas2 {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-6 min-h-screen flex flex-col items-center">
+
+    <div class="max-w-6xl w-full">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Electromagnetism & Induction</h1>
+            <h2 class="text-2xl font-semibold text-gray-600 mb-4">HS-PS2-5: Current and Magnetic Fields</h2>
+            <p class="text-lg text-gray-700 max-w-4xl mx-auto">
+                Plan and conduct an investigation to provide evidence that an electric current can produce a magnetic field and that a changing magnetic field can produce an electric current.
+            </p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-300 mb-6">
+            <button id="tab1-btn" class="tab-btn active flex-1 py-3 text-lg text-gray-600 hover:text-blue-600 focus:outline-none transition-colors">
+                Investigation 1: Electromagnet (Current → B-Field)
+            </button>
+            <button id="tab2-btn" class="tab-btn flex-1 py-3 text-lg text-gray-600 hover:text-blue-600 focus:outline-none transition-colors">
+                Investigation 2: Induction (Changing B-Field → Current)
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+            <!-- Controls Panel -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md border border-gray-200 h-fit">
+
+                <!-- Tab 1 Controls -->
+                <div id="controls-tab1">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2 text-blue-800">Electromagnet Controls</h3>
+                    <p class="text-sm text-gray-600 mb-4">Adjust the battery voltage to push current through the coil. Observe the compass needle.</p>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Battery Voltage (V): <span id="voltVal">0.0</span></label>
+                        <input type="range" id="voltageSlider" min="-12" max="12" step="1" value="0" class="w-full accent-blue-500">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>-12V</span><span>0V</span><span>+12V</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Number of Loops (N): <span id="loopVal1">3</span></label>
+                        <input type="range" id="loopSlider1" min="1" max="10" step="1" value="3" class="w-full accent-green-500">
+                    </div>
+
+                    <div class="mt-6 p-3 bg-blue-50 border border-blue-200 rounded">
+                        <h4 class="font-semibold text-sm">Compass Field (B):</h4>
+                        <p class="text-lg font-mono font-bold text-blue-900"><span id="bFieldVal">0.0</span> mT</p>
+                    </div>
+                </div>
+
+                <!-- Tab 2 Controls -->
+                <div id="controls-tab2" class="hidden">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2 text-red-800">Induction Controls</h3>
+                    <p class="text-sm text-gray-600 mb-4">Drag the permanent magnet near or through the coil. Observe the ammeter.</p>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Number of Loops (N): <span id="loopVal2">3</span></label>
+                        <input type="range" id="loopSlider2" min="1" max="10" step="1" value="3" class="w-full accent-green-500">
+                    </div>
+
+                    <div class="mt-6 p-3 bg-red-50 border border-red-200 rounded">
+                        <h4 class="font-semibold text-sm">Induced Current (I):</h4>
+                        <p class="text-lg font-mono font-bold text-red-900"><span id="currentVal">0.0</span> A</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Simulation Area -->
+            <div class="lg:col-span-3">
+
+                <!-- Tab 1 Sim -->
+                <div id="sim-tab1" class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Electromagnet</h3>
+                    <div class="sim-area" id="simArea1">
+                        <canvas id="fieldCanvas1"></canvas>
+
+                        <!-- Battery -->
+                        <div class="absolute bottom-4 left-4 w-24 h-16 bg-yellow-400 border-4 border-gray-800 rounded flex items-center justify-between px-2 font-bold text-xl z-20">
+                            <span>-</span><span class="text-sm">BATTERY</span><span>+</span>
+                        </div>
+
+                        <!-- Wires -->
+                        <div class="wire" style="bottom: 30px; left: 100px; width: 150px; height: 0; border-bottom: 0;"></div>
+                        <div class="wire" style="bottom: 50px; left: 100px; width: 150px; height: 0; border-top: 0;"></div>
+
+                        <!-- Coil -->
+                        <div class="coil-container" id="coil1" style="left: 250px;">
+                            <!-- Loops injected via JS -->
+                        </div>
+
+                        <!-- Compass -->
+                        <div class="compass" id="compass1" style="left: 500px; cursor: move;" title="Drag me!">
+                            <div class="compass-needle" id="needle1">
+                                <div class="compass-needle-n"></div>
+                                <div class="compass-needle-s"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Tab 2 Sim -->
+                <div id="sim-tab2" class="hidden bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Electromagnetic Induction (Faraday's Law)</h3>
+                    <div class="sim-area" id="simArea2">
+                        <canvas id="fieldCanvas2"></canvas>
+
+                        <!-- Meter -->
+                        <div class="meter">
+                            <span class="text-xs font-bold mb-1">AMMETER (A)</span>
+                            <div class="meter-scale">
+                                <div class="meter-needle" id="ammeterNeedle"></div>
+                            </div>
+                        </div>
+
+                        <!-- Coil -->
+                        <div class="coil-container" id="coil2" style="left: 300px;">
+                            <!-- Loops injected via JS -->
+                        </div>
+
+                        <!-- Draggable Magnet -->
+                        <div class="magnet" id="dragMagnet" style="left: 100px; top: 155px;">
+                            <div class="mag-south">S</div>
+                            <div class="mag-north">N</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Educational Context Section -->
+        <div class="mt-8 bg-blue-50 p-6 rounded-xl shadow-md border border-blue-200">
+            <h3 class="text-2xl font-bold text-blue-900 mb-4">NGSS Three-Dimensional Learning</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Science & Engineering Practices</h4>
+                    <p class="text-sm text-gray-700"><strong>Planning and Carrying Out Investigations:</strong> Use this sandbox to gather empirical data. In Tab 1, observe how voltage and loop count affect magnetic field strength. In Tab 2, investigate how the speed and direction of a moving magnet induce different currents.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Disciplinary Core Ideas</h4>
+                    <p class="text-sm text-gray-700"><strong>PS2.B & PS3.A:</strong> Forces at a distance are explained by fields. Electric currents cause magnetic fields (Electromagnets). Conversely, changing magnetic fields cause electric fields, inducing a current in a wire (Faraday's Law).</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-800 mb-2">Crosscutting Concepts</h4>
+                    <p class="text-sm text-gray-700"><strong>Cause and Effect:</strong> Empirical evidence shows specific causes and effects. A stationary magnet (cause) produces no current (effect). A <em>moving</em> magnet (cause) induces a current (effect). Reversing the motion reverses the current.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Tab switching logic
+        const btn1 = document.getElementById('tab1-btn');
+        const btn2 = document.getElementById('tab2-btn');
+        const ctl1 = document.getElementById('controls-tab1');
+        const ctl2 = document.getElementById('controls-tab2');
+        const sim1 = document.getElementById('sim-tab1');
+        const sim2 = document.getElementById('sim-tab2');
+
+        btn1.addEventListener('click', () => {
+            btn1.classList.add('active'); btn2.classList.remove('active');
+            ctl1.classList.remove('hidden'); ctl2.classList.add('hidden');
+            sim1.classList.remove('hidden'); sim2.classList.add('hidden');
+        });
+
+        btn2.addEventListener('click', () => {
+            btn2.classList.add('active'); btn1.classList.remove('active');
+            ctl2.classList.remove('hidden'); ctl1.classList.add('hidden');
+            sim2.classList.remove('hidden'); sim1.classList.add('hidden');
+        });
+
+        // --- Tab 1: Electromagnet Logic ---
+        const voltSlider = document.getElementById('voltageSlider');
+        const voltVal = document.getElementById('voltVal');
+        const loopSlider1 = document.getElementById('loopSlider1');
+        const loopVal1 = document.getElementById('loopVal1');
+        const bFieldVal = document.getElementById('bFieldVal');
+
+        const coil1Container = document.getElementById('coil1');
+        const compass1 = document.getElementById('compass1');
+        const needle1 = document.getElementById('needle1');
+
+        // Render Coils function
+        function renderCoils(container, n) {
+            container.innerHTML = '';
+            for (let i = 0; i < n; i++) {
+                // We draw the back half, then the front half
+                const back = document.createElement('div');
+                back.className = 'coil-loop coil-loop-back';
+                back.style.left = `${(i - n/2) * 10}px`;
+
+                const front = document.createElement('div');
+                front.className = 'coil-loop coil-loop-front';
+                front.style.left = `${(i - n/2) * 10}px`;
+
+                container.appendChild(back);
+                container.appendChild(front);
+            }
+        }
+
+        let volt = 0;
+        let n1 = 3;
+
+        function updateTab1() {
+            volt = parseFloat(voltSlider.value);
+            n1 = parseInt(loopSlider1.value);
+
+            voltVal.textContent = volt.toFixed(1);
+            loopVal1.textContent = n1;
+
+            renderCoils(coil1Container, n1);
+            updateCompass();
+        }
+
+        voltSlider.addEventListener('input', updateTab1);
+        loopSlider1.addEventListener('input', updateTab1);
+
+        // Compass Dragging
+        let isDraggingCompass = false;
+        let compX = 500;
+        let compY = 145; // roughly centered vertically in 350px area (350/2 - 60/2)
+
+        compass1.addEventListener('mousedown', (e) => {
+            isDraggingCompass = true;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingCompass) {
+                const rect = document.getElementById('simArea1').getBoundingClientRect();
+                compX = e.clientX - rect.left - 30; // 30 is half compass width
+                compY = e.clientY - rect.top - 30;
+
+                // Bounds
+                compX = Math.max(0, Math.min(rect.width - 60, compX));
+                compY = Math.max(0, Math.min(rect.height - 60, compY));
+
+                compass1.style.left = `${compX}px`;
+                compass1.style.top = `${compY}px`;
+                updateCompass();
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDraggingCompass = false;
+        });
+
+        // Update Compass Needle (B-field calculation)
+        function updateCompass() {
+            // Coil center roughly at x=250 + 80 = 330, y = 145 + 60 = 205
+            const coilX = 330;
+            const coilY = 175;
+
+            // Center of compass
+            const cx = compX + 30;
+            const cy = compY + 30;
+
+            const dx = cx - coilX;
+            const dy = cy - coilY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            // Magnetic field of a dipole roughly drops off as 1/r^3.
+            // B is proportional to N * I (which we map directly to Voltage here for simplicity).
+            // We use a dipole field approximation.
+            // Magnetic moment m = N * I * Area. Vector is along X axis.
+
+            let Bx = 0;
+            let By = 0;
+
+            if (dist > 10) {
+                // Dipole field equation in 2D (assuming moment m is entirely in x direction)
+                // B = (mu0/4pi) * (1/r^3) * [3(m . r_hat)r_hat - m]
+                // Let's simplify and normalize
+                const m = n1 * volt * 10; // arbitrary constant
+                const r3 = Math.pow(dist, 3);
+
+                const r_hat_x = dx / dist;
+                const r_hat_y = dy / dist;
+
+                const m_dot_r_hat = m * r_hat_x; // since m is only in x
+
+                Bx = (1/r3) * (3 * m_dot_r_hat * r_hat_x - m) * 10000;
+                By = (1/r3) * (3 * m_dot_r_hat * r_hat_y) * 10000;
+            }
+
+            // The Earth has a small background field (let's say pointing North/Up, so y = -1)
+            const B_earth_x = 0;
+            const B_earth_y = -0.5;
+
+            const B_total_x = Bx + B_earth_x;
+            const B_total_y = By + B_earth_y;
+
+            const bMag = Math.sqrt(B_total_x*B_total_x + B_total_y*B_total_y);
+
+            bFieldVal.textContent = (bMag).toFixed(2);
+
+            // Angle of compass needle (atan2(y, x))
+            // Note: Canvas/CSS rotates clockwise from Top (0deg), so we need to map angles.
+            // y is down in CSS.
+            // 0 deg = Up (North).
+            // Vector (x, y) needs to point needle.
+            // A vector pointing right (+x) is 90deg.
+            const angleRad = Math.atan2(B_total_y, B_total_x);
+            // needle default (0deg) points North (up).
+            // Math.atan2(y, x) where x=1, y=0 is 0. We want that to be 90deg.
+            const angleDeg = (angleRad * 180 / Math.PI) + 90;
+
+            needle1.style.transform = `rotate(${angleDeg}deg)`;
+        }
+
+
+        // --- Tab 2: Induction Logic ---
+        const loopSlider2 = document.getElementById('loopSlider2');
+        const loopVal2 = document.getElementById('loopVal2');
+        const currentVal = document.getElementById('currentVal');
+        const coil2Container = document.getElementById('coil2');
+        const dragMagnet = document.getElementById('dragMagnet');
+        const ammeterNeedle = document.getElementById('ammeterNeedle');
+
+        let n2 = 3;
+
+        function updateTab2() {
+            n2 = parseInt(loopSlider2.value);
+            loopVal2.textContent = n2;
+            renderCoils(coil2Container, n2);
+        }
+
+        loopSlider2.addEventListener('input', updateTab2);
+
+        // Magnet Dragging & Faraday's Law
+        let isDraggingMagnet = false;
+        let magX = 100;
+        let magY = 155;
+        let lastMagX = 100;
+        let lastTime = performance.now();
+        let inducedCurrent = 0;
+        let simRunning = true;
+
+        dragMagnet.addEventListener('mousedown', (e) => {
+            isDraggingMagnet = true;
+            // Prevent text selection
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingMagnet) {
+                const rect = document.getElementById('simArea2').getBoundingClientRect();
+                magX = e.clientX - rect.left - 60; // 60 is half magnet width
+                magY = e.clientY - rect.top - 20;  // 20 is half magnet height
+
+                // Keep constrained mostly to the X-axis through the coil for better effect, but allow Y
+                magX = Math.max(0, Math.min(rect.width - 120, magX));
+                magY = Math.max(50, Math.min(rect.height - 40, magY)); // don't go over ammeter
+
+                dragMagnet.style.left = `${magX}px`;
+                dragMagnet.style.top = `${magY}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDraggingMagnet = false;
+        });
+
+        // Animation Loop for Induction
+        function simLoop(time) {
+            if (!simRunning) return;
+
+            const dt = time - lastTime;
+            lastTime = time;
+
+            if (dt > 0) {
+                // Calculate velocity of magnet in X direction
+                const vx = (magX - lastMagX) / dt;
+                lastMagX = magX;
+
+                // Faraday's Law: Emf = -N * dPhi/dt
+                // B-field strength depends on distance to coil.
+                // Center of coil is at x = 300 + 80 = 380
+                const coilX = 380;
+
+                // Let's create a proxy for Magnetic Flux (Phi)
+                // Flux is highest when magnet is centered on the coil.
+                // Using a gaussian curve for flux depending on x-distance.
+                const dist = magX + 60 - coilX; // magnet center x - coil center x
+
+                // Current is derivative of flux. Since flux is Gaussian, derivative is proportional to -x * exp(-x^2) * vx
+                // For a simpler engaging effect, we just say:
+                // If it's near the coil, a high velocity creates a high spike.
+                let proximityFactor = Math.max(0, 1 - Math.abs(dist)/200); // 1 at center, 0 at 200px away
+
+                // EMF = N * velocity * proximity
+                // We add a minus sign conceptually, but visual direction matters.
+                // If moving right (+vx) and approaching (+dist is negative), let's map to current direction.
+
+                let targetCurrent = -n2 * vx * proximityFactor * 2.0;
+
+                // Dampen the current so the needle has inertia
+                inducedCurrent += (targetCurrent - inducedCurrent) * 0.2;
+
+                // Update UI
+                currentVal.textContent = inducedCurrent.toFixed(2);
+
+                // Ammeter needle rotation (say -90 to +90 deg max)
+                let needleAngle = inducedCurrent * 5;
+                needleAngle = Math.max(-80, Math.min(80, needleAngle));
+                ammeterNeedle.style.transform = `rotate(${needleAngle}deg)`;
+            }
+
+            requestAnimationFrame(simLoop);
+        }
+
+        // Initialize
+        updateTab1();
+        compass1.style.top = '145px';
+        updateTab2();
+        requestAnimationFrame(simLoop);
+
+        // Expose for Playwright
+        window.simulationState = {
+            get volt() { return volt; },
+            get n1() { return n1; },
+            get n2() { return n2; },
+            get inducedCurrent() { return inducedCurrent; }
+        };
+    </script>
+</body>
+</html>

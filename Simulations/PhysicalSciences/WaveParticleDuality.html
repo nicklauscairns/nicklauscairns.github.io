@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave-Particle Duality of Light</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { background-color: #0f172a; border-radius: 8px; cursor: crosshair; }
+        .hidden { display: none; }
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        .tab-btn.inactive { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+
+<div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-indigo-600 text-white p-6">
+        <h1 class="text-3xl font-bold">Wave-Particle Duality</h1>
+        <p class="mt-2 text-indigo-100">Evaluate evidence demonstrating that electromagnetic radiation acts as both a wave and a particle depending on the phenomenon (HS-PS4-3).</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b bg-gray-50 p-4 gap-4">
+        <button id="tab-wave" class="tab-btn active px-6 py-2 rounded border font-semibold" onclick="switchTab('wave')">
+            Evidence 1: The Wave Model (Double Slit)
+        </button>
+        <button id="tab-particle" class="tab-btn inactive px-6 py-2 rounded border font-semibold" onclick="switchTab('particle')">
+            Evidence 2: The Particle Model (Photoelectric)
+        </button>
+    </div>
+
+    <!-- Wave Model (Double Slit) -->
+    <div id="content-wave" class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 relative">
+                <canvas id="waveCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="bg-gray-50 p-4 rounded border">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Double-Slit Experiment</h3>
+                    <p class="text-sm text-gray-600 mb-4">When light passes through two narrow slits, it creates a pattern on the back wall.</p>
+
+                    <label class="block font-semibold text-gray-700 mb-1">Slit Spacing: <span id="slit-val">Medium</span></label>
+                    <input type="range" id="slit-slider" min="20" max="80" value="40" class="w-full" oninput="updateSlits(this.value)">
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                    <h3 class="font-bold text-blue-900 mb-2">The Argument for Waves:</h3>
+                    <p class="text-sm text-blue-800 mb-2">If light were purely a stream of particles (like bullets), we would expect exactly two bright lines on the back wall corresponding to the two slits.</p>
+                    <p class="text-sm text-blue-800 font-bold">Instead, we see an interference pattern (multiple stripes).</p>
+                    <p class="text-sm text-blue-800 mt-2">This proves light travels as a wave, diffracting out of the slits and adding/canceling (constructive and destructive interference) before hitting the wall.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Particle Model (Photoelectric Effect) -->
+    <div id="content-particle" class="p-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 relative">
+                <canvas id="particleCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="bg-gray-50 p-4 rounded border">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Photoelectric Effect</h3>
+                    <p class="text-sm text-gray-600 mb-4">Shining light on a metal plate. Can the light knock electrons off the metal?</p>
+
+                    <label class="block font-semibold text-gray-700 mb-1">Light Wavelength (Color):</label>
+                    <input type="range" id="freq-slider" min="400" max="750" value="700" class="w-full" oninput="updateFreq(this.value)">
+                    <div class="flex justify-between text-xs mt-1 font-bold">
+                        <span class="text-red-500">Low Energy (Red)</span>
+                        <span class="text-green-500">Green</span>
+                        <span class="text-blue-500">High Energy (Violet)</span>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 p-4 rounded border border-orange-200">
+                    <h3 class="font-bold text-orange-900 mb-2">The Argument for Particles:</h3>
+                    <p class="text-sm text-orange-800 mb-2">If light were purely a continuous wave, shining a bright red light for a long time should eventually build up enough energy to knock off an electron.</p>
+                    <p class="text-sm text-orange-800 font-bold">However, red light NEVER ejects electrons, no matter how bright or how long you wait. But dim blue light ejects them instantly.</p>
+                    <p class="text-sm text-orange-800 mt-2">This proves light travels in discrete packets (photons). A single red photon doesn't have enough energy to overcome the threshold (work function), while a single blue photon does.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let activeTab = 'wave';
+    let animationId = null;
+
+    function switchTab(tabId) {
+        ['wave', 'particle'].forEach(id => {
+            const btn = document.getElementById('tab-' + id);
+            const content = document.getElementById('content-' + id);
+            if (id === tabId) {
+                btn.classList.replace('inactive', 'active');
+                content.classList.remove('hidden');
+            } else {
+                btn.classList.replace('active', 'inactive');
+                content.classList.add('hidden');
+            }
+        });
+        activeTab = tabId;
+
+        if (tabId === 'wave') {
+            document.getElementById('slit-slider').value = 40;
+            updateSlits(40);
+        } else if (tabId === 'particle') {
+            document.getElementById('freq-slider').value = 700;
+            updateFreq(700);
+            photons = [];
+            electrons = [];
+        }
+    }
+
+    // --- Utility ---
+    function wavelengthToColor(wavelength) {
+        // Very simplified wavelength to RGB for the simulation UI (400-750nm range)
+        let R, G, B;
+        if (wavelength >= 380 && wavelength < 440) { R = -(wavelength - 440) / (440 - 380); G = 0.0; B = 1.0; }
+        else if (wavelength >= 440 && wavelength < 490) { R = 0.0; G = (wavelength - 440) / (490 - 440); B = 1.0; }
+        else if (wavelength >= 490 && wavelength < 510) { R = 0.0; G = 1.0; B = -(wavelength - 510) / (510 - 490); }
+        else if (wavelength >= 510 && wavelength < 580) { R = (wavelength - 510) / (580 - 510); G = 1.0; B = 0.0; }
+        else if (wavelength >= 580 && wavelength < 645) { R = 1.0; G = -(wavelength - 645) / (645 - 580); B = 0.0; }
+        else if (wavelength >= 645 && wavelength <= 780) { R = 1.0; G = 0.0; B = 0.0; }
+        else { R = 0; G = 0; B = 0; }
+
+        let factor;
+        if (wavelength >= 380 && wavelength < 420) factor = 0.3 + 0.7*(wavelength - 380) / (420 - 380);
+        else if (wavelength >= 420 && wavelength < 701) factor = 1.0;
+        else if (wavelength >= 701 && wavelength <= 780) factor = 0.3 + 0.7*(780 - wavelength) / (780 - 700);
+        else factor = 0.0;
+
+        return `rgb(${Math.round(R * factor * 255)}, ${Math.round(G * factor * 255)}, ${Math.round(B * factor * 255)})`;
+    }
+
+    // --- Wave Model Simulation (Double Slit) ---
+    const wCanvas = document.getElementById('waveCanvas');
+    const wCtx = wCanvas.getContext('2d');
+
+    let slitSpacing = 40;
+
+    window.updateSlits = function(val) {
+        slitSpacing = parseInt(val);
+        let lbl = "Medium";
+        if (slitSpacing < 30) lbl = "Narrow";
+        else if (slitSpacing > 60) lbl = "Wide";
+        document.getElementById('slit-val').textContent = lbl;
+    }
+
+    function drawWave() {
+        wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
+
+        const time = Date.now() / 200; // Animation speed
+
+        const wallX = wCanvas.width / 2;
+        const screenX = wCanvas.width - 20;
+
+        const slit1Y = (wCanvas.height / 2) - (slitSpacing / 2);
+        const slit2Y = (wCanvas.height / 2) + (slitSpacing / 2);
+
+        // 1. Draw incident plane waves (Left side)
+        wCtx.strokeStyle = "rgba(0, 255, 100, 0.4)";
+        wCtx.lineWidth = 2;
+        for (let x = (time * -15) % 30; x < wallX; x += 30) {
+            if (x < 0) continue;
+            wCtx.beginPath();
+            wCtx.moveTo(x, 0);
+            wCtx.lineTo(x, wCanvas.height);
+            wCtx.stroke();
+        }
+
+        // 2. Draw wall with two slits
+        wCtx.fillStyle = "#475569";
+        wCtx.fillRect(wallX, 0, 10, slit1Y - 10); // Top
+        wCtx.fillRect(wallX, slit1Y + 10, 10, slitSpacing - 20); // Middle
+        wCtx.fillRect(wallX, slit2Y + 10, 10, wCanvas.height - (slit2Y + 10)); // Bottom
+
+        // 3. Draw Diffracted Waves (Right side)
+        // We simulate the interference pattern by plotting intensity at the screen
+        const wavelength = 30;
+
+        wCtx.globalCompositeOperation = "screen"; // Additive blending for interference
+
+        for (let r = (time * 15) % wavelength; r < wCanvas.width; r += wavelength) {
+            if (r <= 0) continue;
+
+            // Waves from Slit 1
+            wCtx.beginPath();
+            wCtx.arc(wallX + 10, slit1Y, r, -Math.PI/2, Math.PI/2);
+            wCtx.strokeStyle = `rgba(0, 255, 100, ${Math.max(0, 0.5 - (r/wCanvas.width)*0.5)})`;
+            wCtx.stroke();
+
+            // Waves from Slit 2
+            wCtx.beginPath();
+            wCtx.arc(wallX + 10, slit2Y, r, -Math.PI/2, Math.PI/2);
+            wCtx.strokeStyle = `rgba(0, 255, 100, ${Math.max(0, 0.5 - (r/wCanvas.width)*0.5)})`;
+            wCtx.stroke();
+        }
+        wCtx.globalCompositeOperation = "source-over";
+
+        // 4. Draw Screen Interference Pattern (The back wall)
+        wCtx.fillStyle = "#1e293b";
+        wCtx.fillRect(screenX, 0, 20, wCanvas.height);
+
+        for (let y = 0; y < wCanvas.height; y += 2) {
+            // Distance from each slit
+            const d1 = Math.hypot(screenX - wallX, y - slit1Y);
+            const d2 = Math.hypot(screenX - wallX, y - slit2Y);
+
+            // Path difference defines phase difference
+            const pathDiff = Math.abs(d1 - d2);
+            const phase = (pathDiff / wavelength) * Math.PI * 2;
+
+            // Amplitude superposition (cos phase difference)
+            // A^2 gives intensity
+            const intensity = Math.pow(Math.cos(phase / 2), 2);
+
+            if (intensity > 0.1) {
+                wCtx.fillStyle = `rgba(0, 255, 100, ${intensity})`;
+                wCtx.fillRect(screenX, y, 20, 2);
+            }
+        }
+    }
+
+
+    // --- Particle Model Simulation (Photoelectric) ---
+    const pCanvas = document.getElementById('particleCanvas');
+    const pCtx = pCanvas.getContext('2d');
+
+    let frequency = 700; // nm (wavelength)
+    let photons = [];
+    let electrons = [];
+    const WORK_FUNCTION_THRESHOLD = 500; // Eject electrons if wavelength < 500nm (Blue/Violet)
+
+    window.updateFreq = function(val) {
+        frequency = parseInt(val);
+    }
+
+    function drawParticle() {
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+        const metalX = pCanvas.width - 150;
+        const color = wavelengthToColor(frequency);
+        const energyHighEnough = frequency < WORK_FUNCTION_THRESHOLD;
+
+        // Draw Metal Plate
+        pCtx.fillStyle = "#94a3b8"; // Gray metal
+        pCtx.fillRect(metalX, 50, 40, pCanvas.height - 100);
+
+        pCtx.fillStyle = "white";
+        pCtx.font = "16px Arial";
+        pCtx.fillText("Metal Plate", metalX - 20, 30);
+
+        pCtx.fillStyle = "#cbd5e1";
+        pCtx.fillText(`Threshold: ~500nm`, metalX - 35, pCanvas.height - 20);
+
+        // Spawn Photons (randomly)
+        if (Math.random() < 0.1) {
+            photons.push({
+                x: 0,
+                y: 100 + Math.random() * (pCanvas.height - 200),
+                speed: 8 + Math.random()*2,
+                color: color,
+                active: true,
+                wavelength: frequency // freeze state at spawn time
+            });
+        }
+
+        // Update & Draw Photons
+        for (let i = photons.length - 1; i >= 0; i--) {
+            let p = photons[i];
+
+            if (p.active) {
+                p.x += p.speed;
+
+                // Draw Photon (wavy particle)
+                pCtx.beginPath();
+                pCtx.arc(p.x, p.y + Math.sin(p.x/10)*5, 6, 0, Math.PI*2);
+                pCtx.fillStyle = p.color;
+                pCtx.fill();
+                pCtx.shadowColor = p.color;
+                pCtx.shadowBlur = 10;
+                pCtx.fill();
+                pCtx.shadowBlur = 0;
+
+                // Collision with Metal Plate
+                if (p.x >= metalX && p.x <= metalX + 10) {
+                    p.active = false;
+
+                    // Photoelectric effect check!
+                    if (p.wavelength <= WORK_FUNCTION_THRESHOLD) {
+                        // Knock an electron off!
+                        // Kinetic energy depends on how far past the threshold it is
+                        const excessEnergy = WORK_FUNCTION_THRESHOLD - p.wavelength;
+                        electrons.push({
+                            x: metalX - 10,
+                            y: p.y,
+                            vx: -2 - (excessEnergy * 0.05) - Math.random(), // Ejected leftwards
+                            vy: (Math.random() - 0.5) * 2,
+                            life: 1.0
+                        });
+                    }
+                }
+            }
+
+            // Remove off-screen or inactive
+            if (!p.active || p.x > pCanvas.width) {
+                photons.splice(i, 1);
+            }
+        }
+
+        // Update & Draw Ejected Electrons
+        for (let i = electrons.length - 1; i >= 0; i--) {
+            let e = electrons[i];
+            e.x += e.vx;
+            e.y += e.vy;
+            e.life -= 0.005;
+
+            pCtx.beginPath();
+            pCtx.arc(e.x, e.y, 4, 0, Math.PI*2);
+            pCtx.fillStyle = `rgba(255, 255, 0, ${e.life})`; // Yellow electron
+            pCtx.fill();
+            pCtx.strokeStyle = `rgba(255, 100, 0, ${e.life})`;
+            pCtx.lineWidth = 1;
+            pCtx.stroke();
+
+            // Draw minus sign
+            pCtx.fillStyle = "black";
+            pCtx.fillRect(e.x - 2, e.y - 0.5, 4, 1);
+
+            if (e.life <= 0 || e.x < 0) {
+                electrons.splice(i, 1);
+            }
+        }
+    }
+
+
+    function loop() {
+        if (!document.hidden) {
+            if (activeTab === 'wave') {
+                drawWave();
+            } else if (activeTab === 'particle') {
+                drawParticle();
+            }
+        }
+        animationId = requestAnimationFrame(loop);
+    }
+
+    // Expose for testing
+    window.testingTools = {
+        getActiveTab: () => activeTab,
+        getSlitSpacing: () => slitSpacing,
+        getFrequency: () => frequency,
+        getEjectedElectronsCount: () => electrons.length
+    };
+
+    loop();
+</script>
+</body>
+</html>

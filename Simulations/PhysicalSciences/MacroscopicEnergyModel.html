@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macroscopic Energy vs. Microscopic Particles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 8px; }
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        .tab-btn.inactive { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+
+<div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-blue-600 text-white p-6">
+        <h1 class="text-3xl font-bold">Macroscopic vs. Microscopic Energy</h1>
+        <p class="mt-2 text-blue-100">Model how macroscopic energy is a combination of particle motion and relative particle positions (HS-PS3-2).</p>
+    </div>
+
+    <div class="flex border-b bg-gray-50 p-4 gap-4">
+        <button id="tab-thermal" class="tab-btn active px-6 py-2 rounded border font-semibold" onclick="switchTab('thermal')">
+            Thermal Energy (Particle Motion)
+        </button>
+        <button id="tab-potential" class="tab-btn inactive px-6 py-2 rounded border font-semibold" onclick="switchTab('potential')">
+            Potential Energy (Relative Position)
+        </button>
+    </div>
+
+    <!-- Thermal Energy Tab -->
+    <div id="content-thermal" class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Macroscopic View -->
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Macroscopic Scale: Metal Block</h2>
+                <div class="w-full flex justify-center items-center h-48 bg-white border rounded">
+                    <!-- Metal Block color changes based on temp -->
+                    <div id="macro-block" class="w-48 h-32 rounded shadow-md flex items-center justify-center transition-colors duration-300" style="background-color: rgb(150, 150, 150);">
+                        <span class="text-white font-bold drop-shadow-md text-xl"><span id="macro-temp-text">20</span> &deg;C</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block font-semibold text-gray-700 mb-2">Add/Remove Heat:</label>
+                    <input type="range" id="temp-slider" min="0" max="100" value="20" class="w-full" oninput="updateThermal(this.value)">
+                </div>
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                    <p class="text-sm text-blue-900"><strong>Macroscopic View:</strong> We feel thermal energy as temperature. Adding heat makes the object hotter.</p>
+                </div>
+            </div>
+
+            <!-- Microscopic View -->
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Microscopic Scale: Particle Lattice</h2>
+                <canvas id="thermalCanvas" width="500" height="300" class="w-full"></canvas>
+                <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
+                    <p class="text-sm text-green-900"><strong>Microscopic View:</strong> Thermal energy is actually the kinetic energy (motion/vibration) of the particles. Higher temperature = faster particle motion.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Potential Energy Tab -->
+    <div id="content-potential" class="p-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Macroscopic View -->
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Macroscopic Scale: Stretching a Spring</h2>
+                <div class="w-full relative h-48 bg-white border rounded flex flex-col justify-center items-center overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-8 bg-gray-400 border-r-4 border-gray-600"></div>
+                    <svg id="macro-spring" width="400" height="60" class="absolute left-8 transition-all duration-300">
+                        <path id="macro-spring-path" d="M 0 30 L 20 10 L 40 50 L 60 10 L 80 50 L 100 10 L 120 50 L 140 10 L 160 50 L 180 30" stroke="black" stroke-width="4" fill="none" />
+                    </svg>
+                    <div id="macro-spring-weight" class="absolute h-16 w-16 bg-blue-500 rounded border-2 border-blue-800 flex items-center justify-center transition-all duration-300" style="left: 188px;">
+                        <span class="text-white font-bold">Mass</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block font-semibold text-gray-700 mb-2">Stretch Spring (Store Energy):</label>
+                    <input type="range" id="stretch-slider" min="0" max="100" value="0" class="w-full" oninput="updatePotential(this.value)">
+                </div>
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                    <p class="text-sm text-blue-900"><strong>Macroscopic View:</strong> Stretching a spring stores elastic potential energy in the system.</p>
+                </div>
+            </div>
+
+            <!-- Microscopic View -->
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Microscopic Scale: Molecular Bonds</h2>
+                <canvas id="potentialCanvas" width="500" height="300" class="w-full"></canvas>
+                <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
+                    <p class="text-sm text-green-900"><strong>Microscopic View:</strong> Potential energy is the energy associated with the <strong>relative position</strong> of particles. Stretching pulls atoms apart against attractive electromagnetic forces between them.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let activeTab = 'thermal';
+    let animationId = null;
+
+    function switchTab(tabId) {
+        ['thermal', 'potential'].forEach(id => {
+            const btn = document.getElementById('tab-' + id);
+            const content = document.getElementById('content-' + id);
+            if (id === tabId) {
+                btn.classList.replace('inactive', 'active');
+                content.classList.remove('hidden');
+            } else {
+                btn.classList.replace('active', 'inactive');
+                content.classList.add('hidden');
+            }
+        });
+        activeTab = tabId;
+
+        if (tabId === 'thermal') {
+            document.getElementById('temp-slider').value = 20;
+            updateThermal(20);
+        } else if (tabId === 'potential') {
+            document.getElementById('stretch-slider').value = 0;
+            updatePotential(0);
+        }
+    }
+
+    // --- Thermal Energy Simulation (Motion) ---
+    const tCanvas = document.getElementById('thermalCanvas');
+    const tCtx = tCanvas.getContext('2d');
+    let tempValue = 20; // 0 to 100
+
+    // Create particle lattice
+    const tParticles = [];
+    const rows = 6;
+    const cols = 10;
+    const spacingX = tCanvas.width / cols;
+    const spacingY = tCanvas.height / rows;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            tParticles.push({
+                baseX: (c + 0.5) * spacingX,
+                baseY: (r + 0.5) * spacingY,
+                x: (c + 0.5) * spacingX,
+                y: (r + 0.5) * spacingY,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+    }
+
+    window.updateThermal = function(val) {
+        tempValue = parseInt(val);
+        document.getElementById('macro-temp-text').textContent = tempValue;
+
+        // Update macroscopic color (Gray -> Red)
+        const r = 150 + (tempValue * 1.05);
+        const g = 150 - (tempValue * 1.5);
+        const b = 150 - (tempValue * 1.5);
+        document.getElementById('macro-block').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function drawThermal() {
+        tCtx.clearRect(0, 0, tCanvas.width, tCanvas.height);
+
+        const amplitude = tempValue * 0.15; // Max vibration distance
+        const frequency = 0.05 + (tempValue * 0.005); // Vibration speed
+
+        const time = Date.now();
+
+        // Draw bonds
+        tCtx.strokeStyle = "rgba(100, 100, 100, 0.3)";
+        tCtx.lineWidth = 2;
+
+        for (let i = 0; i < tParticles.length; i++) {
+            const p = tParticles[i];
+
+            // Random-walk vibration around base
+            p.x = p.baseX + Math.sin(time * frequency + p.phase) * amplitude + (Math.random() - 0.5) * amplitude;
+            p.y = p.baseY + Math.cos(time * frequency + p.phase * 2) * amplitude + (Math.random() - 0.5) * amplitude;
+
+            // Draw horizontal bonds
+            if ((i + 1) % cols !== 0) {
+                const nextP = tParticles[i + 1];
+                tCtx.beginPath();
+                tCtx.moveTo(p.x, p.y);
+                tCtx.lineTo(nextP.x, nextP.y);
+                tCtx.stroke();
+            }
+            // Draw vertical bonds
+            if (i + cols < tParticles.length) {
+                const bottomP = tParticles[i + cols];
+                tCtx.beginPath();
+                tCtx.moveTo(p.x, p.y);
+                tCtx.lineTo(bottomP.x, bottomP.y);
+                tCtx.stroke();
+            }
+        }
+
+        // Draw particles
+        for (const p of tParticles) {
+            // Particle color shifts slightly red with heat
+            const heatR = Math.min(255, 100 + tempValue * 2);
+            tCtx.fillStyle = `rgb(${heatR}, 100, 200)`;
+            tCtx.beginPath();
+            tCtx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+            tCtx.fill();
+            tCtx.stroke();
+        }
+    }
+
+    // --- Potential Energy Simulation (Relative Position) ---
+    const pCanvas = document.getElementById('potentialCanvas');
+    const pCtx = pCanvas.getContext('2d');
+    let stretchValue = 0; // 0 to 100
+
+    // Microscopic 1D chain of atoms
+    const pParticles = [];
+    const chainLen = 8;
+    for (let i = 0; i < chainLen; i++) {
+        pParticles.push({
+            baseX: 50 + i * 40, // Base resting position
+            x: 50 + i * 40
+        });
+    }
+
+    window.updatePotential = function(val) {
+        stretchValue = parseInt(val);
+
+        // Update Macroscopic Spring UI
+        const baseSpringWidth = 180;
+        const stretchedWidth = baseSpringWidth + (stretchValue * 1.5);
+
+        // Recalculate SVG path
+        let d = `M 0 30`;
+        const segments = 8;
+        const segLen = stretchedWidth / segments;
+        for(let i=1; i<=segments; i++){
+            const y = (i % 2 === 0) ? 10 : 50;
+            if(i === segments) d += ` L ${i * segLen} 30`;
+            else d += ` L ${i * segLen} ${y}`;
+        }
+        document.getElementById('macro-spring-path').setAttribute('d', d);
+        document.getElementById('macro-spring-weight').style.left = (8 + stretchedWidth) + 'px';
+    }
+
+    function drawPotential() {
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+        // Fixed wall
+        pCtx.fillStyle = "#6b7280";
+        pCtx.fillRect(10, 50, 20, 200);
+
+        // Calculate particle positions based on stretch
+        // Relative position changes!
+        const maxStretchPerBond = 15;
+        const stretchAmount = (stretchValue / 100) * maxStretchPerBond;
+
+        for (let i = 0; i < pParticles.length; i++) {
+            // The further down the chain, the more it gets displaced cumulatively
+            pParticles[i].x = pParticles[i].baseX + (i * stretchAmount);
+        }
+
+        // Draw Energy Field / Tension
+        if (stretchValue > 0) {
+            pCtx.fillStyle = `rgba(239, 68, 68, ${stretchValue / 100})`;
+            pCtx.font = "20px Arial";
+            pCtx.fillText(`Stored Potential Energy (Internal Tension)`, 50, 40);
+        }
+
+        // Draw Bonds (Springs between atoms)
+        pCtx.lineWidth = 3;
+        for (let i = 0; i < pParticles.length - 1; i++) {
+            const p1 = pParticles[i];
+            const p2 = pParticles[i+1];
+
+            // Draw zigzag spring between atoms
+            pCtx.beginPath();
+            pCtx.strokeStyle = `rgba(${100 + stretchValue*1.5}, 100, 100, 1)`;
+            pCtx.moveTo(p1.x, 150);
+
+            const dist = p2.x - p1.x;
+            pCtx.lineTo(p1.x + dist*0.25, 130);
+            pCtx.lineTo(p1.x + dist*0.75, 170);
+            pCtx.lineTo(p2.x, 150);
+            pCtx.stroke();
+
+            // Draw tension forces
+            if (stretchValue > 0) {
+                pCtx.fillStyle = "red";
+                pCtx.font = "12px Arial";
+                pCtx.fillText("><", (p1.x + p2.x)/2 - 8, 140);
+            }
+        }
+
+        // Draw Atoms
+        for (let i = 0; i < pParticles.length; i++) {
+            const p = pParticles[i];
+
+            // Base shadow
+            pCtx.beginPath();
+            pCtx.arc(p.baseX, 150, 20, 0, Math.PI*2);
+            pCtx.fillStyle = "rgba(0,0,0,0.05)";
+            pCtx.fill();
+
+            // Actual atom
+            pCtx.beginPath();
+            pCtx.arc(p.x, 150, 20, 0, Math.PI * 2);
+            pCtx.fillStyle = "#3b82f6";
+            pCtx.fill();
+            pCtx.strokeStyle = "#1e3a8a";
+            pCtx.lineWidth = 2;
+            pCtx.stroke();
+
+            // Draw electron cloud outline to emphasize "relative position"
+            pCtx.beginPath();
+            pCtx.arc(p.x, 150, 26, 0, Math.PI * 2);
+            pCtx.strokeStyle = "rgba(59, 130, 246, 0.3)";
+            pCtx.setLineDash([5, 5]);
+            pCtx.stroke();
+            pCtx.setLineDash([]);
+        }
+
+        // Draw Pull Force
+        if (stretchValue > 0) {
+            const lastP = pParticles[pParticles.length - 1];
+            pCtx.fillStyle = "rgba(239, 68, 68, 0.8)";
+            pCtx.beginPath();
+            pCtx.moveTo(lastP.x + 30, 140);
+            pCtx.lineTo(lastP.x + 30, 160);
+            pCtx.lineTo(lastP.x + 30 + stretchValue, 150);
+            pCtx.fill();
+        }
+    }
+
+    function loop() {
+        if (!document.hidden) {
+            if (activeTab === 'thermal') {
+                drawThermal();
+            } else if (activeTab === 'potential') {
+                drawPotential();
+            }
+        }
+        animationId = requestAnimationFrame(loop);
+    }
+
+    window.testingTools = {
+        getActiveTab: () => activeTab,
+        getTempValue: () => tempValue,
+        getStretchValue: () => stretchValue,
+        getThermalParticleMotion: () => tParticles.map(p => ({ x: p.x, y: p.y, bx: p.baseX, by: p.baseY })),
+        getPotentialParticlePos: () => pParticles.map(p => ({ x: p.x, bx: p.baseX }))
+    };
+
+    loop();
+</script>
+</body>
+</html>
