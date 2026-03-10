@@ -56,6 +56,8 @@ Use mathematical representations to support the claim that the total momentum of
 ### HS-PS2-3
 Apply scientific and engineering ideas to design, evaluate, and refine a device that minimizes the force on a macroscopic object during a collision.
 
+- [Collision Force Minimizer](EggDropCrashCushion.html) - An interactive physics sandbox where users engineer the thickness and material stiffness of a crash cushion to minimize impact forces and protect a fragile payload during a drop.
+
 ### HS-PS2-4
 Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.
 
@@ -64,14 +66,22 @@ Use mathematical representations of Newton's Law of Gravitation and Coulomb's La
 ### HS-PS2-5
 Plan and conduct an investigation to provide evidence that an electric current can produce a magnetic field and that a changing magnetic field can produce an electric current.
 
+- [Electromagnetism & Induction Sandbox](ElectromagnetismInduction.html) - Plan investigations using interactive electromagnets to see how current produces magnetic fields, and use a moving magnet near a coil to see how changing magnetic flux induces a current.
+
 ### HS-PS2-6
 Communicate scientific and technical information about why the molecular-level structure is important in the functioning of designed materials.
+
+- [Molecular Structures & Designed Materials](MolecularStructuresMaterials.html) - Explore how the molecular-level structure of metals (conductivity), polymers (flexibility), and pharmaceuticals (specificity) determines their macro-scale functioning.
 
 ### HS-PS3-1
 Create a computational model to calculate the change in the energy of one component in a system when the change in energy of the other component(s) and energy flows in and out of the system are known.
 
+- [Energy Change Computational Model](EnergyChangeModel.html) - An interactive mathematical and computational model for a 3-component system, balancing kinetic, potential, and thermal energy changes with total energy flow.
+
 ### HS-PS3-2
 Develop and use models to illustrate that energy at the macroscopic scale can be accounted for as a combination of energy associated with the motions of particles (objects) and energy associated with the relative position of particles (objects).
+
+- [Macroscopic vs. Microscopic Energy Model](MacroscopicEnergyModel.html) - An interactive dual-view model illustrating how macroscopic temperature and elastic potential energy are derived from microscopic particle motion and relative particle positions.
 
 ### HS-PS3-3
 Design, build, and refine a device that works within given constraints to convert one form of energy into another form of energy.
@@ -81,8 +91,12 @@ Design, build, and refine a device that works within given constraints to conver
 ### HS-PS3-4
 Plan and conduct an investigation to provide evidence that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
 
+- [Thermal Equilibrium Sandbox](ThermalEquilibriumSandbox.html) - An interactive closed-system sandbox to investigate how components of different materials, masses, and initial temperatures transfer heat until reaching a uniform energy distribution (thermal equilibrium).
+
 ### HS-PS3-5
 Develop and use a model of two objects interacting through electric or magnetic fields to illustrate the forces between objects and the changes in energy of the objects due to the interaction.
+
+- [Electric & Magnetic Field Energy Simulator](ElectricMagneticFieldEnergy.html) - Interactively drag charged or magnetic objects to observe how distance impacts force magnitude and stored field potential energy.
 
 ### HS-PS4-1
 Use mathematical representations to support a claim regarding relationships among the frequency, wavelength, and speed of waves traveling in various media.
@@ -92,11 +106,19 @@ Use mathematical representations to support a claim regarding relationships amon
 ### HS-PS4-2
 Evaluate questions about the advantages of using a digital transmission and storage of information.
 
+- [Digital vs. Analog Transmission Advantages](DigitalTransmissionAdvantage.html) - An interactive simulation demonstrating how digital thresholding allows a noisy signal to be perfectly reconstructed, while analog continuous signals permanently degrade.
+
 ### HS-PS4-3
 Evaluate the claims, evidence, and reasoning behind the idea that electromagnetic radiation can be described either by a wave model or a particle model, and that for some situations one model is more useful than the other.
+
+- [Wave-Particle Duality](WaveParticleDuality.html) - Evaluate two interactive models: the double-slit experiment (wave interference) and the photoelectric effect (particle threshold energy).
 
 ### HS-PS4-4
 Evaluate the validity and reliability of claims in published materials of the effects that different frequencies of electromagnetic radiation have when absorbed by matter.
 
+- [EM Radiation Effects on Matter](EMRadiationEffects.html) - Evaluate the claims that low-frequency radiation causes safe thermal heating, while high-frequency radiation acts as ionizing radiation that damages cellular DNA.
+
 ### HS-PS4-5
 Communicate technical information about how some technological devices use the principles of wave behavior and wave interactions with matter to transmit and capture information and energy.
+
+- [Wave Technology: Information & Energy](WaveInformationTechnology.html) - An interactive exploration of how Solar Cells capture energy from light waves, and how Fiber Optics use total internal reflection to transmit digital data.

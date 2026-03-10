@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave Technology: Information & Energy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { background-color: #f8fafc; border-radius: 8px; border: 1px solid #cbd5e1; }
+        .hidden { display: none; }
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        .tab-btn.inactive { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+
+<div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-blue-600 text-white p-6">
+        <h1 class="text-3xl font-bold">Wave Technology: Capturing Information & Energy</h1>
+        <p class="mt-2 text-blue-100">Communicate how technological devices use wave behavior and wave-matter interactions to transmit information and capture energy (HS-PS4-5).</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b bg-gray-50 p-4 gap-4">
+        <button id="tab-solar" class="tab-btn active px-6 py-2 rounded border font-semibold shadow-sm" onclick="switchTab('solar')">
+            Solar Cell (Capturing Energy)
+        </button>
+        <button id="tab-fiber" class="tab-btn inactive px-6 py-2 rounded border font-semibold shadow-sm" onclick="switchTab('fiber')">
+            Fiber Optics (Transmitting Information)
+        </button>
+    </div>
+
+    <!-- Tab Content: Solar Cell -->
+    <div id="content-solar" class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 relative">
+                <canvas id="solarCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="bg-gray-50 p-4 rounded border">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Solar Panel Array</h3>
+                    <p class="text-sm text-gray-600 mb-4">Adjust the incident light (sunlight) interacting with the semiconductor matter to generate electricity.</p>
+
+                    <label class="block font-semibold text-gray-700 mb-1">Light Intensity:</label>
+                    <input type="range" id="intensity-slider" min="0" max="100" value="50" class="w-full mb-4" oninput="updateSolar()">
+
+                    <div class="p-3 bg-white border rounded shadow-inner text-center">
+                        <span class="block text-sm text-gray-500 font-bold uppercase mb-1">Power Output</span>
+                        <span id="power-output" class="text-3xl font-mono text-green-600 font-bold">50 W</span>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                    <h3 class="font-bold text-yellow-900 mb-2">How it works:</h3>
+                    <p class="text-sm text-yellow-800 mb-2">When light waves (photons) strike the silicon semiconductor (matter), they transfer their energy to electrons.</p>
+                    <p class="text-sm text-yellow-800">If the energy is high enough, the electron breaks free. The solar cell's internal electric field forces these free electrons to flow in one direction, creating a usable electric current.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Fiber Optics -->
+    <div id="content-fiber" class="p-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 relative">
+                <canvas id="fiberCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="bg-gray-50 p-4 rounded border">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Fiber Optic Data Transmission</h3>
+                    <p class="text-sm text-gray-600 mb-4">Adjust the entry angle of the laser to successfully transmit data through the glass core.</p>
+
+                    <label class="block font-semibold text-gray-700 mb-1">Laser Entry Angle: <span id="angle-display">15</span>&deg;</label>
+                    <input type="range" id="angle-slider" min="0" max="45" value="15" class="w-full mb-4" oninput="updateFiber()">
+
+                    <div class="p-3 bg-white border rounded shadow-inner text-center">
+                        <span class="block text-sm text-gray-500 font-bold uppercase mb-1">Transmission Status</span>
+                        <span id="fiber-status" class="text-xl font-bold text-green-600">Successful (Total Internal Reflection)</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                    <h3 class="font-bold text-blue-900 mb-2">How it works:</h3>
+                    <p class="text-sm text-blue-800 mb-2">Digital data (1s and 0s) is converted into pulses of light. This light travels through a glass core.</p>
+                    <p class="text-sm text-blue-800 font-bold mb-2">Total Internal Reflection:</p>
+                    <p class="text-sm text-blue-800">Because the glass core has a higher refractive index than the cladding, light hitting the boundary at a shallow angle bounces perfectly instead of passing through. This allows information to be transmitted vast distances with nearly zero loss.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let activeTab = 'solar';
+    let animationId = null;
+
+    function switchTab(tabId) {
+        ['solar', 'fiber'].forEach(id => {
+            const btn = document.getElementById('tab-' + id);
+            const content = document.getElementById('content-' + id);
+            if (id === tabId) {
+                btn.classList.replace('inactive', 'active');
+                content.classList.remove('hidden');
+            } else {
+                btn.classList.replace('active', 'inactive');
+                content.classList.add('hidden');
+            }
+        });
+        activeTab = tabId;
+
+        if (tabId === 'solar') {
+            updateSolar();
+        } else if (tabId === 'fiber') {
+            updateFiber();
+        }
+    }
+
+    // --- Solar Cell Simulation ---
+    const sCanvas = document.getElementById('solarCanvas');
+    const sCtx = sCanvas.getContext('2d');
+
+    let lightIntensity = 50;
+    let photons = [];
+    let electrons = [];
+
+    window.updateSolar = function() {
+        const slider = document.getElementById('intensity-slider');
+        lightIntensity = parseInt(slider.value);
+        document.getElementById('power-output').textContent = `${lightIntensity} W`;
+    }
+
+    function drawSolar() {
+        sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+
+        // Draw Solar Cell structure
+        const cellY = 250;
+
+        // Anti-reflective coating
+        sCtx.fillStyle = "#1e3a8a"; // Dark blue
+        sCtx.fillRect(100, cellY - 10, 400, 10);
+
+        // N-Type Silicon
+        sCtx.fillStyle = "#60a5fa"; // Light blue
+        sCtx.fillRect(100, cellY, 400, 30);
+        sCtx.fillStyle = "white";
+        sCtx.font = "12px Arial";
+        sCtx.fillText("N-Type Silicon (Extra Electrons)", 110, cellY + 20);
+
+        // P-N Junction (Depletion Zone)
+        sCtx.fillStyle = "#e2e8f0"; // Gray line
+        sCtx.fillRect(100, cellY + 30, 400, 4);
+
+        // P-Type Silicon
+        sCtx.fillStyle = "#3b82f6"; // Blue
+        sCtx.fillRect(100, cellY + 34, 400, 60);
+        sCtx.fillStyle = "white";
+        sCtx.fillText("P-Type Silicon (Electron Holes)", 110, cellY + 70);
+
+        // Circuit Wires
+        sCtx.strokeStyle = "#334155";
+        sCtx.lineWidth = 4;
+        sCtx.beginPath();
+        sCtx.moveTo(100, cellY);
+        sCtx.lineTo(50, cellY);
+        sCtx.lineTo(50, cellY + 130);
+        sCtx.lineTo(250, cellY + 130);
+        sCtx.stroke();
+
+        sCtx.beginPath();
+        sCtx.moveTo(350, cellY + 130);
+        sCtx.lineTo(550, cellY + 130);
+        sCtx.lineTo(550, cellY + 94);
+        sCtx.lineTo(500, cellY + 94);
+        sCtx.stroke();
+
+        // Light Bulb (Load)
+        sCtx.beginPath();
+        sCtx.arc(300, cellY + 130, 20, 0, Math.PI*2);
+
+        // Bulb glow based on intensity
+        if (lightIntensity > 0) {
+            sCtx.fillStyle = `rgba(253, 224, 71, ${lightIntensity / 100})`;
+            sCtx.fill();
+            sCtx.shadowColor = "#fef08a";
+            sCtx.shadowBlur = 20 * (lightIntensity / 100);
+            sCtx.fill();
+            sCtx.shadowBlur = 0;
+        }
+
+        sCtx.strokeStyle = "#d1d5db";
+        sCtx.lineWidth = 2;
+        sCtx.stroke();
+
+        // Spawn Photons (Sunlight) based on intensity
+        if (Math.random() * 100 < lightIntensity && lightIntensity > 0) {
+            photons.push({
+                x: 120 + Math.random() * 360,
+                y: -10,
+                speed: 5 + Math.random() * 2,
+                active: true
+            });
+        }
+
+        // Draw and update Photons
+        sCtx.fillStyle = "rgba(253, 224, 71, 0.8)"; // Yellow
+        for (let i = photons.length - 1; i >= 0; i--) {
+            let p = photons[i];
+            if (p.active) {
+                p.y += p.speed;
+                sCtx.beginPath();
+                // Wavy photon
+                sCtx.arc(p.x + Math.sin(p.y/10)*5, p.y, 4, 0, Math.PI*2);
+                sCtx.fill();
+
+                // Hit the PN junction
+                if (p.y > cellY + 10 && p.y < cellY + 30) {
+                    p.active = false; // Absorbed!
+
+                    // Knock loose an electron
+                    electrons.push({
+                        x: p.x,
+                        y: p.y,
+                        path: 0 // 0 = moving up N-type, 1 = moving along wire, etc.
+                    });
+                }
+            }
+            if (!p.active || p.y > sCanvas.height) {
+                photons.splice(i, 1);
+            }
+        }
+
+        // Draw and update Electrons
+        sCtx.fillStyle = "#10b981"; // Green electrons
+        for (let i = electrons.length - 1; i >= 0; i--) {
+            let e = electrons[i];
+
+            // Fixed path logic for visual circuit
+            const speed = 4;
+            if (e.path === 0) {
+                e.y -= speed; // Move to top contact
+                if (e.y <= cellY) e.path = 1;
+            } else if (e.path === 1) {
+                e.x -= speed; // Move left to wire
+                if (e.x <= 50) e.path = 2;
+            } else if (e.path === 2) {
+                e.y += speed; // Move down wire
+                if (e.y >= cellY + 130) e.path = 3;
+            } else if (e.path === 3) {
+                e.x += speed; // Move right through bulb
+                if (e.x >= 550) e.path = 4;
+            } else if (e.path === 4) {
+                e.y -= speed; // Move up back to P-Type
+                if (e.y <= cellY + 94) e.path = 5;
+            } else if (e.path === 5) {
+                e.x -= speed; // Re-enter P-Type
+                if (e.x <= 500) {
+                    // Recombine, remove from simulation
+                    electrons.splice(i, 1);
+                    continue;
+                }
+            }
+
+            sCtx.beginPath();
+            sCtx.arc(e.x, e.y, 4, 0, Math.PI*2);
+            sCtx.fill();
+        }
+    }
+
+
+    // --- Fiber Optic Simulation ---
+    const fCanvas = document.getElementById('fiberCanvas');
+    const fCtx = fCanvas.getContext('2d');
+
+    let entryAngle = 15; // Degrees from horizontal
+    let isSuccessful = true;
+
+    // Abstract digital data pulses
+    let pulses = [];
+
+    window.updateFiber = function() {
+        const slider = document.getElementById('angle-slider');
+        entryAngle = parseInt(slider.value);
+        document.getElementById('angle-display').textContent = entryAngle;
+
+        // Critical angle calculation (simplified)
+        // If the angle is too steep, it escapes the core instead of reflecting
+        isSuccessful = entryAngle < 28;
+
+        const statusEl = document.getElementById('fiber-status');
+        if (isSuccessful) {
+            statusEl.textContent = "Successful (Total Internal Reflection)";
+            statusEl.className = "text-xl font-bold text-green-600";
+        } else {
+            statusEl.textContent = "Data Lost (Light Escaped Core)";
+            statusEl.className = "text-xl font-bold text-red-600";
+        }
+    }
+
+    function drawFiber() {
+        fCtx.clearRect(0, 0, fCanvas.width, fCanvas.height);
+
+        const coreY = 150;
+        const coreH = 100;
+
+        // Cladding (Lower refractive index)
+        fCtx.fillStyle = "#e2e8f0";
+        fCtx.fillRect(100, coreY - 20, 500, 20); // Top
+        fCtx.fillRect(100, coreY + coreH, 500, 20); // Bottom
+
+        // Core (Higher refractive index)
+        fCtx.fillStyle = "rgba(186, 230, 253, 0.4)"; // Light cyan glass
+        fCtx.fillRect(100, coreY, 500, coreH);
+
+        // Draw Laser Source
+        fCtx.fillStyle = "#334155";
+        fCtx.save();
+        fCtx.translate(50, coreY + coreH/2);
+        fCtx.rotate(entryAngle * Math.PI / 180);
+        fCtx.fillRect(-40, -10, 80, 20);
+        fCtx.fillStyle = "red";
+        fCtx.fillRect(40, -5, 5, 10);
+        fCtx.restore();
+
+        // Spawn Data Pulses (Binary 1s)
+        if (Math.random() < 0.05) {
+            // Calculate trajectory
+            // We'll bounce the pulse mathematically
+            pulses.push({
+                x: 100,
+                y: coreY + coreH/2,
+                angle: entryAngle * Math.PI / 180, // radians
+                speed: 15,
+                bounces: 0,
+                active: true,
+                lost: false
+            });
+        }
+
+        // Draw Ray Path (Static preview line)
+        fCtx.beginPath();
+        fCtx.strokeStyle = "rgba(239, 68, 68, 0.3)";
+        fCtx.lineWidth = 2;
+        fCtx.moveTo(100, coreY + coreH/2);
+
+        let tx = 100;
+        let ty = coreY + coreH/2;
+        let tang = entryAngle * Math.PI / 180;
+        let failed = false;
+
+        for (let i=0; i<10; i++) {
+            if (tx > fCanvas.width || failed) break;
+
+            // Find intersection with top or bottom
+            let distToBoundary;
+            if (tang > 0) { // Going down
+                distToBoundary = (coreY + coreH - ty) / Math.sin(tang);
+            } else if (tang < 0) { // Going up
+                distToBoundary = (coreY - ty) / Math.sin(tang);
+            } else { // Straight
+                distToBoundary = 1000;
+            }
+
+            let nextX = tx + Math.cos(tang) * Math.abs(distToBoundary);
+            let nextY = ty + Math.sin(tang) * Math.abs(distToBoundary);
+
+            fCtx.lineTo(nextX, nextY);
+
+            tx = nextX;
+            ty = nextY;
+
+            if (entryAngle >= 28) {
+                // Escapes on first hit
+                failed = true;
+                // Draw escape ray
+                fCtx.lineTo(tx + Math.cos(tang)*50, ty + Math.sin(tang)*50);
+            } else {
+                // Perfect bounce
+                tang = -tang;
+            }
+        }
+        fCtx.stroke();
+
+
+        // Draw & Update Actual Pulses (Data)
+        fCtx.fillStyle = "white";
+        fCtx.font = "bold 14px monospace";
+        for (let i = pulses.length - 1; i >= 0; i--) {
+            let p = pulses[i];
+
+            if (p.active) {
+                p.x += Math.cos(p.angle) * p.speed;
+                p.y += Math.sin(p.angle) * p.speed;
+
+                // Draw pulse as a bright glowing "1"
+                fCtx.shadowColor = "#ef4444";
+                fCtx.shadowBlur = 10;
+                fCtx.fillStyle = "#fecaca";
+                fCtx.fillText("1", p.x - 4, p.y + 4);
+                fCtx.shadowBlur = 0;
+
+                // Check boundary collision
+                if (p.y >= coreY + coreH || p.y <= coreY) {
+                    if (entryAngle >= 28) {
+                        p.lost = true; // Angle too steep, it escapes!
+                        // Force it out
+                    } else {
+                        // Reflect!
+                        p.angle = -p.angle;
+                        // Snap to boundary to prevent sticking
+                        if (p.y >= coreY + coreH) p.y = coreY + coreH - 1;
+                        if (p.y <= coreY) p.y = coreY + 1;
+                    }
+                }
+
+                // If lost, it fades out
+                if (p.lost) {
+                    p.speed *= 0.9; // Slow down outside
+                    if (p.x < 0 || p.x > fCanvas.width || p.y < 0 || p.y > fCanvas.height) {
+                        p.active = false;
+                    }
+                }
+            }
+
+            if (!p.active || p.x > fCanvas.width) {
+                pulses.splice(i, 1);
+            }
+        }
+    }
+
+
+    function loop() {
+        if (!document.hidden) {
+            if (activeTab === 'solar') {
+                drawSolar();
+            } else if (activeTab === 'fiber') {
+                drawFiber();
+            }
+        }
+        animationId = requestAnimationFrame(loop);
+    }
+
+    // Expose for testing
+    window.testingTools = {
+        getActiveTab: () => activeTab,
+        getLightIntensity: () => lightIntensity,
+        getFiberStatus: () => isSuccessful,
+        getElectrons: () => electrons,
+        clearElectrons: () => { electrons = []; photons = []; }
+    };
+
+    updateSolar();
+    loop();
+</script>
+</body>
+</html>

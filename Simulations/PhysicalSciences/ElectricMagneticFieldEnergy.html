@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric & Magnetic Field Energy Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { border: 1px solid #ccc; background-color: #f1f5f9; border-radius: 8px; cursor: crosshair; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+
+<div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-purple-600 text-white p-6">
+        <h1 class="text-3xl font-bold">Electric & Magnetic Field Energy</h1>
+        <p class="mt-2 text-purple-100">Model two objects interacting through fields to illustrate forces and changes in stored field energy (HS-PS3-5).</p>
+    </div>
+
+    <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Controls -->
+        <div class="lg:col-span-1 bg-gray-50 p-4 rounded-lg border">
+            <h2 class="text-xl font-bold mb-4">System Setup</h2>
+
+            <div class="mb-4">
+                <label class="block font-semibold text-gray-700 mb-2">Interaction Type:</label>
+                <select id="interaction-type" class="w-full p-2 border rounded" onchange="updateInteraction()">
+                    <option value="electric_opp">Electric (Opposite Charges)</option>
+                    <option value="electric_same">Electric (Same Charges)</option>
+                    <option value="magnetic_opp">Magnetic (Opposite Poles)</option>
+                    <option value="magnetic_same">Magnetic (Same Poles)</option>
+                </select>
+            </div>
+
+            <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                <p class="text-sm text-blue-900 mb-2">
+                    <strong>Instructions:</strong> Drag Object 2 to change the relative position between the two objects.
+                </p>
+                <p class="text-sm text-blue-900">
+                    Observe how the <strong>Force Vectors</strong> (arrows) and the <strong>Stored Field Energy</strong> change depending on their distance.
+                </p>
+            </div>
+
+            <!-- Energy Meter -->
+            <div class="mt-6 p-4 bg-white rounded border shadow-inner">
+                <h3 class="font-bold text-gray-800 mb-2">Energy Stored in Field</h3>
+                <div class="w-full bg-gray-200 rounded-full h-6 mb-2 overflow-hidden border">
+                    <div id="energy-bar" class="h-6 transition-all duration-200" style="width: 50%; background-color: #a855f7;"></div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-500 font-bold uppercase">
+                    <span>Low Energy (Stable)</span>
+                    <span>High Energy (Unstable)</span>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                <h3 class="font-bold text-yellow-800 text-sm mb-1">DCI connection (PS3.C):</h3>
+                <p class="text-xs text-yellow-900">When two objects interacting through a field change relative position, the energy stored in the field is changed. Pushing repulsive objects together, or pulling attractive objects apart, requires work and increases stored potential energy.</p>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="lg:col-span-2 relative">
+            <canvas id="fieldCanvas" width="600" height="400" class="w-full shadow-sm"></canvas>
+
+            <div class="absolute top-4 right-4 bg-white/80 p-2 rounded border shadow text-sm">
+                Distance: <span id="dist-display" class="font-bold text-indigo-700">200</span> px<br>
+                Force: <span id="force-display" class="font-bold text-red-600">Medium</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('fieldCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let interaction = 'electric_opp';
+
+    // Objects
+    const obj1 = { x: 150, y: 200, radius: 25, isDragging: false };
+    const obj2 = { x: 450, y: 200, radius: 25, isDragging: false };
+
+    // State
+    let storedEnergy = 0; // 0 to 1
+    let forceMag = 0;
+
+    // Mouse interaction
+    let mouseX = 0, mouseY = 0;
+    let offsetX = 0, offsetY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        const dist = Math.hypot(mx - obj2.x, my - obj2.y);
+        if (dist <= obj2.radius + 10) {
+            obj2.isDragging = true;
+            offsetX = obj2.x - mx;
+            offsetY = obj2.y - my;
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        obj2.isDragging = false;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+
+        if (obj2.isDragging) {
+            obj2.x = mouseX + offsetX;
+            obj2.y = mouseY + offsetY;
+
+            // Constrain
+            obj2.x = Math.max(obj2.radius, Math.min(canvas.width - obj2.radius, obj2.x));
+            obj2.y = Math.max(obj2.radius, Math.min(canvas.height - obj2.radius, obj2.y));
+
+            // Prevent exact overlap
+            const dist = Math.hypot(obj2.x - obj1.x, obj2.y - obj1.y);
+            if (dist < obj1.radius + obj2.radius + 5) {
+                const angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+                obj2.x = obj1.x + Math.cos(angle) * (obj1.radius + obj2.radius + 5);
+                obj2.y = obj1.y + Math.sin(angle) * (obj1.radius + obj2.radius + 5);
+            }
+        }
+    });
+
+    window.updateInteraction = function() {
+        interaction = document.getElementById('interaction-type').value;
+    }
+
+    // Drawing Utils
+    function drawArrow(fromX, fromY, toX, toY, color, width=2) {
+        const headlen = 10;
+        const angle = Math.atan2(toY - fromY, toX - fromX);
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.stroke();
+    }
+
+    function calculatePhysics() {
+        const dist = Math.hypot(obj2.x - obj1.x, obj2.y - obj1.y);
+        document.getElementById('dist-display').textContent = Math.round(dist);
+
+        // Force inversely proportional to square of distance
+        // F = k / r^2
+        const k = 50000;
+        forceMag = Math.min(200, k / (dist * dist)); // Cap max force visually
+
+        // Energy Stored (U)
+        // Attractive (opp): U increases as they are pulled apart. U = -k/r (relative to infinity)
+        // Repulsive (same): U increases as they are pushed together. U = k/r
+
+        const isAttractive = (interaction === 'electric_opp' || interaction === 'magnetic_opp');
+
+        if (isAttractive) {
+            // Higher energy when far apart (pulled against attractive force)
+            // Map distance 50 -> 0%, 500 -> 100%
+            storedEnergy = Math.max(0, Math.min(1, (dist - 50) / 450));
+        } else {
+            // Higher energy when close together (pushed against repulsive force)
+            // Map distance 50 -> 100%, 500 -> 0%
+            storedEnergy = Math.max(0, Math.min(1, 1 - (dist - 50) / 450));
+        }
+
+        // Update UI
+        const energyBar = document.getElementById('energy-bar');
+        energyBar.style.width = (storedEnergy * 100) + '%';
+
+        // Color transition: Low (Green) to High (Red)
+        const r = Math.round(255 * storedEnergy);
+        const g = Math.round(255 * (1 - storedEnergy));
+        energyBar.style.backgroundColor = `rgb(${r}, ${g}, 0)`;
+
+        const forceDisp = document.getElementById('force-display');
+        forceDisp.textContent = forceMag > 50 ? "High" : (forceMag > 15 ? "Medium" : "Low");
+    }
+
+    function drawFields() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        calculatePhysics();
+
+        const dx = obj2.x - obj1.x;
+        const dy = obj2.y - obj1.y;
+        const dist = Math.hypot(dx, dy);
+        const dirX = dx / dist;
+        const dirY = dy / dist;
+
+        const isElectric = interaction.startsWith('electric');
+        const isAttractive = interaction.endsWith('opp');
+
+        // Draw Field Lines (simplified abstract representation)
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        ctx.strokeStyle = isElectric ? "#8b5cf6" : "#10b981"; // Purple for electric, Green for magnetic
+        ctx.lineWidth = 1;
+
+        if (isAttractive) {
+            // Field lines connecting them
+            ctx.beginPath();
+            ctx.moveTo(obj1.x, obj1.y);
+            ctx.lineTo(obj2.x, obj2.y);
+            ctx.stroke();
+
+            // Arcs connecting
+            for (let i = 1; i <= 3; i++) {
+                const cx = (obj1.x + obj2.x) / 2;
+                const cy = (obj1.y + obj2.y) / 2;
+                const r = dist / 2;
+
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, r, dist*0.2*i, Math.atan2(dy, dx), 0, Math.PI, false);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, r, dist*0.2*i, Math.atan2(dy, dx), 0, Math.PI, true);
+                ctx.stroke();
+            }
+        } else {
+            // Field lines repelling (diverging)
+            for (let i = -2; i <= 2; i++) {
+                if (i === 0) continue;
+                // Obj 1
+                ctx.beginPath();
+                ctx.moveTo(obj1.x, obj1.y);
+                ctx.quadraticCurveTo(obj1.x + dirY*50*i, obj1.y - dirX*50*i, obj1.x - dirX*100, obj1.y - dirY*100);
+                ctx.stroke();
+
+                // Obj 2
+                ctx.beginPath();
+                ctx.moveTo(obj2.x, obj2.y);
+                ctx.quadraticCurveTo(obj2.x - dirY*50*i, obj2.y + dirX*50*i, obj2.x + dirX*100, obj2.y + dirY*100);
+                ctx.stroke();
+            }
+        }
+        ctx.restore();
+
+        // Draw Forces
+        const forceLineLength = Math.max(10, forceMag * 1.5); // Visual scaling
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 4;
+
+        if (isAttractive) {
+            // Arrows point toward each other
+            drawArrow(obj1.x + dirX*obj1.radius, obj1.y + dirY*obj1.radius,
+                      obj1.x + dirX*(obj1.radius + forceLineLength), obj1.y + dirY*(obj1.radius + forceLineLength),
+                      "#ef4444", 3);
+            drawArrow(obj2.x - dirX*obj2.radius, obj2.y - dirY*obj2.radius,
+                      obj2.x - dirX*(obj2.radius + forceLineLength), obj2.y - dirY*(obj2.radius + forceLineLength),
+                      "#ef4444", 3);
+        } else {
+            // Arrows point away
+            drawArrow(obj1.x - dirX*obj1.radius, obj1.y - dirY*obj1.radius,
+                      obj1.x - dirX*(obj1.radius + forceLineLength), obj1.y - dirY*(obj1.radius + forceLineLength),
+                      "#ef4444", 3);
+            drawArrow(obj2.x + dirX*obj2.radius, obj2.y + dirY*obj2.radius,
+                      obj2.x + dirX*(obj2.radius + forceLineLength), obj2.y + dirY*(obj2.radius + forceLineLength),
+                      "#ef4444", 3);
+        }
+        ctx.shadowBlur = 0; // Reset shadow
+
+        // Draw Objects
+        const drawObject = (obj, label, color) => {
+            // Glow based on energy
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 10 + (storedEnergy * 20);
+
+            ctx.beginPath();
+            ctx.arc(obj.x, obj.y, obj.radius, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = "white";
+            ctx.font = "bold 24px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(label, obj.x, obj.y);
+        };
+
+        if (interaction === 'electric_opp') {
+            drawObject(obj1, "+", "#ef4444");
+            drawObject(obj2, "−", "#3b82f6");
+        } else if (interaction === 'electric_same') {
+            drawObject(obj1, "+", "#ef4444");
+            drawObject(obj2, "+", "#ef4444");
+        } else if (interaction === 'magnetic_opp') {
+            drawObject(obj1, "N", "#ef4444");
+            drawObject(obj2, "S", "#eab308");
+        } else if (interaction === 'magnetic_same') {
+            drawObject(obj1, "N", "#ef4444");
+            drawObject(obj2, "N", "#ef4444");
+        }
+
+        // Draw dragging indicator
+        if (obj2.isDragging) {
+            ctx.beginPath();
+            ctx.arc(obj2.x, obj2.y, obj2.radius + 5, 0, Math.PI * 2);
+            ctx.strokeStyle = "#3b82f6";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    }
+
+    function loop() {
+        if (!document.hidden) {
+            drawFields();
+        }
+        requestAnimationFrame(loop);
+    }
+
+    // Expose for testing
+    window.testingTools = {
+        getInteraction: () => interaction,
+        getStoredEnergy: () => storedEnergy,
+        getForceMag: () => forceMag,
+        getDist: () => Math.hypot(obj2.x - obj1.x, obj2.y - obj1.y),
+        moveObject2: (x, y) => { obj2.x = x; obj2.y = y; }
+    };
+
+    loop();
+</script>
+</body>
+</html>
