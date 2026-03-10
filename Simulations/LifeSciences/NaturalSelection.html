@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Selection Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .canvas-container {
+            border: 2px solid #cbd5e1;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <header class="text-center space-y-2">
+            <h1 class="text-3xl font-bold text-slate-800">Natural Selection Simulation</h1>
+            <p class="text-slate-600 max-w-3xl mx-auto">
+                Explore how environmental changes, predation, and mutation drive evolution in a population over time (NGSS HS-LS4-3).
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Controls and Visualization -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <h2 class="text-xl font-semibold mb-4">Simulation Controls</h2>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1 flex justify-between">
+                            <span>Background Color (Environment)</span>
+                            <span id="bg-val">128</span>
+                        </label>
+                        <input type="range" id="bg-color" min="0" max="255" value="128" class="w-full">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1 flex justify-between">
+                            <span>Mutation Rate (%)</span>
+                            <span id="mut-val">10</span>
+                        </label>
+                        <input type="range" id="mutation-rate" min="0" max="100" value="10" class="w-full">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1 flex justify-between">
+                            <span>Predation Level (%)</span>
+                            <span id="pred-val">50</span>
+                        </label>
+                        <input type="range" id="predation-level" min="0" max="90" value="50" step="10" class="w-full">
+                    </div>
+
+                    <div class="flex gap-2 pt-4">
+                        <button id="btn-play" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded font-medium transition-colors">Play</button>
+                        <button id="btn-next" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded font-medium transition-colors">Next Gen</button>
+                    </div>
+                    <button id="btn-reset" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 py-2 px-4 rounded font-medium transition-colors mt-2">Reset Simulation</button>
+                </div>
+
+                <!-- Canvas -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
+                    <h2 class="text-lg font-semibold mb-2 self-start">Environment View</h2>
+                    <div class="canvas-container relative w-full aspect-square max-w-[300px]">
+                        <canvas id="sim-canvas" width="300" height="300" class="w-full h-full block"></canvas>
+                    </div>
+                    <div class="mt-2 text-sm text-slate-500 w-full text-center">
+                        Generation: <span id="gen-display" class="font-bold text-slate-800">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Data and Chart -->
+            <div class="lg:col-span-2 space-y-6 flex flex-col">
+                <!-- Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1 min-h-[300px]">
+                    <h2 class="text-xl font-semibold mb-4">Population Average Color vs Environment Over Time</h2>
+                    <div class="relative h-64 w-full">
+                        <canvas id="data-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1 flex flex-col max-h-[400px]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Data Log</h2>
+                        <button id="btn-export" class="bg-slate-800 hover:bg-slate-900 text-white py-1 px-3 rounded text-sm transition-colors">Export CSV</button>
+                    </div>
+                    <div class="overflow-y-auto flex-1 border border-slate-200 rounded">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-100 sticky top-0">
+                                <tr>
+                                    <th class="p-2 font-medium">Generation</th>
+                                    <th class="p-2 font-medium">Avg Pop Color</th>
+                                    <th class="p-2 font-medium">Environment Color</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data-table-body" class="divide-y divide-slate-100">
+                                <!-- Data rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation State
+        const state = {
+            populationSize: 200,
+            organisms: [],
+            generation: 0,
+            bgColor: 128,
+            mutationRate: 10,
+            predationLevel: 50,
+            isRunning: false,
+            dataLog: []
+        };
+
+        // DOM Elements
+        const canvas = document.getElementById('sim-canvas');
+        const ctx = canvas.getContext('2d');
+        const bgColorInput = document.getElementById('bg-color');
+        const mutationRateInput = document.getElementById('mutation-rate');
+        const predationLevelInput = document.getElementById('predation-level');
+        const bgValDisplay = document.getElementById('bg-val');
+        const mutValDisplay = document.getElementById('mut-val');
+        const predValDisplay = document.getElementById('pred-val');
+        const genDisplay = document.getElementById('gen-display');
+        const btnPlay = document.getElementById('btn-play');
+        const btnNext = document.getElementById('btn-next');
+        const btnReset = document.getElementById('btn-reset');
+        const btnExport = document.getElementById('btn-export');
+        const dataTableBody = document.getElementById('data-table-body');
+
+        // Chart setup
+        const chartCtx = document.getElementById('data-chart').getContext('2d');
+        const chart = new Chart(chartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Average Population Color',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        fill: true
+                    },
+                    {
+                        label: 'Environment Color',
+                        data: [],
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.1,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 255,
+                        title: { display: true, text: 'Color Value (0-Black, 255-White)' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Generation' }
+                    }
+                },
+                animation: false
+            }
+        });
+
+        // Initialize Simulation
+        function initSim() {
+            state.organisms = [];
+            state.generation = 0;
+            state.dataLog = [];
+            state.isRunning = false;
+            btnPlay.textContent = 'Play';
+
+            // Generate initial random population
+            for (let i = 0; i < state.populationSize; i++) {
+                state.organisms.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    color: Math.floor(Math.random() * 256)
+                });
+            }
+
+            updateCanvas();
+            updateChartAndTable(true);
+        }
+
+        // Draw current state to canvas
+        function updateCanvas() {
+            // Fill background
+            ctx.fillStyle = `rgb(${state.bgColor}, ${state.bgColor}, ${state.bgColor})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw organisms
+            state.organisms.forEach(org => {
+                ctx.beginPath();
+                ctx.arc(org.x, org.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = `rgb(${org.color}, ${org.color}, ${org.color})`;
+                ctx.fill();
+                ctx.strokeStyle = org.color > 128 ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            genDisplay.textContent = state.generation;
+        }
+
+        // Advance one generation
+        function nextGeneration() {
+            // Calculate fitness/visibility
+            // Visibility = difference between organism color and background
+            const withVisibility = state.organisms.map(org => ({
+                ...org,
+                visibility: Math.abs(org.color - state.bgColor)
+            }));
+
+            // Sort by visibility descending (most visible first)
+            withVisibility.sort((a, b) => b.visibility - a.visibility);
+
+            // Kill top percentage based on predation level
+            const killCount = Math.floor(state.populationSize * (state.predationLevel / 100));
+            const survivors = withVisibility.slice(killCount);
+
+            // If everyone dies (predation 100%), which shouldn't happen with our max 90 limit, but just in case
+            if (survivors.length === 0) survivors.push(withVisibility[withVisibility.length - 1]);
+
+            // Reproduce to fill population
+            const newGeneration = [];
+            while (newGeneration.length < state.populationSize) {
+                // Randomly select a survivor
+                const parent = survivors[Math.floor(Math.random() * survivors.length)];
+                let childColor = parent.color;
+
+                // Mutation
+                if (Math.random() * 100 < state.mutationRate) {
+                    // Mutate by up to +/- 30
+                    const mutationAmount = (Math.random() * 60) - 30;
+                    childColor = Math.floor(childColor + mutationAmount);
+                    // Clamp to 0-255
+                    childColor = Math.max(0, Math.min(255, childColor));
+                }
+
+                newGeneration.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    color: childColor
+                });
+            }
+
+            state.organisms = newGeneration;
+            state.generation++;
+
+            updateCanvas();
+            updateChartAndTable();
+        }
+
+        // Calculate average color
+        function getAverageColor() {
+            if (state.organisms.length === 0) return 0;
+            const sum = state.organisms.reduce((acc, org) => acc + org.color, 0);
+            return Math.floor(sum / state.organisms.length);
+        }
+
+        // Update Data Logging
+        function updateChartAndTable(reset = false) {
+            const avgColor = getAverageColor();
+
+            if (reset) {
+                chart.data.labels = [];
+                chart.data.datasets[0].data = [];
+                chart.data.datasets[1].data = [];
+                dataTableBody.innerHTML = ''; // Fast clearing
+            }
+
+            // Record data
+            const dataPoint = {
+                gen: state.generation,
+                avgCol: avgColor,
+                bgCol: state.bgColor
+            };
+
+            if (!reset) {
+                state.dataLog.push(dataPoint);
+            }
+
+            // Update chart
+            chart.data.labels.push(state.generation);
+            chart.data.datasets[0].data.push(avgColor);
+            chart.data.datasets[1].data.push(state.bgColor);
+
+            // Keep last 100 points for performance
+            if (chart.data.labels.length > 100) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+                chart.data.datasets[1].data.shift();
+            }
+
+            chart.update();
+
+            // Update Table securely
+            if (!reset) {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50';
+
+                const tdGen = document.createElement('td');
+                tdGen.className = 'p-2';
+                tdGen.textContent = state.generation;
+
+                const tdAvg = document.createElement('td');
+                tdAvg.className = 'p-2';
+                tdAvg.textContent = avgColor;
+
+                const tdBg = document.createElement('td');
+                tdBg.className = 'p-2';
+                tdBg.textContent = state.bgColor;
+
+                tr.appendChild(tdGen);
+                tr.appendChild(tdAvg);
+                tr.appendChild(tdBg);
+
+                // Prepend to show newest first
+                if (dataTableBody.firstChild) {
+                    dataTableBody.insertBefore(tr, dataTableBody.firstChild);
+                } else {
+                    dataTableBody.appendChild(tr);
+                }
+            }
+        }
+
+        // Simulation Loop
+        let animationId;
+        let lastFrameTime = 0;
+        const targetFPS = 10; // 10 generations per second max
+
+        function simLoop(timestamp) {
+            if (!state.isRunning) return;
+
+            if (timestamp - lastFrameTime > 1000 / targetFPS) {
+                nextGeneration();
+                lastFrameTime = timestamp;
+            }
+
+            animationId = requestAnimationFrame(simLoop);
+        }
+
+        // Event Listeners
+        bgColorInput.addEventListener('input', (e) => {
+            state.bgColor = parseInt(e.target.value);
+            bgValDisplay.textContent = state.bgColor;
+            updateCanvas();
+        });
+
+        mutationRateInput.addEventListener('input', (e) => {
+            state.mutationRate = parseInt(e.target.value);
+            mutValDisplay.textContent = state.mutationRate;
+        });
+
+        predationLevelInput.addEventListener('input', (e) => {
+            state.predationLevel = parseInt(e.target.value);
+            predValDisplay.textContent = state.predationLevel;
+        });
+
+        btnPlay.addEventListener('click', () => {
+            state.isRunning = !state.isRunning;
+            btnPlay.textContent = state.isRunning ? 'Pause' : 'Play';
+            btnPlay.classList.toggle('bg-blue-600');
+            btnPlay.classList.toggle('bg-amber-500');
+            btnPlay.classList.toggle('hover:bg-blue-700');
+            btnPlay.classList.toggle('hover:bg-amber-600');
+
+            if (state.isRunning) {
+                lastFrameTime = performance.now();
+                simLoop(performance.now());
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            if (state.isRunning) {
+                btnPlay.click(); // Pause if running
+            }
+            nextGeneration();
+        });
+
+        btnReset.addEventListener('click', () => {
+            if (state.isRunning) {
+                btnPlay.click();
+            }
+            initSim();
+        });
+
+        btnExport.addEventListener('click', () => {
+            if (state.dataLog.length === 0) {
+                alert("No data to export yet. Run the simulation for a few generations.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Generation,Average Population Color,Environment Color\n";
+
+            state.dataLog.forEach(row => {
+                csvContent += `${row.gen},${row.avgCol},${row.bgCol}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "natural_selection_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Start
+        initSim();
+    </script>
+</body>
+</html>

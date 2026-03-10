@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbital Motion & Kepler's Laws</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .slider-container { margin-bottom: 1rem; }
+        .readout { font-weight: 600; font-family: monospace; }
+        canvas { background-color: #0f172a; border-radius: 0.5rem; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-blue-900">Orbital Motion & Kepler's Third Law</h1>
+            <p class="text-gray-600 mt-2">Explore how star mass, initial distance, and velocity affect a planet's orbit. Discover the relationship between orbital period and semi-major axis.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Column: Simulation and Controls -->
+            <div class="bg-white p-4 rounded-lg shadow-md flex flex-col">
+                <div class="relative w-full aspect-square mb-4">
+                    <canvas id="simCanvas" class="w-full h-full shadow-inner"></canvas>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div class="slider-container">
+                        <label for="starMass" class="block text-sm font-medium text-gray-700">Star Mass (Solar Masses): <span id="starMassVal">1.0</span></label>
+                        <input type="range" id="starMass" min="0.1" max="5.0" step="0.1" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div class="slider-container">
+                        <label for="initDistance" class="block text-sm font-medium text-gray-700">Initial Distance (AU): <span id="initDistanceVal">1.0</span></label>
+                        <input type="range" id="initDistance" min="0.2" max="3.0" step="0.1" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div class="slider-container sm:col-span-2">
+                        <label for="velMultiplier" class="block text-sm font-medium text-gray-700">Initial Velocity Multiplier: <span id="velMultiplierVal">1.00</span></label>
+                        <p class="text-xs text-gray-500 mb-1">1.0 = Circular orbit (if distance is unchanged). &gt;1.0 = Elliptical. &ge; &radic;2 = Escape.</p>
+                        <input type="range" id="velMultiplier" min="0.1" max="1.5" step="0.05" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-3 rounded border border-blue-100 mb-4 grid grid-cols-2 gap-2 text-sm">
+                    <div>Semi-major Axis (a): <span id="readoutA" class="readout text-blue-800">1.00</span> AU</div>
+                    <div>Period (T): <span id="readoutT" class="readout text-blue-800">1.00</span> Years</div>
+                    <div>Eccentricity (e): <span id="readoutE" class="readout text-blue-800">0.00</span></div>
+                    <div>Status: <span id="readoutStatus" class="readout text-blue-800">Stable</span></div>
+                    <div>a&sup3;: <span id="readoutA3" class="readout text-purple-700">1.00</span> AU&sup3;</div>
+                    <div>T&sup2;: <span id="readoutT2" class="readout text-purple-700">1.00</span> Yr&sup2;</div>
+                </div>
+
+                <div class="flex space-x-2">
+                    <button id="btnReset" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition">Reset Orbit</button>
+                    <button id="btnLog" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">Log Data</button>
+                </div>
+            </div>
+
+            <!-- Right Column: Data and Chart -->
+            <div class="bg-white p-4 rounded-lg shadow-md flex flex-col">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Logged Data</h2>
+
+                <div class="flex-1 min-h-[250px] relative mb-4">
+                    <canvas id="dataChart"></canvas>
+                </div>
+
+                <div class="overflow-y-auto max-h-60 border border-gray-200 rounded">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">Mass (M)</th>
+                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">a (AU)</th>
+                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">T (Yr)</th>
+                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">a&sup3;</th>
+                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">T&sup2;</th>
+                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">e</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Data rows will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button id="btnClearData" class="mt-4 w-full bg-red-100 hover:bg-red-200 text-red-700 font-semibold py-2 px-4 rounded transition text-sm">Clear Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const G = 4 * Math.PI * Math.PI; // AU, Years, Solar Masses
+        const AU_TO_PX = 60; // 1 AU = 60 pixels for rendering
+
+        // Elements
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const sliderMass = document.getElementById('starMass');
+        const sliderDist = document.getElementById('initDistance');
+        const sliderVel = document.getElementById('velMultiplier');
+
+        const valMass = document.getElementById('starMassVal');
+        const valDist = document.getElementById('initDistanceVal');
+        const valVel = document.getElementById('velMultiplierVal');
+
+        const readA = document.getElementById('readoutA');
+        const readT = document.getElementById('readoutT');
+        const readE = document.getElementById('readoutE');
+        const readStatus = document.getElementById('readoutStatus');
+        const readA3 = document.getElementById('readoutA3');
+        const readT2 = document.getElementById('readoutT2');
+
+        const btnReset = document.getElementById('btnReset');
+        const btnLog = document.getElementById('btnLog');
+        const btnClear = document.getElementById('btnClearData');
+        const tableBody = document.getElementById('dataTableBody');
+
+        // Simulation State
+        let star = { mass: 1.0, x: 0, y: 0 };
+        let planet = { x: 1.0, y: 0, vx: 0, vy: 0 };
+        let path = [];
+        let simInterval;
+        let lastTime = 0;
+        let isOrbiting = true;
+
+        // Current calculated orbital elements
+        let currentOrbit = { a: 0, T: 0, e: 0, isEscape: false };
+
+        // Chart State
+        let scatterChart;
+
+        function initChart() {
+            const ctxChart = document.getElementById('dataChart').getContext('2d');
+            scatterChart = new Chart(ctxChart, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'T² vs a³',
+                        data: [],
+                        backgroundColor: 'rgba(147, 51, 234, 0.6)',
+                        borderColor: 'rgba(147, 51, 234, 1)',
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'a³ (AU³)' },
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0
+                        },
+                        y: {
+                            title: { display: true, text: 'T² (Years²)' },
+                            type: 'linear',
+                            min: 0
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `a³: ${context.parsed.x.toFixed(2)}, T²: ${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function resetSimulation() {
+            star.mass = parseFloat(sliderMass.value);
+            const r0 = parseFloat(sliderDist.value);
+            const vMult = parseFloat(sliderVel.value);
+
+            // Circular velocity: v = sqrt(G*M/r)
+            const vCirc = Math.sqrt((G * star.mass) / r0);
+            const v0 = vCirc * vMult;
+
+            planet.x = r0;
+            planet.y = 0;
+            planet.vx = 0;
+            planet.vy = v0;
+
+            path = [];
+            isOrbiting = true;
+
+            updateOrbitalElements();
+            lastTime = performance.now();
+            draw();
+        }
+
+        function updateOrbitalElements() {
+            // Calculate orbital elements from state vector (r, v)
+            const r = Math.sqrt(planet.x*planet.x + planet.y*planet.y);
+            const vSq = planet.vx*planet.vx + planet.vy*planet.vy;
+            const mu = G * star.mass;
+
+            // Specific orbital energy: epsilon = v^2/2 - mu/r
+            const epsilon = (vSq / 2) - (mu / r);
+
+            // Angular momentum h = r x v = x*vy - y*vx
+            const h = planet.x * planet.vy - planet.y * planet.vx;
+
+            if (epsilon >= 0) {
+                // Parabolic or hyperbolic escape
+                currentOrbit.isEscape = true;
+                currentOrbit.a = Infinity;
+                currentOrbit.T = Infinity;
+                currentOrbit.e = Math.sqrt(1 + (2 * epsilon * h * h) / (mu * mu));
+            } else {
+                currentOrbit.isEscape = false;
+                // a = -mu / 2*epsilon
+                currentOrbit.a = -mu / (2 * epsilon);
+                // e = sqrt(1 + 2*epsilon*h^2 / mu^2)
+                currentOrbit.e = Math.sqrt(Math.max(0, 1 + (2 * epsilon * h * h) / (mu * mu)));
+                // T = 2*pi * sqrt(a^3 / mu)
+                currentOrbit.T = 2 * Math.PI * Math.sqrt(Math.pow(currentOrbit.a, 3) / mu);
+            }
+
+            updateReadouts();
+        }
+
+        function updateReadouts() {
+            if (currentOrbit.isEscape) {
+                readA.textContent = "∞";
+                readT.textContent = "∞";
+                readE.textContent = currentOrbit.e.toFixed(3);
+                readA3.textContent = "∞";
+                readT2.textContent = "∞";
+                readStatus.textContent = "Escape";
+                readStatus.className = "readout text-red-600";
+            } else {
+                readA.textContent = currentOrbit.a.toFixed(3);
+                readT.textContent = currentOrbit.T.toFixed(3);
+                readE.textContent = currentOrbit.e.toFixed(3);
+                const a3 = Math.pow(currentOrbit.a, 3);
+                const t2 = Math.pow(currentOrbit.T, 2);
+                readA3.textContent = a3.toFixed(3);
+                readT2.textContent = t2.toFixed(3);
+                readStatus.textContent = "Stable";
+                readStatus.className = "readout text-green-600";
+            }
+        }
+
+        function updatePhysics(dt) {
+            // Cap dt to prevent instability if tab is inactive
+            if (dt > 0.1) dt = 0.1;
+
+            // Time step simulation in Years. We want simulation to be reasonably fast.
+            // Let's say 1 real second = 0.5 simulated years
+            const simDt = dt * 0.5;
+
+            // We use standard Euler-Cromer or Velocity Verlet. Let's use basic symplectic Euler for simplicity
+            // or smaller substeps for accuracy.
+            const substeps = 20;
+            const h = simDt / substeps;
+            const mu = G * star.mass;
+
+            for (let i = 0; i < substeps; i++) {
+                const rSq = planet.x*planet.x + planet.y*planet.y;
+                const r = Math.sqrt(rSq);
+
+                if (r < 0.05) {
+                    // Collision with star
+                    isOrbiting = false;
+                    readStatus.textContent = "Collision!";
+                    readStatus.className = "readout text-red-600";
+                    return;
+                }
+
+                const rCubed = rSq * r;
+                const ax = -mu * planet.x / rCubed;
+                const ay = -mu * planet.y / rCubed;
+
+                planet.vx += ax * h;
+                planet.vy += ay * h;
+
+                planet.x += planet.vx * h;
+                planet.y += planet.vy * h;
+            }
+
+            // Record path
+            if (path.length === 0 || Math.hypot(path[path.length-1].x - planet.x, path[path.length-1].y - planet.y) > 0.02) {
+                path.push({x: planet.x, y: planet.y});
+                if (path.length > 500) path.shift();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // Draw grid and axes
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy);
+            ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height);
+            ctx.stroke();
+
+            // Draw orbit path
+            if (path.length > 1) {
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(cx + path[0].x * AU_TO_PX, cy - path[0].y * AU_TO_PX);
+                for (let i = 1; i < path.length; i++) {
+                    ctx.lineTo(cx + path[i].x * AU_TO_PX, cy - path[i].y * AU_TO_PX);
+                }
+                ctx.stroke();
+            }
+
+            // Draw Star
+            ctx.fillStyle = '#fde047';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#facc15';
+            ctx.beginPath();
+            // Star size scales slightly with mass
+            ctx.arc(cx, cy, 8 + star.mass * 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Draw Planet
+            if (isOrbiting) {
+                ctx.fillStyle = '#60a5fa';
+                ctx.beginPath();
+                ctx.arc(cx + planet.x * AU_TO_PX, cy - planet.y * AU_TO_PX, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        function gameLoop(time) {
+            if (lastTime === 0) lastTime = time;
+            const dt = (time - lastTime) / 1000;
+            lastTime = time;
+
+            if (isOrbiting) {
+                updatePhysics(dt);
+            }
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Event Listeners
+        function updateInputs() {
+            valMass.textContent = parseFloat(sliderMass.value).toFixed(1);
+            valDist.textContent = parseFloat(sliderDist.value).toFixed(1);
+            valVel.textContent = parseFloat(sliderVel.value).toFixed(2);
+            resetSimulation();
+        }
+
+        sliderMass.addEventListener('input', updateInputs);
+        sliderDist.addEventListener('input', updateInputs);
+        sliderVel.addEventListener('input', updateInputs);
+        btnReset.addEventListener('click', resetSimulation);
+
+        btnLog.addEventListener('click', () => {
+            if (currentOrbit.isEscape) {
+                alert("Cannot log an escape trajectory.");
+                return;
+            }
+            if (!isOrbiting) {
+                alert("Planet has collided, reset orbit first.");
+                return;
+            }
+
+            const a = currentOrbit.a;
+            const T = currentOrbit.T;
+            const e = currentOrbit.e;
+            const a3 = Math.pow(a, 3);
+            const t2 = Math.pow(T, 2);
+            const m = star.mass;
+
+            // Add to table
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-gray-50';
+
+            const createTd = (text) => {
+                const td = document.createElement('td');
+                td.className = 'px-3 py-2 whitespace-nowrap text-gray-700';
+                td.textContent = text;
+                return td;
+            };
+
+            tr.appendChild(createTd(m.toFixed(1)));
+            tr.appendChild(createTd(a.toFixed(3)));
+            tr.appendChild(createTd(T.toFixed(3)));
+            tr.appendChild(createTd(a3.toFixed(3)));
+            tr.appendChild(createTd(t2.toFixed(3)));
+            tr.appendChild(createTd(e.toFixed(3)));
+
+            tableBody.appendChild(tr);
+
+            // Add to chart
+            scatterChart.data.datasets[0].data.push({ x: a3, y: t2 });
+            scatterChart.update();
+
+            // Auto-scale chart axes to show 0 if needed, but Chart.js does it automatically.
+        });
+
+        btnClear.addEventListener('click', () => {
+            tableBody.textContent = '';
+            scatterChart.data.datasets[0].data = [];
+            scatterChart.update();
+        });
+
+        // Initialization
+        initChart();
+        // Wait for canvas to be sized correctly
+        setTimeout(() => {
+            resizeCanvas();
+            resetSimulation();
+            requestAnimationFrame(gameLoop);
+        }, 100);
+
+    </script>
+</body>
+</html>

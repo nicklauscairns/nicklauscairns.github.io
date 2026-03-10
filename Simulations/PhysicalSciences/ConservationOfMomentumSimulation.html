@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conservation of Momentum Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles */
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-6">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">Conservation of Momentum Simulation</h1>
+        <p class="text-center text-gray-600 mb-6">Explore 1D elastic and inelastic collisions. Adjust masses and velocities to observe the conservation of momentum and changes in kinetic energy.</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Controls -->
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 col-span-1">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Simulation Controls</h2>
+
+                <div class="space-y-4">
+                    <!-- Object 1 Controls -->
+                    <div class="bg-blue-50 p-3 rounded border border-blue-200">
+                        <h3 class="font-medium text-blue-800 mb-2">Object 1 (Blue)</h3>
+                        <div class="flex flex-col mb-2">
+                            <label for="mass1" class="text-sm font-medium text-gray-700">Mass (kg): <span id="mass1-val">1.0</span></label>
+                            <input type="range" id="mass1" min="0.1" max="5.0" step="0.1" value="1.0" class="w-full">
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="vel1" class="text-sm font-medium text-gray-700">Initial Velocity (m/s): <span id="vel1-val">2.0</span></label>
+                            <input type="range" id="vel1" min="-5.0" max="5.0" step="0.1" value="2.0" class="w-full">
+                        </div>
+                    </div>
+
+                    <!-- Object 2 Controls -->
+                    <div class="bg-red-50 p-3 rounded border border-red-200">
+                        <h3 class="font-medium text-red-800 mb-2">Object 2 (Red)</h3>
+                        <div class="flex flex-col mb-2">
+                            <label for="mass2" class="text-sm font-medium text-gray-700">Mass (kg): <span id="mass2-val">1.5</span></label>
+                            <input type="range" id="mass2" min="0.1" max="5.0" step="0.1" value="1.5" class="w-full">
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="vel2" class="text-sm font-medium text-gray-700">Initial Velocity (m/s): <span id="vel2-val">-1.0</span></label>
+                            <input type="range" id="vel2" min="-5.0" max="5.0" step="0.1" value="-1.0" class="w-full">
+                        </div>
+                    </div>
+
+                    <!-- Environment Controls -->
+                    <div class="bg-gray-100 p-3 rounded border border-gray-300">
+                        <h3 class="font-medium text-gray-800 mb-2">Collision Settings</h3>
+                        <div class="flex flex-col">
+                            <label for="elasticity" class="text-sm font-medium text-gray-700">Elasticity (e): <span id="elasticity-val">1.0</span></label>
+                            <input type="range" id="elasticity" min="0.0" max="1.0" step="0.1" value="1.0" class="w-full">
+                            <p class="text-xs text-gray-500 mt-1">1.0 = Elastic, 0.0 = Perfectly Inelastic</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-2 pt-2">
+                        <button id="start-btn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">Start</button>
+                        <button id="pause-btn" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition" disabled>Pause</button>
+                        <button id="reset-btn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Canvas and Live Data -->
+            <div class="lg:col-span-2 flex flex-col space-y-6">
+                <!-- Simulation Canvas -->
+                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 relative">
+                    <canvas id="sim-canvas" width="800" height="250" class="w-full h-auto"></canvas>
+                    <div class="absolute top-6 left-6 right-6 flex justify-between text-sm font-mono pointer-events-none">
+                        <div id="live-data-1" class="text-blue-700 bg-white/80 px-2 py-1 rounded hidden">v: 0.0 m/s<br>p: 0.0 kg·m/s</div>
+                        <div id="live-data-2" class="text-red-700 bg-white/80 px-2 py-1 rounded hidden text-right">v: 0.0 m/s<br>p: 0.0 kg·m/s</div>
+                    </div>
+                </div>
+
+                <!-- Live Physics Readout -->
+                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="text-lg font-semibold mb-3">System Metrics</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="bg-gray-50 p-2 rounded border">
+                            <div class="text-xs text-gray-500 font-bold uppercase">Total Initial Momentum</div>
+                            <div id="metric-pi" class="text-lg font-mono">0.00</div>
+                            <div class="text-xs text-gray-500">kg·m/s</div>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded border">
+                            <div class="text-xs text-gray-500 font-bold uppercase">Total Final Momentum</div>
+                            <div id="metric-pf" class="text-lg font-mono">-</div>
+                            <div class="text-xs text-gray-500">kg·m/s</div>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded border">
+                            <div class="text-xs text-gray-500 font-bold uppercase">Total Initial KE</div>
+                            <div id="metric-kei" class="text-lg font-mono">0.00</div>
+                            <div class="text-xs text-gray-500">J</div>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded border">
+                            <div class="text-xs text-gray-500 font-bold uppercase">Total Final KE</div>
+                            <div id="metric-kef" class="text-lg font-mono">-</div>
+                            <div class="text-xs text-gray-500">J</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Logging Table -->
+        <div class="mt-8 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Data Log</h2>
+                <button id="export-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm transition flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Export CSV
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-3 py-2 border-b">Trial</th>
+                            <th scope="col" class="px-3 py-2 border-b">m₁ (kg)</th>
+                            <th scope="col" class="px-3 py-2 border-b">m₂ (kg)</th>
+                            <th scope="col" class="px-3 py-2 border-b">v₁ᵢ (m/s)</th>
+                            <th scope="col" class="px-3 py-2 border-b">v₂ᵢ (m/s)</th>
+                            <th scope="col" class="px-3 py-2 border-b">e</th>
+                            <th scope="col" class="px-3 py-2 border-b">v₁f (m/s)</th>
+                            <th scope="col" class="px-3 py-2 border-b">v₂f (m/s)</th>
+                            <th scope="col" class="px-3 py-2 border-b">p_tot_i</th>
+                            <th scope="col" class="px-3 py-2 border-b">p_tot_f</th>
+                            <th scope="col" class="px-3 py-2 border-b">KE_i (J)</th>
+                            <th scope="col" class="px-3 py-2 border-b">KE_f (J)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-table-body">
+                        <!-- Data rows will be added here -->
+                    </tbody>
+                </table>
+                <div id="no-data-msg" class="text-center py-4 text-gray-500 italic">No data logged yet. Run a simulation to log data.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('sim-canvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const logTableBody = document.getElementById('log-table-body');
+        const noDataMsg = document.getElementById('no-data-msg');
+
+        // Live Data Elements
+        const liveData1 = document.getElementById('live-data-1');
+        const liveData2 = document.getElementById('live-data-2');
+        const metricPi = document.getElementById('metric-pi');
+        const metricPf = document.getElementById('metric-pf');
+        const metricKEi = document.getElementById('metric-kei');
+        const metricKEf = document.getElementById('metric-kef');
+
+        // Input Elements and Value Spans
+        const inputs = {
+            m1: { el: document.getElementById('mass1'), valEl: document.getElementById('mass1-val') },
+            m2: { el: document.getElementById('mass2'), valEl: document.getElementById('mass2-val') },
+            v1: { el: document.getElementById('vel1'), valEl: document.getElementById('vel1-val') },
+            v2: { el: document.getElementById('vel2'), valEl: document.getElementById('vel2-val') },
+            e:  { el: document.getElementById('elasticity'), valEl: document.getElementById('elasticity-val') }
+        };
+
+        // Simulation State
+        let state = {
+            running: false,
+            paused: false,
+            time: 0,
+            hasCollided: false,
+            trialCount: 0,
+            pixelsPerMeter: 40,
+            lastTime: 0
+        };
+
+        // Physics Entities
+        class Cart {
+            constructor(id, color, mass, initialVelocity, initialX) {
+                this.id = id;
+                this.color = color;
+                this.mass = mass;
+                this.initialVelocity = initialVelocity; // m/s
+                this.v = initialVelocity; // current velocity
+                this.x = initialX; // meters
+                this.width = 1.0; // meters (visual base size)
+                this.height = 0.5; // meters
+                // Visual size scales slightly with mass for intuition
+                this.renderWidth = this.width + (this.mass - 1) * 0.2;
+            }
+
+            getMomentum() {
+                return this.mass * this.v;
+            }
+
+            getKE() {
+                return 0.5 * this.mass * this.v * this.v;
+            }
+
+            reset(mass, vel, x) {
+                this.mass = mass;
+                this.initialVelocity = vel;
+                this.v = vel;
+                this.x = x;
+                this.renderWidth = this.width + (this.mass - 1) * 0.2;
+            }
+
+            update(dt) {
+                this.x += this.v * dt;
+            }
+
+            draw(ctx, ppm, canvasHeight) {
+                const px = canvas.width / 2 + this.x * ppm;
+                const py = canvasHeight / 2 + 50; // Base track level
+                const pWidth = this.renderWidth * ppm;
+                const pHeight = this.height * ppm;
+
+                ctx.fillStyle = this.color;
+                ctx.fillRect(px - pWidth / 2, py - pHeight, pWidth, pHeight);
+
+                // Draw wheels
+                ctx.fillStyle = '#333';
+                ctx.beginPath();
+                ctx.arc(px - pWidth / 2 + 10, py, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(px + pWidth / 2 - 10, py, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw mass label
+                ctx.fillStyle = '#fff';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${this.mass.toFixed(1)}kg`, px, py - pHeight / 2 + 5);
+            }
+        }
+
+        let cart1 = new Cart(1, '#3b82f6', 1.0, 2.0, -5.0); // Blue
+        let cart2 = new Cart(2, '#ef4444', 1.5, -1.0, 5.0); // Red
+        let elasticity = 1.0;
+
+        // Initialization & Event Listeners
+        function init() {
+            // Setup input listeners
+            for (let key in inputs) {
+                inputs[key].el.addEventListener('input', (e) => {
+                    inputs[key].valEl.textContent = parseFloat(e.target.value).toFixed(1);
+                    if (!state.running && !state.paused) {
+                        resetSimulation();
+                    }
+                });
+            }
+
+            startBtn.addEventListener('click', toggleSimulation);
+            pauseBtn.addEventListener('click', pauseSimulation);
+            resetBtn.addEventListener('click', resetSimulation);
+
+            resetSimulation();
+            requestAnimationFrame(loop);
+        }
+
+        function readInputs() {
+            return {
+                m1: parseFloat(inputs.m1.el.value),
+                m2: parseFloat(inputs.m2.el.value),
+                v1: parseFloat(inputs.v1.el.value),
+                v2: parseFloat(inputs.v2.el.value),
+                e: parseFloat(inputs.e.el.value)
+            };
+        }
+
+        function updateMetricsUI(phase) {
+            const p1 = cart1.getMomentum();
+            const p2 = cart2.getMomentum();
+            const pTotal = p1 + p2;
+            const ke1 = cart1.getKE();
+            const ke2 = cart2.getKE();
+            const keTotal = ke1 + ke2;
+
+            if (phase === 'initial') {
+                metricPi.textContent = pTotal.toFixed(2);
+                metricKEi.textContent = keTotal.toFixed(2);
+                metricPf.textContent = '-';
+                metricKEf.textContent = '-';
+            } else if (phase === 'final') {
+                metricPf.textContent = pTotal.toFixed(2);
+                metricKEf.textContent = keTotal.toFixed(2);
+            }
+        }
+
+        function resetSimulation() {
+            const vals = readInputs();
+            elasticity = vals.e;
+
+            // Initial positions: apart
+            cart1.reset(vals.m1, vals.v1, -4.0);
+            cart2.reset(vals.m2, vals.v2, 4.0);
+
+            state.running = false;
+            state.paused = false;
+            state.hasCollided = false;
+            state.time = 0;
+
+            startBtn.textContent = 'Start';
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+
+            // Enable inputs
+            for(let key in inputs) inputs[key].el.disabled = false;
+
+            updateMetricsUI('initial');
+            draw();
+        }
+
+        function toggleSimulation() {
+            if (!state.running && !state.paused) {
+                // Starting fresh
+                state.running = true;
+                state.lastTime = performance.now();
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+
+                // Disable inputs during run
+                for(let key in inputs) inputs[key].el.disabled = true;
+            } else if (state.paused) {
+                // Resuming
+                state.paused = false;
+                state.running = true;
+                state.lastTime = performance.now();
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+            }
+        }
+
+        function pauseSimulation() {
+            state.paused = true;
+            state.running = false;
+            startBtn.disabled = false;
+            startBtn.textContent = 'Resume';
+            pauseBtn.disabled = true;
+        }
+
+        // Data Logging
+        let loggedData = [];
+
+        function logTrial(m1, m2, u1, u2, e, v1f, v2f) {
+            state.trialCount++;
+            noDataMsg.style.display = 'none';
+
+            const p_i = (m1 * u1) + (m2 * u2);
+            const p_f = (m1 * v1f) + (m2 * v2f);
+            const ke_i = 0.5 * m1 * u1 * u1 + 0.5 * m2 * u2 * u2;
+            const ke_f = 0.5 * m1 * v1f * v1f + 0.5 * m2 * v2f * v2f;
+
+            const trialData = {
+                trial: state.trialCount,
+                m1: m1.toFixed(1),
+                m2: m2.toFixed(1),
+                u1: u1.toFixed(2),
+                u2: u2.toFixed(2),
+                e: e.toFixed(2),
+                v1f: v1f.toFixed(2),
+                v2f: v2f.toFixed(2),
+                pi: p_i.toFixed(2),
+                pf: p_f.toFixed(2),
+                kei: ke_i.toFixed(2),
+                kef: ke_f.toFixed(2)
+            };
+
+            loggedData.push(trialData);
+
+            const row = document.createElement('tr');
+            row.className = 'bg-white border-b hover:bg-gray-50';
+
+            // Note: For security and per instructions, using textContent via individual cells
+            const keys = ['trial', 'm1', 'm2', 'u1', 'u2', 'e', 'v1f', 'v2f', 'pi', 'pf', 'kei', 'kef'];
+            keys.forEach(key => {
+                const cell = document.createElement('td');
+                cell.className = 'px-3 py-2 font-mono';
+                cell.textContent = trialData[key];
+                row.appendChild(cell);
+            });
+
+            logTableBody.insertBefore(row, logTableBody.firstChild);
+        }
+
+        exportBtn.addEventListener('click', () => {
+            if (loggedData.length === 0) {
+                alert("No data to export!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            // Header
+            csvContent += "Trial,m1(kg),m2(kg),v1i(m/s),v2i(m/s),Elasticity,v1f(m/s),v2f(m/s),p_total_initial,p_total_final,KE_total_initial,KE_total_final\n";
+
+            // Rows
+            loggedData.forEach(row => {
+                const rowStr = `${row.trial},${row.m1},${row.m2},${row.u1},${row.u2},${row.e},${row.v1f},${row.v2f},${row.pi},${row.pf},${row.kei},${row.kef}`;
+                csvContent += rowStr + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "momentum_conservation_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        function checkCollision() {
+            if (state.hasCollided) return;
+
+            // Check if edges overlap
+            const cart1Right = cart1.x + cart1.renderWidth / 2;
+            const cart2Left = cart2.x - cart2.renderWidth / 2;
+
+            if (cart1Right >= cart2Left) {
+                // Collision occurs!
+                state.hasCollided = true;
+
+                // Physics calculation
+                const m1 = cart1.mass;
+                const m2 = cart2.mass;
+                const u1 = cart1.v;
+                const u2 = cart2.v;
+                const e = elasticity;
+
+                // Final velocity equations for 1D collision with coefficient of restitution
+                const v1f = ((m1 - e * m2) * u1 + (1 + e) * m2 * u2) / (m1 + m2);
+                const v2f = ((m2 - e * m1) * u2 + (1 + e) * m1 * u1) / (m1 + m2);
+
+                cart1.v = v1f;
+                cart2.v = v2f;
+
+                // Separate them slightly to avoid sticking inside each other due to dt steps
+                const overlap = cart1Right - cart2Left;
+                cart1.x -= overlap / 2;
+                cart2.x += overlap / 2;
+
+                updateMetricsUI('final');
+
+                // Log the trial data
+                logTrial(m1, m2, u1, u2, e, v1f, v2f);
+            }
+        }
+
+        function loop(timestamp) {
+            if (state.running) {
+                const dt = (timestamp - state.lastTime) / 1000; // seconds
+                state.lastTime = timestamp;
+
+                // Cap dt to prevent huge jumps if tab was inactive
+                if (dt < 0.1) {
+                    cart1.update(dt);
+                    cart2.update(dt);
+                    checkCollision();
+                }
+
+                // Auto-pause if they drift too far away
+                if (Math.abs(cart1.x) > 15 && Math.abs(cart2.x) > 15) {
+                    pauseSimulation();
+                    startBtn.disabled = true; // Force reset
+                }
+            }
+
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw track
+            const trackY = canvas.height / 2 + 50;
+            ctx.beginPath();
+            ctx.moveTo(0, trackY + 6);
+            ctx.lineTo(canvas.width, trackY + 6);
+            ctx.strokeStyle = '#9ca3af';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw center marker
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, trackY + 10);
+            ctx.lineTo(canvas.width / 2, trackY + 20);
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            cart1.draw(ctx, state.pixelsPerMeter, canvas.height);
+            cart2.draw(ctx, state.pixelsPerMeter, canvas.height);
+        }
+
+        // Start everything
+        init();
+    </script>
+</body>
+</html>
