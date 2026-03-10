@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Bang Evidence Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-btn { background-color: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 0.5rem 1rem; cursor: pointer; border-radius: 0.25rem 0.25rem 0 0; transition: background-color 0.2s, color 0.2s; }
+        .nav-btn:hover { background-color: #334155; color: white; }
+        .nav-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; border-bottom: none; }
+        canvas { border-radius: 0.5rem; background-color: #020617; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .info-panel { background-color: #1e293b; border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
+
+    <header class="text-center mb-6 w-full max-w-6xl">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-400 mb-2">Big Bang Evidence Explorer</h1>
+        <p class="text-slate-300">Investigate the astronomical evidence supporting the Big Bang Theory.</p>
+    </header>
+
+    <div class="w-full max-w-6xl mb-6">
+        <div class="flex flex-wrap border-b border-slate-700">
+            <button class="nav-btn active" onclick="openTab(event, 'redshift')">Expanding Universe (Redshift)</button>
+            <button class="nav-btn" onclick="openTab(event, 'composition')">Composition of Matter</button>
+            <button class="nav-btn" onclick="openTab(event, 'cmb')">Cosmic Microwave Background</button>
+        </div>
+    </div>
+
+    <main class="w-full max-w-6xl flex-grow flex flex-col">
+
+        <!-- Tab 1: Redshift -->
+        <section id="redshift" class="tab-content active flex-grow">
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                <div class="flex flex-col gap-4">
+                    <h2 class="text-2xl font-semibold text-blue-300">Redshift and the Expanding Universe</h2>
+                    <p class="text-slate-300">Observe galaxies receding from Earth. Their light spectra are shifted towards the red end, indicating they are moving away. Faster moving galaxies exhibit a greater redshift.</p>
+                    <div class="bg-slate-800 p-4 rounded-lg flex-grow flex flex-col relative" style="min-height: 400px;">
+                        <canvas id="universeCanvas" class="w-full flex-grow mb-4 cursor-pointer"></canvas>
+
+                        <div class="flex items-center gap-4 mb-2">
+                            <label for="expansionSlider" class="text-sm font-semibold whitespace-nowrap">Time (Expansion):</label>
+                            <input type="range" id="expansionSlider" min="1" max="3" step="0.05" value="1" class="w-full accent-blue-500">
+                        </div>
+
+                        <div id="spectrumBox" class="bg-slate-900 p-3 rounded border border-slate-700 hidden mt-2">
+                            <h3 class="text-sm font-bold text-slate-300 mb-1">Galaxy Light Spectrum</h3>
+                            <div class="relative w-full h-12 bg-black rounded overflow-hidden">
+                                <!-- Reference Lines -->
+                                <div class="absolute top-0 bottom-0 left-[30%] w-0.5 bg-blue-500 opacity-50 z-10" title="Reference (Blue)"></div>
+                                <div class="absolute top-0 bottom-0 left-[70%] w-0.5 bg-red-500 opacity-50 z-10" title="Reference (Red)"></div>
+                                <!-- Background Gradient to simulate full spectrum -->
+                                <div class="absolute inset-0 bg-gradient-to-r from-violet-600 via-green-500 to-red-600 opacity-30"></div>
+
+                                <!-- Shifted Lines (Galaxy) -->
+                                <div id="shiftedLine1" class="absolute top-0 bottom-0 w-1 bg-white z-20 transition-all duration-200"></div>
+                                <div id="shiftedLine2" class="absolute top-0 bottom-0 w-1 bg-white z-20 transition-all duration-200"></div>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xs text-slate-400">Shift (<span id="redshiftValue">0</span>) indicates velocity: <span id="velocityValue" class="text-blue-400 font-mono">0</span> km/s</span>
+                                <button id="recordBtn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs py-1 px-3 rounded transition-colors">Record Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h2 class="text-2xl font-semibold text-blue-300">Hubble's Law Data</h2>
+                    <div class="bg-slate-800 p-4 rounded-lg flex-grow flex flex-col gap-4" style="max-height: 600px;">
+                        <div class="h-64 relative w-full">
+                            <canvas id="hubbleChart"></canvas>
+                        </div>
+                        <div class="overflow-y-auto max-h-48 rounded border border-slate-700 bg-slate-900">
+                            <table class="w-full text-sm text-left text-slate-300">
+                                <thead class="text-xs text-slate-400 bg-slate-800 uppercase sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-2">Galaxy</th>
+                                        <th class="px-4 py-2">Distance (Mpc)</th>
+                                        <th class="px-4 py-2">Velocity (km/s)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataTableBody">
+                                    <!-- Data rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <!-- Tab 2: Composition -->
+        <section id="composition" class="tab-content flex-grow">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                <div class="flex flex-col gap-4">
+                    <h2 class="text-2xl font-semibold text-blue-300">Primordial Composition</h2>
+                    <p class="text-slate-300">The Big Bang Theory predicts that the early universe was hot and dense enough for nuclear fusion to occur for a brief period. Big Bang Nucleosynthesis created mostly Hydrogen (~75% by mass) and Helium (~25%), with trace amounts of Lithium.</p>
+                    <div class="bg-slate-800 p-6 rounded-lg flex-grow flex flex-col items-center justify-center gap-6">
+                        <div class="relative w-48 h-48 rounded-full border-4 border-slate-600 bg-slate-900 overflow-hidden cursor-pointer group" id="sampleCloud" onclick="analyzeSample()">
+                            <!-- Simulated gas cloud -->
+                            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-900/50 via-purple-900/40 to-slate-900/80 blur-md"></div>
+                            <!-- Particles generated via JS -->
+                            <div id="particlesContainer" class="absolute inset-0"></div>
+
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="text-white font-bold text-lg pointer-events-none">Click to Analyze Sample</span>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <h3 class="font-bold text-slate-200 mb-2">Analysis Status</h3>
+                            <div id="analysisStatus" class="text-slate-400">Waiting for sample...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h2 class="text-2xl font-semibold text-blue-300">Matter Distribution (By Mass)</h2>
+                     <div class="bg-slate-800 p-4 rounded-lg flex-grow flex items-center justify-center" style="max-height: 500px;">
+                        <div class="w-full max-w-sm">
+                            <canvas id="compositionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <!-- Tab 3: CMB -->
+        <section id="cmb" class="tab-content flex-grow">
+             <div class="flex flex-col gap-4 h-full">
+                <h2 class="text-2xl font-semibold text-blue-300">Cosmic Microwave Background (CMB)</h2>
+                <p class="text-slate-300">The CMB is the remnant radiation from the hot, dense early universe. As the universe expanded, this radiation cooled and its wavelength stretched into the microwave spectrum we observe today at ~2.7 Kelvin.</p>
+
+                <div class="bg-slate-800 p-6 rounded-lg flex-grow flex flex-col gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label for="timeSlider" class="text-sm font-semibold flex justify-between">
+                            <span>Time since Big Bang</span>
+                            <span id="timeLabel" class="text-blue-400">~380,000 Years (Recombination)</span>
+                        </label>
+                        <input type="range" id="timeSlider" min="0" max="100" value="0" class="w-full accent-blue-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+                        <!-- Universe Expansion Visual -->
+                        <div class="flex flex-col items-center gap-4">
+                            <h3 class="font-bold text-slate-300">Observable Universe Model</h3>
+                            <div class="relative w-full aspect-square max-w-[300px] flex items-center justify-center bg-black rounded-lg border border-slate-700 overflow-hidden">
+                                <div id="universeBox" class="rounded-full flex items-center justify-center transition-all duration-300" style="width: 20%; height: 20%; background-color: #ff4500;">
+                                    <div id="cmbWave" class="w-full h-full opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxwYXRoIGQ9Ik0wLDEwIFExMCwwIDIwLDEwIFQ0MCwxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPg==')] bg-repeat-x bg-center transition-all duration-300" style="background-size: 10px 10px;"></div>
+                                </div>
+                            </div>
+                            <div class="text-center text-sm text-slate-400">
+                                Temperature: <span id="tempLabel" class="font-mono text-orange-400 text-lg">~3000 K</span>
+                            </div>
+                        </div>
+
+                        <!-- Blackbody Radiation Spectrum -->
+                        <div class="flex flex-col gap-4">
+                            <h3 class="font-bold text-slate-300">Radiation Spectrum Peak</h3>
+                            <div class="flex-grow relative min-h-[250px] bg-slate-900 rounded border border-slate-700 p-2">
+                                <canvas id="cmbChart"></canvas>
+                            </div>
+                            <div class="text-sm text-slate-300">
+                                <p><strong>Peak Wavelength:</strong> <span id="wavelengthLabel" class="font-mono text-blue-400">970 nm (Infrared)</span></p>
+                                <p class="text-xs text-slate-500 mt-2">Note: As the universe expands, the peak wavelength shifts from infrared to microwave, and the temperature drops according to Wien's displacement law.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full max-w-6xl mt-8 pt-4 border-t border-slate-700 text-sm text-slate-400">
+        <div class="info-panel p-4 rounded mb-4">
+            <h3 class="font-bold text-slate-200 mb-2">NGSS Alignment (HS-ESS1-2)</h3>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>ESS1.A:</strong> The study of stars' light spectra and brightness is used to identify compositional elements of stars, their movements, and their distances from Earth. The Big Bang theory is supported by observations of distant galaxies receding from our own, of the measured composition of stars and non-stellar gases, and of the maps of spectra of the primordial radiation (CMB).</li>
+                <li><strong>PS4.B:</strong> Atoms of each element emit and absorb characteristic frequencies of light. These characteristics allow identification of the presence of an element, even in microscopic quantities.</li>
+            </ul>
+        </div>
+        <p class="text-center">&copy; <script>document.write(new Date().getFullYear())</script> Science Simulations. Built for educational purposes.</p>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab content
+            const tabcontent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+
+            // Remove active class from all nav buttons
+            const tablinks = document.getElementsByClassName("nav-btn");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+
+            // Show the specific tab and mark button as active
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Initial setup
+        document.getElementById('redshift').style.display = 'block';
+
+        // --- Tab 1: Redshift & Hubble's Law Logic ---
+        const canvas = document.getElementById('universeCanvas');
+        const ctx = canvas.getContext('2d');
+        const expansionSlider = document.getElementById('expansionSlider');
+        const spectrumBox = document.getElementById('spectrumBox');
+        const shiftedLine1 = document.getElementById('shiftedLine1');
+        const shiftedLine2 = document.getElementById('shiftedLine2');
+        const recordBtn = document.getElementById('recordBtn');
+        const dataTableBody = document.getElementById('dataTableBody');
+        const redshiftValueSpan = document.getElementById('redshiftValue');
+        const velocityValueSpan = document.getElementById('velocityValue');
+
+        // Setup Chart
+        const chartCtx = document.getElementById('hubbleChart').getContext('2d');
+        const hubbleChart = new Chart(chartCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Recorded Galaxies',
+                    data: [],
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: { display: true, text: 'Distance (Mpc)', color: '#cbd5e1' },
+                        grid: { color: '#334155' },
+                        ticks: { color: '#cbd5e1' },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    },
+                    y: {
+                        title: { display: true, text: 'Velocity (km/s)', color: '#cbd5e1' },
+                        grid: { color: '#334155' },
+                        ticks: { color: '#cbd5e1' },
+                        suggestedMin: 0,
+                        suggestedMax: 8000
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#cbd5e1' } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `(${context.parsed.x.toFixed(1)} Mpc, ${context.parsed.y.toFixed(0)} km/s)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Galaxy Data Structure
+        const numGalaxies = 8;
+        const H0 = 70; // Hubble Constant ~70 km/s/Mpc
+        let galaxies = [];
+        let selectedGalaxy = null;
+        let recordedData = new Set(); // Keep track of recorded galaxies
+
+        function initGalaxies() {
+            galaxies = [];
+            for (let i = 0; i < numGalaxies; i++) {
+                // Initial positions between 10 and 30 (arbitrary units, translated to Mpc)
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 10 + Math.random() * 20;
+                galaxies.push({
+                    id: i + 1,
+                    baseDist: distance,
+                    angle: angle,
+                    color: `hsl(${Math.random() * 360}, 70%, 70%)`
+                });
+            }
+        }
+
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            // Subtract space for slider and potential spectrum box to keep it visible
+            canvas.height = rect.height - 180;
+            drawUniverse();
+        }
+
+        function drawUniverse() {
+            if(!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const expansion = parseFloat(expansionSlider.value);
+
+            // Draw Earth
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#3b82f6'; // Blue earth
+            ctx.fill();
+            ctx.strokeStyle = '#60a5fa';
+            ctx.stroke();
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Observer', centerX + 10, centerY - 10);
+
+            // Draw Galaxies
+            // Scale arbitrary units to fit canvas (e.g., 100 Mpc = width/2)
+            const scaleFactor = Math.min(canvas.width, canvas.height) / 2.5 / 100;
+
+            galaxies.forEach(g => {
+                const currentDist = g.baseDist * expansion;
+                const px = centerX + Math.cos(g.angle) * currentDist * scaleFactor;
+                const py = centerY + Math.sin(g.angle) * currentDist * scaleFactor;
+
+                // Draw line to galaxy if selected
+                if(selectedGalaxy && selectedGalaxy.id === g.id) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(px, py);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Highlight circle
+                    ctx.beginPath();
+                    ctx.arc(px, py, 10, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.lineWidth = 1;
+                }
+
+                ctx.beginPath();
+                ctx.arc(px, py, 5, 0, Math.PI * 2);
+                ctx.fillStyle = g.color;
+                ctx.fill();
+
+                // If it's recorded, mark it
+                if(recordedData.has(g.id)) {
+                    ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
+                    ctx.fillRect(px - 2, py - 2, 4, 4);
+                }
+            });
+        }
+
+        // Interaction
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const expansion = parseFloat(expansionSlider.value);
+            const scaleFactor = Math.min(canvas.width, canvas.height) / 2.5 / 100;
+
+            let clicked = null;
+
+            for (let g of galaxies) {
+                const currentDist = g.baseDist * expansion;
+                const px = centerX + Math.cos(g.angle) * currentDist * scaleFactor;
+                const py = centerY + Math.sin(g.angle) * currentDist * scaleFactor;
+
+                const distToMouse = Math.hypot(px - mouseX, py - mouseY);
+                if (distToMouse < 15) { // Hitbox
+                    clicked = g;
+                    break;
+                }
+            }
+
+            if (clicked) {
+                selectedGalaxy = clicked;
+                updateSpectrum();
+            } else {
+                selectedGalaxy = null;
+                spectrumBox.classList.add('hidden');
+            }
+            drawUniverse();
+        });
+
+        expansionSlider.addEventListener('input', () => {
+            drawUniverse();
+            if (selectedGalaxy) {
+                updateSpectrum();
+            }
+        });
+
+        function updateSpectrum() {
+            if (!selectedGalaxy) return;
+            spectrumBox.classList.remove('hidden');
+
+            const expansion = parseFloat(expansionSlider.value);
+            // v = H0 * d  (Hubble's Law)
+            const distanceMpc = selectedGalaxy.baseDist * expansion;
+            const velocity = H0 * distanceMpc;
+
+            // Redshift calculation approximation (z ~ v/c for non-relativistic, let's just make it proportional for visual)
+            const c = 300000; // km/s
+            const z = velocity / c;
+
+            // Update UI values
+            redshiftValueSpan.innerText = z.toFixed(4);
+            velocityValueSpan.innerText = velocity.toFixed(0);
+
+            // Visual shift (base at 30% and 70%)
+            // shift percentage proportional to z (exaggerated for visibility)
+            const visualShift = z * 200; // Multiplier to make it visible
+
+            shiftedLine1.style.left = `calc(30% + ${visualShift}%)`;
+            shiftedLine2.style.left = `calc(70% + ${visualShift}%)`;
+
+            // Update record button state
+            if(recordedData.has(selectedGalaxy.id)) {
+                recordBtn.innerText = "Recorded";
+                recordBtn.disabled = true;
+                recordBtn.classList.replace('bg-blue-600', 'bg-slate-600');
+                recordBtn.classList.remove('hover:bg-blue-500');
+            } else {
+                recordBtn.innerText = "Record Data";
+                recordBtn.disabled = false;
+                recordBtn.classList.replace('bg-slate-600', 'bg-blue-600');
+                recordBtn.classList.add('hover:bg-blue-500');
+            }
+        }
+
+        recordBtn.addEventListener('click', () => {
+            if(!selectedGalaxy || recordedData.has(selectedGalaxy.id)) return;
+
+            const expansion = parseFloat(expansionSlider.value);
+            const distance = selectedGalaxy.baseDist * expansion;
+            const velocity = H0 * distance;
+
+            // Add to Table
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-slate-700 hover:bg-slate-700/50';
+            tr.innerHTML = `
+                <td class="px-4 py-2 flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full" style="background-color: ${selectedGalaxy.color}"></div>
+                    Galaxy ${selectedGalaxy.id}
+                </td>
+                <td class="px-4 py-2">${distance.toFixed(1)}</td>
+                <td class="px-4 py-2">${velocity.toFixed(0)}</td>
+            `;
+            dataTableBody.appendChild(tr);
+
+            // Add to Chart
+            hubbleChart.data.datasets[0].data.push({x: distance, y: velocity});
+
+            // Suggest new max if needed
+            if(distance > hubbleChart.options.scales.x.suggestedMax) {
+                hubbleChart.options.scales.x.suggestedMax = Math.ceil(distance / 20) * 20;
+            }
+            if(velocity > hubbleChart.options.scales.y.suggestedMax) {
+                hubbleChart.options.scales.y.suggestedMax = Math.ceil(velocity / 1000) * 1000;
+            }
+
+            hubbleChart.update();
+
+            // Mark as recorded
+            recordedData.add(selectedGalaxy.id);
+            updateSpectrum(); // To change button state
+            drawUniverse(); // To draw the recorded tick
+        });
+
+        // Initialize Tab 1
+        window.addEventListener('resize', resizeCanvas);
+        initGalaxies();
+        // Delay resize slightly to ensure DOM is ready
+        setTimeout(resizeCanvas, 100);
+
+
+        // --- Tab 2: Composition Logic ---
+        const particlesContainer = document.getElementById('particlesContainer');
+        const compChartCtx = document.getElementById('compositionChart').getContext('2d');
+        const analysisStatus = document.getElementById('analysisStatus');
+
+        // Initial Empty Chart
+        const compChart = new Chart(compChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Hydrogen (H)', 'Helium (He)', 'Other (Li, Be)'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['#ef4444', '#3b82f6', '#10b981'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#cbd5e1', padding: 20 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Generate visual particles in the "cloud"
+        function generateParticles() {
+            particlesContainer.innerHTML = '';
+            // Approx ratio by number of atoms: ~92% H, ~8% He
+            const totalAtoms = 150;
+            for(let i=0; i<totalAtoms; i++) {
+                const isHydrogen = Math.random() < 0.92;
+                const size = isHydrogen ? 'w-1 h-1' : 'w-2 h-2';
+                const color = isHydrogen ? 'bg-red-400' : 'bg-blue-400';
+
+                const dot = document.createElement('div');
+                dot.className = `absolute rounded-full ${size} ${color} opacity-70`;
+                dot.style.left = `${Math.random() * 100}%`;
+                dot.style.top = `${Math.random() * 100}%`;
+
+                // Add tiny animation
+                dot.style.animation = `pulse ${2 + Math.random()*2}s infinite alternate`;
+
+                particlesContainer.appendChild(dot);
+            }
+        }
+
+        // Add basic pulse animation dynamically if not present in tailwind setup
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes pulse {
+                0% { transform: scale(0.8); opacity: 0.5; }
+                100% { transform: scale(1.2); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+        generateParticles();
+
+        function analyzeSample() {
+            analysisStatus.innerHTML = '<span class="text-yellow-400">Analyzing spectroscopic data...</span>';
+
+            // Disable click briefly
+            const cloud = document.getElementById('sampleCloud');
+            cloud.onclick = null;
+            cloud.style.opacity = '0.5';
+
+            setTimeout(() => {
+                // Mass ratio: ~75% H, ~25% He
+                compChart.data.datasets[0].data = [75, 25, 0.01]; // 0.01 for trace elements just to show it exists
+                compChart.update();
+
+                analysisStatus.innerHTML = '<span class="text-green-400 font-bold">Analysis Complete: Matches Big Bang Prediction</span>';
+
+                cloud.onclick = analyzeSample;
+                cloud.style.opacity = '1';
+            }, 1500);
+        }
+
+
+        // --- Tab 3: CMB Logic ---
+        const timeSlider = document.getElementById('timeSlider');
+        const universeBox = document.getElementById('universeBox');
+        const cmbWave = document.getElementById('cmbWave');
+        const timeLabel = document.getElementById('timeLabel');
+        const tempLabel = document.getElementById('tempLabel');
+        const wavelengthLabel = document.getElementById('wavelengthLabel');
+        const cmbChartCtx = document.getElementById('cmbChart').getContext('2d');
+
+        // CMB Chart setup (Simplified representation of Planck's Law peak shifting)
+        const cmbChart = new Chart(cmbChartCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 100}, (_, i) => i), // Arbitrary x-axis for shape
+                datasets: [{
+                    label: 'Intensity',
+                    data: generateBlackbodyCurve(50), // Peak at middle
+                    borderColor: '#ff4500',
+                    backgroundColor: 'rgba(255, 69, 0, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { display: false, title: {display: true, text: 'Wavelength', color: '#cbd5e1'} },
+                    y: { display: false, suggestedMax: 100 }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                },
+                animation: { duration: 100 }
+            }
+        });
+
+        // Simple curve generator to visually represent blackbody shift
+        function generateBlackbodyCurve(peakIndex) {
+            let data = [];
+            for (let i = 0; i < 100; i++) {
+                // Create a generic skewed bell curve shape
+                if (i < peakIndex) {
+                    data.push(Math.pow((i / peakIndex), 3) * 100);
+                } else {
+                    data.push(Math.exp(-(i - peakIndex) / 20) * 100);
+                }
+            }
+            return data;
+        }
+
+        // Color interpolation from Hot (Orange/White) to Cold (Dark Blue/Black)
+        function getTemperatureColor(progress) {
+            // progress 0 (Hot) to 1 (Cold)
+            if (progress < 0.5) {
+                // Orange to Red
+                const p = progress * 2;
+                return `rgb(255, ${Math.floor(69 * (1-p))}, 0)`;
+            } else {
+                // Red to Dark Blue
+                const p = (progress - 0.5) * 2;
+                return `rgb(${Math.floor(255 * (1-p))}, 0, ${Math.floor(50 * p)})`;
+            }
+        }
+
+        timeSlider.addEventListener('input', () => {
+            const val = parseInt(timeSlider.value);
+            const progress = val / 100; // 0 to 1
+
+            // 1. Update Labels
+            if (val === 0) timeLabel.innerText = "~380,000 Years (Recombination)";
+            else if (val === 100) timeLabel.innerText = "13.8 Billion Years (Present Day)";
+            else timeLabel.innerText = `~${(0.38 + progress * 13.4).toFixed(1)} Billion Years`;
+
+            // T inversely proportional to scale factor (a). Let's use an exponential decay for visual effect.
+            // Start ~3000K, End ~2.7K
+            const temp = 3000 * Math.exp(-progress * 7);
+            tempLabel.innerText = `~${temp < 10 ? temp.toFixed(1) : Math.round(temp)} K`;
+            if(temp < 100) tempLabel.className = "font-mono text-blue-400 text-lg";
+            else tempLabel.className = "font-mono text-orange-400 text-lg";
+
+            // Wien's Law approximation for label
+            // lambda_max = b / T
+            const b = 2.897e-3; // m*K
+            const lambda = b / temp; // meters
+
+            if (lambda < 1e-6) {
+                wavelengthLabel.innerText = `${(lambda * 1e9).toFixed(0)} nm (Infrared)`;
+            } else if (lambda < 1e-3) {
+                wavelengthLabel.innerText = `${(lambda * 1e6).toFixed(1)} µm (Far Infrared)`;
+            } else {
+                wavelengthLabel.innerText = `${(lambda * 1000).toFixed(2)} mm (Microwave)`;
+            }
+
+            // 2. Update Universe Visual (Size & Color)
+            const size = 20 + (progress * 80); // 20% to 100%
+            universeBox.style.width = `${size}%`;
+            universeBox.style.height = `${size}%`;
+
+            const color = getTemperatureColor(progress);
+            universeBox.style.backgroundColor = color;
+
+            // Wavelength stretch (background size)
+            const waveSize = 10 + (progress * 40);
+            cmbWave.style.backgroundSize = `${waveSize}px 10px`;
+            cmbWave.style.opacity = 0.5 - (progress * 0.3); // Fades out as it cools
+
+            // 3. Update Chart
+            // Peak moves to the right (longer wavelength) and intensity drops
+            const newPeak = 20 + (progress * 70);
+            const newCurve = generateBlackbodyCurve(newPeak);
+
+            // Drop overall height to simulate cooling
+            const heightMultiplier = 1 - (progress * 0.8);
+            const scaledCurve = newCurve.map(v => v * heightMultiplier);
+
+            cmbChart.data.datasets[0].data = scaledCurve;
+            cmbChart.data.datasets[0].borderColor = color;
+            cmbChart.data.datasets[0].backgroundColor = color.replace('rgb', 'rgba').replace(')', ', 0.1)');
+            cmbChart.update();
+        });
+
+    </script>
+</body>
+</html>

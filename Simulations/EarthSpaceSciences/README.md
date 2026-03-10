@@ -10,6 +10,8 @@ Develop a model based on evidence to illustrate the life span of the sun and the
 ### HS-ESS1-2
 Construct an explanation of the Big Bang theory based on astronomical evidence of light spectra, motion of distant galaxies, and composition of matter in the universe.
 
+- [Big Bang Evidence Explorer](BigBangEvidenceExplorer.html) - An interactive exploration of the three key pieces of evidence supporting the Big Bang Theory: cosmic redshift, primordial composition, and the cosmic microwave background.
+
 ### HS-ESS1-3
 Communicate scientific ideas about the way stars, over their life cycle, produce elements.
 
