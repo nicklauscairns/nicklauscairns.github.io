@@ -8,7 +8,7 @@ Assessment Boundary: Assessment is limited to main group elements: Assessment do
 #### Science and Engineering Practices  
 ##### Developing and Using Models  
 Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.  
-    * Use a model to predict the relationships between systems or between components of a system.  
+* Use a model to predict the relationships between systems or between components of a system.  
 #### Disciplinary Core Ideas  
 ##### PS1.A: Structure and Properties of Matter  
 * Each atom has a charged substructure consisting of a nucleus, which is made of protons and neutrons, surrounded by electrons.  
