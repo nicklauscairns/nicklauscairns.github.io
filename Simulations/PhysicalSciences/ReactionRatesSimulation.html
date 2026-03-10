@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Rates Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .slider-container { margin-bottom: 1rem; }
+        .slider-label { display: flex; justify-content: space-between; font-weight: 500; font-size: 0.875rem; margin-bottom: 0.25rem; }
+        canvas { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+        .control-panel { background-color: #f1f5f9; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
+        .data-panel { background-color: #ffffff; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.875rem; }
+        th, td { border: 1px solid #e2e8f0; padding: 0.5rem; text-align: center; }
+        th { background-color: #f8fafc; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 p-6">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-slate-900">Reaction Rates Simulation</h1>
+            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-5: Temperature, Concentration, and Collision Theory</h2>
+            <p class="mt-2 text-slate-700">Explore how changing the temperature or concentration of reacting particles affects the rate of a chemical reaction. According to collision theory, particles must collide with sufficient energy (activation energy) to react.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Controls & Simulation -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Simulation Canvas -->
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-semibold text-lg mb-2">Particle View</h3>
+                    <div class="relative w-full aspect-video">
+                        <canvas id="simCanvas" class="w-full h-full"></canvas>
+                        <div id="statusOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none bg-white/50 hidden">
+                            <span class="text-2xl font-bold text-slate-700">Simulation Paused</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <div class="flex space-x-4 text-sm font-medium">
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>Reactant A</div>
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>Reactant B</div>
+                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-purple-600 mr-2"></span>Product AB</div>
+                        </div>
+                        <div class="text-sm text-slate-600">
+                            Time: <span id="timeDisplay" class="font-mono font-bold">0.0</span> s
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="control-panel shadow-sm">
+                    <h3 class="font-semibold text-lg mb-4">Experimental Conditions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <label for="temperatureSlider">Temperature (Kinetic Energy)</label>
+                                    <span id="temperatureVal" class="text-orange-600 font-bold">300 K</span>
+                                </div>
+                                <input type="range" id="temperatureSlider" min="100" max="600" step="10" value="300" class="w-full accent-orange-500">
+                                <p class="text-xs text-slate-500 mt-1">Increases particle speed and collision energy.</p>
+                            </div>
+                            <div class="slider-container mt-4">
+                                <div class="slider-label">
+                                    <label for="activationEnergySlider">Activation Energy Barrier</label>
+                                    <span id="activationEnergyVal" class="text-slate-600">Medium</span>
+                                </div>
+                                <input type="range" id="activationEnergySlider" min="1" max="100" step="1" value="50" class="w-full accent-slate-500">
+                                <p class="text-xs text-slate-500 mt-1">Minimum energy required for a successful collision.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="slider-container">
+                                <div class="slider-label">
+                                    <label for="concentrationASlider">Initial Concentration [A]</label>
+                                    <span id="concentrationAVal" class="text-blue-600 font-bold">50 particles</span>
+                                </div>
+                                <input type="range" id="concentrationASlider" min="10" max="150" step="5" value="50" class="w-full accent-blue-500">
+                            </div>
+                            <div class="slider-container mt-4">
+                                <div class="slider-label">
+                                    <label for="concentrationBSlider">Initial Concentration [B]</label>
+                                    <span id="concentrationBVal" class="text-red-600 font-bold">50 particles</span>
+                                </div>
+                                <input type="range" id="concentrationBSlider" min="10" max="150" step="5" value="50" class="w-full accent-red-500">
+                                <p class="text-xs text-slate-500 mt-1">Increases collision frequency.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button id="startBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition-colors">Start Experiment</button>
+                        <button id="pauseBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded font-medium transition-colors" disabled>Pause</button>
+                        <button id="resetBtn" class="bg-slate-600 hover:bg-slate-700 text-white px-6 py-2 rounded font-medium transition-colors">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Data & Explanation -->
+            <div class="space-y-6">
+                <!-- Graph -->
+                <div class="data-panel shadow-sm" style="max-height: 400px; display: flex; flex-direction: column;">
+                    <h3 class="font-semibold text-lg mb-2">Concentration vs. Time</h3>
+                    <div class="flex-grow relative">
+                        <canvas id="dataChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Data Log -->
+                <div class="data-panel shadow-sm overflow-hidden flex flex-col" style="max-height: 350px;">
+                    <h3 class="font-semibold text-lg mb-2">Experimental Data</h3>
+                    <div class="overflow-y-auto flex-grow">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Time (s)</th>
+                                    <th>[A]</th>
+                                    <th>[B]</th>
+                                    <th>[AB]</th>
+                                    <th>Rate (AB/s)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button id="clearDataBtn" class="mt-3 w-full border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded text-sm transition-colors">Clear Data</button>
+                </div>
+
+                <!-- Educational Content -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
+                    <h4 class="font-bold mb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Constructing Explanations
+                    </h4>
+                    <p class="mb-2"><strong>Temperature:</strong> Raising temperature increases the average kinetic energy of particles. This means more particles have energy greater than the activation energy, leading to more successful collisions per second.</p>
+                    <p><strong>Concentration:</strong> Increasing concentration means more particles in the same volume. This increases the overall frequency of collisions, thereby increasing the reaction rate.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation State
+        const state = {
+            isRunning: false,
+            time: 0,
+            lastFrameTime: 0,
+            particles: [],
+            counts: { A: 0, B: 0, AB: 0 },
+            history: [],
+            lastLogTime: -1,
+            // Parameters
+            temperature: 300,
+            activationEnergy: 50,
+            initialA: 50,
+            initialB: 50,
+            width: 800,
+            height: 450
+        };
+
+        // DOM Elements
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('statusOverlay');
+        const timeDisplay = document.getElementById('timeDisplay');
+
+        // Controls
+        const tempSlider = document.getElementById('temperatureSlider');
+        const tempVal = document.getElementById('temperatureVal');
+        const eaSlider = document.getElementById('activationEnergySlider');
+        const eaVal = document.getElementById('activationEnergyVal');
+        const concASlider = document.getElementById('concentrationASlider');
+        const concAVal = document.getElementById('concentrationAVal');
+        const concBSlider = document.getElementById('concentrationBSlider');
+        const concBVal = document.getElementById('concentrationBVal');
+
+        // Buttons
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Particle class
+        class Particle {
+            constructor(type, x, y, vx, vy) {
+                this.type = type; // 'A', 'B', or 'AB'
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.radius = type === 'AB' ? 8 : 6;
+                this.mass = type === 'AB' ? 2 : 1;
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                if (this.type === 'A') {
+                    ctx.fillStyle = '#3b82f6'; // blue-500
+                } else if (this.type === 'B') {
+                    ctx.fillStyle = '#ef4444'; // red-500
+                } else {
+                    ctx.fillStyle = '#9333ea'; // purple-600
+                }
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            update(dt) {
+                // Adjust speed based on temperature
+                // base speed at 300K is 1x. v is proportional to sqrt(T)
+                const speedMult = Math.sqrt(state.temperature / 300);
+
+                this.x += this.vx * speedMult * (dt / 16);
+                this.y += this.vy * speedMult * (dt / 16);
+
+                // Bounce off walls
+                if (this.x - this.radius < 0) {
+                    this.x = this.radius;
+                    this.vx *= -1;
+                } else if (this.x + this.radius > state.width) {
+                    this.x = state.width - this.radius;
+                    this.vx *= -1;
+                }
+
+                if (this.y - this.radius < 0) {
+                    this.y = this.radius;
+                    this.vy *= -1;
+                } else if (this.y + this.radius > state.height) {
+                    this.y = state.height - this.radius;
+                    this.vy *= -1;
+                }
+            }
+        }
+
+        function initSimulation() {
+            // Setup canvas
+            canvas.width = state.width;
+            canvas.height = state.height;
+
+            // Read controls
+            state.temperature = parseInt(tempSlider.value);
+            state.activationEnergy = parseInt(eaSlider.value);
+            state.initialA = parseInt(concASlider.value);
+            state.initialB = parseInt(concBSlider.value);
+
+            resetSimulation();
+        }
+
+        function resetSimulation() {
+            state.isRunning = false;
+            state.time = 0;
+            state.lastLogTime = -1;
+            state.particles = [];
+            state.history = [];
+
+            // Create particles
+            for (let i = 0; i < state.initialA; i++) {
+                state.particles.push(createRandomParticle('A'));
+            }
+            for (let i = 0; i < state.initialB; i++) {
+                state.particles.push(createRandomParticle('B'));
+            }
+
+            updateCounts();
+            drawFrame();
+
+            // UI Updates
+            timeDisplay.textContent = "0.0";
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            overlay.classList.remove('hidden');
+            overlay.querySelector('span').textContent = "Ready to Start";
+
+            // Need to update chart and table if they exist
+            if (window.resetDataVisualization) {
+                window.resetDataVisualization();
+            }
+        }
+
+        function createRandomParticle(type) {
+            const r = 6;
+            const x = r + Math.random() * (state.width - 2 * r);
+            const y = r + Math.random() * (state.height - 2 * r);
+            // Random direction, constant base magnitude
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 2.0 + Math.random();
+            return new Particle(type, x, y, Math.cos(angle) * speed, Math.sin(angle) * speed);
+        }
+
+        function updateCounts() {
+            state.counts = { A: 0, B: 0, AB: 0 };
+            for (const p of state.particles) {
+                state.counts[p.type]++;
+            }
+        }
+
+        function checkCollisions() {
+            const toRemove = new Set();
+            const toAdd = [];
+
+            for (let i = 0; i < state.particles.length; i++) {
+                if (toRemove.has(i)) continue;
+                for (let j = i + 1; j < state.particles.length; j++) {
+                    if (toRemove.has(j)) continue;
+
+                    const p1 = state.particles[i];
+                    const p2 = state.particles[j];
+
+                    const dx = p2.x - p1.x;
+                    const dy = p2.y - p1.y;
+                    const distSq = dx*dx + dy*dy;
+                    const minDist = p1.radius + p2.radius;
+
+                    if (distSq < minDist * minDist) {
+                        const reacted = resolveCollision(p1, p2, toAdd);
+                        if (reacted) {
+                            toRemove.add(i);
+                            toRemove.add(j);
+                            break; // Stop checking p1 against other particles if it reacted
+                        }
+                    }
+                }
+            }
+
+            if (toRemove.size > 0 || toAdd.length > 0) {
+                // Filter out removed particles
+                state.particles = state.particles.filter((_, index) => !toRemove.has(index));
+                // Add new particles
+                state.particles.push(...toAdd);
+                updateCounts();
+            }
+        }
+
+        function resolveCollision(p1, p2, toAdd) {
+            // Basic elastic collision logic to separate them
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            if (dist === 0) return false;
+
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            // Relative velocity
+            const dvx = p2.vx - p1.vx;
+            const dvy = p2.vy - p1.vy;
+            const relVel = dvx*nx + dvy*ny;
+
+            // If moving apart, do nothing
+            if (relVel > 0) return false;
+
+            // Calculate collision energy based on relative velocity and temperature
+            const speedMult = Math.sqrt(state.temperature / 300);
+            // Kinetic energy roughly proportional to T * relVel^2
+            const collisionEnergy = (Math.pow(relVel * speedMult, 2)) * 10;
+
+            // Check if reaction occurs: A + B -> AB
+            if ((p1.type === 'A' && p2.type === 'B') || (p1.type === 'B' && p2.type === 'A')) {
+                // Reaction probability depends on collision energy vs activation energy
+                // Using an Arrhenius-like probability model
+                const k = 0.5; // Scale factor
+                const probability = Math.exp(-state.activationEnergy / (k * state.temperature));
+
+                // Add a random factor to make it stochastic, but influenced by T and Ea
+                if (Math.random() < probability * 5) {
+                    // Reaction successful!
+
+                    // Create AB particle at center of mass
+                    const newX = (p1.x + p2.x) / 2;
+                    const newY = (p1.y + p2.y) / 2;
+                    // Conservation of momentum for new velocity
+                    const newVx = (p1.vx * p1.mass + p2.vx * p2.mass) / (p1.mass + p2.mass);
+                    const newVy = (p1.vy * p1.mass + p2.vy * p2.mass) / (p1.mass + p2.mass);
+
+                    const ab = new Particle('AB', newX, newY, newVx, newVy);
+                    toAdd.push(ab);
+
+                    return true; // Reaction happened
+                }
+            }
+
+            // If no reaction, just bounce (elastic collision)
+            const e = 1.0; // coefficient of restitution
+            const impulse = -(1 + e) * relVel / (1/p1.mass + 1/p2.mass);
+
+            p1.vx -= (impulse / p1.mass) * nx;
+            p1.vy -= (impulse / p1.mass) * ny;
+            p2.vx += (impulse / p2.mass) * nx;
+            p2.vy += (impulse / p2.mass) * ny;
+
+            // Move apart slightly to prevent sticking
+            const mDist = p1.radius + p2.radius;
+            const overlap = mDist - dist;
+            p1.x -= nx * overlap * 0.5;
+            p1.y -= ny * overlap * 0.5;
+            p2.x += nx * overlap * 0.5;
+            p2.y += ny * overlap * 0.5;
+
+            return false;
+        }
+
+        window.simulationLoop = function(timestamp) {
+            if (!state.isRunning) return;
+
+            if (!state.lastFrameTime) state.lastFrameTime = timestamp;
+            const dt = timestamp - state.lastFrameTime;
+            state.lastFrameTime = timestamp;
+
+            // Update time (assuming 60fps, 1 frame = 16.6ms, scale to seconds)
+            state.time += dt / 1000;
+            timeDisplay.textContent = state.time.toFixed(1);
+
+            // Update particles
+            for (const p of state.particles) {
+                p.update(dt);
+            }
+
+            checkCollisions();
+            drawFrame();
+
+            // Log data every second
+            const currentSec = Math.floor(state.time);
+            if (currentSec > state.lastLogTime) {
+                state.lastLogTime = currentSec;
+                if (window.logDataPoint) {
+                    window.logDataPoint(currentSec, state.counts);
+                }
+            }
+
+            requestAnimationFrame(window.simulationLoop);
+        }
+
+        function drawFrame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const p of state.particles) {
+                p.draw(ctx);
+            }
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            if (!state.isRunning) {
+                state.isRunning = true;
+                state.lastFrameTime = 0;
+                overlay.classList.add('hidden');
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                requestAnimationFrame(window.simulationLoop);
+            }
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            if (state.isRunning) {
+                state.isRunning = false;
+                overlay.classList.remove('hidden');
+                overlay.querySelector('span').textContent = "Simulation Paused";
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            resetSimulation();
+        });
+
+        // Sliders update text immediately, but only affect new runs for concentration
+        tempSlider.addEventListener('input', (e) => {
+            tempVal.textContent = `${e.target.value} K`;
+            state.temperature = parseInt(e.target.value);
+        });
+
+        eaSlider.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            let text = "Medium";
+            if (val < 30) text = "Low";
+            else if (val > 70) text = "High";
+            eaVal.textContent = text;
+            state.activationEnergy = val;
+        });
+
+        concASlider.addEventListener('input', (e) => {
+            concAVal.textContent = `${e.target.value} particles`;
+            if (!state.isRunning && state.time === 0) {
+                state.initialA = parseInt(e.target.value);
+                resetSimulation();
+            }
+        });
+
+        concBSlider.addEventListener('input', (e) => {
+            concBVal.textContent = `${e.target.value} particles`;
+            if (!state.isRunning && state.time === 0) {
+                state.initialB = parseInt(e.target.value);
+                resetSimulation();
+            }
+        });
+
+        // Data Visualization and Logging
+        let chartInstance = null;
+        const ctxChart = document.getElementById('dataChart').getContext('2d');
+        const dataTableBody = document.querySelector('#dataTable tbody');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+
+        function initDataVisualization() {
+            chartInstance = new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: [0],
+                    datasets: [
+                        { label: '[A]', data: [state.initialA], borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.1, fill: false },
+                        { label: '[B]', data: [state.initialB], borderColor: '#ef4444', backgroundColor: '#ef4444', tension: 0.1, fill: false },
+                        { label: '[AB]', data: [0], borderColor: '#9333ea', backgroundColor: '#9333ea', tension: 0.1, fill: false }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 100,
+                            title: { display: true, text: 'Number of Particles' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Time (s)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+
+        window.resetDataVisualization = function() {
+            if (chartInstance) {
+                chartInstance.data.labels = [0];
+                chartInstance.data.datasets[0].data = [state.initialA];
+                chartInstance.data.datasets[1].data = [state.initialB];
+                chartInstance.data.datasets[2].data = [0];
+                chartInstance.options.scales.y.suggestedMax = Math.max(state.initialA, state.initialB) + 10;
+                chartInstance.update();
+            }
+            dataTableBody.innerHTML = '';
+        };
+
+        window.logDataPoint = function(timeSec, counts) {
+            // Update Chart
+            chartInstance.data.labels.push(timeSec);
+            chartInstance.data.datasets[0].data.push(counts.A);
+            chartInstance.data.datasets[1].data.push(counts.B);
+            chartInstance.data.datasets[2].data.push(counts.AB);
+            chartInstance.update();
+
+            // Calculate rate (change in AB over the last second)
+            let rate = 0;
+            if (chartInstance.data.datasets[2].data.length > 1) {
+                const prevAB = chartInstance.data.datasets[2].data[chartInstance.data.datasets[2].data.length - 2];
+                rate = counts.AB - prevAB;
+            }
+
+            // Update Table
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${timeSec}</td>
+                <td class="text-blue-600">${counts.A}</td>
+                <td class="text-red-600">${counts.B}</td>
+                <td class="text-purple-600">${counts.AB}</td>
+                <td class="font-medium">${rate > 0 ? '+' : ''}${rate}</td>
+            `;
+            // Insert at top
+            dataTableBody.insertBefore(row, dataTableBody.firstChild);
+        };
+
+        clearDataBtn.addEventListener('click', () => {
+            if (!state.isRunning) {
+                window.resetDataVisualization();
+            }
+        });
+
+        // Expose functions for playwright tests
+        window.simState = state;
+
+        // Initialize
+        initDataVisualization();
+        initSimulation();
+    </script>
+</body>
+</html>

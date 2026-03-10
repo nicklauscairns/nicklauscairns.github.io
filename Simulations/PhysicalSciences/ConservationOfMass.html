@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conservation of Mass Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .atom {
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 50%; font-weight: bold; color: white;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+        .molecule {
+            position: relative;
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        /* Balance Scale Styles */
+        .scale-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 40px;
+        }
+        .scale-base {
+            width: 120px;
+            height: 20px;
+            background-color: #475569;
+            border-radius: 10px 10px 0 0;
+            z-index: 10;
+        }
+        .scale-post {
+            width: 10px;
+            height: 150px;
+            background-color: #64748b;
+            z-index: 10;
+        }
+        .scale-beam {
+            width: 80%;
+            height: 8px;
+            background-color: #94a3b8;
+            position: absolute;
+            top: 100px;
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20;
+            border-radius: 4px;
+        }
+        .scale-pan {
+            width: 150px;
+            height: 20px;
+            border-bottom: 20px solid #cbd5e1;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            position: absolute;
+            top: 20px; /* relative to beam end */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .pan-string {
+            position: absolute;
+            width: 2px;
+            height: 40px;
+            background-color: #94a3b8;
+            top: -20px;
+        }
+        .pan-content {
+            position: absolute;
+            bottom: 25px;
+            display: flex;
+            flex-wrap: wrap-reverse;
+            justify-content: center;
+            width: 140px;
+            min-height: 80px;
+        }
+
+        .left-pan-container { position: absolute; left: 0; top: 0; transform-origin: top center; transition: transform 0.5s ease; }
+        .right-pan-container { position: absolute; right: 0; top: 0; transform-origin: top center; transition: transform 0.5s ease; }
+
+        .coeff-input {
+            width: 40px; text-align: center; font-size: 1.25rem; font-weight: bold;
+            border: 2px solid #cbd5e1; border-radius: 4px; margin-right: 8px;
+        }
+        .coeff-input:focus { border-color: #3b82f6; outline: none; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
+    <div class="max-w-5xl mx-auto space-y-6">
+        <header class="border-b pb-4">
+            <h1 class="text-3xl font-bold text-slate-900">Conservation of Mass Simulator</h1>
+            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-7: Atoms and Mass are Conserved</h2>
+            <p class="mt-2 text-slate-700">Use mathematical representations (balancing equations) to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Controls & Equation -->
+            <div class="lg:col-span-12 space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h3 class="font-semibold text-lg">Reaction Equation</h3>
+                        <select id="reactionSelect" class="border-gray-300 rounded text-sm p-1">
+                            <option value="water">Water Synthesis: H₂ + O₂ &rarr; H₂O</option>
+                            <option value="methane">Methane Combustion: CH₄ + O₂ &rarr; CO₂ + H₂O</option>
+                            <option value="ammonia">Ammonia Synthesis: N₂ + H₂ &rarr; NH₃</option>
+                        </select>
+                    </div>
+
+                    <div id="equationArea" class="flex items-center justify-center space-x-4 text-2xl font-mono py-4">
+                        <!-- Equation inputs injected here -->
+                    </div>
+
+                    <div class="flex justify-center mt-4 space-x-4">
+                        <button id="checkBtn" class="px-6 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition">Check Balance</button>
+                        <button id="resetBtn" class="px-6 py-2 border border-slate-300 rounded font-medium hover:bg-slate-50 transition">Reset</button>
+                    </div>
+
+                    <div id="feedbackMsg" class="mt-4 text-center font-bold text-lg hidden"></div>
+                </div>
+            </div>
+
+            <!-- Visualization: Balance Scale -->
+            <div class="lg:col-span-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 h-full">
+                    <h3 class="font-semibold text-lg mb-2">Mass Balance Visualizer</h3>
+
+                    <div class="scale-container">
+                        <div class="scale-beam" id="scaleBeam">
+                            <!-- Left Pan -->
+                            <div class="left-pan-container" id="leftPanContainer">
+                                <div class="pan-string" style="left: 0; transform: rotate(20deg);"></div>
+                                <div class="pan-string" style="right: 0; transform: rotate(-20deg);"></div>
+                                <div class="scale-pan" style="left: -75px;">
+                                    <div class="pan-content" id="leftPanContent"></div>
+                                </div>
+                            </div>
+
+                            <!-- Right Pan -->
+                            <div class="right-pan-container" id="rightPanContainer">
+                                <div class="pan-string" style="left: 0; transform: rotate(20deg);"></div>
+                                <div class="pan-string" style="right: 0; transform: rotate(-20deg);"></div>
+                                <div class="scale-pan" style="right: -75px;">
+                                    <div class="pan-content" id="rightPanContent"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scale-post"></div>
+                        <div class="scale-base"></div>
+                    </div>
+
+                    <div class="flex justify-between mt-4 text-center font-mono text-lg font-bold">
+                        <div class="w-1/2 text-blue-700">Reactants Mass: <br><span id="leftMass">0</span> u</div>
+                        <div class="w-1/2 text-green-700">Products Mass: <br><span id="rightMass">0</span> u</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data & Analysis -->
+            <div class="lg:col-span-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-full flex flex-col">
+                    <h3 class="font-semibold text-lg mb-4 border-b pb-2">Atom Inventory</h3>
+
+                    <table class="w-full text-center text-sm mb-4">
+                        <thead>
+                            <tr class="bg-slate-50 border-b">
+                                <th class="py-2">Element</th>
+                                <th class="py-2 text-blue-700">Reactants</th>
+                                <th class="py-2 text-green-700">Products</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded p-4 text-sm text-blue-900 mt-auto">
+                        <h4 class="font-bold mb-1">Scientific Principle</h4>
+                        <p>Matter cannot be created or destroyed in a chemical reaction. Therefore, the number of atoms of each element must be exactly the same in the reactants as in the products. The total mass on both sides of the equation must be perfectly balanced.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Data Definitions
+        const elements = {
+            'H': { color: '#a8a29e', mass: 1 },
+            'O': { color: '#ef4444', mass: 16 },
+            'C': { color: '#64748b', mass: 12 },
+            'N': { color: '#3b82f6', mass: 14 }
+        };
+
+        const reactions = {
+            water: {
+                reactants: [{ id: 'r1', formula: 'H2', comp: { 'H': 2 } }, { id: 'r2', formula: 'O2', comp: { 'O': 2 } }],
+                products: [{ id: 'p1', formula: 'H2O', comp: { 'H': 2, 'O': 1 } }],
+                correctBalance: [2, 1, 2]
+            },
+            methane: {
+                reactants: [{ id: 'r1', formula: 'CH4', comp: { 'C': 1, 'H': 4 } }, { id: 'r2', formula: 'O2', comp: { 'O': 2 } }],
+                products: [{ id: 'p1', formula: 'CO2', comp: { 'C': 1, 'O': 2 } }, { id: 'p2', formula: 'H2O', comp: { 'H': 2, 'O': 1 } }],
+                correctBalance: [1, 2, 1, 2]
+            },
+            ammonia: {
+                reactants: [{ id: 'r1', formula: 'N2', comp: { 'N': 2 } }, { id: 'r2', formula: 'H2', comp: { 'H': 2 } }],
+                products: [{ id: 'p1', formula: 'NH3', comp: { 'N': 1, 'H': 3 } }],
+                correctBalance: [1, 3, 2]
+            }
+        };
+
+        // State
+        let currentRxKey = 'water';
+        let coeffs = {};
+
+        // DOM
+        const reactionSelect = document.getElementById('reactionSelect');
+        const equationArea = document.getElementById('equationArea');
+        const checkBtn = document.getElementById('checkBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const feedbackMsg = document.getElementById('feedbackMsg');
+        const scaleBeam = document.getElementById('scaleBeam');
+        const leftPanContainer = document.getElementById('leftPanContainer');
+        const rightPanContainer = document.getElementById('rightPanContainer');
+        const leftPanContent = document.getElementById('leftPanContent');
+        const rightPanContent = document.getElementById('rightPanContent');
+        const leftMassDisplay = document.getElementById('leftMass');
+        const rightMassDisplay = document.getElementById('rightMass');
+        const inventoryTable = document.getElementById('inventoryTable');
+
+        function initEquation() {
+            const rx = reactions[currentRxKey];
+            equationArea.innerHTML = '';
+            coeffs = {};
+
+            // Reactants
+            rx.reactants.forEach((mol, idx) => {
+                coeffs[mol.id] = 1;
+                equationArea.appendChild(createInputGrp(mol.id, formatFormula(mol.formula)));
+                if (idx < rx.reactants.length - 1) {
+                    equationArea.appendChild(createSpan('+'));
+                }
+            });
+
+            equationArea.appendChild(createSpan('→'));
+
+            // Products
+            rx.products.forEach((mol, idx) => {
+                coeffs[mol.id] = 1;
+                equationArea.appendChild(createInputGrp(mol.id, formatFormula(mol.formula)));
+                if (idx < rx.products.length - 1) {
+                    equationArea.appendChild(createSpan('+'));
+                }
+            });
+
+            feedbackMsg.classList.add('hidden');
+            updateSimulation();
+        }
+
+        function createInputGrp(id, textHtml) {
+            const div = document.createElement('div');
+            div.className = 'flex items-center';
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = '1';
+            input.max = '9';
+            input.value = '1';
+            input.className = 'coeff-input';
+            input.dataset.id = id;
+            input.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value);
+                if (isNaN(val) || val < 1) val = 1;
+                coeffs[id] = val;
+                feedbackMsg.classList.add('hidden');
+                updateSimulation();
+            });
+            div.appendChild(input);
+            const span = document.createElement('span');
+            span.innerHTML = textHtml;
+            div.appendChild(span);
+            return div;
+        }
+
+        function createSpan(text) {
+            const span = document.createElement('span');
+            span.textContent = text;
+            return span;
+        }
+
+        function formatFormula(f) {
+            return f.replace(/(\d+)/g, '<sub>$1</sub>');
+        }
+
+        // Creates visual DOM elements for molecules
+        function renderMolecule(molObj) {
+            const div = document.createElement('div');
+            div.className = 'molecule m-1 flex items-center justify-center';
+            div.style.width = '30px';
+            div.style.height = '30px';
+
+            let html = '';
+            // Basic simplistic rendering for visual weight, not chemically accurate geometry
+            const atomSize = '14px';
+            let offset = 0;
+
+            for (const [el, count] of Object.entries(molObj.comp)) {
+                for (let i = 0; i < count; i++) {
+                    html += `<div class="atom" style="background-color: ${elements[el].color}; width: ${atomSize}; height: ${atomSize}; z-index: ${20-offset}; transform: translate(${offset*8}px, ${(Math.random()-0.5)*4}px);"></div>`;
+                    offset++;
+                }
+            }
+            div.innerHTML = html;
+            return div;
+        }
+
+        function updateSimulation() {
+            const rx = reactions[currentRxKey];
+
+            // Calculate Inventory & Mass
+            let leftMass = 0;
+            let rightMass = 0;
+            const leftAtoms = {};
+            const rightAtoms = {};
+            const allElements = new Set();
+
+            leftPanContent.innerHTML = '';
+            rightPanContent.innerHTML = '';
+
+            rx.reactants.forEach(mol => {
+                const count = coeffs[mol.id];
+                for(let i=0; i<count; i++) leftPanContent.appendChild(renderMolecule(mol));
+
+                for (const [el, amt] of Object.entries(mol.comp)) {
+                    leftAtoms[el] = (leftAtoms[el] || 0) + (amt * count);
+                    leftMass += elements[el].mass * amt * count;
+                    allElements.add(el);
+                }
+            });
+
+            rx.products.forEach(mol => {
+                const count = coeffs[mol.id];
+                for(let i=0; i<count; i++) rightPanContent.appendChild(renderMolecule(mol));
+
+                for (const [el, amt] of Object.entries(mol.comp)) {
+                    rightAtoms[el] = (rightAtoms[el] || 0) + (amt * count);
+                    rightMass += elements[el].mass * amt * count;
+                    allElements.add(el);
+                }
+            });
+
+            // Update UI Mass
+            leftMassDisplay.textContent = leftMass;
+            rightMassDisplay.textContent = rightMass;
+
+            // Update Table
+            inventoryTable.innerHTML = '';
+            Array.from(allElements).sort().forEach(el => {
+                const L = leftAtoms[el] || 0;
+                const R = rightAtoms[el] || 0;
+                const isBalanced = L === R;
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b font-mono';
+                tr.innerHTML = `
+                    <td class="py-2 font-bold flex items-center justify-center gap-2">
+                        <div class="w-3 h-3 rounded-full" style="background-color: ${elements[el].color}"></div>
+                        ${el}
+                    </td>
+                    <td class="py-2 text-blue-700 ${!isBalanced ? 'bg-red-50' : ''}">${L}</td>
+                    <td class="py-2 text-green-700 ${!isBalanced ? 'bg-red-50' : ''}">${R}</td>
+                `;
+                inventoryTable.appendChild(tr);
+            });
+
+            // Update Scale Tilt
+            // Base max tilt on ratio of mass, max tilt 25 degrees
+            let tilt = 0;
+            if (leftMass > rightMass) {
+                const ratio = Math.min(leftMass / (rightMass || 1), 3);
+                tilt = -15 * (ratio - 1);
+            } else if (rightMass > leftMass) {
+                const ratio = Math.min(rightMass / (leftMass || 1), 3);
+                tilt = 15 * (ratio - 1);
+            }
+
+            tilt = Math.max(-25, Math.min(tilt, 25)); // clamp
+
+            scaleBeam.style.transform = `rotate(${tilt}deg)`;
+            // keep pans level by rotating opposite to beam
+            leftPanContainer.style.transform = `rotate(${-tilt}deg)`;
+            rightPanContainer.style.transform = `rotate(${-tilt}deg)`;
+        }
+
+        // Listeners
+        reactionSelect.addEventListener('change', (e) => {
+            currentRxKey = e.target.value;
+            initEquation();
+        });
+
+        resetBtn.addEventListener('click', initEquation);
+
+        checkBtn.addEventListener('click', () => {
+            const rx = reactions[currentRxKey];
+            const currentVals = [];
+            rx.reactants.forEach(r => currentVals.push(coeffs[r.id]));
+            rx.products.forEach(p => currentVals.push(coeffs[p.id]));
+
+            let isCorrect = true;
+            for(let i=0; i < currentVals.length; i++) {
+                if(currentVals[i] !== rx.correctBalance[i]) isCorrect = false;
+            }
+
+            feedbackMsg.classList.remove('hidden', 'text-green-600', 'text-red-600');
+
+            if (isCorrect) {
+                feedbackMsg.textContent = "Equation is Balanced! Mass is conserved.";
+                feedbackMsg.classList.add('text-green-600');
+
+                // Pulse the scale beam
+                scaleBeam.classList.add('scale-105');
+                setTimeout(() => scaleBeam.classList.remove('scale-105'), 500);
+            } else {
+                feedbackMsg.textContent = "Not Balanced yet. Check the Atom Inventory.";
+                feedbackMsg.classList.add('text-red-600');
+            }
+        });
+
+        // Init
+        initEquation();
+    </script>
+</body>
+</html>

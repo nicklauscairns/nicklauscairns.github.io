@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemical Reaction Outcomes Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .atom-circle {
+            width: 80px; height: 80px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem;
+            color: white; position: relative;
+        }
+        .valence-shell {
+            position: absolute; width: 110%; height: 110%; border: 2px dashed #94a3b8; border-radius: 50%;
+        }
+        .electron {
+            width: 12px; height: 12px; background-color: #fbbf24; border-radius: 50%; position: absolute;
+            box-shadow: 0 0 5px rgba(251, 191, 36, 0.8);
+        }
+        .dropzone {
+            min-height: 120px; border: 2px dashed #cbd5e1; border-radius: 0.5rem;
+            display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem;
+            background-color: #f8fafc; transition: all 0.2s;
+        }
+        .dropzone.active { border-color: #3b82f6; background-color: #eff6ff; }
+        .draggable { cursor: grab; }
+        .draggable:active { cursor: grabbing; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
+    <div class="max-w-5xl mx-auto space-y-6">
+        <header class="border-b pb-4">
+            <h1 class="text-3xl font-bold text-slate-900">Chemical Reaction Outcomes Predictor</h1>
+            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-2: Predicting Reactions based on Valence Electrons</h2>
+            <p class="mt-2 text-slate-700">Construct explanations for simple chemical reactions by analyzing the outermost electron states of atoms and their trends in the periodic table.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Left: Element Selection -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                <h3 class="font-semibold text-lg mb-4">1. Select Reactants</h3>
+                <p class="text-sm text-slate-600 mb-4">Click to add atoms to the reaction chamber.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-500 mb-2">Alkali Metals (Group 1)</h4>
+                        <div class="flex gap-2">
+                            <button class="bg-red-500 hover:bg-red-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="Na" data-valence="1" data-color="#ef4444">Na</button>
+                            <button class="bg-red-500 hover:bg-red-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="K" data-valence="1" data-color="#ef4444">K</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-500 mb-2">Halogens (Group 17)</h4>
+                        <div class="flex gap-2">
+                            <button class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="Cl" data-valence="7" data-color="#22c55e">Cl</button>
+                            <button class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="F" data-valence="7" data-color="#22c55e">F</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-500 mb-2">Other Nonmetals</h4>
+                        <div class="flex gap-2">
+                            <button class="bg-blue-500 hover:bg-blue-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="O" data-valence="6" data-color="#3b82f6">O</button>
+                            <button class="bg-gray-500 hover:bg-gray-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="C" data-valence="4" data-color="#6b7280">C</button>
+                            <button class="bg-purple-500 hover:bg-purple-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="H" data-valence="1" data-color="#a855f7">H</button>
+                        </div>
+                    </div>
+                </div>
+                <button id="clearBtn" class="mt-6 w-full border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded text-sm transition-colors">Clear Reactants</button>
+            </div>
+
+            <!-- Middle/Right: Reaction Chamber -->
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-lg">2. Reaction Chamber</h3>
+                        <button id="reactBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>Predict Outcome</button>
+                    </div>
+
+                    <div id="reactantsArea" class="dropzone mb-4 flex-wrap">
+                        <span class="text-slate-400 text-center" id="emptyStateMsg">Add elements from the left panel.</span>
+                    </div>
+
+                    <div id="reactionArrow" class="text-center text-3xl text-slate-400 mb-4 hidden">
+                        &#8595;
+                    </div>
+
+                    <div id="productsArea" class="dropzone hidden bg-green-50 border-green-200 flex-wrap">
+                        <!-- Products will appear here -->
+                    </div>
+                </div>
+
+                <!-- Explanation Panel -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <h3 class="font-bold text-blue-900 mb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Scientific Explanation
+                    </h3>
+                    <div id="explanationText" class="text-blue-800 text-sm leading-relaxed">
+                        Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            reactants: [], // Array of objects: { id, element, valence, color }
+            nextId: 1
+        };
+
+        const reactantsArea = document.getElementById('reactantsArea');
+        const emptyStateMsg = document.getElementById('emptyStateMsg');
+        const reactBtn = document.getElementById('reactBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const reactionArrow = document.getElementById('reactionArrow');
+        const productsArea = document.getElementById('productsArea');
+        const explanationText = document.getElementById('explanationText');
+        const elementBtns = document.querySelectorAll('.element-btn');
+
+        // Known Reactions Database
+        const reactions = [
+            {
+                reactants: { Na: 1, Cl: 1 },
+                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">Na<sup>+</sup> Cl<sup>-</sup> (Sodium Chloride)</div>',
+                explanation: "<strong>Synthesis Reaction (Ionic Bond):</strong> Sodium (Na) is an alkali metal in Group 1 with 1 valence electron. Chlorine (Cl) is a halogen in Group 17 with 7 valence electrons. Na transfers its 1 outer electron to Cl. Na becomes a positive ion (Na⁺) with a full outer shell (octet from lower level), and Cl becomes a negative ion (Cl⁻) completing its octet. Opposite charges attract, forming a stable ionic compound (NaCl)."
+            },
+            {
+                reactants: { K: 1, F: 1 },
+                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">K<sup>+</sup> F<sup>-</sup> (Potassium Fluoride)</div>',
+                explanation: "<strong>Synthesis Reaction (Ionic Bond):</strong> Potassium (K) transfers its 1 valence electron to Fluorine (F), which has 7. Both achieve stable octet configurations, creating K⁺ and F⁻ ions that bond."
+            },
+            {
+                reactants: { H: 2, O: 1 },
+                productsHtml: '<div class="text-2xl font-bold bg-blue-100 px-4 py-2 rounded border border-blue-300">H<sub>2</sub>O (Water)</div>',
+                explanation: "<strong>Synthesis Reaction (Covalent Bond):</strong> Oxygen (Group 16) has 6 valence electrons and needs 2 more to complete its octet. Hydrogen has 1 valence electron. Two Hydrogen atoms share their electrons with one Oxygen atom, forming two single covalent bonds (H₂O)."
+            },
+            {
+                reactants: { C: 1, O: 2 },
+                productsHtml: '<div class="text-2xl font-bold bg-gray-100 px-4 py-2 rounded border border-gray-300">CO<sub>2</sub> (Carbon Dioxide)</div>',
+                explanation: "<strong>Combustion/Synthesis (Covalent Bond):</strong> Carbon has 4 valence electrons and Oxygen has 6. Carbon shares 2 electrons with each Oxygen atom, forming two double covalent bonds. All atoms achieve a stable octet."
+            },
+            {
+                reactants: { C: 1, H: 4 },
+                productsHtml: '<div class="text-2xl font-bold bg-gray-100 px-4 py-2 rounded border border-gray-300">CH<sub>4</sub> (Methane)</div>',
+                explanation: "<strong>Synthesis (Covalent Bond):</strong> Carbon has 4 valence electrons and needs 4 more. Hydrogen has 1. Four Hydrogen atoms each share their electron with Carbon, creating four single covalent bonds (Methane)."
+            },
+            {
+                reactants: { Na: 2, O: 1 },
+                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">Na<sub>2</sub>O (Sodium Oxide)</div>',
+                explanation: "<strong>Synthesis (Ionic Bond):</strong> Oxygen has 6 valence electrons and needs 2 to complete its octet. Since Sodium only has 1 valence electron to give, it requires two Sodium atoms to satisfy one Oxygen atom."
+            }
+        ];
+
+        function createAtomElement(element, valence, color, id) {
+            const container = document.createElement('div');
+            container.className = 'atom-container m-2 text-center';
+            container.dataset.id = id;
+
+            const atom = document.createElement('div');
+            atom.className = 'atom-circle shadow-md';
+            atom.style.backgroundColor = color;
+            atom.textContent = element;
+
+            const shell = document.createElement('div');
+            shell.className = 'valence-shell';
+
+            // Distribute electrons around the shell
+            for (let i = 0; i < valence; i++) {
+                const electron = document.createElement('div');
+                electron.className = 'electron';
+                const angle = (i / valence) * 2 * Math.PI;
+                // Position on the edge of the shell
+                const radius = 50; // roughly 50% of the container
+                electron.style.left = `calc(50% + ${Math.cos(angle) * radius}% - 6px)`;
+                electron.style.top = `calc(50% + ${Math.sin(angle) * radius}% - 6px)`;
+                shell.appendChild(electron);
+            }
+
+            atom.appendChild(shell);
+            container.appendChild(atom);
+
+            // Delete button
+            const delBtn = document.createElement('button');
+            delBtn.className = 'text-xs text-red-500 mt-2 hover:underline';
+            delBtn.textContent = 'Remove';
+            delBtn.onclick = () => removeReactant(id);
+            container.appendChild(delBtn);
+
+            return container;
+        }
+
+        function addReactant(element, valence, color) {
+            if (state.reactants.length >= 6) {
+                alert("Maximum of 6 atoms allowed in the chamber for simple reactions.");
+                return;
+            }
+
+            const id = state.nextId++;
+            state.reactants.push({ id, element, valence, color });
+            renderReactants();
+            resetReaction(); // If they change inputs, hide previous results
+        }
+
+        function removeReactant(id) {
+            state.reactants = state.reactants.filter(r => r.id !== id);
+            renderReactants();
+            resetReaction();
+        }
+
+        function renderReactants() {
+            reactantsArea.innerHTML = '';
+            if (state.reactants.length === 0) {
+                reactantsArea.appendChild(emptyStateMsg);
+                emptyStateMsg.style.display = 'block';
+                reactBtn.disabled = true;
+            } else {
+                emptyStateMsg.style.display = 'none';
+                state.reactants.forEach(r => {
+                    reactantsArea.appendChild(createAtomElement(r.element, r.valence, r.color, r.id));
+                });
+                reactBtn.disabled = false;
+            }
+        }
+
+        function resetReaction() {
+            reactionArrow.classList.add('hidden');
+            productsArea.classList.add('hidden');
+            productsArea.innerHTML = '';
+            explanationText.innerHTML = 'Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.';
+        }
+
+        function predictOutcome() {
+            if (state.reactants.length === 0) return;
+
+            // Count occurrences of each element
+            const counts = {};
+            state.reactants.forEach(r => {
+                counts[r.element] = (counts[r.element] || 0) + 1;
+            });
+
+            // Find matching reaction
+            let match = null;
+            for (const rx of reactions) {
+                let isMatch = true;
+                // Check if all elements in recipe match counts exactly
+                for (const el in rx.reactants) {
+                    if (counts[el] !== rx.reactants[el]) {
+                        isMatch = false;
+                        break;
+                    }
+                }
+                // Check if there are extra elements in counts not in recipe
+                for (const el in counts) {
+                    if (rx.reactants[el] === undefined) {
+                        isMatch = false;
+                        break;
+                    }
+                }
+
+                if (isMatch) {
+                    match = rx;
+                    break;
+                }
+            }
+
+            // Show UI elements
+            reactionArrow.classList.remove('hidden');
+            productsArea.classList.remove('hidden');
+
+            if (match) {
+                productsArea.innerHTML = match.productsHtml;
+                explanationText.innerHTML = match.explanation;
+            } else {
+                // Determine total valence to see if an octet is even possible (simplified heuristic)
+                const totalValence = state.reactants.reduce((sum, r) => sum + parseInt(r.valence), 0);
+
+                productsArea.innerHTML = '<div class="text-xl text-red-600 font-semibold bg-red-50 p-3 rounded">No Reaction / Unstable Combination</div>';
+                explanationText.innerHTML = `<strong>Outcome:</strong> Based on the outermost electron states, this combination of atoms does not easily form a stable, simple compound that satisfies the octet rule (or duet for Hydrogen) for all atoms involved. Try combining metals (Groups 1/2) with non-metals (Groups 16/17), or combining specific non-metals (like C, H, O) in the right ratios. (Total valence electrons provided: ${totalValence})`;
+            }
+        }
+
+        // Event Listeners
+        elementBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                addReactant(e.target.dataset.element, e.target.dataset.valence, e.target.dataset.color);
+            });
+        });
+
+        clearBtn.addEventListener('click', () => {
+            state.reactants = [];
+            renderReactants();
+            resetReaction();
+        });
+
+        reactBtn.addEventListener('click', predictOutcome);
+
+    </script>
+</body>
+</html>
