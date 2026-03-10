@@ -6,15 +6,15 @@ Students who demonstrate understanding can:
 Clarification Statement: Examples of properties that could be predicted from patterns could include reactivity of metals, types of bonds formed, numbers of bonds formed, and reactions with oxygen.  
 Assessment Boundary: Assessment is limited to main group elements: Assessment does not include quantitative understanding of ionization energy beyond relative trends.  
 #### Science and Engineering Practices  
-Developing and Using Models  
-* Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.  
+##### Developing and Using Models  
+Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and developing models to predict and show relationships among variables between systems and their components in the natural and designed worlds.  
     * Use a model to predict the relationships between systems or between components of a system.  
 #### Disciplinary Core Ideas  
-PS1.A: Structure and Properties of Matter  
+##### PS1.A: Structure and Properties of Matter  
 * Each atom has a charged substructure consisting of a nucleus, which is made of protons and neutrons, surrounded by electrons.  
 * The periodic table orders elements horizontally by the number of protons in the atom’s nucleus and places those with similar chemical properties in columns. The repeating patterns of this table reflect patterns of outer electron states.  
 #### Crosscutting Concepts  
-Patterns  
+##### Patterns  
 * Different patterns may be observed at each of the scales at which a system is studied and can provide evidence for causality in explanations of phenomena.  
 
 ### HS-PS1-2
