@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Vehicle Optimization Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Add some basic custom styling if needed */
+        input[type=range] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8 font-sans text-gray-800">
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <header class="mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-center text-blue-700">Electric Vehicle Design & Optimization</h1>
+            <p class="text-gray-600 mt-2 text-center">Modify vehicle parameters to optimize efficiency and range. Aligned with NGSS HS-ETS1 Engineering Design standards.</p>
+        </header>
+
+        <main id="simulation-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Column 1: Controls -->
+            <section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">Design Parameters</h2>
+
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="battery-capacity" class="font-medium text-sm">Battery Capacity (kWh)</label>
+                        <span id="val-battery" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">60</span>
+                    </div>
+                    <input type="range" id="battery-capacity" min="20" max="120" step="5" value="60" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>20</span><span>120</span></div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="drag-coef" class="font-medium text-sm">Drag Coefficient (C<sub>d</sub>)</label>
+                        <span id="val-drag" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">0.28</span>
+                    </div>
+                    <input type="range" id="drag-coef" min="0.15" max="0.5" step="0.01" value="0.28" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.15</span><span>0.5</span></div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="frontal-area" class="font-medium text-sm">Frontal Area (m²)</label>
+                        <span id="val-area" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">2.2</span>
+                    </div>
+                    <input type="range" id="frontal-area" min="1.5" max="3.5" step="0.1" value="2.2" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>1.5</span><span>3.5</span></div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="rolling-res" class="font-medium text-sm">Rolling Resistance (C<sub>rr</sub>)</label>
+                        <span id="val-crr" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">0.012</span>
+                    </div>
+                    <input type="range" id="rolling-res" min="0.005" max="0.025" step="0.001" value="0.012" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.005</span><span>0.025</span></div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="vehicle-mass" class="font-medium text-sm">Base Mass (kg) <i>(without battery)</i></label>
+                        <span id="val-mass" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">1500</span>
+                    </div>
+                    <input type="range" id="vehicle-mass" min="800" max="2500" step="50" value="1500" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>800</span><span>2500</span></div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="speed" class="font-medium text-sm">Cruising Speed (km/h)</label>
+                        <span id="val-speed" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">100</span>
+                    </div>
+                    <input type="range" id="speed" min="30" max="150" step="5" value="100" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>30</span><span>150</span></div>
+                </div>
+            </section>
+
+            <!-- Column 2: Performance Outputs -->
+            <section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm flex flex-col justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">Performance Metrics</h2>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-white p-3 rounded shadow-sm border text-center">
+                            <span class="block text-gray-500 text-sm font-bold mb-1">Range</span>
+                            <span id="out-range" class="text-3xl font-black text-green-600">350</span>
+                            <span class="text-sm text-gray-500">km</span>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm border text-center">
+                            <span class="block text-gray-500 text-sm font-bold mb-1">Efficiency</span>
+                            <span id="out-efficiency" class="text-3xl font-black text-blue-600">170</span>
+                            <span class="text-sm text-gray-500">Wh/km</span>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm border text-center">
+                            <span class="block text-gray-500 text-sm font-bold mb-1">Power Needed</span>
+                            <span id="out-power" class="text-2xl font-black text-purple-600">17.0</span>
+                            <span class="text-sm text-gray-500">kW</span>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm border text-center">
+                            <span class="block text-gray-500 text-sm font-bold mb-1">Total Mass</span>
+                            <span id="out-total-mass" class="text-2xl font-black text-orange-600">1900</span>
+                            <span class="text-sm text-gray-500">kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 bg-white p-3 rounded border shadow-sm flex-grow flex flex-col items-center justify-center">
+                    <h3 class="text-sm font-bold text-gray-600 mb-2">Power Loss Breakdown</h3>
+                    <div class="w-full h-48 relative">
+                        <canvas id="powerChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Column 3: Data Logging -->
+            <section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm flex flex-col">
+                <h2 class="text-xl font-semibold mb-4 text-purple-800 border-b pb-2">Data Collection</h2>
+
+                <div class="flex gap-2 mb-4">
+                    <button id="btn-record" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200">
+                        Record Trial
+                    </button>
+                    <button id="btn-export" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200">
+                        Export CSV
+                    </button>
+                    <button id="btn-clear" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200" title="Clear All Data">
+                        Clear
+                    </button>
+                </div>
+
+                <div class="flex-grow overflow-hidden flex flex-col bg-white border rounded shadow-sm">
+                    <div class="overflow-x-auto overflow-y-auto flex-grow" style="max-height: 400px;">
+                        <table class="w-full text-xs text-left" id="data-table">
+                            <thead class="text-gray-700 bg-gray-100 sticky top-0">
+                                <tr>
+                                    <th class="px-2 py-2">Tr#</th>
+                                    <th class="px-2 py-2" title="Battery (kWh)">Bat</th>
+                                    <th class="px-2 py-2" title="Drag Coef">Cd</th>
+                                    <th class="px-2 py-2" title="Mass (kg)">Mass</th>
+                                    <th class="px-2 py-2" title="Speed (km/h)">Spd</th>
+                                    <th class="px-2 py-2 font-bold text-green-700" title="Range (km)">Range</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body" class="divide-y divide-gray-200">
+                                <!-- Data rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 text-center">Log data across multiple trials to analyze the impact of different design choices.</p>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- Core Physics Model ---
+
+        // Constants
+        const AIR_DENSITY = 1.225; // kg/m^3 at sea level
+        const GRAVITY = 9.81; // m/s^2
+        const BATTERY_ENERGY_DENSITY = 160; // Wh/kg (approximate modern EV battery)
+        const DRIVETRAIN_EFFICIENCY = 0.90; // 90% efficiency from battery to wheels
+        const BASE_ACCESSORY_LOAD = 1500; // Watts (AC, electronics, etc.)
+
+        function calculatePhysics(params) {
+            // Unpack parameters
+            const batteryCapKwh = params.batteryCap;
+            const dragCoef = params.dragCoef;
+            const frontalArea = params.frontalArea;
+            const rollingRes = params.rollingRes;
+            const baseMass = params.baseMass;
+            const speedKmh = params.speed;
+
+            // Derived values
+            const speedMs = speedKmh / 3.6;
+            const batteryMass = (batteryCapKwh * 1000) / BATTERY_ENERGY_DENSITY;
+            const totalMass = baseMass + batteryMass;
+
+            // Forces
+            // 1. Aerodynamic Drag: F_d = 0.5 * p * v^2 * Cd * A
+            const dragForce = 0.5 * AIR_DENSITY * Math.pow(speedMs, 2) * dragCoef * frontalArea;
+
+            // 2. Rolling Resistance: F_r = Crr * m * g
+            const rollingForce = rollingRes * totalMass * GRAVITY;
+
+            // Total Force
+            const totalForce = dragForce + rollingForce;
+
+            // Power required at wheels (Watts) = Force * velocity
+            const powerAtWheels = totalForce * speedMs;
+
+            // Power from battery (Watts) accounting for drivetrain efficiency and accessories
+            const powerFromBattery = (powerAtWheels / DRIVETRAIN_EFFICIENCY) + BASE_ACCESSORY_LOAD;
+
+            // Efficiency (Wh/km) = (Power in Watts / speed in km/h)
+            // Example: 15000 W / 100 km/h = 150 Wh/km
+            const efficiency = powerFromBattery / speedKmh;
+
+            // Range (km) = (Battery Capacity in Wh) / (Efficiency in Wh/km)
+            // Ensure we don't divide by zero or negative if speed is 0
+            let range = 0;
+            if (speedKmh > 0 && efficiency > 0) {
+                 range = (batteryCapKwh * 1000) / efficiency;
+            }
+
+            // Breakdown for charts (in Watts)
+            const powerDrag = (dragForce * speedMs) / DRIVETRAIN_EFFICIENCY;
+            const powerRolling = (rollingForce * speedMs) / DRIVETRAIN_EFFICIENCY;
+
+            return {
+                totalMass: totalMass,
+                powerTotalkW: powerFromBattery / 1000,
+                efficiencyWhKm: efficiency,
+                rangeKm: range,
+                breakdown: {
+                    aerodynamic: powerDrag,
+                    rolling: powerRolling,
+                    accessories: BASE_ACCESSORY_LOAD
+                }
+            };
+        }
+
+        // --- UI Logic and Interaction ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements - Inputs
+            const batteryCapEl = document.getElementById('battery-capacity');
+            const dragCoefEl = document.getElementById('drag-coef');
+            const frontalAreaEl = document.getElementById('frontal-area');
+            const rollingResEl = document.getElementById('rolling-res');
+            const baseMassEl = document.getElementById('vehicle-mass');
+            const speedEl = document.getElementById('speed');
+
+            // DOM Elements - Input Labels
+            const valBatteryEl = document.getElementById('val-battery');
+            const valDragEl = document.getElementById('val-drag');
+            const valAreaEl = document.getElementById('val-area');
+            const valCrrEl = document.getElementById('val-crr');
+            const valMassEl = document.getElementById('val-mass');
+            const valSpeedEl = document.getElementById('val-speed');
+
+            // DOM Elements - Outputs
+            const outRangeEl = document.getElementById('out-range');
+            const outEfficiencyEl = document.getElementById('out-efficiency');
+            const outPowerEl = document.getElementById('out-power');
+            const outTotalMassEl = document.getElementById('out-total-mass');
+
+            // Chart Initialization
+            const ctx = document.getElementById('powerChart').getContext('2d');
+            const powerChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aerodynamic Drag', 'Rolling Resistance', 'Accessories'],
+                    datasets: [{
+                        data: [33, 33, 33],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 } } },
+                        tooltip: { callbacks: { label: function(context) { return context.label + ': ' + Math.round(context.raw / 1000) + ' kW'; } } }
+                    }
+                }
+            });
+
+            // Update function
+            function updateSimulation() {
+                const params = {
+                    batteryCap: parseFloat(batteryCapEl.value),
+                    dragCoef: parseFloat(dragCoefEl.value),
+                    frontalArea: parseFloat(frontalAreaEl.value),
+                    rollingRes: parseFloat(rollingResEl.value),
+                    baseMass: parseFloat(baseMassEl.value),
+                    speed: parseFloat(speedEl.value)
+                };
+
+                // Update input displays
+                valBatteryEl.textContent = params.batteryCap;
+                valDragEl.textContent = params.dragCoef;
+                valAreaEl.textContent = params.frontalArea;
+                valCrrEl.textContent = params.rollingRes;
+                valMassEl.textContent = params.baseMass;
+                valSpeedEl.textContent = params.speed;
+
+                // Run calculations
+                const results = calculatePhysics(params);
+
+                // Update output displays
+                outRangeEl.textContent = Math.round(results.rangeKm);
+                outEfficiencyEl.textContent = Math.round(results.efficiencyWhKm);
+                outPowerEl.textContent = results.powerTotalkW.toFixed(1);
+                outTotalMassEl.textContent = Math.round(results.totalMass);
+
+                // Update Chart
+                powerChart.data.datasets[0].data = [
+                    results.breakdown.aerodynamic,
+                    results.breakdown.rolling,
+                    results.breakdown.accessories
+                ];
+                powerChart.update();
+            }
+
+            // Event Listeners for Sliders
+            [batteryCapEl, dragCoefEl, frontalAreaEl, rollingResEl, baseMassEl, speedEl].forEach(el => {
+                el.addEventListener('input', updateSimulation);
+            });
+
+            // --- Data Logging Logic ---
+            let trials = [];
+            let trialCount = 0;
+            const tableBody = document.getElementById('table-body');
+            const btnRecord = document.getElementById('btn-record');
+            const btnClear = document.getElementById('btn-clear');
+            const btnExport = document.getElementById('btn-export');
+
+            btnRecord.addEventListener('click', () => {
+                trialCount++;
+
+                const params = {
+                    batteryCap: parseFloat(batteryCapEl.value),
+                    dragCoef: parseFloat(dragCoefEl.value),
+                    frontalArea: parseFloat(frontalAreaEl.value),
+                    rollingRes: parseFloat(rollingResEl.value),
+                    baseMass: parseFloat(baseMassEl.value),
+                    speed: parseFloat(speedEl.value)
+                };
+                const results = calculatePhysics(params);
+
+                // Save to array
+                trials.push({ id: trialCount, params, results });
+
+                // Update UI
+                const tr = document.createElement('tr');
+                tr.className = trialCount % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+
+                const createTd = (text, isBold = false, isColor = '') => {
+                    const td = document.createElement('td');
+                    td.className = `px-2 py-2 border-t ${isBold ? 'font-bold' : ''} ${isColor}`;
+                    td.textContent = text;
+                    return td;
+                };
+
+                tr.appendChild(createTd(trialCount));
+                tr.appendChild(createTd(params.batteryCap));
+                tr.appendChild(createTd(params.dragCoef));
+                tr.appendChild(createTd(Math.round(results.totalMass)));
+                tr.appendChild(createTd(params.speed));
+                tr.appendChild(createTd(Math.round(results.rangeKm), true, 'text-green-700'));
+
+                tableBody.appendChild(tr);
+                tableBody.parentElement.parentElement.scrollTop = tableBody.parentElement.parentElement.scrollHeight;
+            });
+
+            btnClear.addEventListener('click', () => {
+                tableBody.innerHTML = '';
+                trials = [];
+                trialCount = 0;
+            });
+
+            btnExport.addEventListener('click', () => {
+                if (trials.length === 0) {
+                    alert('No data to export. Please record some trials first.');
+                    return;
+                }
+
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Trial,Battery(kWh),DragCoef(Cd),FrontalArea(m2),RollRes(Crr),BaseMass(kg),TotalMass(kg),Speed(km/h),PowerReq(kW),Efficiency(Wh/km),Range(km)\n";
+
+                trials.forEach(t => {
+                    const p = t.params;
+                    const r = t.results;
+                    const row = [
+                        t.id, p.batteryCap, p.dragCoef, p.frontalArea, p.rollingRes, p.baseMass,
+                        Math.round(r.totalMass), p.speed, r.powerTotalkW.toFixed(2),
+                        Math.round(r.efficiencyWhKm), Math.round(r.rangeKm)
+                    ].join(",");
+                    csvContent += row + "\n";
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "ev_simulation_data.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Initial calculation
+            updateSimulation();
+        });
+    </script>
+</body>
+</html>
