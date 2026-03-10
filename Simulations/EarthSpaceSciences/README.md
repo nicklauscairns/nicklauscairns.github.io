@@ -1,4 +1,4 @@
-# Simulations aligned to NGSS High School Earth and Space Sciences Standards belong here
+# NGSS High School Earth and Space Sciences Standards Aligned Content
 
 ## Simulations
 
