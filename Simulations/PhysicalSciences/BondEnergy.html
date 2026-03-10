@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bond Energy Changes Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .molecule-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            position: relative;
+        }
+        .atom {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+        }
+        .bond {
+            height: 8px;
+            background-color: #94a3b8;
+            margin: 0 -5px;
+            z-index: 5;
+            transition: all 0.5s ease;
+        }
+        .double-bond {
+            height: 16px;
+            background: repeating-linear-gradient(to bottom, #94a3b8 0%, #94a3b8 6px, transparent 6px, transparent 10px, #94a3b8 10px, #94a3b8 16px);
+        }
+
+        /* Animation States */
+        .breaking .bond { width: 0 !important; margin: 0; opacity: 0; }
+        .breaking .atom { margin: 0 20px; }
+
+        .forming .bond { width: 0; margin: 0; opacity: 0; transition: none; }
+        .forming.formed .bond { opacity: 1; transition: all 0.5s ease; }
+        .forming.formed .atom { margin: 0; }
+
+        .energy-bar { transition: height 0.5s ease, background-color 0.5s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <header class="border-b pb-4">
+            <h1 class="text-3xl font-bold text-slate-900">Bond Energy Changes Simulator</h1>
+            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-4: Chemical Reactions and Bond Energy</h2>
+            <p class="mt-2 text-slate-700">Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy. Breaking bonds absorbs energy (+), and forming bonds releases energy (-).</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Left: Reaction Selection & Data -->
+            <div class="space-y-6">
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-semibold text-lg mb-4">1. Select Reaction</h3>
+                    <div class="space-y-3">
+                        <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="reaction" value="combustion" class="form-radio text-orange-600 mb-1" checked>
+                            <div class="font-bold">Combustion of Methane</div>
+                            <div class="text-sm text-slate-600 font-mono">CH₄ + 2O₂ &rarr; CO₂ + 2H₂O</div>
+                            <div class="text-xs text-orange-600 mt-1">Exothermic (Releases Energy)</div>
+                        </label>
+                        <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="reaction" value="photosynthesis" class="form-radio text-blue-600 mb-1">
+                            <div class="font-bold">Water Splitting (Electrolysis)</div>
+                            <div class="text-sm text-slate-600 font-mono">2H₂O &rarr; 2H₂ + O₂</div>
+                            <div class="text-xs text-blue-600 mt-1">Endothermic (Absorbs Energy)</div>
+                        </label>
+                        <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="reaction" value="synthesis" class="form-radio text-green-600 mb-1">
+                            <div class="font-bold">Haber Process (Ammonia)</div>
+                            <div class="text-sm text-slate-600 font-mono">N₂ + 3H₂ &rarr; 2NH₃</div>
+                            <div class="text-xs text-green-600 mt-1">Exothermic (Releases Energy)</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-semibold text-lg mb-2">Bond Energy Table</h3>
+                    <table class="w-full text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b">
+                                <th class="py-2 text-left px-2">Bond</th>
+                                <th class="py-2 text-right px-2">Energy (kJ/mol)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bondTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Middle: Molecular Model Animation -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 min-h-[400px] flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-semibold text-lg">2. Reaction Progress</h3>
+                        <div class="space-x-2">
+                            <button id="step1Btn" class="px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition">Break Bonds (Absorb Energy)</button>
+                            <button id="step2Btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50" disabled>Form Bonds (Release Energy)</button>
+                            <button id="resetBtn" class="px-4 py-2 border border-slate-300 rounded hover:bg-slate-50 transition">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Animation Area -->
+                    <div class="flex-grow flex flex-col justify-center border-2 border-dashed border-slate-200 rounded-lg p-4 bg-slate-50 relative overflow-hidden">
+
+                        <!-- Energy System Background Indicator -->
+                        <div id="systemEnergyBg" class="absolute inset-0 bg-gradient-to-t from-red-100 to-transparent opacity-0 transition-opacity duration-1000 pointer-events-none"></div>
+
+                        <div class="grid grid-cols-2 gap-4 w-full relative z-10">
+                            <div class="text-center">
+                                <h4 class="font-bold text-slate-500 mb-4">Reactants (Initial State)</h4>
+                                <div id="reactantsArea" class="flex flex-wrap justify-center gap-6 min-h-[150px]">
+                                    <!-- Molecules rendered here -->
+                                </div>
+                            </div>
+                            <div class="text-center border-l-2 border-slate-200">
+                                <h4 class="font-bold text-slate-500 mb-4">Products (Final State)</h4>
+                                <div id="productsArea" class="flex flex-wrap justify-center gap-6 min-h-[150px] opacity-30">
+                                    <!-- Molecules rendered here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mt-8 px-8">
+                            <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>Reactants</span>
+                                <span>Transition State</span>
+                                <span>Products</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden flex">
+                                <div id="progressFill" class="h-full bg-slate-500 w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom: Energy Diagram -->
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-semibold text-lg mb-2">Energy Profile</h3>
+                        <div class="h-[250px] w-full">
+                            <canvas id="energyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h3 class="font-semibold text-lg mb-4">Energy Accounting</h3>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 bg-red-50 rounded text-red-800">
+                                <div>
+                                    <div class="font-bold">Energy Absorbed</div>
+                                    <div class="text-xs opacity-80">Breaking Reactant Bonds</div>
+                                </div>
+                                <div class="font-mono font-bold text-xl" id="absorbedVal">+0 kJ</div>
+                            </div>
+
+                            <div class="flex justify-between items-center p-3 bg-blue-50 rounded text-blue-800">
+                                <div>
+                                    <div class="font-bold">Energy Released</div>
+                                    <div class="text-xs opacity-80">Forming Product Bonds</div>
+                                </div>
+                                <div class="font-mono font-bold text-xl" id="releasedVal">-0 kJ</div>
+                            </div>
+
+                            <div class="border-t-2 border-slate-300 pt-4 flex justify-between items-center">
+                                <div class="font-bold text-lg">Net Energy Change (&Delta;H)</div>
+                                <div class="font-mono font-bold text-2xl" id="netEnergyVal">0 kJ</div>
+                            </div>
+                        </div>
+
+                        <div id="conclusionText" class="mt-4 text-sm font-medium p-3 rounded bg-slate-100 text-slate-700">
+                            Perform the reaction to see the net energy change.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Models
+        const bondEnergies = {
+            'C-H': 413,
+            'O=O': 495,
+            'C=O': 799,
+            'H-O': 463,
+            'H-H': 436,
+            'N≡N': 941,
+            'N-H': 391
+        };
+
+        const reactions = {
+            combustion: {
+                reactants: [
+                    { type: 'CH4', name: 'Methane', color: '#64748b', atoms: ['H', 'H', 'H', 'H'], center: 'C', bonds: ['C-H', 'C-H', 'C-H', 'C-H'] },
+                    { type: 'O2', name: 'Oxygen', color: '#ef4444', atoms: ['O', 'O'], bonds: ['O=O'], double: true },
+                    { type: 'O2', name: 'Oxygen', color: '#ef4444', atoms: ['O', 'O'], bonds: ['O=O'], double: true }
+                ],
+                products: [
+                    { type: 'CO2', name: 'Carbon Dioxide', color: '#64748b', center: 'C', outer: ['O', 'O'], bonds: ['C=O', 'C=O'], double: true },
+                    { type: 'H2O', name: 'Water', color: '#3b82f6', center: 'O', outer: ['H', 'H'], bonds: ['H-O', 'H-O'] },
+                    { type: 'H2O', name: 'Water', color: '#3b82f6', center: 'O', outer: ['H', 'H'], bonds: ['H-O', 'H-O'] }
+                ],
+                bondTable: [
+                    { bond: 'C-H', count: 4, type: 'reactant' },
+                    { bond: 'O=O', count: 2, type: 'reactant' },
+                    { bond: 'C=O', count: 2, type: 'product' },
+                    { bond: 'H-O', count: 4, type: 'product' }
+                ]
+            },
+            photosynthesis: {
+                reactants: [
+                    { type: 'H2O', name: 'Water', color: '#3b82f6', center: 'O', outer: ['H', 'H'], bonds: ['H-O', 'H-O'] },
+                    { type: 'H2O', name: 'Water', color: '#3b82f6', center: 'O', outer: ['H', 'H'], bonds: ['H-O', 'H-O'] }
+                ],
+                products: [
+                    { type: 'H2', name: 'Hydrogen', color: '#a8a29e', atoms: ['H', 'H'], bonds: ['H-H'] },
+                    { type: 'H2', name: 'Hydrogen', color: '#a8a29e', atoms: ['H', 'H'], bonds: ['H-H'] },
+                    { type: 'O2', name: 'Oxygen', color: '#ef4444', atoms: ['O', 'O'], bonds: ['O=O'], double: true }
+                ],
+                bondTable: [
+                    { bond: 'H-O', count: 4, type: 'reactant' },
+                    { bond: 'H-H', count: 2, type: 'product' },
+                    { bond: 'O=O', count: 1, type: 'product' }
+                ]
+            },
+            synthesis: {
+                reactants: [
+                    { type: 'N2', name: 'Nitrogen', color: '#8b5cf6', atoms: ['N', 'N'], bonds: ['N≡N'], triple: true },
+                    { type: 'H2', name: 'Hydrogen', color: '#a8a29e', atoms: ['H', 'H'], bonds: ['H-H'] },
+                    { type: 'H2', name: 'Hydrogen', color: '#a8a29e', atoms: ['H', 'H'], bonds: ['H-H'] },
+                    { type: 'H2', name: 'Hydrogen', color: '#a8a29e', atoms: ['H', 'H'], bonds: ['H-H'] }
+                ],
+                products: [
+                    { type: 'NH3', name: 'Ammonia', color: '#8b5cf6', center: 'N', outer: ['H', 'H', 'H'], bonds: ['N-H', 'N-H', 'N-H'] },
+                    { type: 'NH3', name: 'Ammonia', color: '#8b5cf6', center: 'N', outer: ['H', 'H', 'H'], bonds: ['N-H', 'N-H', 'N-H'] }
+                ],
+                bondTable: [
+                    { bond: 'N≡N', count: 1, type: 'reactant' },
+                    { bond: 'H-H', count: 3, type: 'reactant' },
+                    { bond: 'N-H', count: 6, type: 'product' }
+                ]
+            }
+        };
+
+        let currentReaction = 'combustion';
+        let state = 0; // 0=init, 1=broken, 2=formed
+        let chartInstance = null;
+
+        // DOM Elements
+        const bondTableBody = document.getElementById('bondTableBody');
+        const reactantsArea = document.getElementById('reactantsArea');
+        const productsArea = document.getElementById('productsArea');
+        const step1Btn = document.getElementById('step1Btn');
+        const step2Btn = document.getElementById('step2Btn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressFill = document.getElementById('progressFill');
+        const absorbedVal = document.getElementById('absorbedVal');
+        const releasedVal = document.getElementById('releasedVal');
+        const netEnergyVal = document.getElementById('netEnergyVal');
+        const conclusionText = document.getElementById('conclusionText');
+        const systemEnergyBg = document.getElementById('systemEnergyBg');
+        const reactionRadios = document.querySelectorAll('input[name="reaction"]');
+
+        function initChart() {
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Initial', 'Transition State', 'Final'],
+                    datasets: [{
+                        label: 'Potential Energy',
+                        data: [0, 0, 0],
+                        borderColor: '#64748b',
+                        backgroundColor: '#64748b40',
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 6,
+                        pointBackgroundColor: ['#3b82f6', '#ef4444', '#10b981']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Energy (kJ)' },
+                            suggestedMin: -1000,
+                            suggestedMax: 3000
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function createAtomElement(symbol, color) {
+            return `<div class="atom shadow" style="background-color: ${color}">${symbol}</div>`;
+        }
+
+        function renderMolecule(molData, isProduct) {
+            let html = '<div class="molecule-container flex items-center justify-center p-2 rounded border border-transparent">';
+            const bondClass = molData.double ? 'bond double-bond w-6' : (molData.triple ? 'bond double-bond w-6' : 'bond w-6'); // Visual simplification for triple
+
+            if (molData.center) {
+                // Central atom surrounded by others
+                html += '<div class="flex items-center">';
+                if (molData.outer.length === 2) {
+                    html += createAtomElement(molData.outer[0], '#a8a29e') +
+                            `<div class="${bondClass}"></div>` +
+                            createAtomElement(molData.center, molData.color) +
+                            `<div class="${bondClass}"></div>` +
+                            createAtomElement(molData.outer[1], '#a8a29e');
+                } else if (molData.outer.length === 3) {
+                    // Triangle-ish layout using flex column for center
+                    html += `<div class="flex flex-col items-center">
+                                ${createAtomElement(molData.outer[0], '#a8a29e')}
+                                <div class="${bondClass} rotate-90 my-2"></div>
+                             </div>
+                             <div class="${bondClass} -ml-2"></div>
+                             ${createAtomElement(molData.center, molData.color)}
+                             <div class="${bondClass}"></div>
+                             ${createAtomElement(molData.outer[1], '#a8a29e')}`;
+                } else if (molData.outer.length === 4) {
+                    // Simplified cross layout
+                    html += createAtomElement(molData.outer[0], '#a8a29e') +
+                            `<div class="${bondClass}"></div>` +
+                            createAtomElement(molData.center, molData.color) +
+                            `<div class="${bondClass}"></div>` +
+                            createAtomElement(molData.outer[1], '#a8a29e');
+                }
+                html += '</div>';
+            } else {
+                // Diatomic
+                html += createAtomElement(molData.atoms[0], molData.color) +
+                        `<div class="${bondClass}"></div>` +
+                        createAtomElement(molData.atoms[1], molData.color);
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function loadReaction() {
+            state = 0;
+            const rx = reactions[currentReaction];
+
+            // Build Table
+            bondTableBody.innerHTML = '';
+            rx.bondTable.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b hover:bg-slate-50';
+                tr.innerHTML = `
+                    <td class="py-2 px-2"><span class="font-mono bg-slate-100 px-1 rounded">${b.bond}</span> (${b.count}x, ${b.type})</td>
+                    <td class="py-2 px-2 text-right font-mono">${bondEnergies[b.bond]}</td>
+                `;
+                bondTableBody.appendChild(tr);
+            });
+
+            // Render Molecules
+            reactantsArea.innerHTML = rx.reactants.map(m => renderMolecule(m, false)).join('');
+            productsArea.innerHTML = rx.products.map(m => renderMolecule(m, true)).join('');
+
+            // Initial classes
+            reactantsArea.className = "flex flex-wrap justify-center gap-6 min-h-[150px] transition-all duration-1000";
+            productsArea.className = "flex flex-wrap justify-center gap-6 min-h-[150px] opacity-20 forming transition-all duration-1000";
+
+            // Calculate Energies
+            const eIn = rx.bondTable.filter(b => b.type==='reactant').reduce((sum, b) => sum + (b.count * bondEnergies[b.bond]), 0);
+            const eOut = rx.bondTable.filter(b => b.type==='product').reduce((sum, b) => sum + (b.count * bondEnergies[b.bond]), 0);
+            const net = eIn - eOut;
+
+            // Reset UI
+            step1Btn.disabled = false;
+            step2Btn.disabled = true;
+            step1Btn.classList.replace('bg-slate-300', 'bg-slate-600');
+            step2Btn.classList.replace('bg-blue-600', 'bg-blue-300');
+            progressFill.style.width = "0%";
+            progressFill.className = "h-full bg-slate-500 transition-all duration-1000";
+
+            absorbedVal.textContent = "+0 kJ";
+            releasedVal.textContent = "-0 kJ";
+            netEnergyVal.textContent = "0 kJ";
+            netEnergyVal.className = "font-mono font-bold text-2xl text-slate-800";
+            conclusionText.innerHTML = "Perform the reaction to see the net energy change.";
+            conclusionText.className = "mt-4 text-sm font-medium p-3 rounded bg-slate-100 text-slate-700";
+            systemEnergyBg.className = "absolute inset-0 bg-gradient-to-t from-red-100 to-transparent opacity-0 transition-opacity duration-1000 pointer-events-none";
+
+            // Update Chart
+            if (!chartInstance) initChart();
+
+            // Calculate base energy scale to fit chart nicely
+            const baseEnergy = eOut > eIn ? eOut : eIn;
+
+            chartInstance.data.datasets[0].data = [baseEnergy, baseEnergy, baseEnergy];
+            chartInstance.options.scales.y.suggestedMin = baseEnergy - net - 500;
+            chartInstance.options.scales.y.suggestedMax = baseEnergy + eIn + 500;
+            chartInstance.update();
+        }
+
+        // Logic Actions
+        function breakBonds() {
+            if (state !== 0) return;
+            state = 1;
+            const rx = reactions[currentReaction];
+            const eIn = rx.bondTable.filter(b => b.type==='reactant').reduce((sum, b) => sum + (b.count * bondEnergies[b.bond]), 0);
+            const baseEnergy = chartInstance ? chartInstance.data.datasets[0].data[0] : 0;
+
+            // Animate molecules breaking
+            const mols = reactantsArea.querySelectorAll('.molecule-container');
+            mols.forEach(m => m.classList.add('breaking'));
+
+            // UI Updates
+            step1Btn.disabled = true;
+            step2Btn.disabled = false;
+            step1Btn.classList.replace('bg-slate-600', 'bg-slate-300');
+            step2Btn.classList.replace('bg-blue-300', 'bg-blue-600');
+            progressFill.style.width = "50%";
+            progressFill.classList.replace('bg-slate-500', 'bg-red-500');
+
+            // Energy Updates
+            absorbedVal.textContent = `+${eIn} kJ`;
+            absorbedVal.classList.add('animate-pulse');
+            setTimeout(() => absorbedVal.classList.remove('animate-pulse'), 1000);
+
+            systemEnergyBg.classList.replace('from-blue-100', 'from-red-100');
+            systemEnergyBg.classList.replace('opacity-0', 'opacity-50');
+
+            if (chartInstance) {
+                chartInstance.data.datasets[0].data = [baseEnergy, baseEnergy + eIn, baseEnergy + eIn];
+                chartInstance.update();
+            }
+        }
+
+        function formBonds() {
+            if (state !== 1) return;
+            state = 2;
+            const rx = reactions[currentReaction];
+            const eIn = rx.bondTable.filter(b => b.type==='reactant').reduce((sum, b) => sum + (b.count * bondEnergies[b.bond]), 0);
+            const eOut = rx.bondTable.filter(b => b.type==='product').reduce((sum, b) => sum + (b.count * bondEnergies[b.bond]), 0);
+            const net = eIn - eOut;
+            const baseEnergy = chartInstance ? chartInstance.data.datasets[0].data[0] : 0;
+
+            // Animate molecules forming
+            reactantsArea.classList.add('opacity-0');
+            productsArea.classList.remove('opacity-20');
+            productsArea.classList.add('opacity-100', 'formed');
+
+            // UI Updates
+            step2Btn.disabled = true;
+            step2Btn.classList.replace('bg-blue-600', 'bg-blue-300');
+            progressFill.style.width = "100%";
+            progressFill.classList.replace('bg-red-500', net < 0 ? 'bg-orange-500' : 'bg-blue-500');
+
+            // Energy Updates
+            releasedVal.textContent = `-${eOut} kJ`;
+            releasedVal.classList.add('animate-pulse');
+            setTimeout(() => releasedVal.classList.remove('animate-pulse'), 1000);
+
+            const netSign = net > 0 ? '+' : '';
+            netEnergyVal.textContent = `${netSign}${net} kJ`;
+
+            if (net < 0) {
+                // Exothermic (Released heat to surroundings, system energy drops)
+                netEnergyVal.classList.add('text-orange-600');
+                systemEnergyBg.classList.replace('from-red-100', 'from-orange-100');
+                systemEnergyBg.classList.replace('opacity-50', 'opacity-100');
+                conclusionText.innerHTML = `<strong>Exothermic:</strong> More energy was released forming bonds (${eOut} kJ) than was absorbed breaking them (${eIn} kJ). Net energy is released into the surroundings.`;
+                conclusionText.className = "mt-4 text-sm font-medium p-3 rounded bg-orange-50 border border-orange-200 text-orange-800";
+            } else {
+                // Endothermic (Absorbed heat from surroundings)
+                netEnergyVal.classList.add('text-blue-600');
+                systemEnergyBg.classList.replace('from-red-100', 'from-blue-100');
+                conclusionText.innerHTML = `<strong>Endothermic:</strong> More energy was required to break bonds (${eIn} kJ) than was released forming them (${eOut} kJ). Net energy is absorbed from the surroundings.`;
+                conclusionText.className = "mt-4 text-sm font-medium p-3 rounded bg-blue-50 border border-blue-200 text-blue-800";
+            }
+
+            if (chartInstance) {
+                chartInstance.data.datasets[0].data = [baseEnergy, baseEnergy + eIn, baseEnergy + net];
+                chartInstance.update();
+            }
+        }
+
+        // Listeners
+        reactionRadios.forEach(r => r.addEventListener('change', (e) => {
+            currentReaction = e.target.value;
+            loadReaction();
+        }));
+
+        step1Btn.addEventListener('click', breakBonds);
+        step2Btn.addEventListener('click', formBonds);
+        resetBtn.addEventListener('click', loadReaction);
+
+        // Init
+        loadReaction();
+    </script>
+</body>
+</html>

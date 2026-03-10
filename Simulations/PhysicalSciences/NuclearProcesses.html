@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuclear Processes Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        .nucleon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3);
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .proton { background-color: #ef4444; } /* Red */
+        .neutron { background-color: #3b82f6; } /* Blue */
+
+        .nucleus-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .energy-wave {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid #f59e0b;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes pulse-energy {
+            0% { width: 0; height: 0; opacity: 1; border-width: 10px; }
+            100% { width: 400px; height: 400px; opacity: 0; border-width: 0px; }
+        }
+
+        .anim-energy {
+            animation: pulse-energy 1.5s ease-out;
+        }
+
+        .equation-text { font-family: 'Courier New', Courier, monospace; font-size: 1.5rem; font-weight: bold; }
+        .isotope { display: inline-flex; flex-direction: column; vertical-align: middle; font-size: 0.7em; line-height: 1; text-align: right; margin-right: 2px; }
+        .mass-num { margin-bottom: 2px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
+    <div class="max-w-5xl mx-auto space-y-6">
+        <header class="border-b pb-4">
+            <h1 class="text-3xl font-bold text-slate-900">Nuclear Processes Simulator</h1>
+            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-8: Fission, Fusion, and Radioactive Decay</h2>
+            <p class="mt-2 text-slate-700">Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during different nuclear processes.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+            <!-- Process Selection -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 md:col-span-1">
+                <h3 class="font-semibold text-lg mb-4">Select Process</h3>
+                <div class="space-y-3">
+                    <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+                        <input type="radio" name="process" value="alpha" class="form-radio text-blue-600 mb-1" checked>
+                        <div class="font-bold">Alpha Decay</div>
+                        <div class="text-xs text-slate-500">Uranium-238 &rarr; Thorium-234 + α</div>
+                    </label>
+                    <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+                        <input type="radio" name="process" value="fission" class="form-radio text-orange-600 mb-1">
+                        <div class="font-bold">Nuclear Fission</div>
+                        <div class="text-xs text-slate-500">U-235 + n &rarr; Ba-144 + Kr-89 + 3n</div>
+                    </label>
+                    <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+                        <input type="radio" name="process" value="fusion" class="form-radio text-red-600 mb-1">
+                        <div class="font-bold">Nuclear Fusion</div>
+                        <div class="text-xs text-slate-500">H-2 + H-3 &rarr; He-4 + n</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Visualization Area -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 md:col-span-3 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-semibold text-lg" id="processTitle">Alpha Decay of U-238</h3>
+                    <button id="triggerBtn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded font-bold uppercase tracking-wider transition-colors shadow-sm">Trigger Reaction</button>
+                    <button id="resetBtn" class="bg-slate-500 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold uppercase tracking-wider transition-colors shadow-sm hidden">Reset</button>
+                </div>
+
+                <!-- Canvas / Animation Box -->
+                <div class="flex-grow bg-slate-900 rounded-lg relative overflow-hidden flex items-center justify-center min-h-[350px]" id="simArea">
+                    <div id="energyWave" class="energy-wave"></div>
+
+                    <!-- Nuclei will be injected here via JS -->
+
+                    <!-- Legend Overlay -->
+                    <div class="absolute bottom-4 left-4 bg-white/10 p-2 rounded backdrop-blur-sm text-xs text-white flex space-x-4">
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-red-500 mr-1 shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.5)]"></div> Proton (p⁺)</div>
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-blue-500 mr-1 shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.5)]"></div> Neutron (n⁰)</div>
+                    </div>
+                </div>
+
+                <!-- Equation Display -->
+                <div class="mt-6 text-center bg-slate-100 p-4 rounded border border-slate-200">
+                    <div class="equation-text" id="equationDisplay">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Panel -->
+            <div class="md:col-span-4 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="font-bold text-blue-900 mb-2 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Scientific Explanation
+                </h3>
+                <div id="explanationText" class="text-blue-800 text-sm leading-relaxed">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-blue-200">
+                    <h4 class="font-bold text-blue-900 mb-1 text-sm">Energy Output</h4>
+                    <p id="energyText" class="text-blue-800 text-sm">
+                        <!-- Populated by JS -->
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const processes = {
+            alpha: {
+                title: "Alpha Decay of U-238",
+                initial: [
+                    { id: 'u238', type: 'nucleus', protons: 92, neutrons: 146, symbol: 'U', x: 0, y: 0 }
+                ],
+                equationPre: `<span class="isotope"><span class="mass-num">238</span><span>92</span></span>U &rarr; `,
+                equationPost: `<span class="isotope"><span class="mass-num">234</span><span>90</span></span>Th + <span class="isotope"><span class="mass-num">4</span><span>2</span></span>He (α)`,
+                explanation: "<strong>Alpha Decay:</strong> An unstable, heavy nucleus (Uranium-238) spontaneously emits an alpha particle (2 protons and 2 neutrons, equivalent to a Helium nucleus). This reduces the original nucleus's atomic number by 2 and mass number by 4, creating Thorium-234.",
+                energy: "<strong>Low-Moderate:</strong> Energy is released primarily as kinetic energy of the ejected alpha particle (~4-5 MeV). This energy comes from the tiny loss of mass (mass defect) converted via E=mc²."
+            },
+            fission: {
+                title: "Nuclear Fission of U-235",
+                initial: [
+                    { id: 'u235', type: 'nucleus', protons: 92, neutrons: 143, symbol: 'U', x: 20, y: 0 },
+                    { id: 'n_in', type: 'neutron_bullet', protons: 0, neutrons: 1, symbol: 'n', x: -200, y: 0, vx: 5, vy: 0 }
+                ],
+                equationPre: `<span class="isotope"><span class="mass-num">235</span><span>92</span></span>U + <span class="isotope"><span class="mass-num">1</span><span>0</span></span>n &rarr; `,
+                equationPost: `<span class="isotope"><span class="mass-num">144</span><span>56</span></span>Ba + <span class="isotope"><span class="mass-num">89</span><span>36</span></span>Kr + 3 <span class="isotope"><span class="mass-num">1</span><span>0</span></span>n`,
+                explanation: "<strong>Nuclear Fission:</strong> A slow-moving neutron strikes a fissile Uranium-235 nucleus, temporarily making it highly unstable U-236. It violently splits into two lighter nuclei (Barium-144 and Krypton-89) and releases 3 fast neutrons, which can go on to trigger a chain reaction.",
+                energy: "<strong>Extremely High:</strong> A massive amount of energy (~200 MeV per event) is released due to a significant mass defect. This is the process used in modern nuclear power plants and atomic bombs."
+            },
+            fusion: {
+                title: "Nuclear Fusion (D-T)",
+                initial: [
+                    { id: 'h2', type: 'nucleus', protons: 1, neutrons: 1, symbol: 'H', x: -100, y: 0, vx: 3, vy: 0 },
+                    { id: 'h3', type: 'nucleus', protons: 1, neutrons: 2, symbol: 'H', x: 100, y: 0, vx: -3, vy: 0 }
+                ],
+                equationPre: `<span class="isotope"><span class="mass-num">2</span><span>1</span></span>H + <span class="isotope"><span class="mass-num">3</span><span>1</span></span>H &rarr; `,
+                equationPost: `<span class="isotope"><span class="mass-num">4</span><span>2</span></span>He + <span class="isotope"><span class="mass-num">1</span><span>0</span></span>n`,
+                explanation: "<strong>Nuclear Fusion:</strong> Two light nuclei (Deuterium and Tritium isotopes of Hydrogen) collide at extremely high speeds (requiring massive temperatures/pressures) to overcome electrostatic repulsion. They fuse into a heavier Helium nucleus and eject a neutron.",
+                energy: "<strong>Tremendous:</strong> Fusion releases even more energy per unit mass than fission (~17.6 MeV per event, but fuels are very light). This is the process that powers the Sun and stars."
+            }
+        };
+
+        let currentProcess = 'alpha';
+        let isAnimating = false;
+        let animationId;
+        let objects = [];
+
+        // DOM
+        const simArea = document.getElementById('simArea');
+        const energyWave = document.getElementById('energyWave');
+        const triggerBtn = document.getElementById('triggerBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processTitle = document.getElementById('processTitle');
+        const equationDisplay = document.getElementById('equationDisplay');
+        const explanationText = document.getElementById('explanationText');
+        const energyText = document.getElementById('energyText');
+        const radioBtns = document.querySelectorAll('input[name="process"]');
+
+        function createNucleon(type, parentRadius) {
+            const el = document.createElement('div');
+            el.className = `nucleon ${type}`;
+            // Position randomly within the nucleus radius
+            const r = Math.random() * (parentRadius - 10);
+            const theta = Math.random() * 2 * Math.PI;
+            el.style.left = `calc(50% + ${r * Math.cos(theta)}px - 10px)`;
+            el.style.top = `calc(50% + ${r * Math.sin(theta)}px - 10px)`;
+
+            // For tiny nuclei (H2, H3, He), arrange them deterministically
+            return el;
+        }
+
+        function createNucleusDOM(objData) {
+            const container = document.createElement('div');
+            container.className = 'nucleus-container';
+            container.id = objData.id;
+
+            // Calculate visual radius based on total nucleons (A)
+            const A = objData.protons + objData.neutrons;
+            let radius = 20; // base for 1 nucleon
+            if (A > 1) radius = Math.max(30, Math.pow(A, 1/3) * 12); // Rough visual scaling
+            if (A > 200) radius = 80;
+
+            container.style.width = `${radius*2}px`;
+            container.style.height = `${radius*2}px`;
+
+            // If it's a single neutron
+            if (A === 1 && objData.neutrons === 1) {
+                container.style.width = '20px';
+                container.style.height = '20px';
+                const n = document.createElement('div');
+                n.className = 'nucleon neutron';
+                n.style.left = '0'; n.style.top = '0';
+                container.appendChild(n);
+            } else {
+                // Populate with protons and neutrons
+                // For performance and visual clarity on heavy elements, cap the visual count
+                const visualProtons = Math.min(objData.protons, 40);
+                const visualNeutrons = Math.min(objData.neutrons, 60);
+
+                // Specific layouts for light elements
+                if (A <= 4) {
+                    container.style.width = '40px'; container.style.height = '40px';
+                    const positions = [[5,5], [15,15], [5,15], [15,5]]; // Simple offsets
+                    let pCount = 0;
+
+                    for(let i=0; i<objData.protons; i++) {
+                        const p = document.createElement('div'); p.className='nucleon proton';
+                        p.style.left = positions[pCount][0]+'px'; p.style.top = positions[pCount][1]+'px';
+                        container.appendChild(p); pCount++;
+                    }
+                    for(let i=0; i<objData.neutrons; i++) {
+                        const n = document.createElement('div'); n.className='nucleon neutron';
+                        n.style.left = positions[pCount][0]+'px'; n.style.top = positions[pCount][1]+'px';
+                        container.appendChild(n); pCount++;
+                    }
+                } else {
+                    for (let i = 0; i < visualProtons; i++) container.appendChild(createNucleon('proton', radius));
+                    for (let i = 0; i < visualNeutrons; i++) container.appendChild(createNucleon('neutron', radius));
+                }
+            }
+
+            // Symbol overlay
+            if (objData.symbol !== 'n') {
+                const sym = document.createElement('div');
+                sym.className = 'absolute inset-0 flex items-center justify-center font-bold text-white/80 text-3xl pointer-events-none drop-shadow-md';
+                sym.textContent = objData.symbol;
+                container.appendChild(sym);
+            }
+
+            // Position
+            container.style.position = 'absolute';
+            container.style.left = `calc(50% + ${objData.x}px - ${parseInt(container.style.width)/2}px)`;
+            container.style.top = `calc(50% + ${objData.y}px - ${parseInt(container.style.height)/2}px)`;
+
+            simArea.appendChild(container);
+            return container;
+        }
+
+        function loadProcess() {
+            cancelAnimationFrame(animationId);
+            isAnimating = false;
+            triggerBtn.classList.remove('hidden');
+            resetBtn.classList.add('hidden');
+            energyWave.classList.remove('anim-energy');
+
+            // Clean up sim area (keep legend and energy wave)
+            const nodes = simArea.querySelectorAll('.nucleus-container');
+            nodes.forEach(n => n.remove());
+
+            const data = processes[currentProcess];
+            processTitle.textContent = data.title;
+            equationDisplay.innerHTML = data.equationPre + `<span class="opacity-30">?</span>`;
+            explanationText.innerHTML = data.explanation;
+            energyText.innerHTML = data.energy;
+
+            // Deep copy initial objects
+            objects = JSON.parse(JSON.stringify(data.initial));
+
+            objects.forEach(obj => {
+                obj.el = createNucleusDOM(obj);
+            });
+        }
+
+        function triggerReaction() {
+            if (isAnimating) return;
+            isAnimating = true;
+            triggerBtn.classList.add('hidden');
+            resetBtn.classList.remove('hidden');
+
+            if (currentProcess === 'alpha') {
+                animateAlpha();
+            } else if (currentProcess === 'fission') {
+                animateFission();
+            } else if (currentProcess === 'fusion') {
+                animateFusion();
+            }
+        }
+
+        function triggerEnergyWave(x, y) {
+            energyWave.style.left = `calc(50% + ${x}px)`;
+            energyWave.style.top = `calc(50% + ${y}px)`;
+            energyWave.classList.remove('anim-energy');
+            void energyWave.offsetWidth; // trigger reflow
+            energyWave.classList.add('anim-energy');
+            equationDisplay.innerHTML = processes[currentProcess].equationPre + processes[currentProcess].equationPost;
+        }
+
+        function animateAlpha() {
+            const u238 = objects.find(o => o.id === 'u238');
+
+            // Jiggle
+            u238.el.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                // Split
+                u238.el.remove();
+
+                // Create Th-234
+                const th = { id: 'th234', type: 'nucleus', protons: 90, neutrons: 144, symbol: 'Th', x: -20, y: 0 };
+                th.el = createNucleusDOM(th);
+
+                // Create Alpha
+                const alpha = { id: 'alpha', type: 'nucleus', protons: 2, neutrons: 2, symbol: 'He', x: 50, y: 0 };
+                alpha.el = createNucleusDOM(alpha);
+
+                triggerEnergyWave(0, 0);
+
+                // Animate apart
+                setTimeout(() => {
+                    th.el.style.transition = 'left 1s ease-out';
+                    alpha.el.style.transition = 'left 1s ease-out';
+                    th.el.style.left = `calc(50% - 60px - 40px)`; // shift left slightly
+                    alpha.el.style.left = `calc(50% + 150px - 20px)`; // shoot right
+                }, 50);
+
+            }, 500);
+        }
+
+        function animateFission() {
+            const neutron = objects.find(o => o.id === 'n_in');
+            const u235 = objects.find(o => o.id === 'u235');
+
+            // Move neutron
+            neutron.el.style.transition = 'left 0.5s linear';
+            neutron.el.style.left = `calc(50% + 20px - 10px)`; // hit U235
+
+            setTimeout(() => {
+                neutron.el.remove();
+                u235.el.style.transform = 'scale(1.1) scaleX(1.3)'; // elongate
+                u235.el.querySelector('div.absolute').textContent = 'U*'; // Unstable U-236
+
+                setTimeout(() => {
+                    u235.el.remove();
+                    triggerEnergyWave(20, 0);
+
+                    // Create Fragments
+                    const ba = { id: 'ba144', type: 'nucleus', protons: 56, neutrons: 88, symbol: 'Ba', x: 20, y: -20 };
+                    ba.el = createNucleusDOM(ba);
+
+                    const kr = { id: 'kr89', type: 'nucleus', protons: 36, neutrons: 53, symbol: 'Kr', x: 20, y: 20 };
+                    kr.el = createNucleusDOM(kr);
+
+                    // Create 3 neutrons
+                    const n1 = { id: 'n1', type: 'nucleus', protons: 0, neutrons: 1, symbol: 'n', x: 20, y: 0 }; n1.el = createNucleusDOM(n1);
+                    const n2 = { id: 'n2', type: 'nucleus', protons: 0, neutrons: 1, symbol: 'n', x: 20, y: 0 }; n2.el = createNucleusDOM(n2);
+                    const n3 = { id: 'n3', type: 'nucleus', protons: 0, neutrons: 1, symbol: 'n', x: 20, y: 0 }; n3.el = createNucleusDOM(n3);
+
+                    // Explode outwards
+                    setTimeout(() => {
+                        const t = 'all 1s ease-out';
+                        ba.el.style.transition = t; kr.el.style.transition = t;
+                        n1.el.style.transition = t; n2.el.style.transition = t; n3.el.style.transition = t;
+
+                        ba.el.style.left = `calc(50% - 100px)`; ba.el.style.top = `calc(50% - 100px)`;
+                        kr.el.style.left = `calc(50% - 80px)`; kr.el.style.top = `calc(50% + 80px)`;
+
+                        n1.el.style.left = `calc(50% + 150px)`; n1.el.style.top = `calc(50% - 40px)`;
+                        n2.el.style.left = `calc(50% + 160px)`; n2.el.style.top = `calc(50% + 10px)`;
+                        n3.el.style.left = `calc(50% + 140px)`; n3.el.style.top = `calc(50% + 60px)`;
+                    }, 50);
+
+                }, 400);
+            }, 500);
+        }
+
+        function animateFusion() {
+            const h2 = objects.find(o => o.id === 'h2');
+            const h3 = objects.find(o => o.id === 'h3');
+
+            // Move together fast
+            h2.el.style.transition = 'left 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53)'; // accelerate
+            h3.el.style.transition = 'left 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53)';
+
+            h2.el.style.left = `calc(50% - 10px)`;
+            h3.el.style.left = `calc(50% + 10px)`;
+
+            setTimeout(() => {
+                h2.el.remove();
+                h3.el.remove();
+
+                triggerEnergyWave(0, 0);
+
+                // Create He4 and Neutron
+                const he4 = { id: 'he4', type: 'nucleus', protons: 2, neutrons: 2, symbol: 'He', x: 0, y: 0 };
+                he4.el = createNucleusDOM(he4);
+
+                const n = { id: 'n_out', type: 'nucleus', protons: 0, neutrons: 1, symbol: 'n', x: 0, y: 0 };
+                n.el = createNucleusDOM(n);
+
+                // Recoil
+                setTimeout(() => {
+                    he4.el.style.transition = 'all 1s ease-out';
+                    n.el.style.transition = 'all 1s ease-out';
+
+                    he4.el.style.left = `calc(50% - 40px)`;
+                    n.el.style.left = `calc(50% + 100px)`;
+                }, 50);
+
+            }, 400);
+        }
+
+        // Listeners
+        radioBtns.forEach(r => r.addEventListener('change', (e) => {
+            currentProcess = e.target.value;
+            loadProcess();
+        }));
+
+        triggerBtn.addEventListener('click', triggerReaction);
+        resetBtn.addEventListener('click', loadProcess);
+
+        // Init
+        loadProcess();
+
+    </script>
+</body>
+</html>

@@ -10,23 +10,37 @@ Use the periodic table as a model to predict the relative properties of elements
 ### HS-PS1-2
 Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.
 
+- [Chemical Reaction Outcomes Predictor](ChemicalReactionsOutcomes.html) - An interactive sandbox to predict outcomes and explore the octet rule by combining atoms with varying valence electrons.
+
 ### HS-PS1-3
 Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
+
+- [Intermolecular Forces Investigation](IntermolecularForces.html) - Observe boiling points and surface tension to infer the strength of London Dispersion, Dipole-Dipole, and Hydrogen Bonding forces.
 
 ### HS-PS1-4
 Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy.
 
+- [Bond Energy Changes Simulator](BondEnergy.html) - An animated model illustrating how breaking bonds absorbs energy and forming bonds releases energy, and how the net change determines if a reaction is endothermic or exothermic.
+
 ### HS-PS1-5
 Apply scientific principles and evidence to provide an explanation about the effects of changing the temperature or concentration of the reacting particles on the rate at which a reaction occurs.
+
+- [Reaction Rates Simulation](ReactionRatesSimulation.html) - Explore how changing temperature (kinetic energy) and concentration affects collision frequency, reaction rates, and activation energy barriers using an interactive particle model.
 
 ### HS-PS1-6
 Refine the design of a chemical system by specifying a change in conditions that would produce increased amounts of products at equilibrium.
 
+- [Le Chatelier's Principle Simulator](LeChatelier.html) - Interactively stress an equilibrium system (Haber Process) by changing concentration, volume, and temperature to see how the system shifts.
+
 ### HS-PS1-7
 Use mathematical representations to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
 
+- [Conservation of Mass Simulator](ConservationOfMass.html) - Balance chemical equations and observe how total mass and atom counts remain perfectly conserved across the reaction.
+
 ### HS-PS1-8
 Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during the processes of fission, fusion, and radioactive decay.
+
+- [Nuclear Processes Simulator](NuclearProcesses.html) - Visualize the changes in protons and neutrons, and the massive energy released, during Alpha Decay, Nuclear Fission, and Nuclear Fusion.
 
 ### HS-PS2-1
 Analyze data to support the claim that Newton's second law of motion describes the mathematical relationship among the net force on a macroscopic object, its mass, and its acceleration.
