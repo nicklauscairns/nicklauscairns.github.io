@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbital Motion & Kepler's Laws Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 0; }
+        .canvas-container { background-color: #0f172a; border-radius: 0.5rem; overflow: hidden; position: relative; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        canvas { display: block; width: 100%; height: 100%; }
+        .control-panel { background-color: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .slider-label { display: flex; justify-content: space-between; font-weight: 500; font-size: 0.875rem; margin-bottom: 0.25rem; }
+        input[type=range] { width: 100%; cursor: pointer; }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; border: none; }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #e5e7eb; color: #374151; }
+        .btn-secondary:hover { background-color: #d1d5db; }
+        .data-table-container { max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 0.375rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
+        th, td { padding: 0.5rem; border-bottom: 1px solid #e5e7eb; }
+        th { background-color: #f9fafb; font-weight: 600; position: sticky; top: 0; }
+        .stat-card { background-color: #f8fafc; padding: 1rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; text-align: center; }
+        .stat-value { font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-top: 0.25rem; }
+        .stat-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Orbital Motion & Kepler's Laws Simulation</h1>
+            <p class="text-gray-600">Explore Newton's Law of Universal Gravitation and Kepler's Laws by adjusting planetary parameters. Aligned to NGSS HS-ESS1-4.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Canvas and Real-time Stats -->
+            <div class="lg:col-span-2 flex flex-col gap-6">
+                <div class="canvas-container relative" style="height: 500px;">
+                    <canvas id="simulationCanvas"></canvas>
+                    <div class="absolute top-4 left-4 text-white/80 text-sm font-mono pointer-events-none">
+                        Time: <span id="timeDisplay">0.00</span> years
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="stat-card">
+                        <div class="stat-label">Semi-Major Axis (a)</div>
+                        <div class="stat-value"><span id="statA">0.00</span> AU</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Orbital Period (T)</div>
+                        <div class="stat-value"><span id="statT">0.00</span> yrs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Eccentricity (e)</div>
+                        <div class="stat-value"><span id="statE">0.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Controls and Data Logging -->
+            <div class="flex flex-col gap-6">
+                <!-- Controls -->
+                <div class="control-panel">
+                    <h2 class="text-xl font-bold mb-4">Initial Parameters</h2>
+
+                    <div class="mb-4">
+                        <div class="slider-label">
+                            <span>Star Mass (M)</span>
+                            <span id="massVal">1.0 M☉</span>
+                        </div>
+                        <input type="range" id="massSlider" min="0.1" max="5.0" step="0.1" value="1.0">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="slider-label">
+                            <span>Initial Distance (r₀)</span>
+                            <span id="distVal">1.0 AU</span>
+                        </div>
+                        <input type="range" id="distSlider" min="0.3" max="5.0" step="0.1" value="1.0">
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="slider-label">
+                            <span>Initial Velocity (v₀)</span>
+                            <span id="velVal">1.0 v₀</span>
+                        </div>
+                        <input type="range" id="velSlider" min="0.1" max="2.0" step="0.05" value="1.0">
+                        <p class="text-xs text-gray-500 mt-1">Multiples of circular orbit velocity at 1 AU.</p>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button id="btnPlayPause" class="btn btn-primary flex-1">Pause</button>
+                        <button id="btnReset" class="btn btn-secondary flex-1">Reset Orbit</button>
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <label class="flex items-center space-x-2 text-sm">
+                            <input type="checkbox" id="showVectors" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" checked>
+                            <span>Show Vectors</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm ml-4">
+                            <input type="checkbox" id="traceOrbit" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" checked>
+                            <span>Trace Orbit</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Data Logging -->
+                <div class="control-panel flex-1 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">Data Log</h2>
+                        <button id="btnRecord" class="btn btn-primary text-sm py-1 px-3">Record Trial</button>
+                    </div>
+
+                    <div class="data-table-container flex-1 mb-4">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Trial</th>
+                                    <th>M (M☉)</th>
+                                    <th>a (AU)</th>
+                                    <th>T (yrs)</th>
+                                    <th>e</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody">
+                                <!-- Data rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex gap-2 mt-auto">
+                        <button id="btnClearData" class="btn btn-secondary flex-1 text-sm py-1">Clear Data</button>
+                        <button id="btnExportCSV" class="btn btn-secondary flex-1 text-sm py-1">Export CSV</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const G = 4 * Math.PI * Math.PI; // Gravitational constant in AU^3 / (M_sun * yr^2)
+        const CANVAS_AU_SCALE = 100; // Pixels per AU
+
+        // Simulation State
+        let isRunning = true;
+        let time = 0;
+        let dt = 0.001; // Time step in years
+
+        let trialCount = 0;
+        let orbitPath = [];
+
+        // Body properties
+        let star = { mass: 1.0, x: 0, y: 0 };
+        let planet = {
+            x: 1.0, y: 0,
+            vx: 0, vy: 2 * Math.PI, // Circular velocity at 1 AU for M=1
+            mass: 1e-6 // Negligible mass for planet
+        };
+
+        // DOM Elements
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const massSlider = document.getElementById('massSlider');
+        const distSlider = document.getElementById('distSlider');
+        const velSlider = document.getElementById('velSlider');
+
+        const massVal = document.getElementById('massVal');
+        const distVal = document.getElementById('distVal');
+        const velVal = document.getElementById('velVal');
+
+        const statA = document.getElementById('statA');
+        const statT = document.getElementById('statT');
+        const statE = document.getElementById('statE');
+        const timeDisplay = document.getElementById('timeDisplay');
+
+        const btnPlayPause = document.getElementById('btnPlayPause');
+        const btnReset = document.getElementById('btnReset');
+        const btnRecord = document.getElementById('btnRecord');
+        const btnClearData = document.getElementById('btnClearData');
+        const btnExportCSV = document.getElementById('btnExportCSV');
+
+        const showVectors = document.getElementById('showVectors');
+        const traceOrbit = document.getElementById('traceOrbit');
+        const dataTableBody = document.getElementById('dataTableBody');
+
+        // Resize Canvas
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Calculate theoretical orbital elements
+        function calculateElements() {
+            // Position and velocity vectors
+            const r = Math.sqrt(planet.x * planet.x + planet.y * planet.y);
+            const vSq = planet.vx * planet.vx + planet.vy * planet.vy;
+
+            // Specific orbital energy
+            const mu = G * star.mass;
+            const epsilon = vSq / 2 - mu / r;
+
+            // Semi-major axis
+            let a = -mu / (2 * epsilon);
+
+            // Specific angular momentum
+            const h = planet.x * planet.vy - planet.y * planet.vx;
+
+            // Eccentricity
+            let e = Math.sqrt(Math.max(0, 1 + (2 * epsilon * h * h) / (mu * mu)));
+
+            // Period
+            let period = 0;
+            if (e < 1 && a > 0) {
+                period = 2 * Math.PI * Math.sqrt((a * a * a) / mu);
+            }
+
+            return { a, e, period };
+        }
+
+        function updateStatsUI() {
+            const elements = calculateElements();
+
+            if (elements.e >= 1 || elements.a <= 0) {
+                statA.textContent = "∞";
+                statT.textContent = "∞";
+                statE.textContent = elements.e.toFixed(3);
+            } else {
+                statA.textContent = elements.a.toFixed(3);
+                statT.textContent = elements.period.toFixed(3);
+                statE.textContent = elements.e.toFixed(3);
+            }
+        }
+
+        // Initialize/Reset Simulation
+        function initSimulation() {
+            const m = parseFloat(massSlider.value);
+            const r0 = parseFloat(distSlider.value);
+            const v0_mult = parseFloat(velSlider.value);
+
+            star.mass = m;
+            planet.x = r0;
+            planet.y = 0;
+
+            // Base circular velocity at r0 for mass m
+            const v_circ = Math.sqrt((G * m) / r0);
+
+            planet.vx = 0;
+            planet.vy = v_circ * v0_mult;
+
+            time = 0;
+            orbitPath = [];
+
+            updateStatsUI();
+            timeDisplay.textContent = time.toFixed(2);
+        }
+
+        // Physics Step (Velocity Verlet Integration)
+        function stepPhysics() {
+            // Calculate acceleration
+            const rSq = planet.x * planet.x + planet.y * planet.y;
+            const r = Math.sqrt(rSq);
+
+            // Check collision
+            if (r < 0.05) {
+                return; // Stop updating if too close to star
+            }
+
+            const ax = - (G * star.mass * planet.x) / (rSq * r);
+            const ay = - (G * star.mass * planet.y) / (rSq * r);
+
+            // Update position
+            planet.x += planet.vx * dt + 0.5 * ax * dt * dt;
+            planet.y += planet.vy * dt + 0.5 * ay * dt * dt;
+
+            // Calculate new acceleration
+            const rSqNew = planet.x * planet.x + planet.y * planet.y;
+            const rNew = Math.sqrt(rSqNew);
+            const axNew = - (G * star.mass * planet.x) / (rSqNew * rNew);
+            const ayNew = - (G * star.mass * planet.y) / (rSqNew * rNew);
+
+            // Update velocity
+            planet.vx += 0.5 * (ax + axNew) * dt;
+            planet.vy += 0.5 * (ay + ayNew) * dt;
+
+            time += dt;
+
+            // Record path
+            if (traceOrbit.checked && time % (dt * 10) < dt) {
+                orbitPath.push({x: planet.x, y: planet.y});
+                if (orbitPath.length > 2000) orbitPath.shift(); // Limit path length
+            }
+        }
+
+        function drawArrow(ctx, fromx, fromy, tox, toy, color) {
+            const headlen = 10;
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Rendering
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // Draw Orbit Path
+            if (traceOrbit.checked && orbitPath.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(cx + orbitPath[0].x * CANVAS_AU_SCALE, cy - orbitPath[0].y * CANVAS_AU_SCALE);
+                for (let i = 1; i < orbitPath.length; i++) {
+                    ctx.lineTo(cx + orbitPath[i].x * CANVAS_AU_SCALE, cy - orbitPath[i].y * CANVAS_AU_SCALE);
+                }
+                ctx.strokeStyle = 'rgba(100, 116, 139, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Draw Star
+            ctx.beginPath();
+            ctx.arc(cx, cy, 15 + star.mass * 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fef08a'; // yellow-200
+            ctx.fill();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#facc15';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Draw Planet
+            const px = cx + planet.x * CANVAS_AU_SCALE;
+            const py = cy - planet.y * CANVAS_AU_SCALE;
+
+            ctx.beginPath();
+            ctx.arc(px, py, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#60a5fa'; // blue-400
+            ctx.fill();
+
+            // Draw Vectors
+            if (showVectors.checked) {
+                // Velocity vector
+                const vScale = 10; // Pixels per AU/yr
+                drawArrow(ctx, px, py, px + planet.vx * vScale, py - planet.vy * vScale, '#34d399'); // Emerald-400
+
+                // Force/Acceleration vector
+                const rSq = planet.x * planet.x + planet.y * planet.y;
+                const r = Math.sqrt(rSq);
+                const ax = - (G * star.mass * planet.x) / (rSq * r);
+                const ay = - (G * star.mass * planet.y) / (rSq * r);
+
+                // Scaling the acceleration vector dynamically (e.g. logarithmic) to demonstrate magnitude
+                const aMag = Math.sqrt(ax*ax + ay*ay);
+                const aScale = 20 * Math.log10(1 + aMag * 10) / aMag;
+                if(r > 0.05 && aMag > 0) { // don't draw if too close
+                    drawArrow(ctx, px, py, px + ax * aScale, py - ay * aScale, '#f87171'); // Red-400
+                }
+            }
+
+            // Draw scale
+            ctx.beginPath();
+            ctx.moveTo(20, canvas.height - 20);
+            ctx.lineTo(20 + CANVAS_AU_SCALE, canvas.height - 20);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.moveTo(20, canvas.height - 25);
+            ctx.lineTo(20, canvas.height - 15);
+            ctx.stroke();
+            ctx.moveTo(20 + CANVAS_AU_SCALE, canvas.height - 25);
+            ctx.lineTo(20 + CANVAS_AU_SCALE, canvas.height - 15);
+            ctx.stroke();
+            ctx.fillStyle = 'white';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('1 AU', 20 + CANVAS_AU_SCALE / 2 - 12, canvas.height - 30);
+        }
+
+        // Main Loop
+        function loop() {
+            if (isRunning) {
+                // Do multiple small steps per frame for better accuracy
+                for (let i = 0; i < 10; i++) {
+                    stepPhysics();
+                }
+                timeDisplay.textContent = time.toFixed(2);
+                updateStatsUI();
+            }
+            render();
+            requestAnimationFrame(loop);
+        }
+
+        // Event Listeners
+        massSlider.addEventListener('input', (e) => {
+            massVal.textContent = parseFloat(e.target.value).toFixed(1) + ' M☉';
+            initSimulation();
+        });
+
+        distSlider.addEventListener('input', (e) => {
+            distVal.textContent = parseFloat(e.target.value).toFixed(1) + ' AU';
+            initSimulation();
+        });
+
+        velSlider.addEventListener('input', (e) => {
+            velVal.textContent = parseFloat(e.target.value).toFixed(2) + ' v₀';
+            initSimulation();
+        });
+
+        btnPlayPause.addEventListener('click', () => {
+            isRunning = !isRunning;
+            btnPlayPause.textContent = isRunning ? 'Pause' : 'Play';
+            btnPlayPause.className = isRunning ? 'btn btn-primary flex-1' : 'btn btn-secondary flex-1 bg-green-500 text-white hover:bg-green-600';
+        });
+
+        btnReset.addEventListener('click', () => {
+            initSimulation();
+        });
+
+        // Data Logging
+        btnRecord.addEventListener('click', () => {
+            const elements = calculateElements();
+            trialCount++;
+
+            const tr = document.createElement('tr');
+
+            const tdTrial = document.createElement('td');
+            tdTrial.textContent = trialCount;
+
+            const tdMass = document.createElement('td');
+            tdMass.textContent = star.mass.toFixed(1);
+
+            const tdA = document.createElement('td');
+            tdA.textContent = elements.e >= 1 ? "∞" : elements.a.toFixed(3);
+
+            const tdT = document.createElement('td');
+            tdT.textContent = elements.e >= 1 ? "∞" : elements.period.toFixed(3);
+
+            const tdE = document.createElement('td');
+            tdE.textContent = elements.e.toFixed(3);
+
+            tr.appendChild(tdTrial);
+            tr.appendChild(tdMass);
+            tr.appendChild(tdA);
+            tr.appendChild(tdT);
+            tr.appendChild(tdE);
+
+            dataTableBody.appendChild(tr);
+
+            // Scroll to bottom
+            const container = dataTableBody.parentElement.parentElement;
+            container.scrollTop = container.scrollHeight;
+        });
+
+        btnClearData.addEventListener('click', () => {
+            dataTableBody.textContent = '';
+            trialCount = 0;
+        });
+
+        btnExportCSV.addEventListener('click', () => {
+            let csvContent = "data:text/csv;charset=utf-8,Trial,StarMass(M_sun),SemiMajorAxis(AU),Period(yrs),Eccentricity\n";
+
+            const rows = dataTableBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('td');
+                const rowData = Array.from(cols).map(col => col.textContent).join(',');
+                csvContent += rowData + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "orbital_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Start
+        initSimulation();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
