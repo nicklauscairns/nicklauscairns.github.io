@@ -46,6 +46,8 @@ Analyze geoscience data to make the claim that one change to Earth's surface can
 ### HS-ESS2-3
 Develop a model based on evidence of Earth’s interior to describe the cycling of matter by thermal convection.
 
+- [Mantle Convection Explorer](MantleConvectionExplorer.html) - An interactive simulation exploring how the outward flow of energy from Earth's core drives thermal convection in the mantle and the surface expression of plate tectonics.
+
 ### HS-ESS2-4
 Use a model to describe how variations in the flow of energy into and out of Earth’s systems result in changes in climate.
 
