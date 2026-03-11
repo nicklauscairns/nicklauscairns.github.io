@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Four Factors of Evolution Model</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        /* Custom range styling */
+        input[type=range] { @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer; }
+        input[type=range]::-webkit-slider-thumb { @apply appearance-none w-4 h-4 rounded-full bg-blue-600 cursor-pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-indigo-700 text-white p-4 shadow-md">
+        <h1 class="text-2xl font-bold">The Four Factors of Evolution</h1>
+        <p class="text-sm mt-1">NGSS HS-LS4-2: Construct an explanation based on evidence that evolution results from four factors: potential to increase, genetic variation, competition for limited resources, and proliferation of fit organisms.</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-7xl mx-auto w-full">
+
+        <!-- Simulation & Controls Area -->
+        <section class="w-full lg:w-2/3 flex flex-col gap-4 overflow-hidden">
+
+            <!-- Canvas -->
+            <div class="relative bg-white rounded-lg shadow-md border border-gray-200 flex-1 min-h-[400px] overflow-hidden">
+                <canvas id="simCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+                <!-- Overlay Stats -->
+                <div class="absolute top-2 left-2 bg-white/80 backdrop-blur px-3 py-1 rounded shadow text-sm font-mono">
+                    Pop: <span id="stat-pop" class="font-bold text-indigo-700">0</span> | Year: <span id="stat-year" class="font-bold">0</span>
+                </div>
+                <div class="absolute bottom-2 right-2 flex gap-2">
+                    <button id="btn-start" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors">Start</button>
+                    <button id="btn-pause" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors hidden">Pause</button>
+                    <button id="btn-reset" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors">Reset</button>
+                </div>
+            </div>
+
+            <!-- The Four Factors Controls -->
+            <div class="bg-white rounded-lg shadow-md p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div class="border p-3 rounded bg-indigo-50 border-indigo-100">
+                    <h3 class="font-semibold text-indigo-800 mb-1 flex items-center gap-1">
+                        <span class="bg-indigo-200 text-indigo-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">1</span>
+                        Potential to Increase
+                    </h3>
+                    <p class="text-xs text-gray-600 mb-2">Species can produce more offspring than the environment can support.</p>
+                    <label class="flex items-center text-sm cursor-pointer">
+                        <input type="checkbox" id="chk-reproduction" class="mr-2 h-4 w-4 text-indigo-600 rounded" checked>
+                        Enable Reproduction (Mitosis)
+                    </label>
+                </div>
+
+                <div class="border p-3 rounded bg-blue-50 border-blue-100">
+                    <h3 class="font-semibold text-blue-800 mb-1 flex items-center gap-1">
+                        <span class="bg-blue-200 text-blue-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">2</span>
+                        Genetic Variation
+                    </h3>
+                    <p class="text-xs text-gray-600 mb-2">Offspring inherit traits (color) with slight mutations.</p>
+                    <label class="flex items-center text-sm cursor-pointer mb-2">
+                        <input type="checkbox" id="chk-mutation" class="mr-2 h-4 w-4 text-blue-600 rounded" checked>
+                        Enable Mutation
+                    </label>
+                    <div class="flex items-center justify-between text-xs">
+                        <span>Low</span>
+                        <input type="range" id="rng-mutation" min="1" max="50" value="15" class="w-2/3">
+                        <span>High</span>
+                    </div>
+                </div>
+
+                <div class="border p-3 rounded bg-orange-50 border-orange-100">
+                    <h3 class="font-semibold text-orange-800 mb-1 flex items-center gap-1">
+                        <span class="bg-orange-200 text-orange-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">3</span>
+                        Competition (Limited Resources)
+                    </h3>
+                    <p class="text-xs text-gray-600 mb-2">Organisms compete for a limited supply of food to survive and reproduce.</p>
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span>Food Supply Rate:</span>
+                        <span id="lbl-food" class="font-bold">Medium</span>
+                    </div>
+                    <input type="range" id="rng-food" min="1" max="20" value="8">
+                </div>
+
+                <div class="border p-3 rounded bg-emerald-50 border-emerald-100">
+                    <h3 class="font-semibold text-emerald-800 mb-1 flex items-center gap-1">
+                        <span class="bg-emerald-200 text-emerald-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">4</span>
+                        Differential Survival
+                    </h3>
+                    <p class="text-xs text-gray-600 mb-2">Organisms with advantageous traits (camouflage) are less likely to be eaten by predators.</p>
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span>Environment Color (Selection Pressure):</span>
+                    </div>
+                    <!-- Hue Slider -->
+                    <input type="range" id="rng-env" min="0" max="360" value="120" style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);">
+                    <p class="text-xs text-gray-500 mt-1 italic">Predators automatically eat the most visible organisms.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Sidebar / Chart / Explanation -->
+        <aside class="w-full lg:w-1/3 flex flex-col gap-4 overflow-hidden">
+
+            <section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col min-h-[250px]">
+                <h2 class="text-lg font-semibold border-b pb-1 mb-2">Trait Distribution (Cause & Effect)</h2>
+                <p class="text-xs text-gray-600 mb-2">Observe how the population's average color changes over time as it adapts to the environment.</p>
+                <div class="flex-1 relative w-full h-full min-h-[150px]">
+                    <canvas id="traitChart"></canvas>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col">
+                <h2 class="text-lg font-semibold border-b pb-1 mb-2">Construct an Explanation</h2>
+                <p class="text-xs text-gray-600 mb-2 leading-relaxed">
+                    <strong>SEP: Constructing Explanations.</strong> Based on your simulation data, construct a paragraph explaining how the interaction of these four factors resulted in the adaptation of the species' color trait over time.
+                </p>
+                <textarea id="explanation-log" class="flex-1 w-full border border-gray-300 rounded p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Because resources were limited (Factor 3), organisms had to compete. Genetic variation (Factor 2) created individuals with different colors. Those whose color matched the environment were less likely to be eaten, allowing them to survive and reproduce (Factor 4), passing on their advantageous traits due to their reproductive potential (Factor 1)..."></textarea>
+            </section>
+
+        </aside>
+
+    </main>
+
+    <!-- Simulation Script -->
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const btnStart = document.getElementById('btn-start');
+        const btnPause = document.getElementById('btn-pause');
+        const btnReset = document.getElementById('btn-reset');
+
+        // Controls
+        const chkReproduction = document.getElementById('chk-reproduction');
+        const chkMutation = document.getElementById('chk-mutation');
+        const rngMutation = document.getElementById('rng-mutation');
+        const rngFood = document.getElementById('rng-food');
+        const lblFood = document.getElementById('lbl-food');
+        const rngEnv = document.getElementById('rng-env');
+        const statPop = document.getElementById('stat-pop');
+        const statYear = document.getElementById('stat-year');
+
+        // Simulation State
+        const simState = {
+            running: false,
+            time: 0,
+            organisms: [],
+            foods: [],
+            params: {
+                envColor: 120, // Hue
+                foodRate: 8,
+                mutationRate: 15,
+                mutationEnabled: true,
+                reproductionEnabled: true
+            }
+        };
+
+        // Resize Canvas to fit container
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Classes
+        class Organism {
+            constructor(x, y, hue) {
+                this.x = x;
+                this.y = y;
+                this.hue = hue; // Genetic trait (color)
+                this.radius = 6;
+                this.energy = 50; // Starting energy
+                this.maxEnergy = 100;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.age = 0;
+            }
+
+            update() {
+                // Move
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off walls
+                if (this.x < this.radius || this.x > canvas.width - this.radius) this.vx *= -1;
+                if (this.y < this.radius || this.y > canvas.height - this.radius) this.vy *= -1;
+
+                // Occasional random direction change (wandering)
+                if (Math.random() < 0.05) {
+                    this.vx += (Math.random() - 0.5) * 0.5;
+                    this.vy += (Math.random() - 0.5) * 0.5;
+                }
+
+                // Limit speed
+                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                if (speed > 2) {
+                    this.vx = (this.vx / speed) * 2;
+                    this.vy = (this.vy / speed) * 2;
+                }
+
+                // Consume energy
+                this.energy -= 0.1;
+                this.age++;
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${this.hue}, 80%, 50%)`;
+                ctx.fill();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Energy bar
+                const barWidth = 10;
+                const eRatio = this.energy / this.maxEnergy;
+                ctx.fillStyle = eRatio > 0.3 ? 'green' : 'red';
+                ctx.fillRect(this.x - barWidth/2, this.y - this.radius - 4, barWidth * eRatio, 3);
+            }
+        }
+
+        class Food {
+            constructor() {
+                this.x = Math.random() * (canvas.width - 20) + 10;
+                this.y = Math.random() * (canvas.height - 20) + 10;
+                this.radius = 3;
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#10b981'; // emerald-500
+                ctx.fill();
+            }
+        }
+
+        // Core Logic
+        function initSimulation() {
+            simState.time = 0;
+            simState.organisms = [];
+            simState.foods = [];
+
+            // Seed 20 random organisms
+            for(let i=0; i<20; i++) {
+                // Random hue between 0 and 360
+                simState.organisms.push(new Organism(canvas.width/2 + (Math.random()-0.5)*50, canvas.height/2 + (Math.random()-0.5)*50, Math.random() * 360));
+            }
+
+            // Seed initial food
+            for(let i=0; i<50; i++) {
+                simState.foods.push(new Food());
+            }
+
+            updateUI();
+
+            // Force first stat update
+            statPop.textContent = simState.organisms.length;
+            statYear.textContent = 0;
+        }
+
+        function getDifference(hue1, hue2) {
+            let diff = Math.abs(hue1 - hue2);
+            return Math.min(diff, 360 - diff); // Shortest distance on color wheel
+        }
+
+        function updateSimulation() {
+            if (!simState.running) return;
+            simState.time++;
+
+            // 1. Spawning Food (Competition for limited resources)
+            if (simState.time % (21 - simState.params.foodRate) === 0) {
+                simState.foods.push(new Food());
+            }
+            // Limit total food to prevent lag
+            if (simState.foods.length > 200) simState.foods.shift();
+
+            // 2. Predator (Differential Survival)
+            // Every 100 ticks, predator eats the single most visible organism (highest color diff from env)
+            if (simState.time % 100 === 0 && simState.organisms.length > 5) {
+                let maxDiff = -1;
+                let targetIdx = -1;
+
+                for(let i=0; i<simState.organisms.length; i++) {
+                    let diff = getDifference(simState.organisms[i].hue, simState.params.envColor);
+                    if (diff > maxDiff) {
+                        maxDiff = diff;
+                        targetIdx = i;
+                    }
+                }
+
+                if (targetIdx !== -1) {
+                    simState.organisms.splice(targetIdx, 1); // Eaten
+                }
+            }
+
+            // 3. Update Organisms
+            for(let i = simState.organisms.length - 1; i >= 0; i--) {
+                let org = simState.organisms[i];
+                org.update();
+
+                // Death by starvation
+                if (org.energy <= 0 || org.age > 1500) {
+                    simState.organisms.splice(i, 1);
+                    continue;
+                }
+
+                // Eating Food
+                for(let j = simState.foods.length - 1; j >= 0; j--) {
+                    let food = simState.foods[j];
+                    let dx = org.x - food.x;
+                    let dy = org.y - food.y;
+                    if (dx*dx + dy*dy < org.radius*org.radius + 10) {
+                        org.energy = Math.min(org.maxEnergy, org.energy + 20);
+                        simState.foods.splice(j, 1);
+                        break; // Eat one at a time
+                    }
+                }
+
+                // 4. Reproduction (Potential to increase & Genetic Variation)
+                if (simState.params.reproductionEnabled && org.energy > 80 && simState.organisms.length < 150) {
+                    org.energy -= 40; // Cost of reproduction
+
+                    let newHue = org.hue;
+                    if (simState.params.mutationEnabled) {
+                        // Mutate hue slightly based on mutation rate slider
+                        let shift = (Math.random() - 0.5) * simState.params.mutationRate;
+                        newHue = (newHue + shift + 360) % 360;
+                    }
+
+                    simState.organisms.push(new Organism(org.x + (Math.random()-0.5)*10, org.y + (Math.random()-0.5)*10, newHue));
+                }
+            }
+
+            // Draw Background (Environment Color)
+            ctx.fillStyle = `hsl(${simState.params.envColor}, 40%, 80%)`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Foods
+            for(let food of simState.foods) {
+                food.draw(ctx);
+            }
+
+            // Draw Organisms
+            for(let org of simState.organisms) {
+                org.draw(ctx);
+            }
+
+            // Update UI periodically
+            if (simState.time % 10 === 0) {
+                statPop.textContent = simState.organisms.length;
+                statYear.textContent = Math.floor(simState.time / 100);
+            }
+
+            // Global expose for testing
+            window.simState = simState;
+            window.updateSimulation = updateSimulation;
+            window.updateChartData = updateChartData;
+        }
+
+        // Controls Logic
+        function updateUI() {
+            simState.params.reproductionEnabled = chkReproduction.checked;
+            simState.params.mutationEnabled = chkMutation.checked;
+            simState.params.mutationRate = parseInt(rngMutation.value);
+            simState.params.foodRate = parseInt(rngFood.value);
+            simState.params.envColor = parseInt(rngEnv.value);
+
+            lblFood.textContent = simState.params.foodRate < 6 ? "Low" : (simState.params.foodRate > 15 ? "High" : "Medium");
+        }
+
+        chkReproduction.addEventListener('change', updateUI);
+        chkMutation.addEventListener('change', updateUI);
+        rngMutation.addEventListener('input', updateUI);
+        rngFood.addEventListener('input', updateUI);
+        rngEnv.addEventListener('input', () => {
+            updateUI();
+            if(!simState.running) { // redraw background if paused
+                ctx.fillStyle = `hsl(${simState.params.envColor}, 40%, 80%)`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                for(let food of simState.foods) food.draw(ctx);
+                for(let org of simState.organisms) org.draw(ctx);
+            }
+        });
+
+        btnStart.addEventListener('click', () => {
+            simState.running = true;
+            btnStart.classList.add('hidden');
+            btnPause.classList.remove('hidden');
+            btnPause.classList.remove('hidden'); // Fix styling overlap
+            btnPause.style.display = 'inline-block';
+            btnStart.style.display = 'none';
+        });
+
+        btnPause.addEventListener('click', () => {
+            simState.running = false;
+            btnPause.style.display = 'none';
+            btnStart.style.display = 'inline-block';
+        });
+
+        btnReset.addEventListener('click', () => {
+            simState.running = false;
+            btnPause.style.display = 'none';
+            btnStart.style.display = 'inline-block';
+            initSimulation();
+            // Clear canvas to white initially
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0,0, canvas.width, canvas.height);
+        });
+
+        // Chart Logic
+        let chart;
+        const MAX_HISTORY = 100;
+
+        function initChart() {
+            const ctxChart = document.getElementById('traitChart').getContext('2d');
+
+            if(chart) chart.destroy();
+
+            chart = new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Average Population Color (Hue)',
+                        data: [],
+                        borderColor: '#6366f1', // indigo-500
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            min: 0,
+                            max: 360,
+                            title: { display: true, text: 'Color Hue (0-360)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+
+        function updateChartData() {
+            if (!simState.running || simState.time % 20 !== 0) return;
+
+            if (simState.organisms.length === 0) return;
+
+            // Calculate average hue
+            // Note: circular mean is tricky, but for this simplified sim we'll use a basic average
+            // since we just want to show general drift toward the environment color.
+            let sumHue = 0;
+            for(let org of simState.organisms) sumHue += org.hue;
+            let avgHue = sumHue / simState.organisms.length;
+
+            chart.data.labels.push(simState.time);
+            chart.data.datasets[0].data.push(avgHue);
+
+            if (chart.data.labels.length > MAX_HISTORY) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+
+            // Dynamically change line color to match average hue
+            chart.data.datasets[0].borderColor = `hsl(${avgHue}, 80%, 50%)`;
+
+            chart.update();
+        }
+
+        // Main Animation Loop
+        function loop() {
+            updateSimulation();
+            updateChartData();
+            requestAnimationFrame(loop);
+        }
+
+        // Override Init to include chart
+        const baseInit = initSimulation;
+        initSimulation = function() {
+            baseInit();
+            initChart();
+        };
+
+        // Initialize empty state
+        initSimulation();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
