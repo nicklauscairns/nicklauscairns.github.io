@@ -1,56 +1,30 @@
-import asyncio
-from playwright.async_api import async_playwright
+from playwright.sync_api import sync_playwright
 import os
 
-async def main():
-    async with async_playwright() as p:
-        browser = await p.chromium.launch()
-        page = await browser.new_page()
+def test_ev_sim():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
 
-        file_path = os.path.abspath('Simulations/EngineeringTechnologyScience/ElectricVehicleSimulation.html')
+        file_path = "file://" + os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Simulations', 'EngineeringTechnologyScience', 'ElectricVehicleSimulation.html'))
+        page.goto(file_path)
+        page.wait_for_timeout(1000)
 
-        # Read the HTML content
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
+        # 1. Update inputs
+        page.evaluate("document.getElementById('battery-capacity').value = '100'; document.getElementById('battery-capacity').dispatchEvent(new Event('input'))")
+        page.wait_for_timeout(500)
 
-        # Strip out CDNs (Tailwind and Chart.js) to avoid timeout in sandbox
-        content = content.replace('<script src="https://cdn.tailwindcss.com"></script>', '')
-        content = content.replace('<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>', '')
+        # 2. Record trial
+        page.evaluate("document.getElementById('btn-record').click()")
+        page.wait_for_timeout(500)
 
-        # Replace chart.js usage to not throw error since script is removed
-        content = content.replace("const powerChart = new Chart", "const powerChart = { data: { datasets: [{ data: [] }] }, update: function() {} }; // new Chart")
+        # Verify
+        range_val = page.locator('#out-range').inner_text()
+        print(f"New Range with 100kWh: {range_val} km")
+        assert range_val is not None and range_val != "0", "Range should be calculated and present."
 
-        # We need to completely stub Chart since it's referenced directly
-        content = content.replace("const ctx = document.getElementById('powerChart').getContext('2d');", "const ctx = {}; window.Chart = function() { return powerChart; };")
-
-        # Load content into page
-        await page.set_content(content, wait_until='load')
-
-        # Verify initial state
-        range_val = await page.locator('#out-range').text_content()
-        print(f"Initial Range: {range_val} km")
-
-        # Record a trial
-        await page.locator('#btn-record').click()
-
-        # Change slider
-        await page.evaluate("const el = document.getElementById('battery-capacity'); el.value = 100; el.dispatchEvent(new Event('input', {bubbles: true}));")
-
-        range_val_new = await page.locator('#out-range').text_content()
-        print(f"New Range with 100kWh: {range_val_new} km")
-
-        # Record another trial
-        await page.locator('#btn-record').click()
-
-        # Wait a moment
-        await page.wait_for_timeout(1000)
-
-        # Take screenshot
-        screenshot_path = 'ev_sim_screenshot.png'
-        await page.screenshot(path=screenshot_path, full_page=True)
-        print(f"Saved screenshot to {screenshot_path}")
-
-        await browser.close()
+        print(f"Test complete.")
+        browser.close()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    test_ev_sim()

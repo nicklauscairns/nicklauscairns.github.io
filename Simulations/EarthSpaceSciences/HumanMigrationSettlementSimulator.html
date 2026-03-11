@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Settlement & Migration Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f1f5f9; }
+        #mapCanvas {
+            background-color: #e2e8f0;
+            border-radius: 8px;
+            box-shadow: inset 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            cursor: crosshair;
+        }
+        .action-btn {
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-amber-500 mb-2">Human Settlement & Migration Simulator</h1>
+            <p class="text-slate-300 max-w-3xl mx-auto text-sm md:text-base">
+                Observe how the availability of natural resources drives human settlement, and how natural hazards and climate change force migration (HS-ESS3-1).
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+
+            <!-- Controls -->
+            <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-xl flex flex-col gap-4">
+
+                <div>
+                    <h2 class="text-lg font-bold text-amber-400 mb-2 border-b border-slate-600 pb-1">Simulation State</h2>
+                    <div class="flex justify-between items-center mb-1 text-sm">
+                        <span class="text-slate-300">Total Population:</span>
+                        <span id="popDisplay" class="font-bold text-white">0</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-3 text-sm">
+                        <span class="text-slate-300">Simulation Year:</span>
+                        <span id="yearDisplay" class="font-bold text-white font-mono">0</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="toggleBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded font-bold text-sm transition-colors">Start Sim</button>
+                        <button id="resetBtn" class="flex-1 bg-slate-600 hover:bg-slate-500 py-1.5 rounded font-bold text-sm transition-colors">Reset</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-lg font-bold text-red-400 mb-2 border-b border-slate-600 pb-1">Geologic Hazards</h2>
+                    <div class="space-y-2">
+                        <button class="action-btn w-full bg-slate-700 hover:bg-red-900/50 border border-slate-600 py-2 rounded text-sm text-left px-3 flex justify-between items-center" onclick="triggerHazard('volcano')">
+                            <span>🌋 Volcanic Eruption</span>
+                            <span class="text-xs text-slate-400">Mountains</span>
+                        </button>
+                        <button class="action-btn w-full bg-slate-700 hover:bg-amber-900/50 border border-slate-600 py-2 rounded text-sm text-left px-3 flex justify-between items-center" onclick="triggerHazard('drought')">
+                            <span>☀️ Severe Drought</span>
+                            <span class="text-xs text-slate-400">Global</span>
+                        </button>
+                        <button class="action-btn w-full bg-slate-700 hover:bg-blue-900/50 border border-slate-600 py-2 rounded text-sm text-left px-3 flex justify-between items-center" onclick="triggerHazard('flood')">
+                            <span>🌊 River Flood</span>
+                            <span class="text-xs text-slate-400">Rivers</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-lg font-bold text-blue-300 mb-2 border-b border-slate-600 pb-1">Climate Change</h2>
+                    <div class="space-y-2">
+                        <button class="action-btn w-full bg-cyan-900 hover:bg-cyan-800 border border-cyan-700 py-2 rounded text-sm text-left px-3" onclick="triggerHazard('sealevel')">
+                            📈 Sea Level Rise (+1m)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-auto bg-slate-900 p-3 rounded text-xs text-slate-400 font-mono h-32 overflow-y-auto" id="logPanel">
+                    > Map initialized.<br>
+                    > Awaiting human settlement...<br>
+                </div>
+            </div>
+
+            <!-- Simulation View -->
+            <div class="lg:col-span-3 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl relative">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-bold text-slate-200">Regional Map</h2>
+                    <div class="flex gap-4 text-xs font-bold text-slate-400">
+                        <span class="flex items-center gap-1"><div class="w-3 h-3 bg-blue-400 rounded-sm"></div> Water</span>
+                        <span class="flex items-center gap-1"><div class="w-3 h-3 bg-green-500 rounded-sm"></div> Fertile</span>
+                        <span class="flex items-center gap-1"><div class="w-3 h-3 bg-slate-500 rounded-sm"></div> Mountains/Mines</span>
+                        <span class="flex items-center gap-1"><div class="w-2 h-2 bg-black rounded-full"></div> Humans</span>
+                    </div>
+                </div>
+
+                <div class="relative w-full aspect-[16/9]">
+                    <canvas id="mapCanvas" width="800" height="450" class="w-full h-full"></canvas>
+
+                    <!-- Overlay alerts -->
+                    <div id="alertOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500">
+                        <div id="alertText" class="bg-red-600/90 text-white px-8 py-4 rounded-xl font-bold text-2xl tracking-widest shadow-2xl transform scale-90 transition-transform duration-500">
+                            HAZARD WARNING
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Context -->
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-xl">
+            <h2 class="text-xl font-bold text-emerald-300 mb-3">Understanding the Mechanics (HS-ESS3-1)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-300">
+                <div>
+                    <h3 class="font-bold text-white mb-1">1. Natural Resources</h3>
+                    <p>Humans fundamentally settle where resources are abundant. In the simulation, agents seek out <strong>fresh water</strong> (rivers), <strong>fertile soil</strong> for agriculture (green plains), and <strong>mineral deposits</strong> (mountains). High resource density increases carrying capacity.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white mb-1">2. Natural Hazards</h3>
+                    <p>Geologic and weather events shape history. A <strong>volcanic eruption</strong> or severe <strong>flood</strong> acts as a "push factor", immediately destroying local resources and forcing the surviving population to migrate to safer areas.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white mb-1">3. Climate Change</h3>
+                    <p>Long-term climatic shifts, like <strong>sea level rise</strong>, permanently alter the geography. As coastal land is submerged, coastal settlements are displaced inland, increasing competition for resources in the interior.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Setup Canvas and Constants ---
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const popDisplay = document.getElementById('popDisplay');
+        const yearDisplay = document.getElementById('yearDisplay');
+        const logPanel = document.getElementById('logPanel');
+        const alertOverlay = document.getElementById('alertOverlay');
+        const alertText = document.getElementById('alertText');
+
+        // Map dimensions (Grid based for resource calculation)
+        const cols = 80;
+        const rows = 45;
+        const cellW = canvas.width / cols;
+        const cellH = canvas.height / rows;
+
+        // Resource Grid (0 to 1 scale for attractiveness)
+        let resourceMap = [];
+        let elevationMap = [];
+        let baseElevationMap = []; // to remember original terrain before sea level rise
+
+        let agents = [];
+
+        let state = {
+            isRunning: false,
+            year: 0,
+            seaLevelOffset: 0, // increases with climate change
+            activeHazard: null,
+            hazardTimer: 0
+        };
+
+        // Expose to window for testing
+        window.simState = state;
+        window.getAgentCount = () => agents.length;
+
+        function logMsg(msg, isAlert = false) {
+            const el = document.createElement('div');
+            el.innerHTML = `> <span class="text-slate-500">[Yr ${Math.floor(state.year)}]</span> <span class="${isAlert ? 'text-red-400 font-bold' : ''}">${msg}</span>`;
+            logPanel.appendChild(el);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        function showAlert(text, colorClass) {
+            alertText.textContent = text;
+            alertText.className = `text-white px-8 py-4 rounded-xl font-bold text-2xl tracking-widest shadow-2xl transform scale-100 transition-transform duration-500 ${colorClass}`;
+            alertOverlay.style.opacity = '1';
+
+            setTimeout(() => {
+                alertOverlay.style.opacity = '0';
+                alertText.classList.replace('scale-100', 'scale-90');
+            }, 2000);
+        }
+
+        // --- Map Generation ---
+        function generateMap() {
+            resourceMap = new Array(cols * rows).fill(0);
+            elevationMap = new Array(cols * rows).fill(0);
+            baseElevationMap = new Array(cols * rows).fill(0);
+
+            // Simple procedual generation
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const idx = y * cols + x;
+
+                    // 1. Coastline on the right (x > 60) -> elevation drops
+                    let elev = 50; // base land
+                    if (x > 65) elev = 0; // ocean
+                    else if (x > 60) elev = (65 - x) * 10; // beach
+
+                    // 2. Mountains on the left (x < 20, varying y)
+                    let distToPeak = Math.sqrt(Math.pow(x - 10, 2) + Math.pow(y - 22, 2));
+                    if (distToPeak < 15) {
+                        elev += (15 - distToPeak) * 5;
+                    }
+
+                    // 3. River winding from mountains to ocean
+                    // Roughly y = 22 + sin(x/5)*5
+                    let riverY = 22 + Math.sin(x/5) * 5;
+                    let distToRiver = Math.abs(y - riverY);
+
+                    baseElevationMap[idx] = elev;
+                    elevationMap[idx] = elev;
+
+                    // Calculate Base Resources
+                    calculateResourcesForCell(x, y, elev, distToRiver);
+                }
+            }
+        }
+
+        function calculateResourcesForCell(x, y, elev, distToRiver) {
+            const idx = y * cols + x;
+            let res = 0.1; // Base subsistence
+
+            // If underwater, 0 resources for humans
+            if (elev <= state.seaLevelOffset) {
+                resourceMap[idx] = 0;
+                return;
+            }
+
+            // Fresh water & fertile soil near river
+            if (distToRiver < 2) res += 0.8; // The river itself
+            else if (distToRiver < 6) res += 0.5; // Floodplain
+
+            // Minerals in mountains
+            if (elev > 80) res += 0.4;
+
+            // Coastal fishing
+            if (elev > state.seaLevelOffset && elev <= state.seaLevelOffset + 10) res += 0.3;
+
+            resourceMap[idx] = Math.min(1.0, res);
+        }
+
+        function recomputeAllResources() {
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const idx = y * cols + x;
+                    let riverY = 22 + Math.sin(x/5) * 5;
+                    let distToRiver = Math.abs(y - riverY);
+
+                    // Adjust elevation based on sea level
+                    elevationMap[idx] = baseElevationMap[idx] - state.seaLevelOffset;
+
+                    calculateResourcesForCell(x, y, elevationMap[idx], distToRiver);
+                }
+            }
+        }
+
+        // --- Agent Logic ---
+        function spawnInitialPopulation() {
+            agents = [];
+            // Spawn 50 agents randomly, they will migrate to resources
+            for (let i = 0; i < 50; i++) {
+                agents.push({
+                    x: Math.random() * cols,
+                    y: Math.random() * rows,
+                    vx: 0, vy: 0,
+                    health: 100
+                });
+            }
+            popDisplay.textContent = agents.length;
+        }
+
+        function updateAgents(dt) {
+            // Find local gradient of resources to migrate towards
+
+            for (let i = agents.length - 1; i >= 0; i--) {
+                let a = agents[i];
+
+                let gridX = Math.floor(a.x);
+                let gridY = Math.floor(a.y);
+
+                // Keep in bounds
+                if (gridX < 0) gridX = 0; if (gridX >= cols) gridX = cols - 1;
+                if (gridY < 0) gridY = 0; if (gridY >= rows) gridY = rows - 1;
+
+                const idx = gridY * cols + gridX;
+                const currentRes = resourceMap[idx];
+
+                // If in ocean or hazard zone, health drops rapidly.
+                if (elevationMap[idx] <= 0) {
+                    a.health -= 20 * dt; // Drowning
+                } else if (state.activeHazard) {
+                    // Hazard logic
+                    if (state.activeHazard === 'volcano' && baseElevationMap[idx] > 80) {
+                        a.health -= 50 * dt; // Lava/Ash
+                    }
+                    if (state.activeHazard === 'flood' && currentRes > 0.5) { // proxy for river proximity
+                        a.health -= 30 * dt; // Drowning in flood
+                    }
+                    if (state.activeHazard === 'drought') {
+                        a.health -= 5 * dt; // Slow starvation everywhere
+                    }
+                } else {
+                    // Normal state: heal if resources are good, starve if 0
+                    if (currentRes < 0.1) a.health -= 5 * dt;
+                    else if (currentRes > 0.4 && a.health < 100) a.health += 10 * dt;
+                }
+
+                // Die
+                if (a.health <= 0) {
+                    agents.splice(i, 1);
+                    continue;
+                }
+
+                // Migration Vector (seek higher resources)
+                // Look around 1 cell radius
+                let bestX = gridX;
+                let bestY = gridY;
+                let maxRes = currentRes;
+
+                // Add a bit of random wandering
+                if (Math.random() < 0.1) {
+                    a.vx += (Math.random() - 0.5);
+                    a.vy += (Math.random() - 0.5);
+                }
+
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        let nx = gridX + dx;
+                        let ny = gridY + dy;
+                        if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+                            let nIdx = ny * cols + nx;
+
+                            // If hazard is active, heavily penalize hazardous areas in decision making
+                            let perceivedRes = resourceMap[nIdx];
+                            if (state.activeHazard === 'volcano' && baseElevationMap[nIdx] > 80) perceivedRes = -1;
+                            if (state.activeHazard === 'flood' && perceivedRes > 0.5) perceivedRes = -1;
+                            if (elevationMap[nIdx] <= 0) perceivedRes = -1; // Water
+
+                            if (perceivedRes > maxRes) {
+                                maxRes = perceivedRes;
+                                bestX = nx;
+                                bestY = ny;
+                            }
+                        }
+                    }
+                }
+
+                // Steer towards best
+                let targetVx = (bestX - a.x);
+                let targetVy = (bestY - a.y);
+
+                // Normalize target vector
+                let len = Math.sqrt(targetVx*targetVx + targetVy*targetVy);
+                if (len > 0) {
+                    targetVx = (targetVx / len) * 2; // speed
+                    targetVy = (targetVy / len) * 2;
+                }
+
+                // Apply force
+                a.vx += (targetVx - a.vx) * 0.1;
+                a.vy += (targetVy - a.vy) * 0.1;
+
+                a.x += a.vx * dt * 5;
+                a.y += a.vy * dt * 5;
+
+                // Hard bounds
+                if (a.x < 0) a.x = 0; if (a.x >= cols) a.x = cols - 0.1;
+                if (a.y < 0) a.y = 0; if (a.y >= rows) a.y = rows - 0.1;
+            }
+
+            // Reproduction (if resources are high and population is low)
+            if (!state.activeHazard && agents.length > 0 && agents.length < 200) {
+                if (Math.random() < 0.05 * dt) {
+                    // Pick random healthy agent to duplicate
+                    let parent = agents[Math.floor(Math.random() * agents.length)];
+                    if (parent.health > 80) {
+                        agents.push({
+                            x: parent.x + (Math.random()-0.5),
+                            y: parent.y + (Math.random()-0.5),
+                            vx: 0, vy: 0,
+                            health: 100
+                        });
+                    }
+                }
+            }
+
+            popDisplay.textContent = agents.length;
+        }
+
+        // --- Interaction ---
+        window.triggerHazard = function(type) {
+            if (type === 'sealevel') {
+                state.seaLevelOffset += 10; // increase water level by 10 units
+                recomputeAllResources();
+                logMsg(`Sea level rose due to climate change. Coastal lands submerged.`, true);
+                showAlert("SEA LEVEL RISE", "bg-cyan-600/90");
+                return;
+            }
+
+            state.activeHazard = type;
+            state.hazardTimer = 3.0; // active for 3 simulation years
+
+            if (type === 'volcano') {
+                logMsg(`Volcanic eruption! Mountain settlements destroyed.`, true);
+                showAlert("VOLCANIC ERUPTION", "bg-red-600/90");
+            } else if (type === 'drought') {
+                logMsg(`Severe global drought. Water resources depleted.`, true);
+                showAlert("SEVERE DROUGHT", "bg-amber-600/90");
+                // Temporarily reduce all resources
+                for(let i=0; i<resourceMap.length; i++) {
+                    if (elevationMap[i] > 0) resourceMap[i] *= 0.2;
+                }
+            } else if (type === 'flood') {
+                logMsg(`Massive river flooding! Floodplain settlements destroyed.`, true);
+                showAlert("RIVER FLOOD", "bg-blue-600/90");
+            }
+        };
+
+        toggleBtn.addEventListener('click', () => {
+            state.isRunning = !state.isRunning;
+            if (state.isRunning) {
+                toggleBtn.textContent = 'Pause Sim';
+                toggleBtn.className = 'flex-1 bg-amber-600 hover:bg-amber-500 py-1.5 rounded font-bold text-sm transition-colors';
+            } else {
+                toggleBtn.textContent = 'Resume Sim';
+                toggleBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded font-bold text-sm transition-colors';
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            state.isRunning = false;
+            state.year = 0;
+            state.seaLevelOffset = 0;
+            state.activeHazard = null;
+            state.hazardTimer = 0;
+
+            toggleBtn.textContent = 'Start Sim';
+            toggleBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded font-bold text-sm transition-colors';
+
+            generateMap();
+            spawnInitialPopulation();
+            logPanel.innerHTML = '> Map initialized.<br>> Awaiting human settlement...<br>';
+            draw();
+        });
+
+        // --- Render ---
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Base Map
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const idx = y * cols + x;
+                    const elev = elevationMap[idx];
+                    const res = resourceMap[idx];
+
+                    let color = '#e2e8f0';
+
+                    if (elev <= 0) {
+                        color = '#3b82f6'; // Ocean water
+                    } else {
+                        // Land colors based on resources and elevation
+                        if (elev > 80) {
+                            color = '#64748b'; // Mountain slate
+                            if (state.activeHazard === 'volcano') color = '#b91c1c'; // Red lava
+                        } else if (res > 0.6) {
+                            color = '#3b82f6'; // River water
+                            if (state.activeHazard === 'flood') color = '#1d4ed8'; // deep flood
+                        } else if (res > 0.3) {
+                            color = '#22c55e'; // Green plains
+                            if (state.activeHazard === 'drought') color = '#ca8a04'; // yellow dried
+                        } else {
+                            color = '#fef08a'; // Sandy/arid
+                        }
+                    }
+
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x * cellW, y * cellH, cellW + 0.5, cellH + 0.5); // +0.5 fixes grid gaps
+                }
+            }
+
+            // Draw Agents
+            ctx.fillStyle = '#0f172a';
+            agents.forEach(a => {
+                ctx.beginPath();
+                ctx.arc(a.x * cellW, a.y * cellH, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw health bar if hurt
+                if (a.health < 90) {
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(a.x * cellW - 3, a.y * cellH - 6, 6 * (a.health/100), 2);
+                    ctx.fillStyle = '#0f172a'; // reset
+                }
+            });
+        }
+
+        let lastTimestamp = 0;
+        function loop(timestamp) {
+            if (state.isRunning) {
+                const dt = (timestamp - lastTimestamp) / 1000 || 0;
+                if (dt < 0.1) {
+                    state.year += dt;
+                    yearDisplay.textContent = Math.floor(state.year);
+
+                    // Handle hazard timers
+                    if (state.activeHazard) {
+                        state.hazardTimer -= dt;
+                        if (state.hazardTimer <= 0) {
+                            logMsg(`${state.activeHazard.charAt(0).toUpperCase() + state.activeHazard.slice(1)} hazard subsided. Environment recovering.`);
+                            state.activeHazard = null;
+                            recomputeAllResources(); // restores from drought
+                        }
+                    }
+
+                    updateAgents(dt);
+                }
+            }
+            draw();
+            lastTimestamp = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        // Boot
+        generateMap();
+        spawnInitialPopulation();
+        draw();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

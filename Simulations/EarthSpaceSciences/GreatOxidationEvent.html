@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great Oxidation Event</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .sim-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #b45309 0%, #d97706 40%, #0c4a6e 40%, #082f49 100%); /* Orange anoxic sky initially */
+            transition: background 2s ease;
+        }
+
+        .sim-container.oxic-sky {
+            background: linear-gradient(180deg, #38bdf8 0%, #bae6fd 40%, #0ea5e9 40%, #0369a1 100%);
+        }
+
+        .ozone-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 30px;
+            background: rgba(255, 255, 255, 0);
+            transition: background 2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        .ozone-layer.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px dashed rgba(255,255,255,0.4);
+        }
+
+        .bif-layer {
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 0px;
+            background: repeating-linear-gradient(
+                0deg,
+                #7f1d1d,
+                #7f1d1d 10px,
+                #1c1917 10px,
+                #1c1917 20px
+            );
+            transition: height 0.5s linear;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            overflow: hidden;
+        }
+
+        .bacteria {
+            position: absolute;
+            width: 12px; height: 12px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #4ade80;
+            animation: pulse 2s infinite alternate;
+        }
+
+        .eukaryote {
+            position: absolute;
+            width: 24px; height: 24px;
+            background-color: #a855f7;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            box-shadow: 0 0 10px #c084fc;
+            animation: float 4s infinite ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .eukaryote::after {
+            content: '';
+            width: 6px; height: 6px;
+            background: #1e1b4b;
+            border-radius: 50%;
+        }
+
+        .bubble {
+            position: absolute;
+            width: 6px; height: 6px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(10deg); } 100% { transform: translateY(0) rotate(0deg); } }
+
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #22c55e;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Coevolution of Earth & Life</h1>
+            <p class="text-slate-300 max-w-4xl mx-auto text-sm md:text-base">
+                Simulate the Great Oxidation Event (HS-ESS2-7). Observe how the emergence of photosynthetic life fundamentally altered Earth's atmosphere, geology, and paved the way for complex aerobic life.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
+            <!-- Controls & Timeline -->
+            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-xl flex flex-col gap-6">
+                <div>
+                    <h2 class="text-xl font-bold text-emerald-300 mb-2 border-b border-slate-600 pb-2">Simulation Controls</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold mb-1 flex justify-between">
+                            <span>Cyanobacteria Population:</span>
+                            <span id="popVal" class="text-green-400">0</span>
+                        </label>
+                        <input type="range" id="popSlider" min="0" max="50" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
+                        <p class="text-xs text-slate-400 mt-1">Add early photosynthetic life to the anoxic ocean.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-4 rounded border border-slate-700 flex-grow flex flex-col">
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mb-2 font-bold">Geochemical State</div>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-300">Ocean Dissolved Iron (Fe²⁺)</span>
+                            <span id="ironVal" class="text-amber-500 font-mono">100%</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded overflow-hidden">
+                            <div id="ironBar" class="bg-amber-600 h-full w-full transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-300">Atmospheric Oxygen (O₂)</span>
+                            <span id="o2Val" class="text-blue-300 font-mono">0.0%</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded overflow-hidden">
+                            <div id="o2Bar" class="bg-blue-400 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-slate-700">
+                        <button id="toggleBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold transition-colors">Start Time</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation View -->
+            <div class="lg:col-span-2 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl relative">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-bold text-slate-200">Archaean Eon Environment</h2>
+                    <div class="text-sm font-mono text-amber-300">
+                        Time: <span id="timeDisplay" class="font-bold text-white">2.50</span> Billion Yrs Ago
+                    </div>
+                </div>
+
+                <div class="sim-container" id="simView">
+                    <!-- Sky and Ocean background via CSS -->
+                    <div class="ozone-layer" id="ozoneLayer">Ozone (O₃) Shield Active</div>
+
+                    <!-- Dynamic Elements -->
+                    <div id="biologyContainer" class="absolute inset-0 top-[40%]"></div>
+
+                    <div class="bif-layer" id="bifLayer">
+                        Banded Iron Formations
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graph -->
+        <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl">
+            <div class="h-64 w-full">
+                <canvas id="historyChart"></canvas>
+            </div>
+        </div>
+
+        <div class="mt-6 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+            <h2 class="text-lg font-bold text-emerald-300 mb-2">Scientific Argument (HS-ESS2-7)</h2>
+            <div class="text-sm text-slate-300 space-y-2">
+                <p><strong>Claim:</strong> Life and Earth's physical systems coevolved, with biological processes driving major geological and atmospheric changes.</p>
+                <p><strong>Evidence 1 (The Sink):</strong> Early oceans were full of dissolved iron (Fe²⁺). When cyanobacteria evolved photosynthesis, they released O₂ as a byproduct. Initially, this O₂ did not build up in the atmosphere; instead, it reacted with dissolved iron to form insoluble iron oxides (rust), which precipitated to the ocean floor creating <em>Banded Iron Formations (BIFs)</em>.</p>
+                <p><strong>Evidence 2 (The Outgassing):</strong> Once the ocean's iron sink was exhausted, free O₂ began outgassing into the atmosphere. This changed the sky from a methane/CO₂ haze to a clear blue, and allowed the formation of the stratospheric Ozone (O₃) layer, shielding Earth from UV radiation.</p>
+                <p><strong>Evidence 3 (New Life):</strong> The oxygen-rich environment was toxic to many early microbes, but it allowed for the evolution of new, energy-efficient aerobic metabolisms and eventually complex eukaryotic life.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        const INITIAL_TIME = 2.50; // Billion years ago
+
+        // Expose to window for tests
+        window.simState = {
+            isRunning: false,
+            time: INITIAL_TIME,
+            population: 0,
+            dissolvedIron: 100.0, // %
+            atmosphericO2: 0.0, // % (Current Earth is ~21%)
+            bifHeight: 0, // px
+            aerobicLifeEvolved: false
+        };
+
+        // DOM
+        const toggleBtn = document.getElementById('toggleBtn');
+        const popSlider = document.getElementById('popSlider');
+        const simView = document.getElementById('simView');
+        const bioContainer = document.getElementById('biologyContainer');
+        const bifLayer = document.getElementById('bifLayer');
+        const ozoneLayer = document.getElementById('ozoneLayer');
+
+        let bacteriaElements = [];
+        let eukaryoteElements = [];
+        let bubbles = [];
+
+        // Chart Setup
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [INITIAL_TIME.toFixed(2)],
+                datasets: [
+                    { label: 'Atmospheric O₂ (%)', data: [0], borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.1)', fill: true, tension: 0.4, yAxisID: 'y' },
+                    { label: 'Ocean Dissolved Iron (%)', data: [100], borderColor: '#fbbf24', borderDash: [5,5], tension: 0.4, yAxisID: 'y1' }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                scales: {
+                    x: { reverse: true, title: { display: true, text: 'Time (Billion Years Ago)', color: '#94a3b8' }, ticks: { color: '#94a3b8' } },
+                    y: { type: 'linear', position: 'left', max: 25, title: { display: true, text: 'O₂ (%)', color: '#38bdf8' }, ticks: { color: '#38bdf8' } },
+                    y1: { type: 'linear', position: 'right', max: 100, title: { display: true, text: 'Iron (%)', color: '#fbbf24' }, ticks: { color: '#fbbf24' }, grid: { drawOnChartArea: false } }
+                }
+            }
+        });
+
+        // UI Listeners
+        popSlider.addEventListener('input', (e) => {
+            const targetPop = parseInt(e.target.value);
+            document.getElementById('popVal').textContent = targetPop;
+            window.simState.population = targetPop;
+            updateBiologyDOM();
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            window.simState.isRunning = !window.simState.isRunning;
+            if(window.simState.isRunning) {
+                toggleBtn.textContent = 'Pause Time';
+                toggleBtn.className = 'w-full bg-amber-600 hover:bg-amber-500 py-2 rounded font-bold transition-colors';
+            } else {
+                toggleBtn.textContent = 'Resume Time';
+                toggleBtn.className = 'w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold transition-colors';
+            }
+        });
+
+        function updateBiologyDOM() {
+            // Reconcile bacteria DOM elements with state population
+            while (bacteriaElements.length < window.simState.population) {
+                const el = document.createElement('div');
+                el.className = 'bacteria';
+                el.style.left = `${10 + Math.random() * 80}%`;
+                el.style.top = `${10 + Math.random() * 80}%`;
+                el.style.animationDelay = `${Math.random() * 2}s`;
+                bioContainer.appendChild(el);
+                bacteriaElements.push(el);
+            }
+            while (bacteriaElements.length > window.simState.population) {
+                const el = bacteriaElements.pop();
+                el.remove();
+            }
+
+            // Spawn Eukaryotes if conditions met
+            if (window.simState.aerobicLifeEvolved && eukaryoteElements.length < 5) {
+                const el = document.createElement('div');
+                el.className = 'eukaryote';
+                el.style.left = `${20 + Math.random() * 60}%`;
+                el.style.top = `${20 + Math.random() * 50}%`;
+                el.style.animationDelay = `${Math.random() * 4}s`;
+                bioContainer.appendChild(el);
+                eukaryoteElements.push(el);
+            }
+        }
+
+        function createBubble() {
+            if(bacteriaElements.length === 0) return;
+            const source = bacteriaElements[Math.floor(Math.random() * bacteriaElements.length)];
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.style.left = source.style.left;
+            bubble.style.top = source.style.top;
+
+            // Random horizontal drift
+            bubble.dataset.x = parseFloat(source.style.left);
+            bubble.dataset.y = parseFloat(source.style.top);
+
+            bioContainer.appendChild(bubble);
+            bubbles.push(bubble);
+        }
+
+        let lastTimestamp = 0;
+        let chartUpdateTimer = 0;
+
+        function loop(timestamp) {
+            if (window.simState.isRunning) {
+                const dt = (timestamp - lastTimestamp) / 1000 || 0;
+                if (dt < 0.1) {
+
+                    // Advance Time
+                    window.simState.time -= dt * 0.05; // 1 second real time = 50 million years
+                    if (window.simState.time < 0) window.simState.time = 0;
+                    document.getElementById('timeDisplay').textContent = window.simState.time.toFixed(2);
+
+                    // Physics / Chemistry Logic
+                    const o2ProductionRate = window.simState.population * 0.5 * dt;
+
+                    if (window.simState.population > 0) {
+                        // O2 reacts with Iron first (Sink)
+                        if (window.simState.dissolvedIron > 0) {
+                            window.simState.dissolvedIron -= o2ProductionRate * 2.0;
+                            if (window.simState.dissolvedIron < 0) window.simState.dissolvedIron = 0;
+
+                            // Build Banded Iron Formations
+                            window.simState.bifHeight = (100 - window.simState.dissolvedIron) * 0.4; // up to 40px
+                        }
+                        // Once Iron sink is exhausted, O2 builds up in atmosphere
+                        else {
+                            window.simState.atmosphericO2 += o2ProductionRate * 0.2;
+                            if (window.simState.atmosphericO2 > 21.0) window.simState.atmosphericO2 = 21.0;
+                        }
+
+                        // Visual Bubble generation
+                        if (Math.random() < window.simState.population * 0.05) createBubble();
+                    }
+
+                    // Update UI Bars
+                    document.getElementById('ironVal').textContent = window.simState.dissolvedIron.toFixed(1) + '%';
+                    document.getElementById('ironBar').style.width = window.simState.dissolvedIron + '%';
+
+                    document.getElementById('o2Val').textContent = window.simState.atmosphericO2.toFixed(1) + '%';
+                    document.getElementById('o2Bar').style.width = (window.simState.atmosphericO2 / 21.0 * 100) + '%';
+
+                    // Update Scene View
+                    bifLayer.style.height = window.simState.bifHeight + 'px';
+
+                    // Atmosphere changes color
+                    if (window.simState.atmosphericO2 > 2.0) {
+                        simView.classList.add('oxic-sky');
+                    } else {
+                        simView.classList.remove('oxic-sky');
+                    }
+
+                    // Ozone formation
+                    if (window.simState.atmosphericO2 > 5.0) {
+                        ozoneLayer.classList.add('active');
+                    }
+
+                    // Evolution Trigger
+                    if (window.simState.atmosphericO2 > 10.0 && !window.simState.aerobicLifeEvolved) {
+                        window.simState.aerobicLifeEvolved = true;
+                        updateBiologyDOM();
+                    }
+
+                    // Chart Update (throttle to save performance)
+                    chartUpdateTimer += dt;
+                    if (chartUpdateTimer > 0.5) {
+                        chart.data.labels.push(window.simState.time.toFixed(2));
+                        chart.data.datasets[0].data.push(window.simState.atmosphericO2);
+                        chart.data.datasets[1].data.push(window.simState.dissolvedIron);
+
+                        if (chart.data.labels.length > 100) {
+                            chart.data.labels.shift();
+                            chart.data.datasets[0].data.shift();
+                            chart.data.datasets[1].data.shift();
+                        }
+                        chart.update();
+                        chartUpdateTimer = 0;
+                    }
+                }
+            }
+
+            // Animate Bubbles (even if paused, so they finish moving)
+            const dt = (timestamp - lastTimestamp) / 1000 || 0;
+            if (dt < 0.1) {
+                for (let i = bubbles.length - 1; i >= 0; i--) {
+                    const b = bubbles[i];
+                    let y = parseFloat(b.dataset.y);
+                    y -= 20 * dt; // move up
+                    b.dataset.y = y;
+                    b.style.top = `${y}%`;
+
+                    // Remove if reaches surface
+                    if (y < -10) {
+                        b.remove();
+                        bubbles.splice(i, 1);
+                    }
+                }
+            }
+
+            lastTimestamp = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        // Init
+        updateBiologyDOM();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

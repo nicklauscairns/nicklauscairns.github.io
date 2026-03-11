@@ -16,6 +16,7 @@
     <header class="bg-blue-900 p-4 shadow-lg flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold text-white">From Sparks to Waves</h1>
+        <p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS4-1</p>
             <p class="text-blue-200 text-sm">Interactive Lightning & Wave Oscilloscope</p>
         </div>
         <div class="flex space-x-4">
@@ -26,7 +27,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 relative">
-        
+
         <!-- View 1: Propagation -->
         <div id="view-propagation" class="absolute inset-0 flex flex-col p-6 bg-gray-800">
             <div class="mb-4 flex justify-between items-end">
@@ -59,11 +60,11 @@
                 <h2 class="text-xl font-semibold text-blue-300">Part 2: The Anatomy of a Wave</h2>
                 <p class="text-sm text-gray-400">Compare a transverse light wave with a longitudinal sound wave by adjusting their frequencies.</p>
             </div>
-            
+
             <div class="flex flex-1 gap-6">
                 <!-- Controls -->
                 <div class="w-1/3 flex flex-col space-y-4">
-                    
+
                     <!-- Light Controls -->
                     <div class="bg-gray-900 rounded-xl border border-gray-700 p-5 flex flex-col shadow-lg">
                         <h3 class="text-yellow-400 font-bold mb-4 border-b border-gray-700 pb-2">Light (Transverse Wave)</h3>
@@ -77,7 +78,7 @@
                                 <span class="text-sm text-gray-500"><span id="light-freq-hz-val">5.00 &times; 10<sup>14</sup></span> Hz</span>
                             </div>
                         </div>
-                        
+
                         <div class="flex gap-4 mt-4">
                             <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
                                 <div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
@@ -99,7 +100,7 @@
                             <h3 class="text-blue-400 font-bold">Sound (Longitudinal Wave)</h3>
                             <button id="btn-sound-toggle" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1 rounded transition border border-gray-600 shadow-sm">🔈 Tone: OFF</button>
                         </div>
-                        
+
                         <!-- Frequency Range Selector -->
                         <div class="mb-3">
                             <div class="flex gap-2">
@@ -116,7 +117,7 @@
                             <input type="range" id="freq-slider" min="20" max="200" value="85" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                             <div class="text-right text-blue-400 font-mono mt-2 text-lg"><span id="freq-val">85</span> Hz</div>
                         </div>
-                        
+
                         <div class="flex gap-4 mt-4">
                             <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
                                 <div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
@@ -181,16 +182,16 @@
             const btnStrike = document.getElementById('btn-strike');
             const timeDisplay = document.getElementById('prop-time');
             const checkSlowMo = document.getElementById('check-slowmo');
-            
+
             let propWidth, propHeight;
             let strikeActive = false;
             let simTime = 0; // Simulation time in seconds
             let lastTimestamp = 0;
             let lightRadius = 0;
             let soundRadius = 0;
-            
+
             // Simulation scale: 1 pixel = X meters. Let's make 1715m (Station D) fit well.
-            let metersPerPixel = 5; 
+            let metersPerPixel = 5;
             const speedOfSound = 343; // m/s
             const speedOfLight = 300000000; // m/s (using standard approx for visual dramatic effect)
 
@@ -222,7 +223,7 @@
 
             function drawPropEnvironment() {
                 ctxProp.clearRect(0, 0, propWidth, propHeight);
-                
+
                 const centerX = 50; // Strike on the left side
                 const centerY = propHeight / 2;
 
@@ -233,11 +234,11 @@
                 // Draw Stations
                 stations.forEach(station => {
                     const x = centerX + (station.distance / metersPerPixel);
-                    
+
                     // Station marker
                     ctxProp.fillStyle = station.color;
                     ctxProp.fillRect(x - 5, centerY - 20, 10, 20);
-                    
+
                     // Station Label
                     ctxProp.fillStyle = '#fff';
                     ctxProp.font = '12px monospace';
@@ -257,13 +258,13 @@
 
                 const deltaTime = (timestamp - lastTimestamp) / 1000; // Convert to seconds
                 lastTimestamp = timestamp;
-                
+
                 const isSlowMo = checkSlowMo.checked;
                 // In slow-mo, time passes 1,000,000 times slower
                 const timeScale = isSlowMo ? 0.000001 : 1;
-                
-                simTime += deltaTime * timeScale; 
-                
+
+                simTime += deltaTime * timeScale;
+
                 // Update time display dynamically based on mode
                 if (isSlowMo) {
                     timeDisplay.innerText = simTime.toFixed(6); // Show microseconds
@@ -300,9 +301,9 @@
                 if (lightRadius < propWidth * 5) {
                     ctxProp.beginPath();
                     ctxProp.arc(centerX, centerY, lightRadius, 0, Math.PI * 2);
-                    ctxProp.fillStyle = 'rgba(253, 224, 71, 0.15)'; 
+                    ctxProp.fillStyle = 'rgba(253, 224, 71, 0.15)';
                     ctxProp.fill();
-                    ctxProp.strokeStyle = 'rgba(253, 224, 71, 0.9)'; 
+                    ctxProp.strokeStyle = 'rgba(253, 224, 71, 0.9)';
                     ctxProp.lineWidth = 4;
                     ctxProp.stroke();
                 }
@@ -316,7 +317,7 @@
                 ctxProp.stroke();
 
                 // Stop condition (shorter max time if in slow mo to prevent infinite looping)
-                const maxSimTime = isSlowMo ? 0.000015 : 6; 
+                const maxSimTime = isSlowMo ? 0.000015 : 6;
                 if (simTime < maxSimTime) {
                     requestAnimationFrame(animateProp);
                 } else {
@@ -332,11 +333,11 @@
             const freqVal = document.getElementById('freq-val');
             const waveVal = document.getElementById('wave-val');
             const btnSoundToggle = document.getElementById('btn-sound-toggle');
-            
+
             const btnRangeLow = document.getElementById('btn-range-low');
             const btnRangeMid = document.getElementById('btn-range-mid');
             const btnRangeHigh = document.getElementById('btn-range-high');
-            
+
             let currentSoundRange = 'low';
 
             const lightFreqSlider = document.getElementById('light-freq-slider');
@@ -385,10 +386,10 @@
             // Setup Range Toggles
             function setSoundRange(range) {
                 currentSoundRange = range;
-                
+
                 const activeClasses = 'flex-1 bg-blue-600 text-white text-xs py-1.5 rounded border border-blue-500 transition';
                 const inactiveClasses = 'flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition';
-                
+
                 btnRangeLow.className = range === 'low' ? activeClasses : inactiveClasses;
                 btnRangeMid.className = range === 'mid' ? activeClasses : inactiveClasses;
                 btnRangeHigh.className = range === 'high' ? activeClasses : inactiveClasses;
@@ -420,10 +421,10 @@
                 // Sound
                 const fSound = parseFloat(freqSlider.value);
                 const vSound = 343; // Speed of sound
-                const lambdaSound = vSound / fSound; 
-                
+                const lambdaSound = vSound / fSound;
+
                 freqVal.innerText = fSound.toLocaleString();
-                
+
                 if (currentSoundRange === 'high') {
                     waveVal.innerText = lambdaSound.toFixed(4);
                 } else if (currentSoundRange === 'mid') {
@@ -439,10 +440,10 @@
                 // Light
                 const fLightTHz = parseFloat(lightFreqSlider.value); // in THz
                 const lambdaLightNm = 300000 / fLightTHz; // in nm
-                
+
                 const fLightHz = fLightTHz * 1e12; // convert THz to Hz
                 const lambdaLightM = lambdaLightNm * 1e-9; // convert nm to m
-                
+
                 lightFreqVal.innerText = fLightTHz.toFixed(0);
                 lightWaveVal.innerText = lambdaLightNm.toFixed(0);
 
@@ -493,13 +494,13 @@
                 }
 
                 oscTime += 0.02; // Speed of wave sliding animation
-                
+
                 ctxOsc.clearRect(0, 0, oscWidth, oscHeight);
-                
-                const centerY_Light = oscHeight * 0.25; 
-                const centerY_Sound = oscHeight * 0.75;  
-                const amplitude_Light = oscHeight * 0.15; 
-                
+
+                const centerY_Light = oscHeight * 0.25;
+                const centerY_Sound = oscHeight * 0.75;
+                const amplitude_Light = oscHeight * 0.15;
+
                 // Draw Divider
                 ctxOsc.strokeStyle = '#374151';
                 ctxOsc.lineWidth = 2;
@@ -507,28 +508,28 @@
 
                 // Calculate Sound Parameters
                 const fSound = parseFloat(freqSlider.value);
-                const lambdaSound = 343 / fSound; 
-                
+                const lambdaSound = 343 / fSound;
+
                 // Dynamically scale the visual representation so high frequencies don't turn into invisible static
                 let pixelsPerMeterSound = 50;
                 if (currentSoundRange === 'mid') pixelsPerMeterSound = 500;
                 else if (currentSoundRange === 'high') pixelsPerMeterSound = 5000;
-                
+
                 const pixelWavelengthSound = lambdaSound * pixelsPerMeterSound;
 
                 // Calculate Light Parameters
                 const fLight = parseFloat(lightFreqSlider.value);
-                const lambdaLightNm = 300000 / fLight; 
-                const pixelWavelengthLight = lambdaLightNm * 0.15; 
+                const lambdaLightNm = 300000 / fLight;
+                const pixelWavelengthLight = lambdaLightNm * 0.15;
                 const lightColor = wavelengthToColor(lambdaLightNm);
 
                 // --- 1. Draw Transverse Light Wave ---
                 ctxOsc.beginPath();
-                ctxOsc.strokeStyle = lightColor; 
+                ctxOsc.strokeStyle = lightColor;
                 ctxOsc.lineWidth = 4;
                 ctxOsc.shadowBlur = 15;
                 ctxOsc.shadowColor = lightColor;
-                
+
                 for (let x = 0; x < oscWidth; x++) {
                     const normalizedX = x / pixelWavelengthLight;
                     const y = centerY_Light + amplitude_Light * Math.sin((normalizedX - oscTime*2) * Math.PI * 2);
@@ -540,7 +541,7 @@
 
                 // --- 2. Draw Longitudinal Sound Wave (Particles) ---
                 ctxOsc.fillStyle = '#60a5fa'; // Light blue
-                const amplitude_Sound = pixelWavelengthSound * 0.12; 
+                const amplitude_Sound = pixelWavelengthSound * 0.12;
                 const numRows = 9;
                 const spacingX = 12;
                 const spacingY = 12;
@@ -568,7 +569,7 @@
                 if (pixelWavelengthSound < oscWidth) {
                     const startX = (oscTime % 1) * pixelWavelengthSound;
                     const endX = startX + pixelWavelengthSound;
-                    const markerY = oscHeight - 30; 
+                    const markerY = oscHeight - 30;
 
                     ctxOsc.strokeStyle = '#60a5fa';
                     ctxOsc.lineWidth = 2;
@@ -578,14 +579,14 @@
                     ctxOsc.lineTo(endX, markerY);
                     ctxOsc.lineTo(endX, markerY - 10);
                     ctxOsc.stroke();
-                    
+
                     const labelPrecision = currentSoundRange === 'high' ? 4 : (currentSoundRange === 'mid' ? 3 : 2);
                     ctxOsc.fillStyle = '#60a5fa';
                     ctxOsc.font = '14px monospace';
                     ctxOsc.textAlign = 'center';
                     ctxOsc.fillText(`λ = ${lambdaSound.toFixed(labelPrecision)} m`, startX + (pixelWavelengthSound/2), markerY + 15);
                 }
-                
+
                 // Light Marker
                 if (pixelWavelengthLight < oscWidth) {
                     const startX = ((oscTime*2) % 1) * pixelWavelengthLight;
@@ -600,7 +601,7 @@
                     ctxOsc.lineTo(endX, markerY);
                     ctxOsc.lineTo(endX, markerY + 10);
                     ctxOsc.stroke();
-                    
+
                     ctxOsc.fillStyle = lightColor;
                     ctxOsc.font = '14px monospace';
                     ctxOsc.textAlign = 'center';
@@ -630,7 +631,7 @@
             }
 
             window.addEventListener('resize', resizeCanvas);
-            
+
             // Initialization
             resizeCanvas();
             updateOscillator();

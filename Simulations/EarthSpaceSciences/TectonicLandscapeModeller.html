@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tectonic Landscape Modeler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f1f5f9; }
+        canvas {
+            display: block;
+            background: linear-gradient(180deg, #38bdf8 0%, #bae6fd 40%, #0369a1 40%, #1e3a8a 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            cursor: crosshair;
+        }
+
+        .tool-btn {
+            transition: all 0.2s;
+        }
+        .tool-btn.active {
+            ring: 2px;
+            ring-color: #38bdf8;
+            background-color: #334155;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Tectonic Landscape Modeler</h1>
+            <p class="text-slate-300 max-w-3xl mx-auto">
+                Model how constructive forces (uplift, volcanism) and destructive forces (weathering, erosion) operate at different spatial and temporal scales to form Earth's continental and ocean-floor features.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Left Panel: Tools -->
+            <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-lg flex flex-col gap-4">
+                <h2 class="text-xl font-bold text-emerald-300 border-b border-slate-600 pb-2">Geologic Forces</h2>
+
+                <div class="space-y-3">
+                    <h3 class="font-bold text-sm text-amber-400 uppercase tracking-wider">Constructive (Internal)</h3>
+                    <button id="toolUplift" class="tool-btn active w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('uplift')">
+                        <span>Tectonic Uplift <br><span class="text-xs text-slate-400 font-normal">Slow mountain building</span></span>
+                        <span class="text-xl">⛰️</span>
+                    </button>
+                    <button id="toolVolcano" class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('volcano')">
+                        <span>Volcanism <br><span class="text-xs text-slate-400 font-normal">Rapid cone building</span></span>
+                        <span class="text-xl">🌋</span>
+                    </button>
+                </div>
+
+                <div class="space-y-3 mt-2">
+                    <h3 class="font-bold text-sm text-red-400 uppercase tracking-wider">Destructive (Surface)</h3>
+                    <button id="toolWeathering" class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('weathering')">
+                        <span>Weathering & Erosion <br><span class="text-xs text-slate-400 font-normal">Slow valley carving</span></span>
+                        <span class="text-xl">🌧️</span>
+                    </button>
+                    <button id="toolMassWasting" class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('masswasting')">
+                        <span>Mass Wasting <br><span class="text-xs text-slate-400 font-normal">Sudden slope failure</span></span>
+                        <span class="text-xl">🪨</span>
+                    </button>
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-slate-600">
+                    <label class="block text-sm font-medium mb-1">Tool Intensity/Scale:</label>
+                    <input type="range" id="toolIntensity" min="1" max="10" value="5" class="w-full">
+                </div>
+            </div>
+
+            <!-- Center Panel: Simulation -->
+            <div class="lg:col-span-3 bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-lg">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-3">
+                    <div class="text-sm font-mono text-blue-300">
+                        Geologic Time: <span id="timeDisplay" class="text-xl font-bold text-white">0</span> Million Years
+                    </div>
+                    <div class="space-x-2 mt-2 md:mt-0">
+                        <button id="playBtn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-1.5 rounded font-bold transition-colors">Play Time</button>
+                        <button id="resetBtn" class="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded font-bold transition-colors">Reset World</button>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <!-- Instruction Overlay -->
+                    <div id="instructionOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 transition-opacity duration-500">
+                        <div class="bg-slate-900/80 px-6 py-3 rounded-full text-white font-bold backdrop-blur-sm border border-slate-700">
+                            Click and drag on the landscape below to apply forces.
+                        </div>
+                    </div>
+                    <canvas id="landscapeCanvas" width="800" height="400" class="w-full h-auto"></canvas>
+                </div>
+
+                <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-slate-400 font-bold">
+                    <div>Ocean Floor (Trenches / Seamounts)</div>
+                    <div>Coastal Zone / Sea Level</div>
+                    <div>Continental Crust (Mountains / Valleys)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
+            <h2 class="text-xl font-bold text-emerald-300 mb-3">Scientific Principles (HS-ESS2-1)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
+                <div>
+                    <h3 class="font-bold text-white mb-1">Constructive vs. Destructive Forces</h3>
+                    <p class="mb-2">Earth's surface is a constant battleground. <strong>Constructive mechanisms</strong> like tectonic uplift (orogeny) and volcanism build landmasses up, driven by internal heat. <strong>Destructive mechanisms</strong> like weathering, river erosion, and mass wasting tear landmasses down, driven by gravity and the water cycle.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white mb-1">Spatial and Temporal Scales</h3>
+                    <p>These processes operate at vastly different scales. Tectonic uplift might raise a mountain range by a few millimeters a year over millions of years (long temporal scale). A landslide (mass wasting) can alter a mountainside in seconds (short temporal scale). Both shape the final landscape.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('landscapeCanvas');
+        const ctx = canvas.getContext('2d');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const instructionOverlay = document.getElementById('instructionOverlay');
+        const intensitySlider = document.getElementById('toolIntensity');
+
+        let isPlaying = false;
+        let time = 0;
+        let activeTool = 'uplift';
+        let isMouseDown = false;
+        let mouseX = 0;
+
+        // Expose for playwright tests
+        window.simulationState = {
+            heightMap: [],
+            time: 0
+        };
+
+        const NUM_POINTS = 200; // Resolution of the height map
+        const SEA_LEVEL = 160; // Y-coordinate for sea level (0 is top, 400 is bottom)
+        const BASE_Y = 350; // Starting baseline
+
+        // Height map array (y coordinates relative to top of canvas)
+        // Lower value = higher elevation
+        let heightMap = new Array(NUM_POINTS).fill(BASE_Y);
+
+        function initLandscape(seed = null) {
+            heightMap = new Array(NUM_POINTS).fill(BASE_Y);
+
+            // For testing, allow deterministic seed replacement
+            let rand = () => Math.random();
+            if (seed !== null) {
+                let currentSeed = seed;
+                rand = () => {
+                    let x = Math.sin(currentSeed++) * 10000;
+                    return x - Math.floor(x);
+                }
+            }
+
+            // Create a basic continental shelf slope
+            for (let i = 0; i < NUM_POINTS; i++) {
+                // Let's make left side ocean (-y), right side land (+y)
+                let pct = i / NUM_POINTS;
+
+                if (pct < 0.4) {
+                    // Deep ocean floor
+                    heightMap[i] = BASE_Y;
+                } else if (pct < 0.6) {
+                    // Continental slope up to coast
+                    let t = (pct - 0.4) / 0.2; // 0 to 1
+                    // Smooth hermite interpolation
+                    let smooth_t = t * t * (3 - 2 * t);
+                    heightMap[i] = BASE_Y - smooth_t * (BASE_Y - (SEA_LEVEL - 20));
+                } else {
+                    // Landmass slightly above sea level
+                    heightMap[i] = SEA_LEVEL - 20 - (pct - 0.6) * 50;
+                }
+
+                // Add some natural noise
+                heightMap[i] += (rand() - 0.5) * 5;
+            }
+
+            time = 0;
+            window.simulationState.time = 0;
+            window.simulationState.heightMap = [...heightMap];
+            updateDisplay();
+            draw();
+        }
+
+        function updateDisplay() {
+            timeDisplay.textContent = time.toFixed(1);
+        }
+
+        // --- Core Simulation Logic ---
+
+        // Apply Global Natural Weathering over time
+        function applyGlobalWeathering(dt) {
+            // Erosion smooths sharp peaks and fills valleys
+            const newMap = [...heightMap];
+            const erosionRate = 0.5 * dt; // Rate of degradation per million years
+
+            for (let i = 1; i < NUM_POINTS - 1; i++) {
+                // Simple diffusion simulation for erosion (high points move down, low points fill up)
+                const left = heightMap[i-1];
+                const right = heightMap[i+1];
+                const current = heightMap[i];
+
+                // Average neighbors
+                const avg = (left + right) / 2;
+
+                // If peak (lower Y), erode down (increase Y). If valley, fill up.
+                // Move towards average
+                newMap[i] += (avg - current) * erosionRate;
+
+                // Extra erosion for very steep slopes (gravity)
+                const slope = Math.abs(left - right);
+                if (slope > 20) {
+                    // High slopes collapse (mass wasting over time)
+                    newMap[i] += (Math.random() * 2) * dt;
+                }
+
+                // Keep within bounds
+                if (newMap[i] > 390) newMap[i] = 390; // Bottom limit
+            }
+
+            heightMap = newMap;
+            window.simulationState.heightMap = [...heightMap];
+        }
+
+        // User Tools
+        function applyTool(x, intensityFactor) {
+            // Map canvas X to array index
+            const index = Math.floor((x / canvas.clientWidth) * NUM_POINTS);
+            if (index < 0 || index >= NUM_POINTS) return;
+
+            const baseIntensity = parseFloat(intensitySlider.value);
+            // Time multiplier depends if we are paused or playing. If dragging while paused, apply small constant rate.
+            // If dragging while playing, apply scale factor.
+            const rate = intensityFactor * baseIntensity;
+
+            // Gaussian radius based on tool
+            let radius = 0;
+
+            // Allow tests to override via window, otherwise use local
+            let currentTool = window.activeTool || activeTool;
+
+            switch(currentTool) {
+                case 'uplift':
+                    // Broad, slow tectonic push upwards
+                    radius = Math.max(5, Math.floor(baseIntensity * 1.5));
+                    applyGaussianForce(index, radius, -rate * 1.5); // Negative Y is up
+                    break;
+                case 'volcano':
+                    // Narrow, rapid conical build up
+                    radius = Math.max(2, Math.floor(baseIntensity * 0.5));
+                    applyConicalForce(index, radius, -rate * 4.0);
+                    break;
+                case 'weathering':
+                    // Broad smoothing and lowering
+                    radius = Math.max(4, Math.floor(baseIntensity));
+                    applySmoothing(index, radius, rate * 2.0);
+                    break;
+                case 'masswasting':
+                    // Sudden collapse of a slope
+                    radius = Math.max(2, Math.floor(baseIntensity));
+                    applyCollapse(index, radius, rate * 5.0);
+                    break;
+            }
+
+            // Sync state for playwright tests
+            window.simulationState.heightMap = [...heightMap];
+        }
+
+        function applyGaussianForce(centerIdx, radius, amount) {
+            for (let i = -radius * 2; i <= radius * 2; i++) {
+                const idx = centerIdx + i;
+                if (idx >= 0 && idx < NUM_POINTS) {
+                    // Bell curve
+                    const weight = Math.exp(-(i*i) / (2 * radius * radius));
+                    heightMap[idx] += amount * weight;
+                }
+            }
+        }
+
+        function applyConicalForce(centerIdx, radius, amount) {
+            for (let i = -radius; i <= radius; i++) {
+                const idx = centerIdx + i;
+                if (idx >= 0 && idx < NUM_POINTS) {
+                    // Linear dropoff for cone shape
+                    const weight = 1 - (Math.abs(i) / (radius+1));
+                    heightMap[idx] += amount * weight;
+                    // Add slight random texture for volcano
+                    heightMap[idx] += (Math.random() - 0.5) * Math.abs(amount) * 0.2;
+                }
+            }
+        }
+
+        function applySmoothing(centerIdx, radius, strength) {
+            const newMap = [...heightMap];
+            for (let i = -radius; i <= radius; i++) {
+                const idx = centerIdx + i;
+                if (idx > 0 && idx < NUM_POINTS - 1) {
+                    const avg = (heightMap[idx-1] + heightMap[idx+1] + heightMap[idx]) / 3;
+                    // Move current point towards local average
+                    newMap[idx] += (avg - heightMap[idx]) * (strength * 0.1);
+                    // Overall lower the terrain (erosion removes material)
+                    newMap[idx] += strength * 0.05;
+                }
+            }
+            heightMap = newMap;
+        }
+
+        function applyCollapse(centerIdx, radius, amount) {
+            // Amount passed from applyTool might be negative or positive depending on other functions.
+            // In applyTool, rate is positive, amount here is rate * 5.0, so it's positive.
+            let collapseAmount = Math.abs(amount);
+
+            // Find highest point in radius and collapse it down, filling adjacent low points
+            let maxPeakIdx = centerIdx;
+            let minValY = 999; // Highest point (lowest Y)
+
+            for (let i = -radius; i <= radius; i++) {
+                const idx = centerIdx + i;
+                if (idx >= 0 && idx < NUM_POINTS) {
+                    if (heightMap[idx] < minValY) {
+                        minValY = heightMap[idx];
+                        maxPeakIdx = idx;
+                    }
+                }
+            }
+
+            // For mass wasting, let's aggressively bring the whole area down
+            // Bring the peak down violently (increase Y)
+            heightMap[maxPeakIdx] += collapseAmount * 5.0;
+
+            // Also explicitly impact the center and nearby
+            heightMap[centerIdx] += collapseAmount * 2.0;
+            if (centerIdx > 0) heightMap[centerIdx-1] += collapseAmount;
+            if (centerIdx < NUM_POINTS-1) heightMap[centerIdx+1] += collapseAmount;
+
+            // Scatter some debris down the sides of the peak
+            if (maxPeakIdx > 0) heightMap[maxPeakIdx-1] -= collapseAmount * 0.5; // Fill valley (move Y up)
+            if (maxPeakIdx < NUM_POINTS-1) heightMap[maxPeakIdx+1] -= collapseAmount * 0.5;
+        }
+
+        // --- Drawing Logic ---
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const dx = canvas.width / (NUM_POINTS - 1);
+
+            // 1. Draw Landmass Base
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+
+            // Determine colors dynamically based on elevation to show rock/snow/dirt
+            for (let i = 0; i < NUM_POINTS; i++) {
+                ctx.lineTo(i * dx, heightMap[i]);
+            }
+
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.closePath();
+
+            // Create gradient for land
+            const landGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            landGrad.addColorStop(0.0, '#f8fafc'); // Snow tops
+            landGrad.addColorStop(0.2, '#94a3b8'); // Gray rock
+            landGrad.addColorStop(0.5, '#78350f'); // Brown soil
+            landGrad.addColorStop(1.0, '#451a03'); // Dark crust
+
+            ctx.fillStyle = landGrad;
+            ctx.fill();
+
+            // Stroke top edge
+            ctx.beginPath();
+            for (let i = 0; i < NUM_POINTS; i++) {
+                if (i === 0) ctx.moveTo(i * dx, heightMap[i]);
+                else ctx.lineTo(i * dx, heightMap[i]);
+            }
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 2. Draw Ocean overlay (semi transparent)
+            ctx.beginPath();
+            ctx.moveTo(0, SEA_LEVEL);
+            ctx.lineTo(canvas.width, SEA_LEVEL);
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.closePath();
+
+            ctx.fillStyle = 'rgba(2, 132, 199, 0.4)'; // Blue transparent water
+            ctx.fill();
+
+            // Sea level surface line
+            ctx.beginPath();
+            ctx.moveTo(0, SEA_LEVEL);
+            ctx.lineTo(canvas.width, SEA_LEVEL);
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Tool preview cursor if dragging
+            if (isMouseDown) {
+                ctx.beginPath();
+                ctx.arc(mouseX, heightMap[Math.floor((mouseX/canvas.clientWidth)*NUM_POINTS)],
+                        parseFloat(intensitySlider.value)*2, 0, Math.PI*2);
+
+                if (activeTool === 'uplift' || activeTool === 'volcano') ctx.strokeStyle = 'rgba(34, 197, 94, 0.8)'; // Green for construct
+                else ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)'; // Red for destruct
+
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        // --- Event Listeners ---
+        // Expose to window for test scripts
+        window.activeTool = 'uplift';
+
+        window.selectTool = function(toolId) {
+            activeTool = toolId;
+            window.activeTool = toolId;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+
+            let btnId = 'toolUplift';
+            if (toolId === 'volcano') btnId = 'toolVolcano';
+            if (toolId === 'weathering') btnId = 'toolWeathering';
+            if (toolId === 'masswasting') btnId = 'toolMassWasting';
+
+            document.getElementById(btnId).classList.add('active');
+        };
+
+        // Expose apply logic for test bypassing event problems
+        window.forceApplyTool = function(x, intensity, toolOverride) {
+            if (toolOverride) {
+                activeTool = toolOverride;
+                window.activeTool = toolOverride;
+            }
+            // By passing 400 for x in test, x is 400. applyTool uses (x / canvas.clientWidth) * NUM_POINTS.
+            // 400 / 800 = 0.5. 0.5 * 200 = 100. So index is 100.
+
+            applyTool(x, intensity);
+            window.simulationState.heightMap = [...heightMap];
+            if (!isPlaying) draw();
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            instructionOverlay.style.opacity = '0'; // Hide instructions once user interacts
+
+            const rect = canvas.getBoundingClientRect();
+            mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+
+            // Apply immediately on click
+            applyTool(mouseX, 1.0);
+            if (!isPlaying) draw();
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isMouseDown) return;
+
+            const rect = canvas.getBoundingClientRect();
+            mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+
+            // Apply continuous tool effect while dragging
+            applyTool(mouseX, 0.5); // Lighter application on drag
+            if (!isPlaying) draw();
+        });
+
+        canvas.addEventListener('mouseup', () => { isMouseDown = false; });
+        canvas.addEventListener('mouseleave', () => { isMouseDown = false; });
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isMouseDown = true;
+            instructionOverlay.style.opacity = '0';
+            const rect = canvas.getBoundingClientRect();
+            mouseX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+            applyTool(mouseX, 1.0);
+            if (!isPlaying) draw();
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isMouseDown) return;
+            const rect = canvas.getBoundingClientRect();
+            mouseX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+            applyTool(mouseX, 0.5);
+            if (!isPlaying) draw();
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', () => { isMouseDown = false; });
+
+        document.getElementById('playBtn').addEventListener('click', (e) => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                e.target.textContent = 'Pause Time';
+                e.target.classList.replace('bg-emerald-600', 'bg-amber-600');
+                e.target.classList.replace('hover:bg-emerald-500', 'hover:bg-amber-500');
+            } else {
+                e.target.textContent = 'Play Time';
+                e.target.classList.replace('bg-amber-600', 'bg-emerald-600');
+                e.target.classList.replace('hover:bg-amber-500', 'hover:bg-emerald-500');
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            initLandscape(12345); // use fixed seed for resets so tests match exactly
+            isPlaying = false;
+            const pBtn = document.getElementById('playBtn');
+            pBtn.textContent = 'Play Time';
+            pBtn.classList.remove('bg-amber-600', 'hover:bg-amber-500');
+            pBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+            instructionOverlay.style.opacity = '1';
+        });
+
+        // --- Main Loop ---
+        let lastTimestamp = 0;
+        function loop(timestamp) {
+            if (isPlaying) {
+                const dt = (timestamp - lastTimestamp) / 1000; // Seconds
+                if (dt < 0.1) { // cap delta
+                    // Advance geologic time (1 unit = 1 million years)
+                    const timeStep = 0.5; // Base rate
+                    time += timeStep;
+                    window.simulationState.time = time;
+
+                    // Apply global natural forces that happen over time
+                    applyGlobalWeathering(timeStep);
+
+                    updateDisplay();
+                }
+            }
+
+            draw();
+            lastTimestamp = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        // Boot
+        initLandscape();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

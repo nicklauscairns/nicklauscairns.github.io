@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Carbon Cycle Model</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .pool {
+            transition: all 0.3s ease;
+        }
+        .flux-arrow {
+            stroke: #cbd5e1;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        .flux-label {
+            font-size: 12px;
+            fill: #f1f5f9;
+            text-anchor: middle;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flux-label-bg {
+            fill: #334155;
+            rx: 4;
+            ry: 4;
+            cursor: pointer;
+        }
+        .flux-label-bg:hover {
+            fill: #475569;
+        }
+        .flux-value {
+            font-size: 10px;
+            fill: #94a3b8;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        /* Slider styling */
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #10b981;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-emerald-400 mb-2">Global Carbon Cycle Model</h1>
+            <p class="text-slate-300 max-w-4xl mx-auto text-sm">
+                A quantitative model of the biogeochemical cycling of carbon (in Gigatons, GtC) among the atmosphere, biosphere, hydrosphere, and geosphere. Total mass is conserved.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Box Model Diagram -->
+            <div class="lg:col-span-2 bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl relative">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-bold text-slate-200">System Reservoirs & Fluxes</h2>
+                    <div class="text-xs text-slate-400">Values in GtC (Pools) and GtC/yr (Fluxes)</div>
+                </div>
+
+                <div class="w-full aspect-[4/3] bg-slate-900 rounded-lg relative overflow-hidden" id="diagramContainer">
+                    <svg width="100%" height="100%" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" id="svgDiagram">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#cbd5e1" />
+                            </marker>
+
+                            <!-- Pool Gradients -->
+                            <linearGradient id="gradAtmo" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#38bdf8" />
+                                <stop offset="100%" stop-color="#0284c7" />
+                            </linearGradient>
+                            <linearGradient id="gradBio" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#4ade80" />
+                                <stop offset="100%" stop-color="#16a34a" />
+                            </linearGradient>
+                            <linearGradient id="gradHydro" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#60a5fa" />
+                                <stop offset="100%" stop-color="#2563eb" />
+                            </linearGradient>
+                            <linearGradient id="gradGeo" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#94a3b8" />
+                                <stop offset="100%" stop-color="#475569" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Flux Lines will be drawn via JS -->
+                        <g id="fluxLines"></g>
+
+                        <!-- Flux UI Elements will be drawn via JS -->
+                        <g id="fluxUI"></g>
+
+                        <!-- Pools (Static positions, dynamic text) -->
+                        <g class="pool" id="pool-atmosphere" transform="translate(300, 50)">
+                            <rect width="200" height="80" rx="10" fill="url(#gradAtmo)" stroke="#0f172a" stroke-width="3"/>
+                            <text x="100" y="30" fill="white" font-weight="bold" text-anchor="middle">Atmosphere</text>
+                            <text x="100" y="60" fill="white" font-size="24" font-weight="bold" text-anchor="middle" id="val-atmosphere">800</text>
+                        </g>
+
+                        <g class="pool" id="pool-biosphere" transform="translate(50, 250)">
+                            <rect width="200" height="80" rx="10" fill="url(#gradBio)" stroke="#0f172a" stroke-width="3"/>
+                            <text x="100" y="30" fill="white" font-weight="bold" text-anchor="middle">Terrestrial Biosphere</text>
+                            <text x="100" y="60" fill="white" font-size="24" font-weight="bold" text-anchor="middle" id="val-biosphere">2000</text>
+                        </g>
+
+                        <g class="pool" id="pool-hydrosphere" transform="translate(550, 250)">
+                            <rect width="200" height="80" rx="10" fill="url(#gradHydro)" stroke="#0f172a" stroke-width="3"/>
+                            <text x="100" y="30" fill="white" font-weight="bold" text-anchor="middle">Hydrosphere (Ocean)</text>
+                            <text x="100" y="60" fill="white" font-size="24" font-weight="bold" text-anchor="middle" id="val-hydrosphere">38000</text>
+                        </g>
+
+                        <g class="pool" id="pool-geosphere" transform="translate(300, 450)">
+                            <rect width="200" height="80" rx="10" fill="url(#gradGeo)" stroke="#0f172a" stroke-width="3"/>
+                            <text x="100" y="30" fill="white" font-weight="bold" text-anchor="middle">Geosphere (Fossil/Soil)</text>
+                            <text x="100" y="60" fill="white" font-size="24" font-weight="bold" text-anchor="middle" id="val-geosphere">4000</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Controls & Charts -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+                <div class="mb-4">
+                    <h2 class="text-xl font-bold text-emerald-300 mb-2">Controls</h2>
+                    <p class="text-xs text-slate-400 mb-4">Adjust the rate of human carbon extraction and combustion. Notice the effect on the atmosphere and ocean over time.</p>
+
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 mb-4">
+                        <label class="block text-sm font-bold mb-1 flex justify-between">
+                            <span class="text-red-400">Human Emissions:</span>
+                            <span id="humanFluxVal" class="text-white">9.0 GtC/yr</span>
+                        </label>
+                        <input type="range" id="humanFluxSlider" min="0" max="30" step="0.5" value="9.0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button id="toggleBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold transition-colors">Play Time</button>
+                        <button id="resetBtn" class="flex-1 bg-slate-600 hover:bg-slate-500 py-2 rounded font-bold transition-colors">Reset</button>
+                    </div>
+                </div>
+
+                <div class="flex-grow min-h-[250px] bg-slate-900 p-2 rounded border border-slate-700 relative">
+                    <canvas id="carbonChart"></canvas>
+                </div>
+
+                <div class="mt-4 text-xs font-mono text-slate-400 text-center">
+                    Total System Mass: <span id="totalMass">44800</span> GtC (Conserved)
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl">
+            <h2 class="text-lg font-bold text-emerald-300 mb-2">Scientific Context (HS-ESS2-6)</h2>
+            <p class="text-sm text-slate-300">
+                Carbon cycles continuously between the atmosphere, terrestrial biosphere (plants, soil), hydrosphere (oceans), and geosphere (fossil fuels, rocks).
+                <strong>Photosynthesis</strong> removes CO₂ from the atmosphere, while <strong>respiration</strong> and <strong>decay</strong> return it.
+                The ocean acts as a massive sink, dissolving CO₂ directly from the air.
+                Before human industrialization, these fluxes were largely in equilibrium.
+                The rapid extraction and <strong>combustion of fossil fuels</strong> transfers carbon from the slow-moving geosphere pool directly into the rapid-moving atmosphere pool, overwhelming the natural sinks and driving climate change.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- State Definition ---
+        // Pools (GtC)
+        let state = {
+            atmosphere: 800,
+            biosphere: 2000,
+            hydrosphere: 38000,
+            geosphere: 4000,
+            time: 0,
+            isRunning: false
+        };
+
+        const INITIAL_STATE = { ...state };
+
+        // Expose state for playwright tests
+        window.simState = state;
+
+        // Fluxes (GtC/yr)
+        // Definition: from, to, baseRate
+        const baseFluxes = {
+            photo: { from: 'atmosphere', to: 'biosphere', rate: 120, name: "Photosynthesis", cx: 160, cy: 150 },
+            resp: { from: 'biosphere', to: 'atmosphere', rate: 118, name: "Respiration/Decay", cx: 240, cy: 190 },
+            oceanIn: { from: 'atmosphere', to: 'hydrosphere', rate: 90, name: "Dissolution", cx: 560, cy: 150 },
+            oceanOut: { from: 'hydrosphere', to: 'atmosphere', rate: 88, name: "Outgassing", cx: 640, cy: 190 },
+            human: { from: 'geosphere', to: 'atmosphere', rate: 9.0, name: "Fossil Emissions", cx: 200, cy: 360 }
+        };
+
+        let currentFluxes = JSON.parse(JSON.stringify(baseFluxes));
+
+        // SVG Drawing Logic
+        const svg = document.getElementById('svgDiagram');
+        const linesG = document.getElementById('fluxLines');
+        const uiG = document.getElementById('fluxUI');
+
+        function drawDiagramBase() {
+            // Draw lines connecting pools
+            // Atmo(300,50) Bio(50,250) Hydro(550,250) Geo(300,450)
+            // Center points of rects:
+            // Atmo: (400, 90)
+            // Bio: (150, 290)
+            // Hydro: (650, 290)
+            // Geo: (400, 490)
+
+            const paths = [
+                // Photo (Atmo to Bio)
+                { id: 'photo', d: "M 320 130 C 250 160, 200 200, 180 250" },
+                // Resp (Bio to Atmo)
+                { id: 'resp', d: "M 220 250 C 250 200, 300 160, 360 130" },
+                // Ocean In (Atmo to Hydro)
+                { id: 'oceanIn', d: "M 480 130 C 550 160, 600 200, 620 250" },
+                // Ocean Out (Hydro to Atmo)
+                { id: 'oceanOut', d: "M 580 250 C 550 200, 500 160, 440 130" },
+                // Human (Geo to Atmo)
+                { id: 'human', d: "M 320 450 C 200 400, 100 200, 300 90" }
+            ];
+
+            let linesHtml = '';
+            paths.forEach(p => {
+                linesHtml += `<path d="${p.d}" class="flux-arrow" id="line-${p.id}" />`;
+            });
+            linesG.innerHTML = linesHtml;
+        }
+
+        function updateDiagramUI() {
+            // Draw labels for fluxes
+            let uiHtml = '';
+            for (const [key, flux] of Object.entries(currentFluxes)) {
+                // Background rect for text
+                uiHtml += `<rect x="${flux.cx - 50}" y="${flux.cy - 12}" width="100" height="24" class="flux-label-bg" />`;
+                uiHtml += `<text x="${flux.cx}" y="${flux.cy + 4}" class="flux-label">${flux.name}</text>`;
+                uiHtml += `<text x="${flux.cx}" y="${flux.cy + 22}" class="flux-value">${flux.rate.toFixed(1)} GtC/yr</text>`;
+            }
+            uiG.innerHTML = uiHtml;
+
+            // Update pool values
+            document.getElementById('val-atmosphere').textContent = Math.round(state.atmosphere);
+            document.getElementById('val-biosphere').textContent = Math.round(state.biosphere);
+            document.getElementById('val-hydrosphere').textContent = Math.round(state.hydrosphere);
+            document.getElementById('val-geosphere').textContent = Math.round(state.geosphere);
+
+            // Update total mass assertion
+            const total = state.atmosphere + state.biosphere + state.hydrosphere + state.geosphere;
+            document.getElementById('totalMass').textContent = Math.round(total);
+        }
+
+        // Chart Setup
+        const ctx = document.getElementById('carbonChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'Atmosphere', data: [], borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.1)', fill: true, tension: 0.1, yAxisID: 'y' },
+                    { label: 'Geosphere', data: [], borderColor: '#94a3b8', borderDash: [5,5], tension: 0.1, yAxisID: 'y1' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 0 },
+                plugins: { legend: { labels: { color: '#cbd5e1', boxWidth: 12, font:{size:10} } } },
+                scales: {
+                    x: { ticks: { color: '#64748b' }, grid: { display: false } },
+                    y: {
+                        type: 'linear', position: 'left',
+                        title: { display: true, text: 'Atmo (GtC)', color: '#38bdf8' },
+                        ticks: { color: '#38bdf8' }, grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    y1: {
+                        type: 'linear', position: 'right',
+                        title: { display: true, text: 'Geo (GtC)', color: '#94a3b8' },
+                        ticks: { color: '#94a3b8' }, grid: { drawOnChartArea: false }
+                    }
+                }
+            }
+        });
+
+        // --- Controls ---
+        const slider = document.getElementById('humanFluxSlider');
+        slider.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            document.getElementById('humanFluxVal').textContent = `${val.toFixed(1)} GtC/yr`;
+            currentFluxes.human.rate = val;
+            updateDiagramUI();
+        });
+
+        document.getElementById('toggleBtn').addEventListener('click', (e) => {
+            state.isRunning = !state.isRunning;
+            const btn = e.target;
+            if (state.isRunning) {
+                btn.textContent = 'Pause Time';
+                btn.classList.replace('bg-emerald-600', 'bg-amber-600');
+                btn.classList.replace('hover:bg-emerald-500', 'hover:bg-amber-500');
+            } else {
+                btn.textContent = 'Play Time';
+                btn.classList.replace('bg-amber-600', 'bg-emerald-600');
+                btn.classList.replace('hover:bg-amber-500', 'hover:bg-emerald-500');
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            state = { ...INITIAL_STATE, isRunning: false };
+            window.simState = state;
+            currentFluxes = JSON.parse(JSON.stringify(baseFluxes));
+
+            slider.value = baseFluxes.human.rate;
+            document.getElementById('humanFluxVal').textContent = `${baseFluxes.human.rate.toFixed(1)} GtC/yr`;
+
+            const btn = document.getElementById('toggleBtn');
+            btn.textContent = 'Play Time';
+            btn.classList.remove('bg-amber-600', 'hover:bg-amber-500');
+            btn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+
+            chart.data.labels = [];
+            chart.data.datasets[0].data = [];
+            chart.data.datasets[1].data = [];
+            chart.update();
+
+            updateDiagramUI();
+        });
+
+        // --- Physics Loop ---
+        let lastTimestamp = 0;
+        function updatePhysics(dt) {
+            // 1 time unit = 1 year
+            const timeStep = 1.0;
+            state.time += timeStep;
+
+            // Natural feedback mechanisms (simplified for model stability)
+            // Ocean dissolves more CO2 if Atmo is high
+            currentFluxes.oceanIn.rate = baseFluxes.oceanIn.rate + ((state.atmosphere - 800) * 0.05);
+            // Plants photosynthesize more if Atmo is high (carbon fertilization)
+            currentFluxes.photo.rate = baseFluxes.photo.rate + ((state.atmosphere - 800) * 0.02);
+
+            // Apply all fluxes
+            // Create temporary deltas to apply simultaneously
+            let deltas = { atmosphere: 0, biosphere: 0, hydrosphere: 0, geosphere: 0 };
+
+            for (const key in currentFluxes) {
+                const flux = currentFluxes[key];
+                // Ensure we don't extract more than a pool has
+                const actualRate = Math.min(flux.rate * timeStep, state[flux.from]);
+
+                deltas[flux.from] -= actualRate;
+                deltas[flux.to] += actualRate;
+            }
+
+            // Apply deltas
+            state.atmosphere += deltas.atmosphere;
+            state.biosphere += deltas.biosphere;
+            state.hydrosphere += deltas.hydrosphere;
+            state.geosphere += deltas.geosphere;
+
+            updateDiagramUI();
+
+            // Update Chart
+            if (Math.floor(state.time) % 2 === 0) {
+                chart.data.labels.push(Math.floor(state.time));
+                chart.data.datasets[0].data.push(state.atmosphere);
+                chart.data.datasets[1].data.push(state.geosphere);
+                if (chart.data.labels.length > 50) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                    chart.data.datasets[1].data.shift();
+                }
+                chart.update();
+            }
+        }
+
+        function loop(timestamp) {
+            if (state.isRunning) {
+                const dt = (timestamp - lastTimestamp) / 1000 || 0;
+                if (dt < 0.1) {
+                    updatePhysics(dt);
+                }
+            }
+            lastTimestamp = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        // Init
+        drawDiagramBase();
+        updateDiagramUI();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

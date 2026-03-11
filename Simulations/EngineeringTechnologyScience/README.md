@@ -5,6 +5,8 @@
 ### HS-ETS1-1
 Analyze a major global challenge to specify qualitative and quantitative criteria and constraints for solutions that account for societal needs and wants.
 
+- [City Water Infrastructure Simulation](CityWaterInfrastructureSimulation.html) - An interactive simulation challenging students to act as city planners facing a growing population and water crisis. Define constraints (budget, environmental impact) and criteria (target capacity), and then manage infrastructure projects to balance societal needs over time.
+
 ### HS-ETS1-2
 Design a solution to a complex real-world problem by breaking it down into smaller, more manageable problems that can be solved through engineering.
 

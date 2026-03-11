@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Climate Impacts & Mitigation Forecast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #38bdf8;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .solution-btn {
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .solution-btn.active {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-6 border-b border-slate-700 pb-4">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Global Climate Impacts & Mitigation Forecast</h1>
+            <p class="text-slate-300 max-w-4xl mx-auto text-sm">
+                Use a computational model to forecast the impacts of climate change on Earth systems (HS-ESS3-5, HS-ESS3-6) and evaluate technological solutions designed to reduce human impact (HS-ESS3-4).
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+            <!-- Controls Panel -->
+            <div class="lg:col-span-1 flex flex-col gap-4">
+
+                <!-- Baseline Control -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl">
+                    <h2 class="text-lg font-bold text-amber-400 mb-3 border-b border-slate-600 pb-1">Human Activity</h2>
+                    <label class="block text-sm font-bold mb-1">
+                        Global CO₂ Emissions Rate:
+                    </label>
+                    <div class="flex justify-between items-center text-xs mb-2">
+                        <span class="text-slate-400">Decreasing</span>
+                        <span id="emissionVal" class="text-white font-mono font-bold bg-slate-900 px-2 py-1 rounded">40 Gt/yr</span>
+                        <span class="text-slate-400">Increasing</span>
+                    </div>
+                    <input type="range" id="emissionSlider" min="0" max="80" step="1" value="40" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb mb-2">
+                    <p class="text-xs text-slate-400 mt-2">Adjust the baseline trajectory of human emissions before technological mitigation.</p>
+                </div>
+
+                <!-- Technological Solutions -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex-grow">
+                    <h2 class="text-lg font-bold text-emerald-400 mb-3 border-b border-slate-600 pb-1">Technological Solutions</h2>
+                    <p class="text-xs text-slate-300 mb-4">Select solutions to reduce net impacts. Compare your mitigated forecast (solid lines) against the "Business as Usual" baseline (dashed lines).</p>
+
+                    <div class="space-y-3">
+                        <button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="renewable" onclick="toggleSolution('renewable')">
+                            <div class="font-bold text-sm flex justify-between"><span>Rapid Renewable Transition</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
+                            <div class="text-xs text-slate-400 mt-1">Replaces fossil fuels. Reduces gross CO₂ emissions drastically.</div>
+                        </button>
+
+                        <button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="ccs" onclick="toggleSolution('ccs')">
+                            <div class="font-bold text-sm flex justify-between"><span>Carbon Capture (CCS)</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
+                            <div class="text-xs text-slate-400 mt-1">Direct air capture technology. Removes CO₂ already in atmosphere.</div>
+                        </button>
+
+                        <button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="geoeng" onclick="toggleSolution('geoeng')">
+                            <div class="font-bold text-sm flex justify-between"><span>Solar Geoengineering</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
+                            <div class="text-xs text-slate-400 mt-1">Stratospheric aerosols reflect sunlight. Cools temp, but DOES NOT fix ocean acidification.</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Panel -->
+            <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- CO2 Chart -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+                    <h2 class="text-md font-bold text-slate-200 mb-1">Atmospheric CO₂ Concentration</h2>
+                    <p class="text-xs text-slate-400 mb-2">The primary driver of the system. (ppm)</p>
+                    <div class="flex-grow min-h-[220px] relative w-full">
+                        <canvas id="co2Chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Temp Chart -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+                    <h2 class="text-md font-bold text-slate-200 mb-1">Global Temperature Anomaly</h2>
+                    <p class="text-xs text-slate-400 mb-2">Increase relative to pre-industrial levels. (°C)</p>
+                    <div class="flex-grow min-h-[220px] relative w-full">
+                        <canvas id="tempChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Ocean pH Chart -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+                    <h2 class="text-md font-bold text-slate-200 mb-1">Ocean Acidification (Hydrosphere)</h2>
+                    <p class="text-xs text-slate-400 mb-2">Surface ocean pH. Lower is more acidic.</p>
+                    <div class="flex-grow min-h-[220px] relative w-full">
+                        <canvas id="phChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Ice Chart -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+                    <h2 class="text-md font-bold text-slate-200 mb-1">Glacial Ice Volume (Cryosphere)</h2>
+                    <p class="text-xs text-slate-400 mb-2">Percent of current volume remaining.</p>
+                    <div class="flex-grow min-h-[220px] relative w-full">
+                        <canvas id="iceChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State ---
+        let activeSolutions = {
+            renewable: false,
+            ccs: false,
+            geoeng: false
+        };
+
+        const CURRENT_YEAR = 2020;
+        const FORECAST_YEARS = 80; // Forecast out to 2100
+        let baselineEmissions = 40; // Gt/yr
+
+        // Initial Conditions (roughly year 2020)
+        const initCO2 = 415; // ppm
+        const initTemp = 1.2; // C above pre-industrial
+        const initPH = 8.1;
+        const initIce = 100; // %
+
+        // --- Model Calculation ---
+        function runForecast() {
+            // Arrays to hold timeline data
+            let labels = [];
+
+            // Baseline arrays (Business as Usual - BAU)
+            let bauCO2 = [];
+            let bauTemp = [];
+            let bauPH = [];
+            let bauIce = [];
+
+            // Mitigated arrays
+            let mitCO2 = [];
+            let mitTemp = [];
+            let mitPH = [];
+            let mitIce = [];
+
+            // Current state trackers
+            let cBAU = { co2: initCO2, temp: initTemp, ph: initPH, ice: initIce };
+            let cMit = { co2: initCO2, temp: initTemp, ph: initPH, ice: initIce };
+
+            for (let i = 0; i <= FORECAST_YEARS; i++) {
+                const year = CURRENT_YEAR + i;
+                labels.push(year);
+
+                // --- Calculate BAU ---
+                // Emissions add roughly 1 ppm per 7.8 Gt CO2 (simplified)
+                let bauEmissionRate = baselineEmissions;
+                // Add a slight growth trend to BAU emissions over time based on baseline
+                bauEmissionRate += (baselineEmissions / 40) * (i * 0.2);
+
+                cBAU.co2 += (bauEmissionRate / 7.8);
+
+                // Temp is logarithmic to CO2 (Climate Sensitivity: ~3C per doubling of CO2)
+                // Temp anomaly = 3 * log2(C / 280)
+                let targetBauTemp = 3.0 * Math.log2(cBAU.co2 / 280);
+                // Thermal inertia delay
+                cBAU.temp += (targetBauTemp - cBAU.temp) * 0.05;
+
+                // Ocean pH drops as CO2 rises (Hydrosphere relationship)
+                // Roughly -0.1 pH per 100ppm increase
+                cBAU.ph = 8.2 - ((cBAU.co2 - 280) * 0.001);
+
+                // Ice melts based on temperature above a threshold (Cryosphere relationship)
+                if (cBAU.temp > 0.5) {
+                    cBAU.ice -= (cBAU.temp - 0.5) * 0.15;
+                    if (cBAU.ice < 0) cBAU.ice = 0;
+                }
+
+                // Push BAU data
+                bauCO2.push(cBAU.co2);
+                bauTemp.push(cBAU.temp);
+                bauPH.push(cBAU.ph);
+                bauIce.push(cBAU.ice);
+
+
+                // --- Calculate Mitigated ---
+                let mitEmissionRate = bauEmissionRate;
+
+                if (activeSolutions.renewable) {
+                    // Emissions drop drastically over time
+                    let reductionFactor = Math.min(0.9, i * 0.03); // max 90% reduction
+                    mitEmissionRate *= (1 - reductionFactor);
+                }
+
+                if (activeSolutions.ccs) {
+                    // Negative emissions tech
+                    let removal = Math.min(20, i * 0.5); // scales up to 20 Gt/yr removed
+                    mitEmissionRate -= removal;
+                }
+
+                cMit.co2 += (mitEmissionRate / 7.8);
+                if (cMit.co2 < 280) cMit.co2 = 280; // Cannot drop below pre-industrial
+
+                let targetMitTemp = 3.0 * Math.log2(cMit.co2 / 280);
+
+                if (activeSolutions.geoeng) {
+                    // Geoengineering artificially lowers temperature by blocking sunlight
+                    // Note: This does NOT lower CO2 or fix ocean acidification
+                    let cooling = Math.min(1.5, i * 0.05);
+                    targetMitTemp -= cooling;
+                }
+
+                cMit.temp += (targetMitTemp - cMit.temp) * 0.05;
+
+                // Ocean pH still depends solely on atmospheric CO2, not temperature
+                // So geoengineering does not help pH
+                cMit.ph = 8.2 - ((cMit.co2 - 280) * 0.001);
+
+                if (cMit.temp > 0.5) {
+                    cMit.ice -= (cMit.temp - 0.5) * 0.15;
+                    if (cMit.ice < 0) cMit.ice = 0;
+                } else if (cMit.temp < 0.5 && cMit.ice < 100) {
+                    // Slight recovery if cold enough
+                    cMit.ice += 0.05;
+                }
+
+                // Push Mit data
+                mitCO2.push(cMit.co2);
+                mitTemp.push(cMit.temp);
+                mitPH.push(cMit.ph);
+                mitIce.push(cMit.ice);
+            }
+
+            updateCharts(labels,
+                {bau: bauCO2, mit: mitCO2},
+                {bau: bauTemp, mit: mitTemp},
+                {bau: bauPH, mit: mitPH},
+                {bau: bauIce, mit: mitIce}
+            );
+
+            // Expose for playwright test
+            window.simForecast = {
+                finalMitTemp: mitTemp[FORECAST_YEARS],
+                finalBauTemp: bauTemp[FORECAST_YEARS],
+                finalMitPH: mitPH[FORECAST_YEARS],
+                finalBauPH: bauPH[FORECAST_YEARS]
+            };
+        }
+
+        // --- Chart Configuration ---
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
+
+        function createConfig(title, color, yMax, yMin, reverse = false) {
+            return {
+                type: 'line',
+                data: { labels: [], datasets: [] },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: {
+                            position: 'left',
+                            max: yMax, min: yMin, reverse: reverse,
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        }
+                    }
+                }
+            };
+        }
+
+        const co2Chart = new Chart(document.getElementById('co2Chart').getContext('2d'), createConfig('CO2', '#a855f7', 1000, 300));
+        const tempChart = new Chart(document.getElementById('tempChart').getContext('2d'), createConfig('Temp', '#ef4444', 5.0, 0));
+        const phChart = new Chart(document.getElementById('phChart').getContext('2d'), createConfig('pH', '#3b82f6', 8.2, 7.6, true)); // reverse so lower pH (acidic) goes down visually
+        const iceChart = new Chart(document.getElementById('iceChart').getContext('2d'), createConfig('Ice', '#e2e8f0', 105, 0));
+
+        function updateChartData(chartObj, labels, dataObj, color) {
+            chartObj.data.labels = labels;
+            chartObj.data.datasets = [
+                {
+                    label: 'Mitigated Forecast',
+                    data: dataObj.mit,
+                    borderColor: color,
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    tension: 0.1
+                },
+                {
+                    label: 'Business as Usual (BAU)',
+                    data: dataObj.bau,
+                    borderColor: 'rgba(148, 163, 184, 0.5)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.1
+                }
+            ];
+            chartObj.update();
+        }
+
+        function updateCharts(labels, co2, temp, ph, ice) {
+            updateChartData(co2Chart, labels, co2, '#a855f7');
+            updateChartData(tempChart, labels, temp, '#ef4444');
+            updateChartData(phChart, labels, ph, '#3b82f6');
+            updateChartData(iceChart, labels, ice, '#cbd5e1');
+        }
+
+        // --- Interaction ---
+        document.getElementById('emissionSlider').addEventListener('input', (e) => {
+            baselineEmissions = parseFloat(e.target.value);
+            document.getElementById('emissionVal').textContent = baselineEmissions + ' Gt/yr';
+            runForecast();
+        });
+
+        window.toggleSolution = function(sol) {
+            activeSolutions[sol] = !activeSolutions[sol];
+            const btn = document.querySelector(`button[data-solution="${sol}"]`);
+            const check = btn.querySelector('.active-check');
+
+            if (activeSolutions[sol]) {
+                btn.classList.add('active');
+                check.style.opacity = '1';
+            } else {
+                btn.classList.remove('active');
+                check.style.opacity = '0';
+            }
+            runForecast();
+        };
+
+        // Initial Run
+        runForecast();
+
+    </script>
+</body>
+</html>
