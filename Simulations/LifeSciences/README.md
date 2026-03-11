@@ -115,5 +115,7 @@ Construct an explanation based on evidence for how natural selection leads to ad
 ### HS-LS4-5
 Evaluate the evidence supporting claims that changes in environmental conditions may result in: (1) increases in the number of individuals of some species, (2) the emergence of new species over time, and (3) the extinction of other species.
 
+- [Environmental Change & Extinction Explorer](EnvironmentalChangeExtinction.html) - An interactive simulation evaluating how environmental changes like drought, deforestation, and pollution cause species extinction, speciation, and population booms.
+
 ### HS-LS4-6
 Create or revise a simulation to test a solution to mitigate adverse impacts of human activity on biodiversity.*
