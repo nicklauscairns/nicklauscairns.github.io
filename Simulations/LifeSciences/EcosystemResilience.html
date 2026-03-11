@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosystem Resilience and Disturbances Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-green-700 text-white p-4 shadow-md">
+        <h1 class="text-2xl font-bold">Ecosystem Resilience and Disturbances</h1>
+        <p class="text-sm mt-1">NGSS HS-LS2-6: Evaluate claims that complex interactions in ecosystems maintain consistent numbers and types of organisms in stable conditions, but changing conditions may result in a new ecosystem.</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col md:flex-row p-4 gap-4 overflow-hidden">
+
+        <!-- Controls Sidebar -->
+        <aside class="w-full md:w-1/3 lg:w-1/4 bg-white rounded-lg shadow-md p-4 flex flex-col gap-4 overflow-y-auto">
+
+            <section>
+                <h2 class="text-lg font-semibold border-b pb-1 mb-2">Simulation Controls</h2>
+                <div class="flex gap-2">
+                    <button id="btn-start" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors font-semibold">Start</button>
+                    <button id="btn-pause" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded transition-colors font-semibold">Pause</button>
+                    <button id="btn-reset" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded transition-colors font-semibold">Reset</button>
+                </div>
+            </section>
+
+            <section class="bg-blue-50 p-3 rounded border border-blue-100">
+                <h3 class="font-semibold text-blue-800 mb-2">Environmental Disturbances</h3>
+                <p class="text-xs text-gray-600 mb-3">Observe how the ecosystem responds (Stability and Change) to different levels of disruption.</p>
+
+                <div class="space-y-3">
+                    <div>
+                        <button id="btn-modest-dist" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded text-sm transition-colors shadow-sm">
+                            Apply Modest Disturbance
+                        </button>
+                        <p class="text-xs text-gray-500 mt-1 italic">e.g., A seasonal drought temporarily reduces the carrying capacity for plants.</p>
+                    </div>
+
+                    <div class="border-t border-blue-200 pt-3">
+                        <button id="btn-extreme-dist" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded text-sm transition-colors shadow-sm">
+                            Apply Extreme Disturbance
+                        </button>
+                        <p class="text-xs text-gray-500 mt-1 italic">e.g., A severe, prolonged climate event or introduction of a highly competitive invasive species that drastically alters the environment.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="flex-1 flex flex-col">
+                <h2 class="text-lg font-semibold border-b pb-1 mb-2">Evidence Log</h2>
+                <p class="text-xs text-gray-600 mb-2">Engaging in Argument from Evidence: Record your observations here. Does the ecosystem return to its original state (resilient) or form a new ecosystem?</p>
+                <textarea id="evidence-log" class="flex-1 w-full border border-gray-300 rounded p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type your observations and arguments here..."></textarea>
+            </section>
+
+        </aside>
+
+        <!-- Visualization Area -->
+        <section class="w-full md:w-2/3 lg:w-3/4 bg-white rounded-lg shadow-md p-4 flex flex-col">
+            <h2 class="text-lg font-semibold mb-2">Population Dynamics over Time</h2>
+            <div class="flex-1 relative w-full h-full min-h-[300px]">
+                <canvas id="populationChart"></canvas>
+            </div>
+
+            <div class="mt-4 grid grid-cols-3 gap-4 text-center text-sm border-t pt-4">
+                <div class="bg-green-50 p-2 rounded">
+                    <span class="font-semibold text-green-800">Plants (Producers):</span>
+                    <span id="stat-plants" class="block text-lg font-bold text-green-600">--</span>
+                </div>
+                <div class="bg-blue-50 p-2 rounded">
+                    <span class="font-semibold text-blue-800">Herbivores (Primary):</span>
+                    <span id="stat-herbivores" class="block text-lg font-bold text-blue-600">--</span>
+                </div>
+                <div class="bg-red-50 p-2 rounded">
+                    <span class="font-semibold text-red-800">Carnivores (Secondary):</span>
+                    <span id="stat-carnivores" class="block text-lg font-bold text-red-600">--</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Simulation Script -->
+    <script>
+        // Global variables for testing
+        window.simulationState = {
+            running: false,
+            time: 0,
+            plants: 0,
+            herbivores: 0,
+            carnivores: 0,
+            params: {}
+        };
+
+        // DOM Elements
+        const btnStart = document.getElementById('btn-start');
+        const btnPause = document.getElementById('btn-pause');
+        const btnReset = document.getElementById('btn-reset');
+        const btnModestDist = document.getElementById('btn-modest-dist');
+        const btnExtremeDist = document.getElementById('btn-extreme-dist');
+        const statPlants = document.getElementById('stat-plants');
+        const statHerbivores = document.getElementById('stat-herbivores');
+        const statCarnivores = document.getElementById('stat-carnivores');
+
+        // Simulation Constants
+        const DT = 0.05; // Time step
+
+        function initSimulation() {
+            window.simulationState.time = 0;
+            window.simulationState.plants = 1000;
+            window.simulationState.herbivores = 300;
+            window.simulationState.carnivores = 50;
+
+            // Lotka-Volterra parameters with carrying capacity for plants
+            window.simulationState.params = {
+                r: 1.2,          // Plant intrinsic growth rate
+                K: 2000,         // Plant carrying capacity
+                a: 0.005,        // Predation rate (herbivore eating plant)
+                b: 0.002,        // Reproduction rate of herbivores per plant eaten
+                m1: 0.5,         // Herbivore mortality rate
+                c: 0.01,         // Predation rate (carnivore eating herbivore)
+                d: 0.005,        // Reproduction rate of carnivores per herbivore eaten
+                m2: 0.4,         // Carnivore mortality rate
+                disturbanceLevel: 0, // 0 = none, 1 = modest, 2 = extreme
+                disturbanceTimer: 0
+            };
+
+            updateDOMStats();
+        }
+
+        function updatePopulations() {
+            if (!window.simulationState.running) return;
+
+            let s = window.simulationState;
+            let p = s.params;
+
+            // Handle active disturbances
+            if (p.disturbanceLevel > 0) {
+                p.disturbanceTimer--;
+
+                if (p.disturbanceLevel === 1) {
+                    // Modest Disturbance: temporary drought, lowers carrying capacity
+                    if (p.disturbanceTimer > 0) {
+                        p.K = 800; // Lowered K
+                    } else {
+                        // Recover
+                        p.K = 2000;
+                        p.disturbanceLevel = 0;
+                    }
+                } else if (p.disturbanceLevel === 2) {
+                    // Extreme Disturbance: Severe event, drastic population wipe, semi-permanent habitat degradation
+                    if (p.disturbanceTimer > 0) {
+                        p.K = 300; // Drastically lowered K
+                        s.plants *= 0.8; // Direct damage
+                        s.herbivores *= 0.6;
+                        s.carnivores *= 0.4;
+                    } else {
+                        // Very slow recovery or new stable state
+                        p.K = 1000; // Permanently degraded K
+                        p.disturbanceLevel = 0;
+                    }
+                }
+            }
+
+            // Differential equations (Euler method)
+            let dPlants = p.r * s.plants * (1 - s.plants / p.K) - p.a * s.plants * s.herbivores;
+            let dHerbivores = p.b * s.plants * s.herbivores - p.m1 * s.herbivores - p.c * s.herbivores * s.carnivores;
+            let dCarnivores = p.d * s.herbivores * s.carnivores - p.m2 * s.carnivores;
+
+            s.plants += dPlants * DT;
+            s.herbivores += dHerbivores * DT;
+            s.carnivores += dCarnivores * DT;
+
+            // Prevent negative populations
+            s.plants = Math.max(0, s.plants);
+            s.herbivores = Math.max(0, s.herbivores);
+            s.carnivores = Math.max(0, s.carnivores);
+
+            s.time += DT;
+
+            // Limit UI updates to every few frames to save performance, but keep logic accurate
+            if (Math.floor(s.time * 20) % 5 === 0) {
+                updateDOMStats();
+            }
+        }
+
+        window.updatePopulations = updatePopulations; // Expose globally
+
+        function updateDOMStats() {
+            statPlants.textContent = Math.round(window.simulationState.plants).toLocaleString();
+            statHerbivores.textContent = Math.round(window.simulationState.herbivores).toLocaleString();
+            statCarnivores.textContent = Math.round(window.simulationState.carnivores).toLocaleString();
+        }
+
+        window.applyDisturbance = function(type) {
+            let p = window.simulationState.params;
+            if (type === 'modest') {
+                p.disturbanceLevel = 1;
+                p.disturbanceTimer = 200; // Duration of modest disturbance in frames
+            } else if (type === 'extreme') {
+                p.disturbanceLevel = 2;
+                p.disturbanceTimer = 100; // Intense, shorter duration
+                // Immediate massive population shock
+                window.simulationState.plants *= 0.1;
+                window.simulationState.herbivores *= 0.05;
+                window.simulationState.carnivores *= 0.01;
+            }
+            updateDOMStats();
+        };
+
+        // Event Listeners
+        btnStart.addEventListener('click', () => {
+            window.simulationState.running = true;
+        });
+
+        btnPause.addEventListener('click', () => {
+            window.simulationState.running = false;
+        });
+
+        btnModestDist.addEventListener('click', () => window.applyDisturbance('modest'));
+        btnExtremeDist.addEventListener('click', () => window.applyDisturbance('extreme'));
+
+        let chart;
+        const MAX_HISTORY = 400; // number of points to keep in chart history
+
+        function setupChart() {
+            const ctx = document.getElementById('populationChart').getContext('2d');
+
+            // Clean up old chart if it exists
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [], // Time values
+                    datasets: [
+                        {
+                            label: 'Plants',
+                            data: [],
+                            borderColor: 'rgb(34, 197, 94)', // green-500
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.1,
+                            pointRadius: 0,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Herbivores',
+                            data: [],
+                            borderColor: 'rgb(59, 130, 246)', // blue-500
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.1,
+                            pointRadius: 0,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Carnivores',
+                            data: [],
+                            borderColor: 'rgb(239, 68, 68)', // red-500
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.1,
+                            pointRadius: 0,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Time (years)' },
+                            ticks: { maxTicksLimit: 10 }
+                        },
+                        y: {
+                            title: { display: true, text: 'Population' },
+                            suggestedMax: 2500, // Dynamic max to keep lines visible
+                            min: 0
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        tooltip: { enabled: false }, // disable for performance since it updates fast
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            if (!chart || !window.simulationState.running) return;
+
+            // Only push data to chart every few frames to keep performance smooth
+            if (Math.floor(window.simulationState.time * 20) % 5 === 0) {
+                const s = window.simulationState;
+                const timeLabel = s.time.toFixed(1);
+
+                chart.data.labels.push(timeLabel);
+                chart.data.datasets[0].data.push(s.plants);
+                chart.data.datasets[1].data.push(s.herbivores);
+                chart.data.datasets[2].data.push(s.carnivores);
+
+                // Keep sliding window
+                if (chart.data.labels.length > MAX_HISTORY) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                    chart.data.datasets[1].data.shift();
+                    chart.data.datasets[2].data.shift();
+                }
+
+                chart.update();
+            }
+        }
+
+        function animationLoop() {
+            updatePopulations();
+            updateChart();
+            requestAnimationFrame(animationLoop);
+        }
+
+        btnReset.addEventListener('click', () => {
+            initSimulation();
+            setupChart();
+        });
+
+        // Init on load
+        initSimulation();
+        setupChart();
+
+        // Push initial state to chart
+        chart.data.labels.push('0.0');
+        chart.data.datasets[0].data.push(window.simulationState.plants);
+        chart.data.datasets[1].data.push(window.simulationState.herbivores);
+        chart.data.datasets[2].data.push(window.simulationState.carnivores);
+        chart.update();
+
+        // Start animation loop
+        requestAnimationFrame(animationLoop);
+
+    </script>
+</body>
+</html>

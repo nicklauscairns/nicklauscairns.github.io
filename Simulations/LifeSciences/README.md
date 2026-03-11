@@ -65,6 +65,8 @@ Develop a model to illustrate the role of photosynthesis and cellular respiratio
 ### HS-LS2-6
 Evaluate the claims, evidence, and reasoning that the complex interactions in ecosystems maintain relatively consistent numbers and types of organisms in stable conditions, but changing conditions may result in a new ecosystem.
 
+- [Ecosystem Resilience and Disturbances](EcosystemResilience.html) - An interactive simulation evaluating claims about ecosystem stability and resilience in response to modest and extreme disturbances.
+
 ### HS-LS2-7
 Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment and biodiversity.*
 
