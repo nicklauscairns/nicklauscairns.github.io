@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homeostasis and Feedback Mechanisms Investigation (HS-LS1-3)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .data-table-container { max-height: 200px; overflow-y: auto; }
+        th { position: sticky; top: 0; background: #f3f4f6; }
+
+        /* Person silhouette styles */
+        .person { position: relative; width: 100px; height: 250px; margin: 0 auto; }
+        .head { width: 50px; height: 50px; border-radius: 50%; background: #9ca3af; position: absolute; top: 0; left: 25px; transition: background-color 0.5s; }
+        .body-core { width: 60px; height: 100px; background: #9ca3af; position: absolute; top: 55px; left: 20px; border-radius: 10px; transition: background-color 0.5s; }
+        .arm-l { width: 20px; height: 80px; background: #9ca3af; position: absolute; top: 60px; left: -5px; border-radius: 10px; transform-origin: top center; transition: background-color 0.5s; }
+        .arm-r { width: 20px; height: 80px; background: #9ca3af; position: absolute; top: 60px; right: -5px; border-radius: 10px; transform-origin: top center; transition: background-color 0.5s; }
+        .leg-l { width: 25px; height: 90px; background: #9ca3af; position: absolute; top: 160px; left: 20px; border-radius: 10px; transform-origin: top center; transition: background-color 0.5s; }
+        .leg-r { width: 25px; height: 90px; background: #9ca3af; position: absolute; top: 160px; right: 20px; border-radius: 10px; transform-origin: top center; transition: background-color 0.5s; }
+
+        /* Heart animation */
+        .heart { width: 20px; height: 20px; background: #ef4444; position: absolute; top: 75px; left: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
+
+        /* Sweat/Shiver particles container */
+        .effects-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; overflow: visible; }
+        .sweat-drop { position: absolute; width: 6px; height: 10px; background: #60a5fa; border-radius: 0 50% 50% 50%; transform: rotate(45deg); opacity: 0.8; }
+        .shiver-line { position: absolute; width: 10px; height: 2px; background: #1e3a8a; opacity: 0.6; }
+
+        @keyframes pump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .walking .arm-l { animation: swing 1.5s infinite alternate ease-in-out; }
+        .walking .arm-r { animation: swing-rev 1.5s infinite alternate ease-in-out; }
+        .walking .leg-l { animation: swing-rev 1.5s infinite alternate ease-in-out; }
+        .walking .leg-r { animation: swing 1.5s infinite alternate ease-in-out; }
+
+        .running .arm-l { animation: swing 0.6s infinite alternate ease-in-out; }
+        .running .arm-r { animation: swing-rev 0.6s infinite alternate ease-in-out; }
+        .running .leg-l { animation: swing-rev 0.6s infinite alternate ease-in-out; }
+        .running .leg-r { animation: swing 0.6s infinite alternate ease-in-out; }
+
+        @keyframes swing {
+            0% { transform: rotate(-20deg); }
+            100% { transform: rotate(20deg); }
+        }
+        @keyframes swing-rev {
+            0% { transform: rotate(20deg); }
+            100% { transform: rotate(-20deg); }
+        }
+
+        /* Input styling */
+        input[type="range"] { accent-color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <header class="text-center">
+            <h1 class="text-3xl font-extrabold text-blue-800">Homeostasis Investigation</h1>
+            <p class="text-gray-600 mt-2">NGSS HS-LS1-3: Plan and conduct an investigation to provide evidence that feedback mechanisms maintain homeostasis.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Column 1: Experimental Design & Controls -->
+            <div class="bg-white p-5 rounded-lg shadow lg:col-span-1 flex flex-col h-full">
+                <h2 class="text-xl font-bold mb-4 border-b pb-2">1. Investigation Setup</h2>
+                <p class="text-sm text-gray-600 mb-4">Manipulate the independent variables (environment and activity) and observe the dependent physiological responses.</p>
+
+                <div class="space-y-6 flex-grow">
+                    <!-- Environment -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-semibold text-gray-700">Environment Temp (&deg;C)</label>
+                            <span id="env-temp-val" class="font-mono bg-gray-100 px-2 rounded text-sm">22&deg;C</span>
+                        </div>
+                        <input type="range" id="env-temp" min="-10" max="45" value="22" class="w-full">
+                        <div class="flex justify-between text-xs text-gray-400 mt-1">
+                            <span>Freezing (-10)</span>
+                            <span>Room (22)</span>
+                            <span>Desert (45)</span>
+                        </div>
+                    </div>
+
+                    <!-- Activity Level -->
+                    <div>
+                        <label class="font-semibold text-gray-700 block mb-2">Activity Level</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button class="activity-btn bg-blue-100 border-2 border-blue-500 text-blue-700 py-2 rounded text-sm font-bold" data-level="resting">Resting</button>
+                            <button class="activity-btn bg-gray-100 border-2 border-transparent hover:border-blue-300 py-2 rounded text-sm font-semibold" data-level="walking">Walking</button>
+                            <button class="activity-btn bg-gray-100 border-2 border-transparent hover:border-blue-300 py-2 rounded text-sm font-semibold" data-level="running">Running</button>
+                        </div>
+                    </div>
+
+                    <!-- Clothing (Insulation) -->
+                    <div>
+                        <label class="font-semibold text-gray-700 block mb-2">Clothing Insulation</label>
+                        <select id="clothing" class="w-full p-2 border rounded bg-gray-50">
+                            <option value="light">Light (Shorts & T-shirt)</option>
+                            <option value="medium" selected>Medium (Pants & Shirt)</option>
+                            <option value="heavy">Heavy (Winter Coat & Gear)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Simulation Controls -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-gray-700">Simulation Time: <span id="sim-time" class="font-mono text-blue-600">00:00</span></span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btn-play" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded shadow transition">Start Sim</button>
+                        <button id="btn-reset" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow transition">Reset</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 text-center">1 sec real time = 1 minute simulation time</p>
+                </div>
+            </div>
+
+            <!-- Column 2: Subject Visualization -->
+            <div class="bg-white p-5 rounded-lg shadow lg:col-span-1 flex flex-col items-center justify-center relative overflow-hidden">
+                <h2 class="text-xl font-bold mb-4 w-full border-b pb-2 text-left absolute top-5 left-5">2. Subject State</h2>
+
+                <div class="mt-12 flex flex-col items-center">
+                    <div class="person" id="person-model">
+                        <div class="head"></div>
+                        <div class="body-core"></div>
+                        <div class="arm-l"></div>
+                        <div class="arm-r"></div>
+                        <div class="leg-l"></div>
+                        <div class="leg-r"></div>
+                        <div class="heart" id="heart-anim"></div>
+                        <div class="effects-container" id="effects"></div>
+                    </div>
+
+                    <div class="mt-6 w-full max-w-xs space-y-3">
+                        <div class="bg-gray-100 p-2 rounded flex justify-between items-center shadow-inner">
+                            <span class="font-semibold text-gray-600 text-sm">Core Temp:</span>
+                            <span id="core-temp-val" class="font-bold text-lg font-mono text-green-600">37.0 &deg;C</span>
+                        </div>
+                        <div class="bg-gray-100 p-2 rounded flex justify-between items-center shadow-inner">
+                            <span class="font-semibold text-gray-600 text-sm">Heart Rate:</span>
+                            <span id="hr-val" class="font-bold text-lg font-mono text-red-500">60 bpm</span>
+                        </div>
+                        <div class="bg-gray-100 p-2 rounded flex justify-between items-center shadow-inner">
+                            <span class="font-semibold text-gray-600 text-sm">Status:</span>
+                            <span id="status-val" class="font-bold text-sm text-green-600">Stable</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Data & Graphs -->
+            <div class="bg-white p-5 rounded-lg shadow lg:col-span-1 flex flex-col h-full">
+                <h2 class="text-xl font-bold mb-4 border-b pb-2">3. Data Collection</h2>
+
+                <div class="flex-grow flex flex-col space-y-4">
+                    <!-- Chart -->
+                    <div class="relative w-full h-48 border rounded bg-gray-50 p-1">
+                        <canvas id="homeostasis-chart"></canvas>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="border rounded data-table-container flex-grow">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr>
+                                    <th class="p-2 border-b">Min</th>
+                                    <th class="p-2 border-b">Env Temp</th>
+                                    <th class="p-2 border-b">Activity</th>
+                                    <th class="p-2 border-b">Heart Rate</th>
+                                    <th class="p-2 border-b">Core Temp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data-log" class="font-mono">
+                                <!-- Data rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Context -->
+        <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded shadow-sm">
+            <h3 class="font-bold text-blue-800 mb-2">Analyzing the Feedback Mechanisms</h3>
+            <p class="text-sm text-gray-700 mb-2">
+                <strong>Negative Feedback Loops:</strong> Notice how the body responds to deviations from the set point (37.0&deg;C core temperature, resting oxygen demand).
+            </p>
+            <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                <li>If core temp drops, shivering generates heat and blood vessels constrict (model turns pale/blue) to conserve heat.</li>
+                <li>If core temp rises, sweating cools the body via evaporation and blood vessels dilate (model turns red) to release heat.</li>
+                <li>During activity, muscle oxygen demand increases, causing the heart rate to rise to deliver more O2 and remove CO2.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let homeostasisChart;
+
+        // Simulation State
+        const state = {
+            time: 0,
+            isRunning: false,
+            interval: null,
+            envTemp: 22,
+            activityLevel: 'resting',
+            clothing: 'medium',
+            coreTemp: 37.0,
+            heartRate: 60,
+            sweatRate: 0,
+            shiverRate: 0,
+            skinBloodFlow: 50,
+            energyDemand: 1.0,
+            logData: []
+        };
+
+        // DOM Elements
+        const elEnvTempSlider = document.getElementById('env-temp');
+        const elEnvTempVal = document.getElementById('env-temp-val');
+        const elActivityBtns = document.querySelectorAll('.activity-btn');
+        const elClothing = document.getElementById('clothing');
+        const elBtnPlay = document.getElementById('btn-play');
+        const elBtnReset = document.getElementById('btn-reset');
+        const elSimTime = document.getElementById('sim-time');
+
+        const elPersonModel = document.getElementById('person-model');
+        const elCoreTemp = document.getElementById('core-temp-val');
+        const elHeartRate = document.getElementById('hr-val');
+        const elStatus = document.getElementById('status-val');
+        const elHeartAnim = document.getElementById('heart-anim');
+        const elEffects = document.getElementById('effects');
+        const elDataLog = document.getElementById('data-log');
+
+        // Body Constants
+        const BASE_TEMP = 37.0;
+        const BASE_HR = 60;
+        const BODY_MASS = 70; // kg
+        const SPECIFIC_HEAT_CAPACITY = 3470; // J/(kg*C)
+        const BASE_HEAT_PROD = 100; // Watts (Resting metabolic rate)
+        const DELTA_T = 60; // Simulation time step (seconds per tick)
+
+        // Activity Multipliers
+        const activityData = {
+            resting: { hr_target: 60, heat_mult: 1.0 },
+            walking: { hr_target: 110, heat_mult: 3.5 },
+            running: { hr_target: 160, heat_mult: 8.0 }
+        };
+
+        // Clothing Insulation (Resistance to heat transfer)
+        const clothingData = {
+            light: 0.1, // Less resistance, easier to lose heat
+            medium: 0.3,
+            heavy: 0.8
+        };
+
+        // Initialization
+        function init() {
+            initChart();
+            setupEventListeners();
+            updateUI();
+            logState();
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('homeostasis-chart').getContext('2d');
+            homeostasisChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Core Temp (°C)',
+                            data: [],
+                            borderColor: 'rgb(34, 197, 94)', // Green
+                            yAxisID: 'y',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Heart Rate (bpm)',
+                            data: [],
+                            borderColor: 'rgb(239, 68, 68)', // Red
+                            yAxisID: 'y1',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { title: { display: true, text: 'Time (min)' } },
+                        y: {
+                            type: 'linear', display: true, position: 'left',
+                            title: { display: true, text: 'Temp (°C)' },
+                            suggestedMin: 35.0, suggestedMax: 39.0
+                        },
+                        y1: {
+                            type: 'linear', display: true, position: 'right',
+                            title: { display: true, text: 'HR (bpm)' },
+                            suggestedMin: 40, suggestedMax: 200,
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            elEnvTempSlider.addEventListener('input', (e) => {
+                state.envTemp = parseFloat(e.target.value);
+                elEnvTempVal.innerHTML = `${state.envTemp}&deg;C`;
+                if(!state.isRunning) renderPerson();
+            });
+
+            elActivityBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Update Active State
+                    elActivityBtns.forEach(b => {
+                        b.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-700');
+                        b.classList.add('bg-gray-100', 'border-transparent');
+                    });
+
+                    const clickedBtn = e.target;
+                    clickedBtn.classList.remove('bg-gray-100', 'border-transparent');
+                    clickedBtn.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-700');
+
+                    state.activityLevel = clickedBtn.getAttribute('data-level');
+
+                    if(!state.isRunning) renderPerson();
+                });
+            });
+
+            elClothing.addEventListener('change', (e) => {
+                state.clothing = e.target.value;
+                if(!state.isRunning) renderPerson();
+            });
+
+            elBtnPlay.addEventListener('click', toggleSimulation);
+            elBtnReset.addEventListener('click', resetSimulation);
+        }
+
+        function toggleSimulation() {
+            if (state.isRunning) {
+                clearInterval(state.interval);
+                state.isRunning = false;
+                elBtnPlay.textContent = "Start Sim";
+                elBtnPlay.classList.replace('bg-yellow-500', 'bg-green-600');
+                elBtnPlay.classList.replace('hover:bg-yellow-600', 'hover:bg-green-700');
+
+                // Pause animation
+                elPersonModel.className = 'person';
+                elHeartAnim.style.animation = 'none';
+            } else {
+                state.isRunning = true;
+                elBtnPlay.textContent = "Pause Sim";
+                elBtnPlay.classList.replace('bg-green-600', 'bg-yellow-500');
+                elBtnPlay.classList.replace('hover:bg-green-700', 'hover:bg-yellow-600');
+
+                // Set animation
+                elPersonModel.className = `person ${state.activityLevel}`;
+                elHeartAnim.style.animation = `pump ${60/state.heartRate}s infinite`;
+
+                state.interval = setInterval(tick, 1000); // 1 real sec = 1 sim min
+            }
+        }
+
+        function resetSimulation() {
+            if (state.isRunning) toggleSimulation();
+
+            state.time = 0;
+            state.coreTemp = BASE_TEMP;
+            state.heartRate = BASE_HR;
+            state.sweatRate = 0;
+            state.shiverRate = 0;
+            state.skinBloodFlow = 50;
+            state.logData = [];
+
+            elDataLog.innerHTML = '';
+
+            // Clear chart
+            homeostasisChart.data.labels = [];
+            homeostasisChart.data.datasets[0].data = [];
+            homeostasisChart.data.datasets[1].data = [];
+            homeostasisChart.update();
+
+            updateUI();
+            logState();
+        }
+
+        function tick() {
+            state.time += 1;
+
+            updatePhysiology();
+            updateUI();
+            logState();
+        }
+
+        function updatePhysiology() {
+            // 1. Calculate Heat Production
+            const baseHeat = BASE_HEAT_PROD;
+            const activityHeat = baseHeat * activityData[state.activityLevel].heat_mult;
+            const shiverHeat = state.shiverRate * 150; // Shivering generates heat
+
+            const totalHeatProduction = activityHeat + shiverHeat; // Joules/sec (Watts)
+
+            // 2. Calculate Heat Loss
+            // Convection/Radiation based on env temp and skin blood flow
+            const tempDiff = state.coreTemp - state.envTemp;
+            const insulation = clothingData[state.clothing];
+
+            // Blood flow to skin increases heat transfer
+            const transferCoef = 5 + (state.skinBloodFlow / 10);
+            const dryHeatLoss = (transferCoef * tempDiff) / insulation;
+
+            // Evaporative heat loss (Sweating)
+            // Sweat is only effective if env is relatively dry, but we'll simplify here
+            // 1 ml sweat ~ 2.4 kJ heat loss. Sweat rate is max 20 ml/min.
+            const evaporativeHeatLoss = state.sweatRate * 40; // Simplified Watt equivalent
+
+            const totalHeatLoss = dryHeatLoss + evaporativeHeatLoss;
+
+            // 3. Update Core Temperature
+            const netHeat = totalHeatProduction - totalHeatLoss; // Watts (J/s)
+
+            // Delta T = Q / (m * c)
+            // Energy over 1 minute (60s) = netHeat * 60
+            const tempChange = (netHeat * DELTA_T) / (BODY_MASS * SPECIFIC_HEAT_CAPACITY);
+
+            state.coreTemp += tempChange;
+
+            // 4. Feedback Mechanisms (Homeostasis Responses)
+            // If Core Temp > 37.5, increase sweating and skin blood flow
+            if (state.coreTemp > 37.2) {
+                state.sweatRate = Math.min(20, (state.coreTemp - 37.2) * 10);
+                state.skinBloodFlow = Math.min(100, 50 + (state.coreTemp - 37.2) * 50);
+                state.shiverRate = 0;
+            }
+            // If Core Temp < 36.5, shiver and decrease skin blood flow
+            else if (state.coreTemp < 36.8) {
+                state.shiverRate = Math.min(10, (36.8 - state.coreTemp) * 10);
+                state.skinBloodFlow = Math.max(10, 50 - (36.8 - state.coreTemp) * 40);
+                state.sweatRate = 0;
+            }
+            // Comfortable zone
+            else {
+                state.sweatRate *= 0.8; // gradual decay
+                state.shiverRate *= 0.8;
+                state.skinBloodFlow += (50 - state.skinBloodFlow) * 0.1; // return to baseline
+            }
+
+            // 5. Update Heart Rate
+            // Target HR based on activity
+            let targetHR = activityData[state.activityLevel].hr_target;
+
+            // Cardiovascular drift due to heat/sweating (loss of blood volume/vasodilation)
+            if (state.coreTemp > 37.5) {
+                targetHR += (state.coreTemp - 37.5) * 15;
+            }
+
+            // Smooth transition towards target HR
+            state.heartRate += (targetHR - state.heartRate) * 0.2;
+
+            // Cap values to prevent unrealistic scenarios
+            state.heartRate = Math.max(40, Math.min(200, state.heartRate));
+
+            // Extreme conditions check
+            if(state.coreTemp > 42.0 || state.coreTemp < 32.0) {
+                 toggleSimulation(); // Stop simulation if critical
+                 alert("CRITICAL: Core temperature has reached dangerous levels. Simulation stopped.");
+            }
+        }
+
+        function updateUI() {
+            // Format time
+            const mins = Math.floor(state.time).toString().padStart(2, '0');
+            elSimTime.textContent = `${mins}:00`;
+
+            // Update gauges
+            elCoreTemp.innerHTML = `${state.coreTemp.toFixed(1)} &deg;C`;
+            elHeartRate.textContent = `${Math.round(state.heartRate)} bpm`;
+
+            // Update Status text color based on temp
+            if (state.coreTemp > 38.5) {
+                elCoreTemp.className = "font-bold text-lg font-mono text-red-600";
+                elStatus.textContent = "Hyperthermic";
+                elStatus.className = "font-bold text-sm text-red-600";
+            } else if (state.coreTemp < 35.5) {
+                elCoreTemp.className = "font-bold text-lg font-mono text-blue-600";
+                elStatus.textContent = "Hypothermic";
+                elStatus.className = "font-bold text-sm text-blue-600";
+            } else if (state.coreTemp > 37.6 || state.coreTemp < 36.4) {
+                elCoreTemp.className = "font-bold text-lg font-mono text-yellow-500";
+                elStatus.textContent = "Struggling";
+                elStatus.className = "font-bold text-sm text-yellow-500";
+            } else {
+                elCoreTemp.className = "font-bold text-lg font-mono text-green-600";
+                elStatus.textContent = "Stable";
+                elStatus.className = "font-bold text-sm text-green-600";
+            }
+
+            // Adjust heart rate animation speed
+            if (state.isRunning) {
+                elPersonModel.className = `person ${state.activityLevel}`;
+                elHeartAnim.style.animation = `pump ${60/state.heartRate}s infinite`;
+            }
+
+            renderPerson();
+        }
+
+        function renderPerson() {
+            // Calculate skin color based on blood flow and temp
+            let r, g, b;
+            if (state.skinBloodFlow > 50) {
+                // Flushing (red)
+                const intensity = Math.min(1, (state.skinBloodFlow - 50) / 50);
+                r = Math.floor(156 + (99 * intensity)); // 156->255
+                g = Math.floor(163 - (100 * intensity)); // 163->63
+                b = Math.floor(175 - (100 * intensity)); // 175->75
+            } else {
+                // Vasoconstriction (pale/blue)
+                const intensity = Math.min(1, (50 - state.skinBloodFlow) / 40);
+                r = Math.floor(156 - (50 * intensity)); // 156->106
+                g = Math.floor(163 + (20 * intensity)); // 163->183
+                b = Math.floor(175 + (80 * intensity)); // 175->255
+            }
+
+            const colorStr = `rgb(${r},${g},${b})`;
+
+            // Apply color to body parts
+            ['head', 'body-core', 'arm-l', 'arm-r', 'leg-l', 'leg-r'].forEach(cls => {
+                const el = elPersonModel.querySelector(`.${cls}`);
+                if (el) el.style.backgroundColor = colorStr;
+            });
+
+            // Handle Sweat/Shiver Effects
+            elEffects.innerHTML = '';
+
+            if (state.sweatRate > 2) {
+                // Generate sweat drops
+                const numDrops = Math.min(10, Math.floor(state.sweatRate / 2));
+                for(let i=0; i<numDrops; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'sweat-drop';
+                    drop.style.left = `${10 + Math.random() * 80}%`;
+                    drop.style.top = `${Math.random() * 80}%`;
+                    elEffects.appendChild(drop);
+                }
+            }
+
+            if (state.shiverRate > 1) {
+                // Generate shiver lines
+                const numLines = Math.min(8, Math.floor(state.shiverRate));
+                for(let i=0; i<numLines; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'shiver-line';
+                    line.style.left = `${20 + Math.random() * 60}%`;
+                    line.style.top = `${10 + Math.random() * 80}%`;
+                    line.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+                    elEffects.appendChild(line);
+                }
+                // Apply shake to person
+                if (state.isRunning && state.activityLevel === 'resting') {
+                     elPersonModel.style.transform = `translateX(${Math.random()*4-2}px)`;
+                }
+            } else {
+                 elPersonModel.style.transform = 'none';
+            }
+        }
+
+        function logDataRow() {
+            const row = document.createElement('tr');
+            row.className = 'border-b hover:bg-gray-50';
+
+            row.innerHTML = `
+                <td class="p-2">${state.time}</td>
+                <td class="p-2">${state.envTemp.toFixed(1)}</td>
+                <td class="p-2 capitalize">${state.activityLevel}</td>
+                <td class="p-2">${Math.round(state.heartRate)}</td>
+                <td class="p-2 ${state.coreTemp>38||state.coreTemp<36?'text-red-500 font-bold':''}">${state.coreTemp.toFixed(2)}</td>
+            `;
+
+            elDataLog.insertBefore(row, elDataLog.firstChild);
+
+            // Limit to last 50 entries
+            if (elDataLog.children.length > 50) {
+                elDataLog.removeChild(elDataLog.lastChild);
+            }
+        }
+
+        function logState() {
+            // Save state for charting
+            state.logData.push({
+                time: state.time,
+                hr: state.heartRate,
+                temp: state.coreTemp
+            });
+
+            logDataRow();
+
+            // Update chart
+            homeostasisChart.data.labels.push(state.time);
+            homeostasisChart.data.datasets[0].data.push(state.coreTemp);
+            homeostasisChart.data.datasets[1].data.push(state.heartRate);
+            homeostasisChart.update();
+        }
+
+        // Initialize simulation
+        init();
+    </script>
+</body>
+</html>

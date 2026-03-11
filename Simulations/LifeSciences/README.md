@@ -13,6 +13,8 @@ Develop and use a model to illustrate the hierarchical organization of interacti
 ### HS-LS1-3
 Plan and conduct an investigation to provide evidence that feedback mechanisms maintain homeostasis.
 
+- [Homeostasis and Feedback Mechanisms Investigation](Homeostasis.html) - An interactive simulation to plan and conduct investigations on how the body maintains homeostasis during exercise.
+
 ### HS-LS1-4
 Use a model to illustrate the role of cellular division (mitosis) and differentiation in producing and maintaining complex organisms.
 
