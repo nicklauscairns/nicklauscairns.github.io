@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA to Protein Structure and Function (HS-LS1-1)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .dna-base {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.2rem; cursor: pointer;
+            border-radius: 4px; border: 2px solid #ccc;
+            transition: all 0.2s;
+        }
+        .base-A { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; } /* Red */
+        .base-T { background-color: #e0f2fe; border-color: #3b82f6; color: #1e3a8a; } /* Blue */
+        .base-C { background-color: #fef9c3; border-color: #eab308; color: #854d0e; } /* Yellow */
+        .base-G { background-color: #dcfce7; border-color: #22c55e; color: #166534; } /* Green */
+        .base-U { background-color: #f3e8ff; border-color: #a855f7; color: #581c87; } /* Purple */
+
+        .codon-group {
+            display: flex; gap: 4px; padding: 4px;
+            border: 1px dashed #9ca3af; border-radius: 4px;
+        }
+
+        .mrna-base {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1rem;
+            border-radius: 4px; border: 1px solid #ccc;
+        }
+
+        .amino-acid {
+            padding: 8px 12px; font-weight: bold; border-radius: 20px;
+            background-color: #f3f4f6; border: 2px solid #6b7280;
+            min-width: 60px; text-align: center; font-size: 0.9rem;
+        }
+
+        canvas { border: 1px solid #e5e7eb; border-radius: 8px; background-color: #f9fafb; }
+
+        .table-container { max-height: 250px; overflow-y: auto; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <header class="text-center">
+            <h1 class="text-3xl font-extrabold text-blue-800">DNA to Protein Structure and Function</h1>
+            <p class="text-gray-600 mt-2">NGSS HS-LS1-1: Construct an explanation based on evidence for how the structure of DNA determines the structure of proteins which carry out the essential functions of life through systems of specialized cells.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Column: Genetics -->
+            <div class="space-y-6">
+                <!-- DNA Section -->
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-3 border-b pb-2">1. DNA Sequence</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click on the DNA bases (top row) to mutate the sequence. Observe how it changes the mRNA and protein.</p>
+
+                    <div class="flex flex-col items-center space-y-2 overflow-x-auto pb-2">
+                        <!-- Coding Strand (Editable) -->
+                        <div class="flex gap-2" id="dna-coding"></div>
+                        <!-- Template Strand (Auto-updates) -->
+                        <div class="flex gap-2" id="dna-template"></div>
+                    </div>
+                </div>
+
+                <!-- mRNA & Protein Section -->
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-3 border-b pb-2">2. Transcription & Translation</h2>
+
+                    <div class="mb-4">
+                        <h3 class="font-semibold text-gray-700 mb-2">mRNA Sequence (Transcription)</h3>
+                        <div class="flex flex-wrap gap-2" id="mrna-sequence"></div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Amino Acid Sequence (Translation)</h3>
+                        <div class="flex flex-wrap items-center gap-2" id="protein-sequence"></div>
+                    </div>
+                </div>
+
+                <!-- Cell Type Selection -->
+                <div class="bg-white p-5 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-3 border-b pb-2">3. Cellular Environment</h2>
+                    <p class="text-sm text-gray-600 mb-3">Select a specialized cell type to see if the produced protein functions correctly within it.</p>
+                    <div class="flex gap-4">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="cell-type" value="muscle" class="form-radio h-5 w-5 text-blue-600" checked>
+                            <span class="font-medium">Muscle Cell</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="cell-type" value="rbc" class="form-radio h-5 w-5 text-red-600">
+                            <span class="font-medium">Red Blood Cell</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="cell-type" value="immune" class="form-radio h-5 w-5 text-purple-600">
+                            <span class="font-medium">Immune Cell</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Structure, Function & Data -->
+            <div class="space-y-6">
+                <!-- Protein Folding Canvas -->
+                <div class="bg-white p-5 rounded-lg shadow flex flex-col items-center">
+                    <h2 class="text-xl font-bold mb-3 w-full border-b pb-2">4. Protein Structure (Folding)</h2>
+                    <p class="text-sm text-gray-600 mb-2 w-full">The amino acid sequence determines the 3D shape of the protein.</p>
+                    <canvas id="structure-canvas" width="400" height="200" class="w-full max-w-md"></canvas>
+                    <div id="structure-info" class="mt-2 font-semibold text-center h-6"></div>
+                </div>
+
+                <!-- Cellular Function Canvas -->
+                <div class="bg-white p-5 rounded-lg shadow flex flex-col items-center">
+                    <h2 class="text-xl font-bold mb-3 w-full border-b pb-2">5. Cellular Function</h2>
+                    <p class="text-sm text-gray-600 mb-2 w-full">Does the protein structure fit its function in the chosen cell?</p>
+                    <canvas id="function-canvas" width="400" height="200" class="w-full max-w-md"></canvas>
+                    <div id="function-info" class="mt-2 font-semibold text-center h-6"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence Log Section -->
+        <div class="bg-white p-5 rounded-lg shadow mt-6">
+            <div class="flex justify-between items-center mb-3 border-b pb-2">
+                <h2 class="text-xl font-bold">Evidence Log</h2>
+                <button id="log-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">Record Current Data</button>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Record observations to construct your explanation of how DNA determines protein structure and cell function.</p>
+
+            <div class="table-container border rounded">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                            <th class="p-2 border-b">DNA (Coding)</th>
+                            <th class="p-2 border-b">Amino Acids</th>
+                            <th class="p-2 border-b">Protein Shape</th>
+                            <th class="p-2 border-b">Cell Type</th>
+                            <th class="p-2 border-b">Function Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evidence-log-body" class="text-sm">
+                        <!-- Log entries will appear here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Standard Presets -->
+        <div class="bg-white p-5 rounded-lg shadow mt-6">
+             <h2 class="text-xl font-bold mb-3 border-b pb-2">Explore Scenarios</h2>
+             <div class="flex flex-wrap gap-2">
+                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGGTGTACCTG">Muscle Protein (Normal)</button>
+                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGGTTTACCTG">Muscle Protein (Mutated)</button>
+                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCACTGCGAC">Hemoglobin (Normal)</button>
+                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCACAGCGAC">Hemoglobin (Sickle)</button>
+                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCGGATTTGC">Antibody (Normal)</button>
+             </div>
+        </div>
+    </div>
+
+    <script>
+        // Data and Logic
+        const BASES = ['A', 'T', 'C', 'G'];
+        const RNA_BASES = ['A', 'U', 'C', 'G'];
+        let dnaCodingSequence = "ATGGTGTACCTG"; // Default: Muscle Protein
+
+        // Simplified Codon Dictionary (Standard Genetic Code)
+        const codonDict = {
+            'AUG': 'Met', 'UUU': 'Phe', 'UUC': 'Phe', 'UUA': 'Leu', 'UUG': 'Leu',
+            'UCU': 'Ser', 'UCC': 'Ser', 'UCA': 'Ser', 'UCG': 'Ser', 'UAU': 'Tyr',
+            'UAC': 'Tyr', 'UGU': 'Cys', 'UGC': 'Cys', 'UGG': 'Trp', 'CUU': 'Leu',
+            'CUC': 'Leu', 'CUA': 'Leu', 'CUG': 'Leu', 'CCU': 'Pro', 'CCC': 'Pro',
+            'CCA': 'Pro', 'CCG': 'Pro', 'CAU': 'His', 'CAC': 'His', 'CAA': 'Gln',
+            'CAG': 'Gln', 'CGU': 'Arg', 'CGC': 'Arg', 'CGA': 'Arg', 'CGG': 'Arg',
+            'AUU': 'Ile', 'AUC': 'Ile', 'AUA': 'Ile', 'ACU': 'Thr', 'ACC': 'Thr',
+            'ACA': 'Thr', 'ACG': 'Thr', 'AAU': 'Asn', 'AAC': 'Asn', 'AAA': 'Lys',
+            'AAG': 'Lys', 'AGU': 'Ser', 'AGC': 'Ser', 'AGA': 'Arg', 'AGG': 'Arg',
+            'GUU': 'Val', 'GUC': 'Val', 'GUA': 'Val', 'GUG': 'Val', 'GCU': 'Ala',
+            'GCC': 'Ala', 'GCA': 'Ala', 'GCG': 'Ala', 'GAU': 'Asp', 'GAC': 'Asp',
+            'GAA': 'Glu', 'GAG': 'Glu', 'GGU': 'Gly', 'GGC': 'Gly', 'GGA': 'Gly',
+            'GGG': 'Gly', 'UAA': 'STOP', 'UAG': 'STOP', 'UGA': 'STOP'
+        };
+
+        const currentShape = { type: 'unknown', description: '' };
+        const currentFunction = { valid: false, message: '' };
+
+        // DOM Elements
+        const elDnaCoding = document.getElementById('dna-coding');
+        const elDnaTemplate = document.getElementById('dna-template');
+        const elMrnaSequence = document.getElementById('mrna-sequence');
+        const elProteinSequence = document.getElementById('protein-sequence');
+        const elStructureInfo = document.getElementById('structure-info');
+        const elFunctionInfo = document.getElementById('function-info');
+        const logDataBtn = document.getElementById('log-data-btn');
+        const elEvidenceLogBody = document.getElementById('evidence-log-body');
+
+        const cellTypeRadios = document.querySelectorAll('input[name="cell-type"]');
+        const presetBtns = document.querySelectorAll('.preset-btn');
+
+        // Functions
+        function init() {
+            renderDNA();
+            setupEventListeners();
+            updateSimulation();
+        }
+
+        function getTemplateStrand(codingSeq) {
+            const complements = { 'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C' };
+            return codingSeq.split('').map(b => complements[b]).join('');
+        }
+
+        function transcribe(templateSeq) {
+            const rnaComplements = { 'A': 'U', 'T': 'A', 'C': 'G', 'G': 'C' };
+            return templateSeq.split('').map(b => rnaComplements[b]).join('');
+        }
+
+        function translate(mrnaSeq) {
+            let aminoAcids = [];
+            for (let i = 0; i < mrnaSeq.length; i += 3) {
+                const codon = mrnaSeq.substring(i, i + 3);
+                if (codon.length === 3) {
+                    const aa = codonDict[codon] || '???';
+                    aminoAcids.push(aa);
+                    if (aa === 'STOP') break;
+                }
+            }
+            return aminoAcids;
+        }
+
+        function toggleBase(index) {
+            const currentBase = dnaCodingSequence[index];
+            const nextIndex = (BASES.indexOf(currentBase) + 1) % BASES.length;
+            const newBase = BASES[nextIndex];
+
+            dnaCodingSequence = dnaCodingSequence.substring(0, index) + newBase + dnaCodingSequence.substring(index + 1);
+
+            renderDNA();
+            updateSimulation();
+        }
+
+        function renderDNA() {
+            elDnaCoding.innerHTML = '';
+            elDnaTemplate.innerHTML = '';
+
+            const templateSeq = getTemplateStrand(dnaCodingSequence);
+
+            for (let i = 0; i < dnaCodingSequence.length; i++) {
+                // Coding base
+                const cBase = document.createElement('div');
+                cBase.className = `dna-base base-${dnaCodingSequence[i]}`;
+                cBase.textContent = dnaCodingSequence[i];
+                cBase.title = "Click to mutate this base";
+                cBase.onclick = () => toggleBase(i);
+                elDnaCoding.appendChild(cBase);
+
+                // Template base
+                const tBase = document.createElement('div');
+                tBase.className = `dna-base base-${templateSeq[i]} opacity-50 cursor-not-allowed border-dashed`;
+                tBase.textContent = templateSeq[i];
+                tBase.title = "Template strand (complementary)";
+                elDnaTemplate.appendChild(tBase);
+            }
+        }
+
+        function renderRNAAndProtein(mrnaSeq, aminoAcids) {
+            elMrnaSequence.innerHTML = '';
+            elProteinSequence.innerHTML = '';
+
+            for (let i = 0; i < mrnaSeq.length; i += 3) {
+                const codon = mrnaSeq.substring(i, i + 3);
+
+                // Grouping codons visually
+                if (codon.length > 0) {
+                    const group = document.createElement('div');
+                    group.className = 'codon-group';
+
+                    for (let j = 0; j < codon.length; j++) {
+                        const mBase = document.createElement('div');
+                        mBase.className = `mrna-base base-${codon[j]}`;
+                        mBase.textContent = codon[j];
+                        group.appendChild(mBase);
+                    }
+                    elMrnaSequence.appendChild(group);
+                }
+            }
+
+            aminoAcids.forEach((aa, index) => {
+                const aaEl = document.createElement('div');
+                aaEl.className = 'amino-acid';
+                aaEl.textContent = aa;
+
+                if (aa === 'STOP') {
+                    aaEl.style.backgroundColor = '#fee2e2';
+                    aaEl.style.borderColor = '#ef4444';
+                    aaEl.style.color = '#991b1b';
+                }
+
+                elProteinSequence.appendChild(aaEl);
+
+                // Add peptide bond line except for last element
+                if (index < aminoAcids.length - 1 && aa !== 'STOP') {
+                    const bond = document.createElement('div');
+                    bond.className = 'h-1 w-4 bg-gray-400';
+                    elProteinSequence.appendChild(bond);
+                }
+            });
+        }
+
+        function updateSimulation() {
+            const templateSeq = getTemplateStrand(dnaCodingSequence);
+            const mrnaSeq = transcribe(templateSeq);
+            const aminoAcids = translate(mrnaSeq);
+
+            renderRNAAndProtein(mrnaSeq, aminoAcids);
+
+            // Re-evaluate structure and function
+            evaluateStructure(aminoAcids);
+            drawStructure();
+
+            evaluateFunction();
+            drawFunction();
+        }
+
+        function evaluateStructure(aminoAcids) {
+            const seqStr = aminoAcids.join('-');
+
+            // Define expected sequences for our simple simulation
+            const seqMuscleNormal = "Met-Val-Tyr-Leu";
+            const seqHemoglobinNormal = "Met-His-Cys-Asp";
+            const seqHemoglobinSickle = "Met-His-Ser-Asp";
+            const seqAntibodyNormal = "Met-Arg-Ile-Cys";
+
+            if (seqStr === seqMuscleNormal) {
+                currentShape.type = 'rod';
+                currentShape.description = 'Fibrous Rod (Myosin-like)';
+                elStructureInfo.textContent = currentShape.description;
+                elStructureInfo.className = "mt-2 font-semibold text-center h-6 text-green-700";
+            } else if (seqStr === seqHemoglobinNormal) {
+                currentShape.type = 'bowl';
+                currentShape.description = 'Globular Bowl (Oxygen Binding)';
+                elStructureInfo.textContent = currentShape.description;
+                elStructureInfo.className = "mt-2 font-semibold text-center h-6 text-green-700";
+            } else if (seqStr === seqHemoglobinSickle) {
+                currentShape.type = 'sickle';
+                currentShape.description = 'Misfolded Fibers (Sickle)';
+                elStructureInfo.textContent = currentShape.description;
+                elStructureInfo.className = "mt-2 font-semibold text-center h-6 text-red-600";
+            } else if (seqStr === seqAntibodyNormal) {
+                currentShape.type = 'Y-shape';
+                currentShape.description = 'Y-Shaped Receptor (Antibody)';
+                elStructureInfo.textContent = currentShape.description;
+                elStructureInfo.className = "mt-2 font-semibold text-center h-6 text-green-700";
+            } else if (aminoAcids.includes('STOP') && aminoAcids.length < 4) {
+                 currentShape.type = 'truncated';
+                 currentShape.description = 'Truncated Protein (Premature STOP)';
+                 elStructureInfo.textContent = currentShape.description;
+                 elStructureInfo.className = "mt-2 font-semibold text-center h-6 text-red-600";
+            } else {
+                currentShape.type = 'misfold';
+                currentShape.description = 'Misfolded Tangle (Non-functional)';
+                elStructureInfo.textContent = currentShape.description;
+                elStructureInfo.className = "mt-2 font-semibold text-center h-6 text-orange-600";
+            }
+        }
+
+        function drawStructure() {
+            const canvas = document.getElementById('structure-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+
+            if (currentShape.type === 'rod') {
+                ctx.strokeStyle = '#4ade80'; // Green
+                ctx.moveTo(cx - 100, cy);
+                // Helical rod pattern
+                for (let i = -100; i <= 100; i += 20) {
+                    ctx.lineTo(cx + i, cy + Math.sin(i * 0.1) * 15);
+                }
+            } else if (currentShape.type === 'bowl') {
+                ctx.strokeStyle = '#f87171'; // Red
+                ctx.arc(cx, cy - 20, 60, 0, Math.PI, false);
+                // Hemoglobin subunits
+                ctx.moveTo(cx - 40, cy - 20); ctx.arc(cx - 30, cy - 30, 20, 0, Math.PI * 2);
+                ctx.moveTo(cx + 40, cy - 20); ctx.arc(cx + 30, cy - 30, 20, 0, Math.PI * 2);
+                ctx.fillStyle = '#fee2e2'; ctx.fill();
+            } else if (currentShape.type === 'sickle') {
+                ctx.strokeStyle = '#9ca3af'; // Gray
+                ctx.moveTo(cx - 80, cy);
+                ctx.quadraticCurveTo(cx, cy + 80, cx + 80, cy);
+                ctx.quadraticCurveTo(cx, cy + 40, cx - 80, cy);
+                ctx.fillStyle = '#f3f4f6'; ctx.fill();
+            } else if (currentShape.type === 'Y-shape') {
+                ctx.strokeStyle = '#c084fc'; // Purple
+                ctx.moveTo(cx, cy + 60);
+                ctx.lineTo(cx, cy);
+                ctx.lineTo(cx - 50, cy - 50);
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + 50, cy - 50);
+            } else if (currentShape.type === 'truncated') {
+                ctx.strokeStyle = '#fb923c'; // Orange
+                ctx.moveTo(cx - 60, cy);
+                ctx.lineTo(cx - 20, cy - 20);
+                ctx.lineTo(cx + 20, cy + 20);
+            } else { // misfold
+                ctx.strokeStyle = '#fbbf24'; // Yellow
+                ctx.moveTo(cx - 40, cy);
+                ctx.bezierCurveTo(cx - 40, cy - 80, cx + 60, cy - 80, cx + 40, cy + 20);
+                ctx.bezierCurveTo(cx + 20, cy + 80, cx - 80, cy + 40, cx - 60, cy - 20);
+                ctx.bezierCurveTo(cx - 40, cy - 60, cx + 80, cy, cx, cy);
+            }
+
+            ctx.stroke();
+        }
+
+        function evaluateFunction() {
+            const cellType = document.querySelector('input[name="cell-type"]:checked').value;
+
+            currentFunction.valid = false;
+
+            if (currentShape.type === 'misfold' || currentShape.type === 'truncated' || currentShape.type === 'sickle') {
+                currentFunction.message = 'Fails: Protein structure is defective.';
+                if (currentShape.type === 'sickle' && cellType === 'rbc') {
+                    currentFunction.message = 'Fails: Protein aggregates, changing cell shape.';
+                }
+            } else if (cellType === 'muscle') {
+                if (currentShape.type === 'rod') {
+                    currentFunction.valid = true;
+                    currentFunction.message = 'Success: Rod structure enables muscle contraction.';
+                } else {
+                    currentFunction.message = `Fails: ${currentShape.description} cannot contract.`;
+                }
+            } else if (cellType === 'rbc') {
+                if (currentShape.type === 'bowl') {
+                    currentFunction.valid = true;
+                    currentFunction.message = 'Success: Bowl structure carries oxygen.';
+                } else {
+                    currentFunction.message = `Fails: ${currentShape.description} cannot hold oxygen.`;
+                }
+            } else if (cellType === 'immune') {
+                if (currentShape.type === 'Y-shape') {
+                    currentFunction.valid = true;
+                    currentFunction.message = 'Success: Y-Shape binds to pathogens.';
+                } else {
+                    currentFunction.message = `Fails: ${currentShape.description} cannot bind pathogens.`;
+                }
+            }
+
+            elFunctionInfo.textContent = currentFunction.message;
+            elFunctionInfo.className = `mt-2 font-semibold text-center h-6 ${currentFunction.valid ? 'text-green-700' : 'text-red-600'}`;
+        }
+
+        function drawFunction() {
+            const canvas = document.getElementById('function-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const cellType = document.querySelector('input[name="cell-type"]:checked').value;
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            // Draw Background Cell Environment
+            ctx.beginPath();
+            if (cellType === 'muscle') {
+                // Striated Muscle fibers
+                ctx.fillStyle = '#fecaca';
+                ctx.fillRect(0, 0, w, h);
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                for(let i=10; i<h; i+=20) {
+                    ctx.moveTo(0, i); ctx.lineTo(w, i);
+                }
+                ctx.stroke();
+            } else if (cellType === 'rbc') {
+                // Blood vessel
+                ctx.fillStyle = '#fee2e2';
+                ctx.fillRect(0, 0, w, h);
+                // Background RBCs
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.arc(w*0.2, h*0.3, 30, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(w*0.8, h*0.8, 30, 0, Math.PI*2); ctx.fill();
+            } else if (cellType === 'immune') {
+                // Tissue
+                ctx.fillStyle = '#f3f4f6';
+                ctx.fillRect(0, 0, w, h);
+                // Draw a pathogen (bacteria)
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath(); ctx.ellipse(w*0.8, cy, 20, 40, 0, 0, Math.PI*2); ctx.fill();
+            }
+
+            // Draw Protein Interaction Result
+            if (currentFunction.valid) {
+                ctx.fillStyle = '#16a34a'; // Success green text
+                ctx.font = 'bold 20px sans-serif';
+                ctx.textAlign = 'center';
+
+                // Draw functional representation
+                ctx.lineWidth = 8;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                if (cellType === 'muscle' && currentShape.type === 'rod') {
+                    ctx.strokeStyle = '#4ade80';
+                    ctx.moveTo(cx - 80, cy); ctx.lineTo(cx + 80, cy);
+                    ctx.stroke();
+                    ctx.fillText('Contracting...', cx, cy - 20);
+                } else if (cellType === 'rbc' && currentShape.type === 'bowl') {
+                    // Draw oxygen binding to the bowl
+                    ctx.strokeStyle = '#f87171'; // Red bowl
+                    ctx.arc(cx, cy + 20, 40, 0, Math.PI, false);
+                    ctx.stroke();
+                    ctx.fillStyle = '#60a5fa'; // Oxygen (O2)
+                    ctx.beginPath(); ctx.arc(cx - 10, cy + 10, 10, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(cx + 10, cy + 10, 10, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#16a34a';
+                    ctx.fillText('Carrying O2', cx, cy - 20);
+                } else if (cellType === 'immune' && currentShape.type === 'Y-shape') {
+                    ctx.strokeStyle = '#c084fc';
+                    ctx.moveTo(w*0.8 - 25, cy); ctx.lineTo(cx + 40, cy); // Binding to pathogen
+                    ctx.moveTo(cx + 40, cy); ctx.lineTo(cx, cy - 40);
+                    ctx.moveTo(cx + 40, cy); ctx.lineTo(cx, cy + 40);
+                    ctx.stroke();
+                    ctx.fillText('Binding Pathogen', cx, cy - 60);
+                }
+            } else {
+                ctx.fillStyle = '#dc2626'; // Failed red text
+                ctx.font = 'bold 20px sans-serif';
+                ctx.textAlign = 'center';
+
+                // Draw failed interaction
+                if (currentShape.type === 'sickle' && cellType === 'rbc') {
+                     // Draw sickled cell
+                     ctx.fillStyle = '#ef4444';
+                     ctx.beginPath();
+                     ctx.moveTo(cx - 60, cy);
+                     ctx.quadraticCurveTo(cx, cy + 80, cx + 60, cy);
+                     ctx.quadraticCurveTo(cx, cy + 20, cx - 60, cy);
+                     ctx.fill();
+                     ctx.fillStyle = '#dc2626';
+                     ctx.fillText('Cell Sickled!', cx, cy - 20);
+                } else {
+                     ctx.fillText('Function Failed', cx, cy);
+                     ctx.font = '14px sans-serif';
+                     ctx.fillText('Structure incompatible with cell environment', cx, cy + 25);
+                }
+            }
+        }
+
+        function logData() {
+            const row = document.createElement('tr');
+            row.className = 'border-b hover:bg-gray-50 transition-colors';
+
+            const cellTypeStr = document.querySelector('input[name="cell-type"]:checked').nextElementSibling.textContent;
+
+            const templateSeq = getTemplateStrand(dnaCodingSequence);
+            const mrnaSeq = transcribe(templateSeq);
+            const aminoAcidsStr = translate(mrnaSeq).join('-');
+
+            row.innerHTML = `
+                <td class="p-2 font-mono text-xs">${dnaCodingSequence}</td>
+                <td class="p-2 text-xs">${aminoAcidsStr}</td>
+                <td class="p-2 text-xs">${currentShape.description}</td>
+                <td class="p-2 text-xs">${cellTypeStr}</td>
+                <td class="p-2 text-xs ${currentFunction.valid ? 'text-green-700 font-semibold' : 'text-red-600'}">${currentFunction.message}</td>
+            `;
+
+            // Insert at top
+            elEvidenceLogBody.insertBefore(row, elEvidenceLogBody.firstChild);
+        }
+
+        function setupEventListeners() {
+            cellTypeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    evaluateFunction();
+                    drawFunction();
+                });
+            });
+
+            presetBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    dnaCodingSequence = e.target.getAttribute('data-seq');
+
+                    // Auto-select corresponding cell type for standard presets
+                    if (e.target.textContent.includes('Muscle')) {
+                        document.querySelector('input[value="muscle"]').checked = true;
+                    } else if (e.target.textContent.includes('Hemoglobin')) {
+                        document.querySelector('input[value="rbc"]').checked = true;
+                    } else if (e.target.textContent.includes('Antibody')) {
+                        document.querySelector('input[value="immune"]').checked = true;
+                    }
+
+                    renderDNA();
+                    updateSimulation();
+                });
+            });
+
+            logDataBtn.addEventListener('click', logData);
+        }
+
+        // Initialize simulation
+        init();
+    </script>
+</body>
+</html>

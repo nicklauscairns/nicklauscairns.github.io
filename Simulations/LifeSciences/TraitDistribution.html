@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trait Distribution and Probability Model (HS-LS3-3)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
+        .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
+        input[type="range"] { accent-color: #10b981; width: 100%; }
+
+        .stat-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; text-align: center; }
+        .stat-val { font-size: 1.5rem; font-weight: bold; font-family: monospace; color: #334155; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: #64748b; margin-top: 4px; }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-emerald-700">Trait Distribution Model</h1>
+            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-3: Apply concepts of statistics and probability to explain the variation and distribution of expressed traits in a population.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+
+            <!-- Controls -->
+            <div class="lg:col-span-1 space-y-6 flex flex-col">
+                <div class="panel border-t-4 border-t-emerald-500">
+                    <h2 class="text-xl font-bold mb-4 text-slate-700">Model Variables</h2>
+                    <p class="text-xs text-slate-500 mb-6">Adjust the genetic and environmental factors to see how they influence the expressed height of a plant population (n = 10,000).</p>
+
+                    <div class="space-y-6">
+                        <!-- Genetic Mean -->
+                        <div>
+                            <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                                <span>Base Genetic Potential (Mean Height)</span>
+                                <span id="val-genetic" class="text-emerald-600 font-mono">100 cm</span>
+                            </label>
+                            <input type="range" id="slider-genetic" min="50" max="150" value="100" step="1">
+                            <p class="text-[10px] text-slate-400 mt-1">The average height dictated purely by the population's DNA.</p>
+                        </div>
+
+                        <!-- Genetic Variance -->
+                        <div>
+                            <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                                <span>Genetic Diversity (Variance)</span>
+                                <span id="val-variance" class="text-emerald-600 font-mono">Moderate</span>
+                            </label>
+                            <input type="range" id="slider-variance" min="5" max="30" value="15" step="1">
+                            <p class="text-[10px] text-slate-400 mt-1">How widely the genetics vary around the mean (Standard Deviation).</p>
+                        </div>
+
+                        <hr class="border-slate-200">
+
+                        <!-- Environmental Factor -->
+                        <div>
+                            <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                                <span>Environmental Factor (Rainfall/Soil)</span>
+                                <span id="val-env" class="text-blue-600 font-mono">Optimal (0)</span>
+                            </label>
+                            <input type="range" id="slider-env" min="-40" max="20" value="0" step="1" class="accent-blue-500">
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                                <span>Severe Drought</span>
+                                <span>Optimal</span>
+                                <span>Abundant</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="panel border-t-4 border-t-blue-500 flex-grow">
+                    <h2 class="text-lg font-bold mb-4 text-slate-700">Population Statistics</h2>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="stat-box">
+                            <div class="stat-val" id="stat-mean">100.0 cm</div>
+                            <div class="stat-label">Expressed Mean Height (μ)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-val" id="stat-sd">15.0 cm</div>
+                            <div class="stat-label">Standard Deviation (σ)</div>
+                        </div>
+                        <div class="stat-box col-span-2">
+                            <div class="stat-val text-emerald-600" id="stat-prob">68.2%</div>
+                            <div class="stat-label">Probability of a plant falling within 1 SD of the mean</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Visualization -->
+            <div class="lg:col-span-2 panel flex flex-col">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-xl font-bold text-slate-700">Trait Distribution (Histogram)</h2>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Normal Distribution Curve</span>
+                </div>
+
+                <div class="relative w-full flex-grow min-h-[400px]">
+                    <canvas id="distribution-chart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Context -->
+        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm">
+            <h3 class="font-bold text-blue-800 mb-1">Scientific Context</h3>
+            <p class="text-sm text-blue-900">
+                Most complex traits (like height, skin color, or yield) are <strong>polygenic</strong> (controlled by many genes) and follow a normal distribution (bell curve).
+                The <strong>genetic potential</strong> sets the baseline and variance for the population. However, <strong>environmental factors</strong> (like a drought) can shift the entire distribution curve, changing the resulting <em>expressed</em> traits (phenotype) even without altering the underlying DNA.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const elSliderGen = document.getElementById('slider-genetic');
+        const elValGen = document.getElementById('val-genetic');
+
+        const elSliderVar = document.getElementById('slider-variance');
+        const elValVar = document.getElementById('val-variance');
+
+        const elSliderEnv = document.getElementById('slider-env');
+        const elValEnv = document.getElementById('val-env');
+
+        const elStatMean = document.getElementById('stat-mean');
+        const elStatSd = document.getElementById('stat-sd');
+        const elStatProb = document.getElementById('stat-prob');
+
+        let distChart = null;
+
+        // Math: Box-Muller transform for normal distribution
+        function randomNormal(mean, stdDev) {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random(); // Converting [0,1) to (0,1)
+            while(v === 0) v = Math.random();
+            let num = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+            num = num / 10.0 + 0.5; // Translate to 0 -> 1
+            if (num > 1 || num < 0) return randomNormal(mean, stdDev); // resample between 0 and 1
+            return (num - 0.5) * 10.0 * stdDev + mean; // Stretch to fill range
+        }
+
+        function init() {
+            initChart();
+            setupEventListeners();
+            updateSimulation();
+        }
+
+        function setupEventListeners() {
+            const sliders = [elSliderGen, elSliderVar, elSliderEnv];
+            sliders.forEach(slider => {
+                slider.addEventListener('input', updateSimulation);
+            });
+
+            // Expose for Playwright testing
+            window.updateSimulation = updateSimulation;
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('distribution-chart').getContext('2d');
+            distChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Number of Plants',
+                        data: [],
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)', // Emerald 500
+                        borderColor: 'rgba(5, 150, 105, 1)', // Emerald 600
+                        borderWidth: 1,
+                        barPercentage: 1.0,
+                        categoryPercentage: 1.0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Expressed Plant Height (cm)' },
+                            ticks: { maxTicksLimit: 20 }
+                        },
+                        y: {
+                            title: { display: true, text: 'Frequency (Count)' },
+                            beginAtZero: true,
+                            suggestedMax: 1500 // Keep scale mostly stable
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => `Height: ${items[0].label} cm`,
+                                label: (item) => `Count: ${item.raw}`
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 400 // Smooth transitions
+                    }
+                }
+            });
+        }
+
+        function updateSimulation() {
+            // 1. Gather Inputs
+            const genMean = parseFloat(elSliderGen.value);
+            const stdDev = parseFloat(elSliderVar.value);
+            const envFactor = parseFloat(elSliderEnv.value);
+
+            // Update Labels
+            elValGen.textContent = `${genMean} cm`;
+
+            let varText = 'Moderate';
+            if (stdDev < 10) varText = 'Low (Inbred)';
+            else if (stdDev > 20) varText = 'High (Diverse)';
+            elValVar.textContent = `${varText} (σ=${stdDev})`;
+
+            let envText = 'Optimal';
+            if (envFactor < -20) envText = 'Severe Drought';
+            else if (envFactor < 0) envText = 'Dry';
+            else if (envFactor > 10) envText = 'Abundant Rain';
+            elValEnv.textContent = `${envText} (${envFactor > 0 ? '+' : ''}${envFactor})`;
+
+            // 2. Calculate Final Phenotype Mean
+            // Phenotype = Genotype + Environment
+            const expressedMean = genMean + envFactor;
+
+            // 3. Generate Population Data (n = 10,000)
+            const popSize = 10000;
+            const population = [];
+            for(let i=0; i<popSize; i++) {
+                const traitValue = randomNormal(expressedMean, stdDev);
+                population.push(traitValue);
+            }
+
+            // 4. Bin Data for Histogram
+            // Range from 0 to 200 cm, bin size 5 cm
+            const minHeight = 0;
+            const maxHeight = 200;
+            const binSize = 5;
+            const numBins = Math.ceil((maxHeight - minHeight) / binSize);
+
+            const bins = new Array(numBins).fill(0);
+            const labels = [];
+
+            for(let i=0; i<numBins; i++) {
+                labels.push(`${minHeight + (i * binSize)}`);
+            }
+
+            population.forEach(val => {
+                if (val >= minHeight && val < maxHeight) {
+                    const binIndex = Math.floor((val - minHeight) / binSize);
+                    bins[binIndex]++;
+                }
+            });
+
+            // 5. Calculate Stats
+            // Real probability within 1 SD in normal dist is ~68.2%, but let's calculate empirically to show it
+            const lowerBound = expressedMean - stdDev;
+            const upperBound = expressedMean + stdDev;
+            let countIn1SD = 0;
+            population.forEach(val => {
+                if(val >= lowerBound && val <= upperBound) countIn1SD++;
+            });
+            const prob1SD = (countIn1SD / popSize) * 100;
+
+            elStatMean.textContent = `${expressedMean.toFixed(1)} cm`;
+            elStatSd.textContent = `${stdDev.toFixed(1)} cm`;
+            elStatProb.textContent = `${prob1SD.toFixed(1)}%`;
+
+            // 6. Update Chart
+            distChart.data.labels = labels;
+            distChart.data.datasets[0].data = bins;
+
+            // Adjust chart color based on environment
+            if (envFactor < -10) {
+                distChart.data.datasets[0].backgroundColor = 'rgba(245, 158, 11, 0.7)'; // Amber
+                distChart.data.datasets[0].borderColor = 'rgba(217, 119, 6, 1)';
+            } else if (envFactor > 10) {
+                distChart.data.datasets[0].backgroundColor = 'rgba(59, 130, 246, 0.7)'; // Blue
+                distChart.data.datasets[0].borderColor = 'rgba(37, 99, 235, 1)';
+            } else {
+                distChart.data.datasets[0].backgroundColor = 'rgba(16, 185, 129, 0.7)'; // Green
+                distChart.data.datasets[0].borderColor = 'rgba(5, 150, 105, 1)';
+            }
+
+            distChart.update();
+        }
+
+        init();
+    </script>
+</body>
+</html>

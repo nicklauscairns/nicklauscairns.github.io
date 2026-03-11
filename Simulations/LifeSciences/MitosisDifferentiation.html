@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitosis and Cellular Differentiation Model (HS-LS1-4)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+
+        #canvas-container {
+            background-color: #0f172a; /* Dark background to make cells pop */
+            border-radius: 12px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stage-btn {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .stage-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stage-btn.active::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 8px 0 8px 8px;
+            border-style: solid;
+            border-color: transparent transparent transparent #3b82f6;
+            z-index: 10;
+        }
+
+        .legend-color {
+            width: 16px; height: 16px; border-radius: 4px; display: inline-block; vertical-align: middle; margin-right: 6px; border: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-slate-800">Growth and Development of Organisms</h1>
+            <p class="text-gray-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS1-4: Use a model to illustrate the role of cellular division (mitosis) and differentiation in producing and maintaining complex organisms.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
+
+            <!-- Left Column: Controls & Stages -->
+            <div class="lg:col-span-1 space-y-4 flex flex-col">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Development Stage</h2>
+                    <p class="text-sm text-gray-500 mb-4">Advance the organism's development to observe mitosis and cellular differentiation.</p>
+
+                    <div class="flex flex-col space-y-2">
+                        <button class="stage-btn active w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold" data-stage="zygote">
+                            1. Zygote (Single Cell)
+                        </button>
+                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="cleavage">
+                            2. Cleavage (Mitosis)
+                        </button>
+                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="blastula">
+                            3. Blastula (Hollow Ball)
+                        </button>
+                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="gastrula">
+                            4. Gastrulation (Differentiation)
+                        </button>
+                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="tissue">
+                            5. Specialized Tissues
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-200">
+                        <button id="btn-advance" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors flex justify-center items-center">
+                            Advance Development
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                        </button>
+                        <button id="btn-reset" class="w-full mt-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded transition-colors">
+                            Restart from Zygote
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Panel -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
+                    <h3 class="font-bold text-slate-700 border-b pb-2 mb-3">Organism Stats</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+                            <span class="text-sm font-semibold text-slate-600">Total Cells:</span>
+                            <span id="stat-count" class="font-mono font-bold text-blue-600 text-lg">1</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+                            <span class="text-sm font-semibold text-slate-600">Process:</span>
+                            <span id="stat-process" class="text-sm font-bold text-slate-700">Fertilization</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+                            <span class="text-sm font-semibold text-slate-600">Genetic Info:</span>
+                            <span id="stat-genetics" class="text-xs font-bold text-slate-700 text-right w-1/2">Identical</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column: Visualization -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col" style="min-height: 500px;">
+                <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h2 class="font-bold text-slate-700 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Cellular Model
+                    </h2>
+                    <span id="stage-title" class="text-sm font-bold text-blue-600">Zygote</span>
+                </div>
+
+                <div id="canvas-container" class="flex-grow w-full h-full p-0">
+                    <canvas id="visual-canvas" width="600" height="600" class="w-full h-full"></canvas>
+                </div>
+
+                <!-- Legend -->
+                <div class="p-3 border-t bg-slate-800 rounded-b-xl flex flex-wrap gap-x-4 gap-y-2 justify-center text-xs font-medium text-slate-300" id="legend">
+                    <div class="flex items-center"><div class="legend-color" style="background-color: #cbd5e1;"></div>Stem Cell (Totipotent)</div>
+                </div>
+            </div>
+
+            <!-- Right Column: Context/Explanation -->
+            <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full overflow-y-auto">
+                <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Scientific Context</h2>
+
+                <div id="context-info" class="space-y-4 text-sm text-slate-600">
+                    <!-- Dynamic content injected here -->
+                </div>
+
+                <div class="mt-8 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                    <h3 class="font-bold text-blue-800 mb-2">Key NGSS Concepts:</h3>
+                    <ul class="list-disc list-inside space-y-1 text-xs text-blue-900">
+                        <li><strong>Mitosis:</strong> Individual cells grow and divide, passing identical genetic material (DNA) to both daughter cells.</li>
+                        <li><strong>Differentiation:</strong> Cells specialize to form tissues and organs that work together to meet the needs of the whole organism.</li>
+                        <li><strong>Complexity:</strong> The organism begins as a single cell and produces a complex system through these two processes.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Data and State
+        const stages = [
+            {
+                id: 'zygote', name: 'Zygote', count: 1, process: 'Fertilization', genetics: 'Identical (2n)',
+                legend: '<div class="flex items-center"><div class="legend-color" style="background-color: #cbd5e1;"></div>Zygote (Totipotent)</div>',
+                context: '<p><strong>The Beginning:</strong> A multicellular organism begins life as a single cell called a zygote, formed by the fusion of sperm and egg.</p><p>This single cell contains all the genetic instructions (DNA) necessary to build the entire complex organism.</p>'
+            },
+            {
+                id: 'cleavage', name: 'Cleavage', count: 8, process: 'Rapid Mitosis', genetics: 'Identical (2n)',
+                legend: '<div class="flex items-center"><div class="legend-color" style="background-color: #94a3b8;"></div>Stem Cells (Totipotent)</div>',
+                context: '<p><strong>Cell Division (Mitosis):</strong> The zygote undergoes rapid cell division. The single cell divides into two, then four, then eight cells, and so on.</p><p>Crucially, before every division, the DNA is copied exactly. Every resulting daughter cell receives <strong>identical genetic material</strong> (two variants of each chromosome pair).</p>'
+            },
+            {
+                id: 'blastula', name: 'Blastula', count: 64, process: 'Mitosis & Organization', genetics: 'Identical (2n)',
+                legend: '<div class="flex items-center"><div class="legend-color" style="background-color: #64748b;"></div>Blastocyst Cells (Pluripotent)</div>',
+                context: '<p><strong>Organization:</strong> As mitosis continues, the solid ball of cells begins to organize itself into a hollow sphere called a blastula.</p><p>The cells are still functionally unspecialized (stem cells), but they are organizing spatially to prepare for the next critical phase.</p>'
+            },
+            {
+                id: 'gastrula', name: 'Gastrulation', count: 256, process: 'Early Differentiation', genetics: 'Identical (2n), Gene Expression Varies',
+                legend: '<div class="flex items-center"><div class="legend-color" style="background-color: #3b82f6;"></div>Ectoderm (Outer)</div><div class="flex items-center"><div class="legend-color" style="background-color: #ef4444;"></div>Mesoderm (Middle)</div><div class="flex items-center"><div class="legend-color" style="background-color: #eab308;"></div>Endoderm (Inner)</div>',
+                context: '<p><strong>Differentiation Begins:</strong> A monumental shift occurs. While every cell still has the exact same DNA, cells begin to "turn on" or "turn off" specific genes based on their position.</p><p>This process, called <strong>differentiation</strong>, forms three distinct germ layers (Ectoderm, Mesoderm, Endoderm). These generic stem cells are committing to specific developmental paths.</p>'
+            },
+            {
+                id: 'tissue', name: 'Specialized Tissues', count: '1000+', process: 'Growth & Specialization', genetics: 'Identical DNA, Highly Differentiated',
+                legend: '<div class="flex items-center"><div class="legend-color" style="background-color: #2563eb; border-radius: 50%;"></div>Skin/Nerve Cells</div><div class="flex items-center"><div class="legend-color" style="background-color: #dc2626; border-radius: 0;"></div>Muscle/Blood Cells</div><div class="flex items-center"><div class="legend-color" style="background-color: #ca8a04; border-radius: 10px 0;"></div>Gut/Lung Cells</div>',
+                context: '<p><strong>Complex Organism Formed:</strong> Further division and differentiation result in highly specialized cells with distinct shapes and functions.</p><p>The ectoderm forms skin and nerves; mesoderm forms muscle and blood; endoderm forms the digestive tract and lungs.</p><p>Together, these specialized cells form tissues, which form organs, which work together as systems to maintain the life of the complex organism.</p>'
+            }
+        ];
+
+        let currentStageIndex = 0;
+        let cells = []; // Array to hold cell objects for canvas rendering
+        let animationId = null;
+
+        // DOM Elements
+        const elBtns = document.querySelectorAll('.stage-btn');
+        const elBtnAdvance = document.getElementById('btn-advance');
+        const elBtnReset = document.getElementById('btn-reset');
+        const elStatCount = document.getElementById('stat-count');
+        const elStatProcess = document.getElementById('stat-process');
+        const elStatGenetics = document.getElementById('stat-genetics');
+        const elStageTitle = document.getElementById('stage-title');
+        const elLegend = document.getElementById('legend');
+        const elContextInfo = document.getElementById('context-info');
+
+        // Initialization
+        function init() {
+            setupEventListeners();
+            loadStage(0);
+        }
+
+        function setupEventListeners() {
+            elBtnAdvance.addEventListener('click', () => {
+                if (currentStageIndex < stages.length - 1) {
+                    loadStage(currentStageIndex + 1);
+                }
+            });
+
+            elBtnReset.addEventListener('click', () => {
+                loadStage(0);
+            });
+
+            // Allow clicking individual stages (mostly for test scripts, but useful UI)
+            elBtns.forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    loadStage(index);
+                });
+            });
+        }
+
+        function loadStage(index) {
+            currentStageIndex = index;
+            const stage = stages[index];
+
+            // Update Buttons UI
+            elBtns.forEach((btn, i) => {
+                btn.className = 'stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold';
+                if (i === index) {
+                    btn.classList.add('active');
+                } else if (i < index) {
+                    btn.classList.add('text-slate-700', 'bg-slate-50');
+                } else {
+                    btn.classList.add('text-slate-400', 'bg-white');
+                }
+            });
+
+            // Update Stats & Text
+            elStatCount.textContent = stage.count;
+            elStatProcess.textContent = stage.process;
+            elStatGenetics.textContent = stage.genetics;
+            elStageTitle.textContent = stage.name;
+            elLegend.innerHTML = stage.legend;
+            elContextInfo.innerHTML = stage.context;
+
+            // Advance Button State
+            if (index === stages.length - 1) {
+                elBtnAdvance.disabled = true;
+                elBtnAdvance.classList.replace('bg-blue-600', 'bg-slate-400');
+                elBtnAdvance.classList.replace('hover:bg-blue-700', 'hover:bg-slate-400');
+                elBtnAdvance.innerHTML = 'Fully Developed';
+            } else {
+                elBtnAdvance.disabled = false;
+                elBtnAdvance.classList.replace('bg-slate-400', 'bg-blue-600');
+                elBtnAdvance.classList.replace('hover:bg-slate-400', 'hover:bg-blue-700');
+                elBtnAdvance.innerHTML = `Advance Development <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>`;
+            }
+
+            // Generate Cells for Visualization
+            generateCellsForStage(index);
+
+            // Trigger drawing
+            if (animationId) cancelAnimationFrame(animationId);
+            drawCanvas();
+        }
+
+        function generateCellsForStage(index) {
+            cells = [];
+
+            // Abstract coordinate space for logic. We'll map to canvas in draw function.
+            // Center is (0,0)
+
+            if (index === 0) {
+                // Zygote: 1 large cell
+                cells.push({ x: 0, y: 0, r: 80, type: 'stem', color: '#cbd5e1' });
+            }
+            else if (index === 1) {
+                // Cleavage: 8 cells packed
+                const r = 40;
+                // Simple 3D-ish packing simulation in 2D
+                cells.push({ x: -20, y: -20, r: r, type: 'stem', color: '#94a3b8' });
+                cells.push({ x: 20, y: -20, r: r, type: 'stem', color: '#94a3b8' });
+                cells.push({ x: -20, y: 20, r: r, type: 'stem', color: '#94a3b8' });
+                cells.push({ x: 20, y: 20, r: r, type: 'stem', color: '#94a3b8' });
+
+                // Front/Back simulated by slightly offset/darker cells
+                cells.push({ x: 0, y: -30, r: r*0.9, type: 'stem', color: '#64748b' });
+                cells.push({ x: 0, y: 30, r: r*0.9, type: 'stem', color: '#64748b' });
+                cells.push({ x: -30, y: 0, r: r*0.9, type: 'stem', color: '#64748b' });
+                cells.push({ x: 30, y: 0, r: r*0.9, type: 'stem', color: '#64748b' });
+            }
+            else if (index === 2) {
+                // Blastula: Hollow ball (ring of cells)
+                const numCells = 64;
+                const radius = 100;
+                for (let i = 0; i < numCells; i++) {
+                    const angle = (i / numCells) * Math.PI * 2;
+                    // Add some noise for organic look
+                    const dist = radius + (Math.random() * 10 - 5);
+                    const x = Math.cos(angle) * dist;
+                    const y = Math.sin(angle) * dist;
+                    cells.push({ x: x, y: y, r: 15, type: 'stem', color: '#64748b' });
+                }
+
+                // Add some cells floating inside/behind
+                for (let i = 0; i < 10; i++) {
+                    const a = Math.random() * Math.PI * 2;
+                    const d = Math.random() * radius * 0.8;
+                    cells.push({ x: Math.cos(a)*d, y: Math.sin(a)*d, r: 12, type: 'stem', color: '#475569' });
+                }
+            }
+            else if (index === 3) {
+                // Gastrula: Differentiation into 3 layers (invagination)
+                const numCellsOuter = 100; // Ectoderm
+                const numCellsMiddle = 80; // Mesoderm
+                const numCellsInner = 60;  // Endoderm
+
+                // Ectoderm (Outer, Blue)
+                for (let i = 0; i < numCellsOuter; i++) {
+                    const angle = (i / numCellsOuter) * Math.PI * 2;
+                    // Create invagination at bottom (angle near PI/2)
+                    let radius = 120;
+                    if (angle > Math.PI*0.3 && angle < Math.PI*0.7) {
+                        radius = 120 - Math.sin((angle - Math.PI*0.3)/(Math.PI*0.4) * Math.PI) * 60;
+                    }
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    cells.push({ x: x, y: y, r: 10, type: 'ecto', color: '#3b82f6' });
+                }
+
+                // Mesoderm (Middle, Red)
+                for (let i = 0; i < numCellsMiddle; i++) {
+                    const angle = (i / numCellsMiddle) * Math.PI * 2;
+                    let radius = 100;
+                    if (angle > Math.PI*0.3 && angle < Math.PI*0.7) {
+                        radius = 100 - Math.sin((angle - Math.PI*0.3)/(Math.PI*0.4) * Math.PI) * 40;
+                    }
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    cells.push({ x: x, y: y, r: 10, type: 'meso', color: '#ef4444' });
+                }
+
+                // Endoderm (Inner, Yellow) - heavily invaginated
+                for (let i = 0; i < numCellsInner; i++) {
+                    const angle = Math.PI*0.2 + (i / numCellsInner) * Math.PI * 0.6; // Only bottom half curve
+                    let radius = 70;
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * 20 - 40; // Push up to form the primitive gut tube
+                    cells.push({ x: x, y: y, r: 10, type: 'endo', color: '#eab308' });
+                }
+            }
+            else if (index === 4) {
+                // Specialized Tissues: Cells break out of spherical shape and form structures
+
+                // 1. Ectoderm -> Nervous System (Top)
+                for (let i=0; i<80; i++) {
+                    const x = (Math.random() - 0.5) * 250;
+                    const y = -100 + (Math.random() - 0.5) * 60;
+                    cells.push({ x: x, y: y, r: 8, type: 'neuron', color: '#2563eb' });
+                }
+
+                // 2. Mesoderm -> Muscle (Middle sides)
+                for (let i=0; i<150; i++) {
+                    const side = Math.random() > 0.5 ? 1 : -1;
+                    const x = side * (80 + Math.random() * 80);
+                    const y = (Math.random() - 0.5) * 150;
+                    cells.push({ x: x, y: y, w: 20, h: 6, type: 'muscle', color: '#dc2626' });
+                }
+
+                // 3. Endoderm -> Gut Tube (Middle center)
+                for (let i=0; i<100; i++) {
+                    const x = (Math.random() - 0.5) * 40;
+                    const y = (Math.random() - 0.5) * 200;
+                    cells.push({ x: x, y: y, r: 10, type: 'gut', color: '#ca8a04' });
+                }
+            }
+        }
+
+        function drawCanvas() {
+            const canvas = document.getElementById('visual-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // High-DPI support
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if(canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            const w = rect.width;
+            const h = rect.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw all cells
+            cells.forEach(cell => {
+                ctx.save();
+                ctx.translate(cx + cell.x, cy + cell.y);
+
+                ctx.fillStyle = cell.color;
+                ctx.strokeStyle = '#ffffff'; // White border for contrast
+                ctx.lineWidth = 1;
+
+                if (cell.type === 'muscle') {
+                    // Rectangular muscle fibers
+                    ctx.beginPath();
+                    ctx.rect(-cell.w/2, -cell.h/2, cell.w, cell.h);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+                else if (cell.type === 'neuron') {
+                    // Central body with dendrites
+                    ctx.beginPath();
+                    ctx.arc(0, 0, cell.r, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Draw a few abstract dendrite lines
+                    ctx.strokeStyle = cell.color;
+                    ctx.lineWidth = 2;
+                    for(let i=0; i<3; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        ctx.beginPath();
+                        ctx.moveTo(0,0);
+                        ctx.lineTo(Math.cos(angle)*15, Math.sin(angle)*15);
+                        ctx.stroke();
+                    }
+                }
+                else {
+                    // Generic circular cells (stem, ecto, meso, endo, gut)
+                    ctx.beginPath();
+                    ctx.arc(0, 0, cell.r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (currentStageIndex <= 2) {
+                        // For early stages (Zygote, Cleavage, Blastula), explicitly show identical nucleus/DNA to satisfy NGSS "passing identical genetic material"
+                        ctx.fillStyle = '#1e293b'; // Dark nucleus
+                        ctx.beginPath();
+                        ctx.arc(0, 0, cell.r * 0.3, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Draw two little chromosomes inside to represent 2n
+                        if (cell.r > 15) {
+                            ctx.strokeStyle = '#f8fafc';
+                            ctx.lineWidth = cell.r * 0.05;
+                            ctx.beginPath(); ctx.moveTo(-cell.r*0.1, -cell.r*0.1); ctx.lineTo(-cell.r*0.1, cell.r*0.1); ctx.stroke();
+                            ctx.beginPath(); ctx.moveTo(cell.r*0.1, -cell.r*0.1); ctx.lineTo(cell.r*0.1, cell.r*0.1); ctx.stroke();
+                        }
+                    }
+
+                    // Light border for overlapping visibility
+                    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            });
+        }
+
+        // Run
+        init();
+    </script>
+</body>
+</html>

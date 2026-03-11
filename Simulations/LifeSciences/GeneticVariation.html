@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sources of Genetic Variation Model (HS-LS3-2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
+
+        /* Module 1: Meiosis */
+        .chromo-pair { display: flex; gap: 8px; justify-content: center; position: relative; height: 150px; }
+        .chromo { width: 30px; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; border: 2px solid rgba(0,0,0,0.1); }
+        .chromo-segment { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5); cursor: pointer; transition: all 0.3s; }
+        .chromo-segment:hover { opacity: 0.8; }
+
+        .p-color { background-color: #3b82f6; } /* Paternal blue */
+        .m-color { background-color: #ec4899; } /* Maternal pink */
+
+        /* Module 2: Replication */
+        .dna-seq { display: flex; gap: 2px; justify-content: center; font-family: monospace; font-size: 1.2rem; font-weight: bold; margin-bottom: 4px; }
+        .base { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: white; }
+        .base-A { background-color: #ef4444; }
+        .base-T { background-color: #3b82f6; }
+        .base-C { background-color: #eab308; }
+        .base-G { background-color: #22c55e; }
+        .base-mutated { border: 3px solid black; animation: shake 0.5s; }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Module 3: Environment */
+        .env-canvas { width: 100%; height: 120px; background-color: #1e293b; border-radius: 8px; position: relative; overflow: hidden; cursor: crosshair; }
+        .uv-ray { position: absolute; width: 2px; background-color: #a855f7; height: 100%; top: -100%; animation: zap 0.3s linear; }
+
+        @keyframes zap {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-indigo-700">Sources of Genetic Variation</h1>
+            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-2: Make and defend a claim based on evidence that inheritable genetic variations may result from: (1) new genetic combinations through meiosis, (2) viable errors occurring during replication, and/or (3) mutations caused by environmental factors.</p>
+        </header>
+
+        <!-- Claim Tracker -->
+        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+            <div>
+                <h2 class="font-bold text-indigo-800">Total Novel Genetic Variations Generated:</h2>
+                <p class="text-xs text-indigo-600">Gather evidence from the three mechanisms below.</p>
+            </div>
+            <div class="text-3xl font-mono font-black text-indigo-700" id="total-variations">0</div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+
+            <!-- Module 1: Meiosis (Crossing Over) -->
+            <div class="panel border-t-4 border-t-purple-500 flex flex-col">
+                <h2 class="text-xl font-bold mb-2 text-slate-700">1. Meiosis (Crossing Over)</h2>
+                <p class="text-xs text-slate-500 mb-4 h-12">During sperm/egg creation, homologous chromosomes pair up and swap sections, creating entirely new combinations of alleles.</p>
+
+                <div class="flex-grow flex flex-col justify-center items-center">
+                    <p class="text-xs font-bold text-slate-400 mb-2 uppercase">Click segments to swap</p>
+                    <div class="chromo-pair" id="meiosis-chromo">
+                        <div class="chromo" id="c1">
+                            <div class="chromo-segment p-color" data-idx="0">A</div>
+                            <div class="chromo-segment p-color" data-idx="1">B</div>
+                            <div class="chromo-segment p-color" data-idx="2">C</div>
+                            <div class="chromo-segment p-color" data-idx="3">D</div>
+                        </div>
+                        <div class="chromo" id="c2">
+                            <div class="chromo-segment m-color" data-idx="0">a</div>
+                            <div class="chromo-segment m-color" data-idx="1">b</div>
+                            <div class="chromo-segment m-color" data-idx="2">c</div>
+                            <div class="chromo-segment m-color" data-idx="3">d</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <div class="text-sm font-bold text-purple-700 mb-1">New Combinations: <span id="meiosis-count">0</span></div>
+                    <button id="btn-reset-meiosis" class="text-xs text-slate-400 underline hover:text-slate-600">Reset Chromosomes</button>
+                </div>
+            </div>
+
+            <!-- Module 2: Replication Errors -->
+            <div class="panel border-t-4 border-t-blue-500 flex flex-col">
+                <h2 class="text-xl font-bold mb-2 text-slate-700">2. DNA Replication Errors</h2>
+                <p class="text-xs text-slate-500 mb-4 h-12">Before a cell divides, it must copy billions of DNA bases. The machinery is highly accurate, but rare random mistakes (point mutations) happen.</p>
+
+                <div class="flex-grow flex flex-col justify-center items-center">
+                    <div class="w-full">
+                        <div class="text-[10px] text-slate-400 font-bold mb-1">Original Template Strand:</div>
+                        <div class="dna-seq" id="rep-template">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <div class="text-[10px] text-slate-400 font-bold mt-4 mb-1">New Copied Strand:</div>
+                        <div class="dna-seq" id="rep-copy">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <button id="btn-replicate" class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full shadow">
+                        Copy DNA Strand
+                    </button>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <div class="text-sm font-bold text-blue-700">Replication Errors: <span id="rep-error-count">0</span></div>
+                </div>
+            </div>
+
+            <!-- Module 3: Environmental Factors -->
+            <div class="panel border-t-4 border-t-emerald-500 flex flex-col">
+                <h2 class="text-xl font-bold mb-2 text-slate-700">3. Environmental Mutations</h2>
+                <p class="text-xs text-slate-500 mb-4 h-12">External factors like UV radiation or chemicals can physically damage DNA, causing mutations that, if in gametes, are inherited.</p>
+
+                <div class="flex-grow flex flex-col justify-center items-center w-full">
+                    <p class="text-xs font-bold text-slate-400 mb-1 uppercase">Click cell to irradiate (UV)</p>
+                    <div class="env-canvas flex items-center justify-center" id="env-box">
+                        <!-- DNA string inside the cell -->
+                        <div class="dna-seq z-10" id="env-dna">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <div class="text-sm font-bold text-emerald-700 mb-1">Radiation Mutations: <span id="env-mut-count">0</span></div>
+                    <button id="btn-heal-env" class="text-xs text-slate-400 underline hover:text-slate-600">DNA Repair (Reset)</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let stats = { meiosis: 0, replication: 0, environment: 0 };
+
+        // --- Module 1: Meiosis ---
+        const initialC1 = [ {l:'A', c:'p'}, {l:'B', c:'p'}, {l:'C', c:'p'}, {l:'D', c:'p'} ];
+        const initialC2 = [ {l:'a', c:'m'}, {l:'b', c:'m'}, {l:'c', c:'m'}, {l:'d', c:'m'} ];
+
+        let c1State = JSON.parse(JSON.stringify(initialC1));
+        let c2State = JSON.parse(JSON.stringify(initialC2));
+
+        function renderMeiosis() {
+            const elC1 = document.getElementById('c1');
+            const elC2 = document.getElementById('c2');
+
+            elC1.innerHTML = ''; elC2.innerHTML = '';
+
+            for(let i=0; i<4; i++) {
+                const s1 = document.createElement('div');
+                s1.className = `chromo-segment ${c1State[i].c}-color`;
+                s1.textContent = c1State[i].l;
+                s1.onclick = () => swapSegments(i);
+                elC1.appendChild(s1);
+
+                const s2 = document.createElement('div');
+                s2.className = `chromo-segment ${c2State[i].c}-color`;
+                s2.textContent = c2State[i].l;
+                s2.onclick = () => swapSegments(i);
+                elC2.appendChild(s2);
+            }
+        }
+
+        function swapSegments(index) {
+            // Swap all segments from index down to bottom (typical crossing over)
+            let swapped = false;
+            for(let i=index; i<4; i++) {
+                if(c1State[i].c !== c2State[i].c) { // Only swap if different to count as "new"
+                    const temp = c1State[i];
+                    c1State[i] = c2State[i];
+                    c2State[i] = temp;
+                    swapped = true;
+                }
+            }
+            if (swapped) {
+                stats.meiosis++;
+                updateGlobalStats();
+                document.getElementById('meiosis-count').textContent = stats.meiosis;
+                renderMeiosis();
+            }
+        }
+
+        document.getElementById('btn-reset-meiosis').onclick = () => {
+            c1State = JSON.parse(JSON.stringify(initialC1));
+            c2State = JSON.parse(JSON.stringify(initialC2));
+            renderMeiosis();
+        };
+
+        // --- Module 2: Replication Errors ---
+        const bases = ['A', 'T', 'C', 'G'];
+        const complements = {'A':'T', 'T':'A', 'C':'G', 'G':'C'};
+        const repTemplate = ['A', 'T', 'G', 'C', 'A', 'A', 'T', 'G'];
+
+        function renderRepTemplate() {
+            const el = document.getElementById('rep-template');
+            el.innerHTML = '';
+            repTemplate.forEach(b => {
+                el.innerHTML += `<div class="base base-${b}">${b}</div>`;
+            });
+            // Clear copy row initially
+            document.getElementById('rep-copy').innerHTML = repTemplate.map(()=>'<div class="base bg-slate-200 text-slate-400">?</div>').join('');
+        }
+
+        document.getElementById('btn-replicate').onclick = () => {
+            const elCopy = document.getElementById('rep-copy');
+            elCopy.innerHTML = '';
+
+            let newErrors = 0;
+
+            repTemplate.forEach(b => {
+                const isError = Math.random() < 0.15; // 15% error rate for demonstration
+                let finalBase = complements[b];
+                let errorClass = '';
+
+                if (isError) {
+                    newErrors++;
+                    const wrongBases = bases.filter(x => x !== complements[b]);
+                    finalBase = wrongBases[Math.floor(Math.random() * wrongBases.length)];
+                    errorClass = 'base-mutated';
+                }
+
+                elCopy.innerHTML += `<div class="base base-${finalBase} ${errorClass}">${finalBase}</div>`;
+            });
+
+            if (newErrors > 0) {
+                stats.replication += newErrors;
+                document.getElementById('rep-error-count').textContent = stats.replication;
+                updateGlobalStats();
+            }
+        };
+
+
+        // --- Module 3: Environmental Mutations ---
+        const envSeqOriginal = ['T','A','C','G','G','A'];
+        let envSeqCurrent = [...envSeqOriginal];
+        const elEnvBox = document.getElementById('env-box');
+        const elEnvDna = document.getElementById('env-dna');
+
+        function renderEnvDna() {
+            elEnvDna.innerHTML = '';
+            envSeqCurrent.forEach((b, i) => {
+                const isMutated = b !== envSeqOriginal[i];
+                const c = isMutated ? 'base-mutated' : '';
+                elEnvDna.innerHTML += `<div class="base base-${b} ${c}">${b}</div>`;
+            });
+        }
+
+        elEnvBox.onclick = (e) => {
+            // Create UV ray visual
+            const ray = document.createElement('div');
+            ray.className = 'uv-ray';
+            ray.style.left = `${e.offsetX}px`;
+            elEnvBox.appendChild(ray);
+            setTimeout(() => ray.remove(), 300);
+
+            // Chance to mutate a random base
+            if (Math.random() < 0.4) {
+                const targetIdx = Math.floor(Math.random() * envSeqCurrent.length);
+                const currentBase = envSeqCurrent[targetIdx];
+                const otherBases = bases.filter(x => x !== currentBase);
+                envSeqCurrent[targetIdx] = otherBases[Math.floor(Math.random() * otherBases.length)];
+
+                stats.environment++;
+                document.getElementById('env-mut-count').textContent = stats.environment;
+                updateGlobalStats();
+                renderEnvDna();
+            }
+        };
+
+        document.getElementById('btn-heal-env').onclick = () => {
+            envSeqCurrent = [...envSeqOriginal];
+            renderEnvDna();
+        };
+
+
+        // --- Global ---
+        function updateGlobalStats() {
+            const total = stats.meiosis + stats.replication + stats.environment;
+            const elTotal = document.getElementById('total-variations');
+            elTotal.textContent = total;
+
+            elTotal.style.transform = 'scale(1.2)';
+            setTimeout(() => elTotal.style.transform = 'scale(1)', 200);
+        }
+
+        // Init all
+        renderMeiosis();
+        renderRepTemplate();
+        renderEnvDna();
+
+        // Expose for playwright
+        window.stats = stats;
+
+    </script>
+</body>
+</html>
