@@ -7,7 +7,7 @@ def test_city_water_sim():
         page = browser.new_page()
 
         # Path to the simulation file
-        file_path = "file:///app/Simulations/EngineeringTechnologyScience/CityWaterInfrastructureSimulation.html"
+        file_path = "file://" + os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Simulations', 'EngineeringTechnologyScience', 'CityWaterInfrastructureSimulation.html'))
 
         # Go to the local page
         page.goto(file_path)
@@ -38,16 +38,11 @@ def test_city_water_sim():
         page.evaluate("document.getElementById('advance-year-btn').click()")
         page.wait_for_timeout(1000) # Give chart time to animate
 
-        # Take screenshot for verification
-        os.makedirs('/home/jules/verification', exist_ok=True)
-        screenshot_path = '/home/jules/verification/city_water_sim.png'
-        page.screenshot(path=screenshot_path)
-
         # Verify values changed somewhat
         year = page.locator('#current-year-display').inner_text()
         assert year == "2027", f"Expected year 2027, got {year}"
 
-        print(f"Test complete. Screenshot saved to {screenshot_path}")
+        print(f"Test complete.")
         browser.close()
 
 if __name__ == "__main__":
