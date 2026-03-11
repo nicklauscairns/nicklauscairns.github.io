@@ -129,7 +129,11 @@
     <!-- Data & Patterns -->
     <div class="bg-white p-6 rounded-lg shadow-sm">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold text-gray-800">Data & Patterns</h2>
+            <div class="flex justify-between items-center mb-2"><h2 class="text-2xl font-bold text-gray-800">Data & Patterns</h2>
+    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+        Export CSV
+    </button>
+    </div>
             <div class="flex space-x-2">
                 <button id="btn-record-data" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition-colors font-semibold">Record Data Point</button>
                 <button id="btn-clear-data" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded transition-colors">Clear Data</button>
@@ -606,6 +610,44 @@
     updateSimulation();
     updateViewMode();
 
-</script>
+
+    // CSV Export Function
+    function exportTableToCSV(filename) {
+        var csv = [];
+        // Find the first visible table or fallback to any table
+        var tables = document.querySelectorAll("table");
+        var targetTable = tables[0];
+        for (var i = 0; i < tables.length; i++) {
+            if (tables[i].offsetParent !== null) {
+                targetTable = tables[i];
+                break;
+            }
+        }
+
+        if (!targetTable) {
+            alert("No data table found to export.");
+            return;
+        }
+
+        var rows = targetTable.querySelectorAll("tr");
+        for (var i = 0; i < rows.length; i++) {
+            var row = [], cols = rows[i].querySelectorAll("td, th");
+            for (var j = 0; j < cols.length; j++) {
+                var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").replace(/,/g, ";");
+                row.push('"' + data + '"');
+            }
+            csv.push(row.join(","));
+        }
+
+        var csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+        var downloadLink = document.createElement("a");
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+    </script>
 </body>
 </html>

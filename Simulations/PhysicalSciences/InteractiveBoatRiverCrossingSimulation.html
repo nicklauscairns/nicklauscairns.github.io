@@ -235,7 +235,12 @@
         </div>
         
         <div class="data-table-container">
-            <table id="dataTable">
+            <div class="mb-2 text-right">
+    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+        Export CSV
+    </button>
+    </div>
+<table id="dataTable">
                 <thead>
                     <tr>
                         <th>Boat (m/s)</th>
@@ -851,6 +856,44 @@
     updateDataPanel();
     drawFrame();
 
-</script>
+
+    // CSV Export Function
+    function exportTableToCSV(filename) {
+        var csv = [];
+        // Find the first visible table or fallback to any table
+        var tables = document.querySelectorAll("table");
+        var targetTable = tables[0];
+        for (var i = 0; i < tables.length; i++) {
+            if (tables[i].offsetParent !== null) {
+                targetTable = tables[i];
+                break;
+            }
+        }
+
+        if (!targetTable) {
+            alert("No data table found to export.");
+            return;
+        }
+
+        var rows = targetTable.querySelectorAll("tr");
+        for (var i = 0; i < rows.length; i++) {
+            var row = [], cols = rows[i].querySelectorAll("td, th");
+            for (var j = 0; j < cols.length; j++) {
+                var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").replace(/,/g, ";");
+                row.push('"' + data + '"');
+            }
+            csv.push(row.join(","));
+        }
+
+        var csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+        var downloadLink = document.createElement("a");
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+    </script>
 </body>
 </html>
