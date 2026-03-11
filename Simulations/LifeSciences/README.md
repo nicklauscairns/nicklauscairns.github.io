@@ -5,6 +5,8 @@
 ### HS-LS1-1
 Construct an explanation based on evidence for how the structure of DNA determines the structure of proteins which carry out the essential functions of life through systems of specialized cells.
 
+- [DNA to Protein Structure and Function](DNAToProtein.html) - An interactive simulation demonstrating how DNA sequence determines protein structure and specialized cell function.
+
 ### HS-LS1-2
 Develop and use a model to illustrate the hierarchical organization of interacting systems that provide specific functions within multicellular organisms.
 
