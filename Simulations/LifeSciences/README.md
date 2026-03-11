@@ -65,6 +65,8 @@ Develop a model to illustrate the role of photosynthesis and cellular respiratio
 ### HS-LS2-6
 Evaluate the claims, evidence, and reasoning that the complex interactions in ecosystems maintain relatively consistent numbers and types of organisms in stable conditions, but changing conditions may result in a new ecosystem.
 
+- [Ecosystem Resilience and Disturbances](EcosystemResilience.html) - An interactive simulation evaluating claims about ecosystem stability and resilience in response to modest and extreme disturbances.
+
 ### HS-LS2-7
 Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment and biodiversity.*
 
@@ -93,8 +95,12 @@ Apply concepts of statistics and probability to explain the variation and distri
 ### HS-LS4-1
 Communicate scientific information that common ancestry and biological evolution are supported by multiple lines of empirical evidence.
 
+- [Evidence of Common Ancestry Explorer](CommonAncestryEvidence.html) - An interactive explorer to compare DNA sequences, amino acid sequences, and anatomical homologies to find empirical evidence of common ancestry.
+
 ### HS-LS4-2
 Construct an explanation based on evidence that the process of evolution primarily results from four factors: (1) the potential for a species to increase in number, (2) the heritable genetic variation of individuals in a species due to mutation and sexual reproduction, (3) competition for limited resources, and (4) the proliferation of those organisms that are better able to survive and reproduce in the environment.
+
+- [The Four Factors of Evolution](FourFactorsEvolution.html) - An interactive simulation demonstrating how population growth, genetic variation, competition, and differential survival drive adaptation.
 
 ### HS-LS4-3
 Apply concepts of statistics and probability to support explanations that organisms with an advantageous heritable trait tend to increase in proportion to organisms lacking this trait.
@@ -104,8 +110,14 @@ Apply concepts of statistics and probability to support explanations that organi
 ### HS-LS4-4
 Construct an explanation based on evidence for how natural selection leads to adaptation of populations.
 
+- [Natural Selection and Adaptation](NaturalSelectionAdaptation.html) - An interactive simulation demonstrating how specific biotic and abiotic factors drive changes in gene frequency over time, leading to adaptation.
+
 ### HS-LS4-5
 Evaluate the evidence supporting claims that changes in environmental conditions may result in: (1) increases in the number of individuals of some species, (2) the emergence of new species over time, and (3) the extinction of other species.
 
+- [Environmental Change & Extinction Explorer](EnvironmentalChangeExtinction.html) - An interactive simulation evaluating how environmental changes like drought, deforestation, and pollution cause species extinction, speciation, and population booms.
+
 ### HS-LS4-6
 Create or revise a simulation to test a solution to mitigate adverse impacts of human activity on biodiversity.*
+
+- [Habitat Fragmentation Mitigation](HabitatFragmentationMitigation.html) - An interactive computational model to test engineering solutions (wildlife corridors) that mitigate the adverse impacts of habitat fragmentation on genetic variation and population size.

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitat Fragmentation Mitigation Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .solution-card {
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+        }
+        .solution-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .solution-card.active {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+        canvas { max-height: 100%; }
+
+        /* Forest background and highway */
+        #eco-view {
+            background-image: linear-gradient(to right, #22c55e 0%, #16a34a 45%, #475569 45%, #475569 55%, #16a34a 55%, #22c55e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .highway-dash {
+            position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: repeating-linear-gradient(to bottom, #fde047 0, #fde047 20px, transparent 20px, transparent 40px); transform: translateX(-50%);
+        }
+
+        /* The Engineered Solution Overlays */
+        #bridge-overlay { position: absolute; left: 40%; right: 40%; top: 40%; bottom: 40%; background: #a3e635; border: 4px solid #4ade80; border-radius: 8px; z-index: 10; display: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
+        #tunnel-overlay { position: absolute; left: 45%; right: 45%; top: 45%; bottom: 45%; background: #334155; border: 2px dashed #94a3b8; border-radius: 999px; z-index: 10; display: none; }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white p-4 shadow-lg flex justify-between items-center z-20 shrink-0">
+        <div>
+            <h1 class="text-2xl font-bold tracking-wide flex items-center gap-2">
+                <svg class="w-6 h-6 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg> Habitat Fragmentation & Genetics Mitigation
+            </h1>
+            <p class="text-xs text-blue-200 mt-1">NGSS HS-LS4-6: Create or revise a simulation to test a solution to mitigate adverse impacts of human activity on biodiversity and genetic variation.</p>
+        </div>
+        <div class="flex gap-4">
+            <button id="btn-run" class="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded shadow font-bold flex items-center gap-2 transition-colors">▶ Run Simulation</button>
+            <button id="btn-reset" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded shadow font-semibold flex items-center gap-2 transition-colors">↺ Reset</button>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-1 grid grid-cols-12 gap-4 p-4 min-h-0">
+
+        <!-- Left Column: Scenario & Engineering Solutions -->
+        <section class="col-span-4 flex flex-col gap-4 overflow-y-auto pr-2">
+
+            <div class="bg-white p-5 rounded-xl shadow border border-slate-200">
+                <h2 class="font-bold text-lg text-blue-900 mb-2 border-b pb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> The Problem
+                </h2>
+                <p class="text-sm text-slate-600 mb-3">A major highway has bisected the habitat of an endangered mountain lion population. The population is now split into "West" and "East" subpopulations.</p>
+                <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 text-sm text-amber-800">
+                    <strong>Impact:</strong> Without genetic flow (mating across the highway), inbreeding depression occurs. Genetic diversity drops, increasing mortality rates and leading toward localized extinction.
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow border border-slate-200 flex-1 flex flex-col">
+                <h2 class="font-bold text-lg text-blue-900 mb-2 border-b pb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg> Engineering Solutions
+                </h2>
+                <p class="text-xs text-slate-500 mb-4">Select a solution to mitigate the impact. Constraints include the municipal budget ($2.0M max).</p>
+
+                <div class="space-y-3 flex-1">
+
+                    <!-- Option 1 -->
+                    <label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer active">
+                        <div class="flex items-start gap-3">
+                            <input type="radio" name="solution" value="baseline" class="mt-1" checked>
+                            <div class="flex-1">
+                                <div class="font-bold text-slate-800">Do Nothing (Baseline)</div>
+                                <div class="text-xs text-slate-500 mt-1">Leaves the highway as a complete barrier to migration.</div>
+                                <div class="mt-2 flex gap-4 text-xs font-medium">
+                                    <span class="text-emerald-600">Cost: $0</span>
+                                    <span class="text-rose-600">Connectivity: 0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Option 2 -->
+                    <label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer">
+                        <div class="flex items-start gap-3">
+                            <input type="radio" name="solution" value="underpass" class="mt-1">
+                            <div class="flex-1">
+                                <div class="font-bold text-slate-800">Drainage Culvert Underpasses</div>
+                                <div class="text-xs text-slate-500 mt-1">Retrofitting drainage pipes to allow small/medium wildlife to cross under. Some large predators refuse to use them due to lack of light.</div>
+                                <div class="mt-2 flex gap-4 text-xs font-medium">
+                                    <span class="text-emerald-600">Cost: $0.5M</span>
+                                    <span class="text-amber-600">Connectivity: 30%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Option 3 -->
+                    <label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer">
+                        <div class="flex items-start gap-3">
+                            <input type="radio" name="solution" value="overpass" class="mt-1">
+                            <div class="flex-1">
+                                <div class="font-bold text-slate-800">Vegetated Wildlife Overpass</div>
+                                <div class="text-xs text-slate-500 mt-1">A wide, soil-covered bridge planted with native flora. Highly preferred by large predators and herd animals.</div>
+                                <div class="mt-2 flex gap-4 text-xs font-medium">
+                                    <span class="text-rose-600">Cost: $1.8M</span>
+                                    <span class="text-blue-600">Connectivity: 85%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Visuals & Data output -->
+        <section class="col-span-8 flex flex-col gap-4 min-w-0">
+
+            <!-- Ecosystem Visualization -->
+            <div class="bg-white rounded-xl shadow border border-slate-200 h-48 relative flex shrink-0 p-1" id="eco-view">
+                <div class="highway-dash"></div>
+                <div id="bridge-overlay"></div>
+                <div id="tunnel-overlay"></div>
+
+                <!-- Stat Overlays -->
+                <div class="absolute top-2 left-2 bg-white/90 backdrop-blur p-2 rounded shadow text-sm border border-slate-300 w-48 z-20">
+                    <h3 class="font-bold text-slate-700 text-xs uppercase mb-1">West Population</h3>
+                    <div class="flex justify-between"><span>Size:</span> <strong id="val-pop-west" class="text-emerald-700">50</strong></div>
+                    <div class="flex justify-between"><span>Genetics (Hz):</span> <strong id="val-gen-west" class="text-blue-600">0.95</strong></div>
+                </div>
+
+                <div class="absolute top-2 right-2 bg-white/90 backdrop-blur p-2 rounded shadow text-sm border border-slate-300 w-48 z-20">
+                    <h3 class="font-bold text-slate-700 text-xs uppercase mb-1">East Population</h3>
+                    <div class="flex justify-between"><span>Size:</span> <strong id="val-pop-east" class="text-emerald-700">50</strong></div>
+                    <div class="flex justify-between"><span>Genetics (Hz):</span> <strong id="val-gen-east" class="text-blue-600">0.95</strong></div>
+                </div>
+
+                <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-slate-900/80 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    YEAR: <span id="val-year" class="text-amber-400 text-base">0</span>
+                </div>
+            </div>
+
+            <!-- Computational Model Charts -->
+            <div class="bg-white p-4 rounded-xl shadow border border-slate-200 flex-1 flex flex-col min-h-0">
+                <h2 class="font-bold text-slate-700 mb-2 border-b pb-2 flex items-center justify-between">
+                    <span>Computational Output: Extinction vs Recovery</span>
+                    <span id="status-indicator" class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-500 font-medium">Ready</span>
+                </h2>
+
+                <div class="flex-1 relative flex gap-4">
+                    <!-- Population Chart -->
+                    <div class="flex-1 relative border border-slate-100 rounded bg-slate-50 p-2">
+                        <canvas id="popChart"></canvas>
+                    </div>
+                    <!-- Genetics Chart -->
+                    <div class="flex-1 relative border border-slate-100 rounded bg-slate-50 p-2">
+                        <canvas id="genChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // Setup visual selection of cards
+        const radioBtns = document.querySelectorAll('input[name="solution"]');
+        const cards = document.querySelectorAll('.solution-card');
+
+        // Simulation State
+        const state = {
+            isRunning: false,
+            year: 0,
+            solution: 'baseline', // baseline, underpass, overpass
+
+            // Subpopulations
+            west: { pop: 50, genetics: 0.95 },
+            east: { pop: 50, genetics: 0.95 },
+
+            // History
+            history: {
+                labels: [0],
+                westPop: [50],
+                eastPop: [50],
+                westGen: [0.95],
+                eastGen: [0.95]
+            }
+        };
+
+        // Connectivity parameters based on engineering solution
+        const solutions = {
+            baseline: { connectivity: 0.00, cost: 0 },
+            underpass: { connectivity: 0.30, cost: 0.5 },
+            overpass: { connectivity: 0.85, cost: 1.8 }
+        };
+
+        let simInterval;
+
+        function runSimulationStep() {
+            if (!state.isRunning) return;
+            state.year++;
+
+            const conn = solutions[state.solution].connectivity;
+
+            // 1. Calculate Migration (Gene Flow)
+            // Number of individuals moving between subpopulations
+            const migWestToEast = Math.floor(state.west.pop * conn * 0.1); // Max 10% move with full connectivity
+            const migEastToWest = Math.floor(state.east.pop * conn * 0.1);
+
+            state.west.pop = state.west.pop - migWestToEast + migEastToWest;
+            state.east.pop = state.east.pop - migEastToWest + migWestToEast;
+
+            // 2. Update Genetic Diversity (Hz - Heterozygosity)
+            // Without gene flow, inbreeding causes genetics to decay rapidly.
+            // With gene flow, they stabilize or slowly recover.
+
+            // Base genetic drift/decay rate (inbreeding rate increases as population stays isolated)
+            const decayWest = 0.02; // Fixed rapid decay for dramatic effect in simulation
+            const decayEast = 0.02;
+
+            // Recovery via gene flow (migrants bring fresh alleles)
+            // If 5 individuals migrate into a population of 50, that's a 10% mix.
+            const recWest = (migEastToWest / Math.max(1, state.west.pop)) * 0.2;
+            const recEast = (migWestToEast / Math.max(1, state.east.pop)) * 0.2;
+
+            state.west.genetics = Math.max(0, Math.min(1.0, state.west.genetics - decayWest + recWest));
+            state.east.genetics = Math.max(0, Math.min(1.0, state.east.genetics - decayEast + recEast));
+
+            // 3. Update Population Growth/Decline
+            // High genetic diversity = healthy growth (births > deaths)
+            // Low genetic diversity = inbreeding depression (deaths > births)
+            // Baseline 0.95 gen = +4.5% growth. At 0.5 gen = 0% growth. Below 0.5 = negative growth.
+            // But we also need a carrying capacity constraint so they don't instantly hit 100.
+
+            const carryCap = 100;
+            const growthWest = (state.west.genetics - 0.5) * 0.15 * ((carryCap - state.west.pop) / carryCap);
+            const growthEast = (state.east.genetics - 0.5) * 0.15 * ((carryCap - state.east.pop) / carryCap);
+
+            if (state.west.pop > 0) state.west.pop += Math.floor(state.west.pop * growthWest);
+            if (state.east.pop > 0) state.east.pop += Math.floor(state.east.pop * growthEast);
+
+            // Cap at carrying capacity (100 per side)
+            state.west.pop = Math.min(100, Math.max(0, state.west.pop));
+            state.east.pop = Math.min(100, Math.max(0, state.east.pop));
+
+            // 4. Log Data
+            state.history.labels.push(state.year);
+            state.history.westPop.push(state.west.pop);
+            state.history.eastPop.push(state.east.pop);
+            state.history.westGen.push(state.west.genetics.toFixed(3));
+            state.history.eastGen.push(state.east.genetics.toFixed(3));
+
+            // Keep arrays manageable
+            if (state.history.labels.length > 50) {
+                state.history.labels.shift();
+                state.history.westPop.shift();
+                state.history.eastPop.shift();
+                state.history.westGen.shift();
+                state.history.eastGen.shift();
+            }
+
+            // 5. Update UI
+            updateUI();
+
+            // Check extinction
+            if (state.west.pop === 0 && state.east.pop === 0) {
+                document.getElementById('status-indicator').textContent = 'Extinct';
+                document.getElementById('status-indicator').className = 'text-xs px-2 py-1 rounded bg-rose-100 text-rose-700 font-bold';
+                toggleSimulation();
+            }
+        }
+
+        // --- Chart Setup ---
+        const ctxPop = document.getElementById('popChart').getContext('2d');
+        const popChart = new Chart(ctxPop, {
+            type: 'line',
+            data: {
+                labels: state.history.labels,
+                datasets: [
+                    { label: 'West Pop', data: state.history.westPop, borderColor: '#3b82f6', tension: 0.3, pointRadius: 0 },
+                    { label: 'East Pop', data: state.history.eastPop, borderColor: '#10b981', tension: 0.3, pointRadius: 0 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                plugins: { title: { display: true, text: 'Population Size (N)' } },
+                scales: { y: { suggestedMax: 100, min: 0 } }
+            }
+        });
+
+        const ctxGen = document.getElementById('genChart').getContext('2d');
+        const genChart = new Chart(ctxGen, {
+            type: 'line',
+            data: {
+                labels: state.history.labels,
+                datasets: [
+                    { label: 'West Gen (Hz)', data: state.history.westGen, borderColor: '#6366f1', borderDash: [5,5], tension: 0.3, pointRadius: 0 },
+                    { label: 'East Gen (Hz)', data: state.history.eastGen, borderColor: '#8b5cf6', borderDash: [5,5], tension: 0.3, pointRadius: 0 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                plugins: { title: { display: true, text: 'Genetic Diversity (Heterozygosity)' } },
+                scales: { y: { suggestedMax: 1.0, min: 0 } }
+            }
+        });
+
+        function updateUI() {
+            document.getElementById('val-year').textContent = state.year;
+
+            document.getElementById('val-pop-west').textContent = state.west.pop;
+            document.getElementById('val-pop-east').textContent = state.east.pop;
+            document.getElementById('val-pop-west').className = state.west.pop < 20 ? 'text-rose-600' : 'text-emerald-700';
+            document.getElementById('val-pop-east').className = state.east.pop < 20 ? 'text-rose-600' : 'text-emerald-700';
+
+            document.getElementById('val-gen-west').textContent = state.west.genetics.toFixed(2);
+            document.getElementById('val-gen-east').textContent = state.east.genetics.toFixed(2);
+            document.getElementById('val-gen-west').className = state.west.genetics < 0.5 ? 'text-rose-600' : 'text-blue-600';
+            document.getElementById('val-gen-east').className = state.east.genetics < 0.5 ? 'text-rose-600' : 'text-blue-600';
+
+            popChart.update();
+            genChart.update();
+        }
+
+        function toggleSimulation() {
+            state.isRunning = !state.isRunning;
+            const btn = document.getElementById('btn-run');
+            if (state.isRunning) {
+                btn.innerHTML = '⏸ Pause Simulation';
+                btn.className = 'bg-amber-500 hover:bg-amber-600 px-6 py-2 rounded shadow font-bold flex items-center gap-2 transition-colors text-white';
+                simInterval = setInterval(runSimulationStep, 200);
+                document.getElementById('status-indicator').textContent = 'Running';
+                document.getElementById('status-indicator').className = 'text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 font-medium';
+            } else {
+                btn.innerHTML = '▶ Resume Simulation';
+                btn.className = 'bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded shadow font-bold flex items-center gap-2 transition-colors text-white';
+                clearInterval(simInterval);
+                if (state.west.pop > 0 || state.east.pop > 0) {
+                    document.getElementById('status-indicator').textContent = 'Paused';
+                    document.getElementById('status-indicator').className = 'text-xs px-2 py-1 rounded bg-amber-100 text-amber-700 font-medium';
+                }
+            }
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('btn-run').addEventListener('click', toggleSimulation);
+        document.getElementById('btn-reset').addEventListener('click', () => location.reload());
+
+        radioBtns.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                cards.forEach(c => c.classList.remove('active'));
+                e.target.closest('.solution-card').classList.add('active');
+
+                // Update strategy state
+                state.solution = e.target.value;
+
+                // Update visuals
+                document.getElementById('bridge-overlay').style.display = state.solution === 'overpass' ? 'block' : 'none';
+                document.getElementById('tunnel-overlay').style.display = state.solution === 'underpass' ? 'block' : 'none';
+            });
+        });
+
+        // Initialize UI
+        updateUI();
+
+        // Expose for Playwright
+        window.state = state;
+        window.runSimulationStep = runSimulationStep;
+    </script>
+</body>
+</html>
