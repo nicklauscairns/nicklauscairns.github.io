@@ -110,6 +110,8 @@ Apply concepts of statistics and probability to support explanations that organi
 ### HS-LS4-4
 Construct an explanation based on evidence for how natural selection leads to adaptation of populations.
 
+- [Natural Selection and Adaptation](NaturalSelectionAdaptation.html) - An interactive simulation demonstrating how specific biotic and abiotic factors drive changes in gene frequency over time, leading to adaptation.
+
 ### HS-LS4-5
 Evaluate the evidence supporting claims that changes in environmental conditions may result in: (1) increases in the number of individuals of some species, (2) the emergence of new species over time, and (3) the extinction of other species.
 
