@@ -21,6 +21,7 @@
     <div class="max-w-6xl mx-auto">
         <header class="mb-8 border-b border-slate-700 pb-4">
             <h1 class="text-3xl font-bold text-blue-400">Stage Lighting Simulator</h1>
+        <p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS3-3</p>
             <p class="text-slate-400 mt-2">Investigate the energy transfer and circuit topography of two stage lighting tracks.</p>
             <div class="mt-4 flex gap-6 text-sm bg-slate-800 p-3 rounded-lg inline-flex border border-slate-700">
                 <div><span class="text-slate-400">Source Voltage:</span> <span class="font-mono text-green-400">120 V</span></div>
@@ -30,7 +31,7 @@
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
+
             <!-- TRACK A -->
             <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl flex flex-col">
                 <div class="flex justify-between items-center mb-6">
@@ -72,7 +73,7 @@
                 <div id="tripped-banner" class="hidden absolute top-0 left-0 w-full bg-red-600 text-white text-center py-1 text-sm font-bold tracking-widest uppercase rounded-t-xl z-20">
                     Circuit Breaker Tripped
                 </div>
-                
+
                 <div class="flex justify-between items-center mb-6 mt-2">
                     <h2 class="text-xl font-semibold text-white">Track B <span class="text-sm font-normal text-slate-400 ml-2">(Mystery Topography)</span></h2>
                     <div class="flex gap-2">
@@ -88,7 +89,7 @@
                     <div class="absolute bottom-10 left-4 right-4 h-1 wire"></div>
                     <div class="absolute top-10 bottom-10 left-4 w-1 wire"></div>
                     <div class="absolute top-10 bottom-10 right-4 w-1 wire"></div>
-                    
+
                     <div id="visual-B" class="relative z-10 flex gap-6 w-full px-8 justify-around items-center h-full">
                         <!-- Bulbs injected by JS -->
                     </div>
@@ -167,7 +168,7 @@
             document.getElementById('current-A').innerText = iA.toFixed(2) + ' A';
             document.getElementById('voltage-A').innerText = vBulbA.toFixed(1) + ' V';
             document.getElementById('power-A').innerText = Math.round(pBulbA) + ' W';
-            
+
             let visualA = '';
             for(let i=0; i<countA; i++) {
                 visualA += getBulbSVG(pBulbA);
