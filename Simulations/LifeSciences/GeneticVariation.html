@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sources of Genetic Variation Model (HS-LS3-2)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sources of Genetic Variation Model (HS-LS3-2)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/GeneticVariation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Sources of Genetic Variation Model (HS-LS3-2). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Sources of Genetic Variation Model (HS-LS3-2)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Sources of Genetic Variation Model (HS-LS3-2), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Sources of Genetic Variation Model (HS-LS3-2). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
         .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
 
@@ -44,107 +52,112 @@
             100% { top: 100%; }
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Sources of Genetic Variation Model (HS-LS3-2)",
+    "description": "Interactive science simulation for Sources of Genetic Variation Model (HS-LS3-2). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/GeneticVariation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-indigo-700">Sources of Genetic Variation</h1>
-            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-2: Make and defend a claim based on evidence that inheritable genetic variations may result from: (1) new genetic combinations through meiosis, (2) viable errors occurring during replication, and/or (3) mutations caused by environmental factors.</p>
-        </header>
-
-        <!-- Claim Tracker -->
-        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
-            <div>
-                <h2 class="font-bold text-indigo-800">Total Novel Genetic Variations Generated:</h2>
-                <p class="text-xs text-indigo-600">Gather evidence from the three mechanisms below.</p>
-            </div>
-            <div class="text-3xl font-mono font-black text-indigo-700" id="total-variations">0</div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
-
-            <!-- Module 1: Meiosis (Crossing Over) -->
-            <div class="panel border-t-4 border-t-purple-500 flex flex-col">
-                <h2 class="text-xl font-bold mb-2 text-slate-700">1. Meiosis (Crossing Over)</h2>
-                <p class="text-xs text-slate-500 mb-4 h-12">During sperm/egg creation, homologous chromosomes pair up and swap sections, creating entirely new combinations of alleles.</p>
-
-                <div class="flex-grow flex flex-col justify-center items-center">
-                    <p class="text-xs font-bold text-slate-400 mb-2 uppercase">Click segments to swap</p>
-                    <div class="chromo-pair" id="meiosis-chromo">
-                        <div class="chromo" id="c1">
-                            <div class="chromo-segment p-color" data-idx="0">A</div>
-                            <div class="chromo-segment p-color" data-idx="1">B</div>
-                            <div class="chromo-segment p-color" data-idx="2">C</div>
-                            <div class="chromo-segment p-color" data-idx="3">D</div>
-                        </div>
-                        <div class="chromo" id="c2">
-                            <div class="chromo-segment m-color" data-idx="0">a</div>
-                            <div class="chromo-segment m-color" data-idx="1">b</div>
-                            <div class="chromo-segment m-color" data-idx="2">c</div>
-                            <div class="chromo-segment m-color" data-idx="3">d</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 text-center">
-                    <div class="text-sm font-bold text-purple-700 mb-1">New Combinations: <span id="meiosis-count">0</span></div>
-                    <button id="btn-reset-meiosis" class="text-xs text-slate-400 underline hover:text-slate-600">Reset Chromosomes</button>
-                </div>
-            </div>
-
-            <!-- Module 2: Replication Errors -->
-            <div class="panel border-t-4 border-t-blue-500 flex flex-col">
-                <h2 class="text-xl font-bold mb-2 text-slate-700">2. DNA Replication Errors</h2>
-                <p class="text-xs text-slate-500 mb-4 h-12">Before a cell divides, it must copy billions of DNA bases. The machinery is highly accurate, but rare random mistakes (point mutations) happen.</p>
-
-                <div class="flex-grow flex flex-col justify-center items-center">
-                    <div class="w-full">
-                        <div class="text-[10px] text-slate-400 font-bold mb-1">Original Template Strand:</div>
-                        <div class="dna-seq" id="rep-template">
-                            <!-- Populated by JS -->
-                        </div>
-
-                        <div class="text-[10px] text-slate-400 font-bold mt-4 mb-1">New Copied Strand:</div>
-                        <div class="dna-seq" id="rep-copy">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <button id="btn-replicate" class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full shadow">
+<div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-indigo-700">Sources of Genetic Variation</h1>
+<p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-2: Make and defend a claim based on evidence that inheritable genetic variations may result from: (1) new genetic combinations through meiosis, (2) viable errors occurring during replication, and/or (3) mutations caused by environmental factors.</p>
+</header>
+<!-- Claim Tracker -->
+<div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
+<div>
+<h2 class="font-bold text-indigo-800">Total Novel Genetic Variations Generated:</h2>
+<p class="text-xs text-indigo-600">Gather evidence from the three mechanisms below.</p>
+</div>
+<div class="text-3xl font-mono font-black text-indigo-700" id="total-variations">0</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+<!-- Module 1: Meiosis (Crossing Over) -->
+<div class="panel border-t-4 border-t-purple-500 flex flex-col">
+<h2 class="text-xl font-bold mb-2 text-slate-700">1. Meiosis (Crossing Over)</h2>
+<p class="text-xs text-slate-500 mb-4 h-12">During sperm/egg creation, homologous chromosomes pair up and swap sections, creating entirely new combinations of alleles.</p>
+<div class="flex-grow flex flex-col justify-center items-center">
+<p class="text-xs font-bold text-slate-400 mb-2 uppercase">Click segments to swap</p>
+<div class="chromo-pair" id="meiosis-chromo">
+<div class="chromo" id="c1">
+<div class="chromo-segment p-color" data-idx="0">A</div>
+<div class="chromo-segment p-color" data-idx="1">B</div>
+<div class="chromo-segment p-color" data-idx="2">C</div>
+<div class="chromo-segment p-color" data-idx="3">D</div>
+</div>
+<div class="chromo" id="c2">
+<div class="chromo-segment m-color" data-idx="0">a</div>
+<div class="chromo-segment m-color" data-idx="1">b</div>
+<div class="chromo-segment m-color" data-idx="2">c</div>
+<div class="chromo-segment m-color" data-idx="3">d</div>
+</div>
+</div>
+</div>
+<div class="mt-4 text-center">
+<div class="text-sm font-bold text-purple-700 mb-1">New Combinations: <span id="meiosis-count">0</span></div>
+<button class="text-xs text-slate-400 underline hover:text-slate-600" id="btn-reset-meiosis">Reset Chromosomes</button>
+</div>
+</div>
+<!-- Module 2: Replication Errors -->
+<div class="panel border-t-4 border-t-blue-500 flex flex-col">
+<h2 class="text-xl font-bold mb-2 text-slate-700">2. DNA Replication Errors</h2>
+<p class="text-xs text-slate-500 mb-4 h-12">Before a cell divides, it must copy billions of DNA bases. The machinery is highly accurate, but rare random mistakes (point mutations) happen.</p>
+<div class="flex-grow flex flex-col justify-center items-center">
+<div class="w-full">
+<div class="text-[10px] text-slate-400 font-bold mb-1">Original Template Strand:</div>
+<div class="dna-seq" id="rep-template">
+<!-- Populated by JS -->
+</div>
+<div class="text-[10px] text-slate-400 font-bold mt-4 mb-1">New Copied Strand:</div>
+<div class="dna-seq" id="rep-copy">
+<!-- Populated by JS -->
+</div>
+</div>
+<button class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full shadow" id="btn-replicate">
                         Copy DNA Strand
                     </button>
-                </div>
-
-                <div class="mt-4 text-center">
-                    <div class="text-sm font-bold text-blue-700">Replication Errors: <span id="rep-error-count">0</span></div>
-                </div>
-            </div>
-
-            <!-- Module 3: Environmental Factors -->
-            <div class="panel border-t-4 border-t-emerald-500 flex flex-col">
-                <h2 class="text-xl font-bold mb-2 text-slate-700">3. Environmental Mutations</h2>
-                <p class="text-xs text-slate-500 mb-4 h-12">External factors like UV radiation or chemicals can physically damage DNA, causing mutations that, if in gametes, are inherited.</p>
-
-                <div class="flex-grow flex flex-col justify-center items-center w-full">
-                    <p class="text-xs font-bold text-slate-400 mb-1 uppercase">Click cell to irradiate (UV)</p>
-                    <div class="env-canvas flex items-center justify-center" id="env-box">
-                        <!-- DNA string inside the cell -->
-                        <div class="dna-seq z-10" id="env-dna">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 text-center">
-                    <div class="text-sm font-bold text-emerald-700 mb-1">Radiation Mutations: <span id="env-mut-count">0</span></div>
-                    <button id="btn-heal-env" class="text-xs text-slate-400 underline hover:text-slate-600">DNA Repair (Reset)</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
+</div>
+<div class="mt-4 text-center">
+<div class="text-sm font-bold text-blue-700">Replication Errors: <span id="rep-error-count">0</span></div>
+</div>
+</div>
+<!-- Module 3: Environmental Factors -->
+<div class="panel border-t-4 border-t-emerald-500 flex flex-col">
+<h2 class="text-xl font-bold mb-2 text-slate-700">3. Environmental Mutations</h2>
+<p class="text-xs text-slate-500 mb-4 h-12">External factors like UV radiation or chemicals can physically damage DNA, causing mutations that, if in gametes, are inherited.</p>
+<div class="flex-grow flex flex-col justify-center items-center w-full">
+<p class="text-xs font-bold text-slate-400 mb-1 uppercase">Click cell to irradiate (UV)</p>
+<div class="env-canvas flex items-center justify-center" id="env-box">
+<!-- DNA string inside the cell -->
+<div class="dna-seq z-10" id="env-dna">
+<!-- Populated by JS -->
+</div>
+</div>
+</div>
+<div class="mt-4 text-center">
+<div class="text-sm font-bold text-emerald-700 mb-1">Radiation Mutations: <span id="env-mut-count">0</span></div>
+<button class="text-xs text-slate-400 underline hover:text-slate-600" id="btn-heal-env">DNA Repair (Reset)</button>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Global State
         let stats = { meiosis: 0, replication: 0, environment: 0 };
 

@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thermal Equilibrium Sandbox</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thermal Equilibrium Sandbox</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/ThermalEquilibriumSandbox.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Thermal Equilibrium Sandbox. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Thermal Equilibrium Sandbox" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Thermal Equilibrium Sandbox, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Thermal Equilibrium Sandbox. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         /* Custom styles if necessary, but mostly using Tailwind */
         .container-box {
             position: relative;
@@ -39,134 +47,135 @@
             background-color: #3b82f6; /* Blue-500 default */
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Thermal Equilibrium Sandbox",
+    "description": "Interactive science simulation for Thermal Equilibrium Sandbox. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/ThermalEquilibriumSandbox.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans p-6 min-h-screen flex flex-col items-center">
-
-    <div class="max-w-6xl w-full">
-        <!-- Header Section -->
-        <header class="mb-8 text-center">
-            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Thermal Equilibrium Sandbox</h1>
-            <h2 class="text-2xl font-semibold text-gray-600 mb-4">HS-PS3-4: Energy Distribution in a Closed System</h2>
-            <p class="text-lg text-gray-700 max-w-4xl mx-auto">
+<div class="max-w-6xl w-full">
+<!-- Header Section -->
+<header class="mb-8 text-center">
+<h1 class="text-4xl font-extrabold text-gray-900 mb-2">Thermal Equilibrium Sandbox</h1>
+<h2 class="text-2xl font-semibold text-gray-600 mb-4">HS-PS3-4: Energy Distribution in a Closed System</h2>
+<p class="text-lg text-gray-700 max-w-4xl mx-auto">
                 Plan and conduct an investigation to provide evidence that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
             </p>
-        </header>
-
-        <!-- Main Content Area -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            <!-- Controls Panel (Left) -->
-            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                <h3 class="text-xl font-bold mb-4 border-b pb-2">Simulation Controls</h3>
-
-                <!-- Substance A Controls -->
-                <div class="mb-6">
-                    <h4 class="font-semibold text-lg text-red-600 mb-2">Substance A</h4>
-
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
-                        <select id="materialA" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                            <option value="water">Water (C: 4.18 J/g°C)</option>
-                            <option value="aluminum">Aluminum (C: 0.90 J/g°C)</option>
-                            <option value="iron">Iron (C: 0.45 J/g°C)</option>
-                            <option value="copper" selected>Copper (C: 0.39 J/g°C)</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Mass (g): <span id="massAVal">100</span></label>
-                        <input type="range" id="massA" min="10" max="500" value="100" class="w-full accent-red-500">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Initial Temp (°C): <span id="tempAVal">90</span></label>
-                        <input type="range" id="tempA" min="0" max="100" value="90" class="w-full accent-red-500">
-                    </div>
-                </div>
-
-                <!-- Substance B Controls -->
-                <div class="mb-6">
-                    <h4 class="font-semibold text-lg text-blue-600 mb-2">Substance B</h4>
-
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
-                        <select id="materialB" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                            <option value="water" selected>Water (C: 4.18 J/g°C)</option>
-                            <option value="aluminum">Aluminum (C: 0.90 J/g°C)</option>
-                            <option value="iron">Iron (C: 0.45 J/g°C)</option>
-                            <option value="copper">Copper (C: 0.39 J/g°C)</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Mass (g): <span id="massBVal">200</span></label>
-                        <input type="range" id="massB" min="10" max="500" value="200" class="w-full accent-blue-500">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Initial Temp (°C): <span id="tempBVal">20</span></label>
-                        <input type="range" id="tempB" min="0" max="100" value="20" class="w-full accent-blue-500">
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <button id="startBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors">Start</button>
-                    <button id="resetBtn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors">Reset</button>
-                </div>
-            </div>
-
-            <!-- Visualization & Graph Panel (Right) -->
-            <div class="lg:col-span-2 flex flex-col gap-6">
-
-                <!-- Visual Container -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Closed System (Insulated Container)</h3>
-                    <div class="container-box shadow-inner">
-                        <div id="visA" class="substance-a" style="width: 33.33%;">
-                            <span id="visLabelA">Copper<br>90.0°C</span>
-                        </div>
-                        <div id="visB" class="substance-b" style="width: 66.67%;">
-                            <span id="visLabelB">Water<br>20.0°C</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 text-center text-sm text-gray-600 italic">
+</header>
+<!-- Main Content Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Controls Panel (Left) -->
+<div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+<h3 class="text-xl font-bold mb-4 border-b pb-2">Simulation Controls</h3>
+<!-- Substance A Controls -->
+<div class="mb-6">
+<h4 class="font-semibold text-lg text-red-600 mb-2">Substance A</h4>
+<div class="mb-3">
+<label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
+<select class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" id="materialA">
+<option value="water">Water (C: 4.18 J/g°C)</option>
+<option value="aluminum">Aluminum (C: 0.90 J/g°C)</option>
+<option value="iron">Iron (C: 0.45 J/g°C)</option>
+<option selected="" value="copper">Copper (C: 0.39 J/g°C)</option>
+</select>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium text-gray-700 mb-1">Mass (g): <span id="massAVal">100</span></label>
+<input class="w-full accent-red-500" id="massA" max="500" min="10" type="range" value="100"/>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium text-gray-700 mb-1">Initial Temp (°C): <span id="tempAVal">90</span></label>
+<input class="w-full accent-red-500" id="tempA" max="100" min="0" type="range" value="90"/>
+</div>
+</div>
+<!-- Substance B Controls -->
+<div class="mb-6">
+<h4 class="font-semibold text-lg text-blue-600 mb-2">Substance B</h4>
+<div class="mb-3">
+<label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
+<select class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" id="materialB">
+<option selected="" value="water">Water (C: 4.18 J/g°C)</option>
+<option value="aluminum">Aluminum (C: 0.90 J/g°C)</option>
+<option value="iron">Iron (C: 0.45 J/g°C)</option>
+<option value="copper">Copper (C: 0.39 J/g°C)</option>
+</select>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium text-gray-700 mb-1">Mass (g): <span id="massBVal">200</span></label>
+<input class="w-full accent-blue-500" id="massB" max="500" min="10" type="range" value="200"/>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium text-gray-700 mb-1">Initial Temp (°C): <span id="tempBVal">20</span></label>
+<input class="w-full accent-blue-500" id="tempB" max="100" min="0" type="range" value="20"/>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors" id="startBtn">Start</button>
+<button class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors" id="resetBtn">Reset</button>
+</div>
+</div>
+<!-- Visualization & Graph Panel (Right) -->
+<div class="lg:col-span-2 flex flex-col gap-6">
+<!-- Visual Container -->
+<div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+<h3 class="text-xl font-bold mb-4 border-b pb-2">Closed System (Insulated Container)</h3>
+<div class="container-box shadow-inner">
+<div class="substance-a" id="visA" style="width: 33.33%;">
+<span id="visLabelA">Copper<br/>90.0°C</span>
+</div>
+<div class="substance-b" id="visB" style="width: 66.67%;">
+<span id="visLabelB">Water<br/>20.0°C</span>
+</div>
+</div>
+<div class="mt-4 text-center text-sm text-gray-600 italic">
                         Thermal energy flows from the hotter substance to the colder substance until equilibrium is reached.
                     </div>
-                </div>
-
-                <!-- Chart Canvas -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex-grow" style="max-height: 400px;">
-                    <h3 class="text-xl font-bold mb-4 border-b pb-2">Temperature vs. Time</h3>
-                    <div class="relative h-full w-full" style="min-height: 250px;">
-                        <canvas id="tempChart"></canvas>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Educational Context Section -->
-        <div class="mt-8 bg-blue-50 p-6 rounded-xl shadow-md border border-blue-200">
-            <h3 class="text-2xl font-bold text-blue-900 mb-4">NGSS Three-Dimensional Learning</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <h4 class="font-bold text-blue-800 mb-2">Science & Engineering Practices</h4>
-                    <p class="text-sm text-gray-700"><strong>Planning and Carrying Out Investigations:</strong> Use this sandbox to plan an investigation. Change the mass or material of one component and observe how it affects the final equilibrium temperature. Collect data from the graph to support your evidence.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-blue-800 mb-2">Disciplinary Core Ideas</h4>
-                    <p class="text-sm text-gray-700"><strong>PS3.B: Conservation of Energy and Energy Transfer:</strong> Energy cannot be created or destroyed. Uncontrolled systems always evolve toward more stable states—that is, toward a more uniform energy distribution (thermal equilibrium).</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-blue-800 mb-2">Crosscutting Concepts</h4>
-                    <p class="text-sm text-gray-700"><strong>Systems and System Models:</strong> This simulation models a closed system (an insulated container). We define the boundaries such that no thermal energy escapes to the environment, allowing us to analyze the inputs, outputs, and internal energy transfer.</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
+</div>
+<!-- Chart Canvas -->
+<div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex-grow" style="max-height: 400px;">
+<h3 class="text-xl font-bold mb-4 border-b pb-2">Temperature vs. Time</h3>
+<div class="relative h-full w-full" style="min-height: 250px;">
+<canvas id="tempChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+<!-- Educational Context Section -->
+<div class="mt-8 bg-blue-50 p-6 rounded-xl shadow-md border border-blue-200">
+<h3 class="text-2xl font-bold text-blue-900 mb-4">NGSS Three-Dimensional Learning</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div>
+<h4 class="font-bold text-blue-800 mb-2">Science &amp; Engineering Practices</h4>
+<p class="text-sm text-gray-700"><strong>Planning and Carrying Out Investigations:</strong> Use this sandbox to plan an investigation. Change the mass or material of one component and observe how it affects the final equilibrium temperature. Collect data from the graph to support your evidence.</p>
+</div>
+<div>
+<h4 class="font-bold text-blue-800 mb-2">Disciplinary Core Ideas</h4>
+<p class="text-sm text-gray-700"><strong>PS3.B: Conservation of Energy and Energy Transfer:</strong> Energy cannot be created or destroyed. Uncontrolled systems always evolve toward more stable states—that is, toward a more uniform energy distribution (thermal equilibrium).</p>
+</div>
+<div>
+<h4 class="font-bold text-blue-800 mb-2">Crosscutting Concepts</h4>
+<p class="text-sm text-gray-700"><strong>Systems and System Models:</strong> This simulation models a closed system (an insulated container). We define the boundaries such that no thermal energy escapes to the environment, allowing us to analyze the inputs, outputs, and internal energy transfer.</p>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Constants and Data
         const materials = {
             water: { name: 'Water', c: 4.18, color: '#3b82f6' },      // Blue

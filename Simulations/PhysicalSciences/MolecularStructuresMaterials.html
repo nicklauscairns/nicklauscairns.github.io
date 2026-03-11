@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Molecular Structures & Designed Materials</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Molecular Structures &amp; Designed Materials</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/MolecularStructuresMaterials.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Molecular Structures &amp; Designed Materials. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Molecular Structures &amp; Designed Materials" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Molecular Structures &amp; Designed Materials, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Molecular Structures &amp; Designed Materials. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         canvas { border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 8px; }
         .hidden { display: none; }
@@ -13,116 +21,129 @@
         .tab-btn.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
         .tab-btn.inactive { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Molecular Structures & Designed Materials",
+    "description": "Interactive science simulation for Molecular Structures & Designed Materials. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/MolecularStructuresMaterials.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-
 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="bg-blue-600 text-white p-6">
-        <h1 class="text-3xl font-bold">Molecular Structures & Designed Materials</h1>
-        <p class="mt-2 text-blue-100">Explore why the molecular-level structure is critical to the functioning of designed materials (HS-PS2-6).</p>
-    </div>
-
-    <!-- Tabs -->
-    <div class="flex border-b bg-gray-50 p-4 gap-4">
-        <button id="tab-metals" class="tab-btn active px-6 py-2 rounded border font-semibold" onclick="switchTab('metals')">
+<div class="bg-blue-600 text-white p-6">
+<h1 class="text-3xl font-bold">Molecular Structures &amp; Designed Materials</h1>
+<p class="mt-2 text-blue-100">Explore why the molecular-level structure is critical to the functioning of designed materials (HS-PS2-6).</p>
+</div>
+<!-- Tabs -->
+<div class="flex border-b bg-gray-50 p-4 gap-4">
+<button class="tab-btn active px-6 py-2 rounded border font-semibold" id="tab-metals" onclick="switchTab('metals')">
             Metals (Conductivity)
         </button>
-        <button id="tab-polymers" class="tab-btn inactive px-6 py-2 rounded border font-semibold" onclick="switchTab('polymers')">
+<button class="tab-btn inactive px-6 py-2 rounded border font-semibold" id="tab-polymers" onclick="switchTab('polymers')">
             Polymers (Flexibility)
         </button>
-        <button id="tab-pharma" class="tab-btn inactive px-6 py-2 rounded border font-semibold" onclick="switchTab('pharma')">
+<button class="tab-btn inactive px-6 py-2 rounded border font-semibold" id="tab-pharma" onclick="switchTab('pharma')">
             Pharmaceuticals (Specificity)
         </button>
-    </div>
-
-    <!-- Tab Content: Metals -->
-    <div id="content-metals" class="p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
-                <canvas id="metalCanvas" width="600" height="400" class="w-full"></canvas>
-            </div>
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 p-4 rounded border">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Controls</h3>
-                    <div class="flex items-center mb-4">
-                        <label class="mr-3 font-semibold text-gray-700">Apply Voltage:</label>
-                        <button id="voltageToggleBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded" onclick="toggleVoltage()">OFF</button>
-                    </div>
-                </div>
-                <div class="bg-blue-50 p-4 rounded border border-blue-200">
-                    <h3 class="text-lg font-bold text-blue-800 mb-2">Structure & Function</h3>
-                    <p class="text-sm text-blue-900 mb-2">
-                        <strong>Structure:</strong> Metals form a lattice of positive ions surrounded by a "sea" of delocalized electrons.
-                    </p>
-                    <p class="text-sm text-blue-900">
-                        <strong>Function:</strong> Because these electrons are free to move, applying a voltage causes a net drift of charge. This molecular-level structure makes metals excellent electrical conductors.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tab Content: Polymers -->
-    <div id="content-polymers" class="p-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
-                <canvas id="polymerCanvas" width="600" height="400" class="w-full"></canvas>
-            </div>
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 p-4 rounded border">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Controls</h3>
-                    <div class="mb-4">
-                        <label class="block font-semibold text-gray-700 mb-1">Apply Stress (Pulling Force): <span id="stressValue">0</span>%</label>
-                        <input type="range" id="stressSlider" min="0" max="100" value="0" class="w-full" oninput="updateStress(this.value)">
-                    </div>
-                </div>
-                <div class="bg-green-50 p-4 rounded border border-green-200">
-                    <h3 class="text-lg font-bold text-green-800 mb-2">Structure & Function</h3>
-                    <p class="text-sm text-green-900 mb-2">
-                        <strong>Structure:</strong> Polymers are composed of very long, chained molecules that can become tangled or coiled.
-                    </p>
-                    <p class="text-sm text-green-900">
-                        <strong>Function:</strong> When stress is applied, these long chains can uncoil, straighten, and slide past each other without breaking the strong covalent bonds. This makes them flexible but highly durable.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tab Content: Pharmaceuticals -->
-    <div id="content-pharma" class="p-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 relative">
-                <canvas id="pharmaCanvas" width="600" height="400" class="w-full"></canvas>
-            </div>
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 p-4 rounded border">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Controls</h3>
-                    <p class="text-sm text-gray-600 mb-3">Test which drug molecule fits the target cellular receptor.</p>
-                    <div class="flex flex-col gap-2">
-                        <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" onclick="testDrug('A')">Test Drug A (Square)</button>
-                        <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded" onclick="testDrug('B')">Test Drug B (Triangle)</button>
-                        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" onclick="testDrug('C')">Test Drug C (Key Shape)</button>
-                    </div>
-                    <div class="mt-4 p-3 bg-white rounded border text-center">
-                        <span id="pharmaStatus" class="font-bold text-gray-700">Waiting for drug test...</span>
-                    </div>
-                </div>
-                <div class="bg-purple-50 p-4 rounded border border-purple-200">
-                    <h3 class="text-lg font-bold text-purple-800 mb-2">Structure & Function</h3>
-                    <p class="text-sm text-purple-900 mb-2">
-                        <strong>Structure:</strong> Pharmaceutical molecules have highly specific 3D geometric shapes and charge distributions.
-                    </p>
-                    <p class="text-sm text-purple-900">
-                        <strong>Function:</strong> Drugs must fit perfectly into specific cellular receptors (the "lock and key" model) to trigger or block a biological response. Only the correct molecular structure functions properly.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
-
+<!-- Tab Content: Metals -->
+<div class="p-6" id="content-metals">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2">
+<canvas class="w-full" height="400" id="metalCanvas" width="600"></canvas>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-gray-50 p-4 rounded border">
+<h3 class="text-xl font-bold text-gray-800 mb-2">Controls</h3>
+<div class="flex items-center mb-4">
+<label class="mr-3 font-semibold text-gray-700">Apply Voltage:</label>
+<button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded" id="voltageToggleBtn" onclick="toggleVoltage()">OFF</button>
+</div>
+</div>
+<div class="bg-blue-50 p-4 rounded border border-blue-200">
+<h3 class="text-lg font-bold text-blue-800 mb-2">Structure &amp; Function</h3>
+<p class="text-sm text-blue-900 mb-2">
+<strong>Structure:</strong> Metals form a lattice of positive ions surrounded by a "sea" of delocalized electrons.
+                    </p>
+<p class="text-sm text-blue-900">
+<strong>Function:</strong> Because these electrons are free to move, applying a voltage causes a net drift of charge. This molecular-level structure makes metals excellent electrical conductors.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Content: Polymers -->
+<div class="p-6 hidden" id="content-polymers">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2">
+<canvas class="w-full" height="400" id="polymerCanvas" width="600"></canvas>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-gray-50 p-4 rounded border">
+<h3 class="text-xl font-bold text-gray-800 mb-2">Controls</h3>
+<div class="mb-4">
+<label class="block font-semibold text-gray-700 mb-1">Apply Stress (Pulling Force): <span id="stressValue">0</span>%</label>
+<input class="w-full" id="stressSlider" max="100" min="0" oninput="updateStress(this.value)" type="range" value="0"/>
+</div>
+</div>
+<div class="bg-green-50 p-4 rounded border border-green-200">
+<h3 class="text-lg font-bold text-green-800 mb-2">Structure &amp; Function</h3>
+<p class="text-sm text-green-900 mb-2">
+<strong>Structure:</strong> Polymers are composed of very long, chained molecules that can become tangled or coiled.
+                    </p>
+<p class="text-sm text-green-900">
+<strong>Function:</strong> When stress is applied, these long chains can uncoil, straighten, and slide past each other without breaking the strong covalent bonds. This makes them flexible but highly durable.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Content: Pharmaceuticals -->
+<div class="p-6 hidden" id="content-pharma">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 relative">
+<canvas class="w-full" height="400" id="pharmaCanvas" width="600"></canvas>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-gray-50 p-4 rounded border">
+<h3 class="text-xl font-bold text-gray-800 mb-2">Controls</h3>
+<p class="text-sm text-gray-600 mb-3">Test which drug molecule fits the target cellular receptor.</p>
+<div class="flex flex-col gap-2">
+<button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" onclick="testDrug('A')">Test Drug A (Square)</button>
+<button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded" onclick="testDrug('B')">Test Drug B (Triangle)</button>
+<button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" onclick="testDrug('C')">Test Drug C (Key Shape)</button>
+</div>
+<div class="mt-4 p-3 bg-white rounded border text-center">
+<span class="font-bold text-gray-700" id="pharmaStatus">Waiting for drug test...</span>
+</div>
+</div>
+<div class="bg-purple-50 p-4 rounded border border-purple-200">
+<h3 class="text-lg font-bold text-purple-800 mb-2">Structure &amp; Function</h3>
+<p class="text-sm text-purple-900 mb-2">
+<strong>Structure:</strong> Pharmaceutical molecules have highly specific 3D geometric shapes and charge distributions.
+                    </p>
+<p class="text-sm text-purple-900">
+<strong>Function:</strong> Drugs must fit perfectly into specific cellular receptors (the "lock and key" model) to trigger or block a biological response. Only the correct molecular structure functions properly.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <script>
     let activeTab = 'metals';
     let animationId = null;

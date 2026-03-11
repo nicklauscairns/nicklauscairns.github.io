@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Natural Selection Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Natural Selection Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/NaturalSelection.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Natural Selection Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Natural Selection Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Natural Selection Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Natural Selection Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .canvas-container {
             border: 2px solid #cbd5e1;
@@ -14,102 +22,113 @@
             overflow: hidden;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Natural Selection Simulation",
+    "description": "Interactive science simulation for Natural Selection Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/NaturalSelection.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-900 p-4 md:p-8">
-    <div class="max-w-6xl mx-auto space-y-6">
-        <header class="text-center space-y-2">
-            <h1 class="text-3xl font-bold text-slate-800">Natural Selection Simulation</h1>
-            <p class="text-slate-600 max-w-3xl mx-auto">
+<div class="max-w-6xl mx-auto space-y-6">
+<header class="text-center space-y-2">
+<h1 class="text-3xl font-bold text-slate-800">Natural Selection Simulation</h1>
+<p class="text-slate-600 max-w-3xl mx-auto">
                 Explore how environmental changes, predation, and mutation drive evolution in a population over time (NGSS HS-LS4-3).
             </p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left Column: Controls and Visualization -->
-            <div class="lg:col-span-1 space-y-6">
-                <!-- Controls -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                    <h2 class="text-xl font-semibold mb-4">Simulation Controls</h2>
-
-                    <div>
-                        <label class="block text-sm font-medium mb-1 flex justify-between">
-                            <span>Background Color (Environment)</span>
-                            <span id="bg-val">128</span>
-                        </label>
-                        <input type="range" id="bg-color" min="0" max="255" value="128" class="w-full">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium mb-1 flex justify-between">
-                            <span>Mutation Rate (%)</span>
-                            <span id="mut-val">10</span>
-                        </label>
-                        <input type="range" id="mutation-rate" min="0" max="100" value="10" class="w-full">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium mb-1 flex justify-between">
-                            <span>Predation Level (%)</span>
-                            <span id="pred-val">50</span>
-                        </label>
-                        <input type="range" id="predation-level" min="0" max="90" value="50" step="10" class="w-full">
-                    </div>
-
-                    <div class="flex gap-2 pt-4">
-                        <button id="btn-play" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded font-medium transition-colors">Play</button>
-                        <button id="btn-next" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded font-medium transition-colors">Next Gen</button>
-                    </div>
-                    <button id="btn-reset" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 py-2 px-4 rounded font-medium transition-colors mt-2">Reset Simulation</button>
-                </div>
-
-                <!-- Canvas -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
-                    <h2 class="text-lg font-semibold mb-2 self-start">Environment View</h2>
-                    <div class="canvas-container relative w-full aspect-square max-w-[300px]">
-                        <canvas id="sim-canvas" width="300" height="300" class="w-full h-full block"></canvas>
-                    </div>
-                    <div class="mt-2 text-sm text-slate-500 w-full text-center">
-                        Generation: <span id="gen-display" class="font-bold text-slate-800">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Data and Chart -->
-            <div class="lg:col-span-2 space-y-6 flex flex-col">
-                <!-- Chart -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1 min-h-[300px]">
-                    <h2 class="text-xl font-semibold mb-4">Population Average Color vs Environment Over Time</h2>
-                    <div class="relative h-64 w-full">
-                        <canvas id="data-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Data Table -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1 flex flex-col max-h-[400px]">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold">Data Log</h2>
-                        <button id="btn-export" class="bg-slate-800 hover:bg-slate-900 text-white py-1 px-3 rounded text-sm transition-colors">Export CSV</button>
-                    </div>
-                    <div class="overflow-y-auto flex-1 border border-slate-200 rounded">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-100 sticky top-0">
-                                <tr>
-                                    <th class="p-2 font-medium">Generation</th>
-                                    <th class="p-2 font-medium">Avg Pop Color</th>
-                                    <th class="p-2 font-medium">Environment Color</th>
-                                </tr>
-                            </thead>
-                            <tbody id="data-table-body" class="divide-y divide-slate-100">
-                                <!-- Data rows go here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Left Column: Controls and Visualization -->
+<div class="lg:col-span-1 space-y-6">
+<!-- Controls -->
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+<h2 class="text-xl font-semibold mb-4">Simulation Controls</h2>
+<div>
+<label class="block text-sm font-medium mb-1 flex justify-between">
+<span>Background Color (Environment)</span>
+<span id="bg-val">128</span>
+</label>
+<input class="w-full" id="bg-color" max="255" min="0" type="range" value="128"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1 flex justify-between">
+<span>Mutation Rate (%)</span>
+<span id="mut-val">10</span>
+</label>
+<input class="w-full" id="mutation-rate" max="100" min="0" type="range" value="10"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1 flex justify-between">
+<span>Predation Level (%)</span>
+<span id="pred-val">50</span>
+</label>
+<input class="w-full" id="predation-level" max="90" min="0" step="10" type="range" value="50"/>
+</div>
+<div class="flex gap-2 pt-4">
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded font-medium transition-colors" id="btn-play">Play</button>
+<button class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded font-medium transition-colors" id="btn-next">Next Gen</button>
+</div>
+<button class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 py-2 px-4 rounded font-medium transition-colors mt-2" id="btn-reset">Reset Simulation</button>
+</div>
+<!-- Canvas -->
+<div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
+<h2 class="text-lg font-semibold mb-2 self-start">Environment View</h2>
+<div class="canvas-container relative w-full aspect-square max-w-[300px]">
+<canvas class="w-full h-full block" height="300" id="sim-canvas" width="300"></canvas>
+</div>
+<div class="mt-2 text-sm text-slate-500 w-full text-center">
+                        Generation: <span class="font-bold text-slate-800" id="gen-display">0</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Data and Chart -->
+<div class="lg:col-span-2 space-y-6 flex flex-col">
+<!-- Chart -->
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1 min-h-[300px]">
+<h2 class="text-xl font-semibold mb-4">Population Average Color vs Environment Over Time</h2>
+<div class="relative h-64 w-full">
+<canvas id="data-chart"></canvas>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1 flex flex-col max-h-[400px]">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-xl font-semibold">Data Log</h2>
+<button class="bg-slate-800 hover:bg-slate-900 text-white py-1 px-3 rounded text-sm transition-colors" id="btn-export">Export CSV</button>
+</div>
+<div class="overflow-y-auto flex-1 border border-slate-200 rounded">
+<table class="w-full text-left text-sm">
+<thead class="bg-slate-100 sticky top-0">
+<tr>
+<th class="p-2 font-medium">Generation</th>
+<th class="p-2 font-medium">Avg Pop Color</th>
+<th class="p-2 font-medium">Environment Color</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100" id="data-table-body">
+<!-- Data rows go here -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Simulation State
         const state = {
             populationSize: 200,

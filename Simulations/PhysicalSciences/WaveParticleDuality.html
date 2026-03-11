@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wave-Particle Duality of Light</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wave-Particle Duality of Light</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/WaveParticleDuality.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Wave-Particle Duality of Light. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Wave-Particle Duality of Light" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Wave-Particle Duality of Light, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Wave-Particle Duality of Light. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         canvas { background-color: #0f172a; border-radius: 8px; cursor: crosshair; }
         .hidden { display: none; }
@@ -13,82 +21,92 @@
         .tab-btn.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
         .tab-btn.inactive { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Wave-Particle Duality of Light",
+    "description": "Interactive science simulation for Wave-Particle Duality of Light. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/WaveParticleDuality.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-
 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="bg-indigo-600 text-white p-6">
-        <h1 class="text-3xl font-bold">Wave-Particle Duality</h1>
-        <p class="mt-2 text-indigo-100">Evaluate evidence demonstrating that electromagnetic radiation acts as both a wave and a particle depending on the phenomenon (HS-PS4-3).</p>
-    </div>
-
-    <!-- Tabs -->
-    <div class="flex border-b bg-gray-50 p-4 gap-4">
-        <button id="tab-wave" class="tab-btn active px-6 py-2 rounded border font-semibold" onclick="switchTab('wave')">
+<div class="bg-indigo-600 text-white p-6">
+<h1 class="text-3xl font-bold">Wave-Particle Duality</h1>
+<p class="mt-2 text-indigo-100">Evaluate evidence demonstrating that electromagnetic radiation acts as both a wave and a particle depending on the phenomenon (HS-PS4-3).</p>
+</div>
+<!-- Tabs -->
+<div class="flex border-b bg-gray-50 p-4 gap-4">
+<button class="tab-btn active px-6 py-2 rounded border font-semibold" id="tab-wave" onclick="switchTab('wave')">
             Evidence 1: The Wave Model (Double Slit)
         </button>
-        <button id="tab-particle" class="tab-btn inactive px-6 py-2 rounded border font-semibold" onclick="switchTab('particle')">
+<button class="tab-btn inactive px-6 py-2 rounded border font-semibold" id="tab-particle" onclick="switchTab('particle')">
             Evidence 2: The Particle Model (Photoelectric)
         </button>
-    </div>
-
-    <!-- Wave Model (Double Slit) -->
-    <div id="content-wave" class="p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 relative">
-                <canvas id="waveCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
-            </div>
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 p-4 rounded border">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Double-Slit Experiment</h3>
-                    <p class="text-sm text-gray-600 mb-4">When light passes through two narrow slits, it creates a pattern on the back wall.</p>
-
-                    <label class="block font-semibold text-gray-700 mb-1">Slit Spacing: <span id="slit-val">Medium</span></label>
-                    <input type="range" id="slit-slider" min="20" max="80" value="40" class="w-full" oninput="updateSlits(this.value)">
-                </div>
-
-                <div class="bg-blue-50 p-4 rounded border border-blue-200">
-                    <h3 class="font-bold text-blue-900 mb-2">The Argument for Waves:</h3>
-                    <p class="text-sm text-blue-800 mb-2">If light were purely a stream of particles (like bullets), we would expect exactly two bright lines on the back wall corresponding to the two slits.</p>
-                    <p class="text-sm text-blue-800 font-bold">Instead, we see an interference pattern (multiple stripes).</p>
-                    <p class="text-sm text-blue-800 mt-2">This proves light travels as a wave, diffracting out of the slits and adding/canceling (constructive and destructive interference) before hitting the wall.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Particle Model (Photoelectric Effect) -->
-    <div id="content-particle" class="p-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 relative">
-                <canvas id="particleCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
-            </div>
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 p-4 rounded border">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Photoelectric Effect</h3>
-                    <p class="text-sm text-gray-600 mb-4">Shining light on a metal plate. Can the light knock electrons off the metal?</p>
-
-                    <label class="block font-semibold text-gray-700 mb-1">Light Wavelength (Color):</label>
-                    <input type="range" id="freq-slider" min="400" max="750" value="700" class="w-full" oninput="updateFreq(this.value)">
-                    <div class="flex justify-between text-xs mt-1 font-bold">
-                        <span class="text-red-500">Low Energy (Red)</span>
-                        <span class="text-green-500">Green</span>
-                        <span class="text-blue-500">High Energy (Violet)</span>
-                    </div>
-                </div>
-
-                <div class="bg-orange-50 p-4 rounded border border-orange-200">
-                    <h3 class="font-bold text-orange-900 mb-2">The Argument for Particles:</h3>
-                    <p class="text-sm text-orange-800 mb-2">If light were purely a continuous wave, shining a bright red light for a long time should eventually build up enough energy to knock off an electron.</p>
-                    <p class="text-sm text-orange-800 font-bold">However, red light NEVER ejects electrons, no matter how bright or how long you wait. But dim blue light ejects them instantly.</p>
-                    <p class="text-sm text-orange-800 mt-2">This proves light travels in discrete packets (photons). A single red photon doesn't have enough energy to overcome the threshold (work function), while a single blue photon does.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
-
+<!-- Wave Model (Double Slit) -->
+<div class="p-6" id="content-wave">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 relative">
+<canvas class="w-full shadow-lg" height="400" id="waveCanvas" width="600"></canvas>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-gray-50 p-4 rounded border">
+<h3 class="text-xl font-bold text-gray-800 mb-2">Double-Slit Experiment</h3>
+<p class="text-sm text-gray-600 mb-4">When light passes through two narrow slits, it creates a pattern on the back wall.</p>
+<label class="block font-semibold text-gray-700 mb-1">Slit Spacing: <span id="slit-val">Medium</span></label>
+<input class="w-full" id="slit-slider" max="80" min="20" oninput="updateSlits(this.value)" type="range" value="40"/>
+</div>
+<div class="bg-blue-50 p-4 rounded border border-blue-200">
+<h3 class="font-bold text-blue-900 mb-2">The Argument for Waves:</h3>
+<p class="text-sm text-blue-800 mb-2">If light were purely a stream of particles (like bullets), we would expect exactly two bright lines on the back wall corresponding to the two slits.</p>
+<p class="text-sm text-blue-800 font-bold">Instead, we see an interference pattern (multiple stripes).</p>
+<p class="text-sm text-blue-800 mt-2">This proves light travels as a wave, diffracting out of the slits and adding/canceling (constructive and destructive interference) before hitting the wall.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Particle Model (Photoelectric Effect) -->
+<div class="p-6 hidden" id="content-particle">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 relative">
+<canvas class="w-full shadow-lg" height="400" id="particleCanvas" width="600"></canvas>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-gray-50 p-4 rounded border">
+<h3 class="text-xl font-bold text-gray-800 mb-2">Photoelectric Effect</h3>
+<p class="text-sm text-gray-600 mb-4">Shining light on a metal plate. Can the light knock electrons off the metal?</p>
+<label class="block font-semibold text-gray-700 mb-1">Light Wavelength (Color):</label>
+<input class="w-full" id="freq-slider" max="750" min="400" oninput="updateFreq(this.value)" type="range" value="700"/>
+<div class="flex justify-between text-xs mt-1 font-bold">
+<span class="text-red-500">Low Energy (Red)</span>
+<span class="text-green-500">Green</span>
+<span class="text-blue-500">High Energy (Violet)</span>
+</div>
+</div>
+<div class="bg-orange-50 p-4 rounded border border-orange-200">
+<h3 class="font-bold text-orange-900 mb-2">The Argument for Particles:</h3>
+<p class="text-sm text-orange-800 mb-2">If light were purely a continuous wave, shining a bright red light for a long time should eventually build up enough energy to knock off an electron.</p>
+<p class="text-sm text-orange-800 font-bold">However, red light NEVER ejects electrons, no matter how bright or how long you wait. But dim blue light ejects them instantly.</p>
+<p class="text-sm text-orange-800 mt-2">This proves light travels in discrete packets (photons). A single red photon doesn't have enough energy to overcome the threshold (work function), while a single blue photon does.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <script>
     let activeTab = 'wave';
     let animationId = null;

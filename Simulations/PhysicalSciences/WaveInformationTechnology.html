@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wave Technology: Information & Energy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wave Technology: Information &amp; Energy</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/WaveInformationTechnology.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Wave Technology: Information &amp; Energy. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Wave Technology: Information &amp; Energy" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Wave Technology: Information &amp; Energy, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Wave Technology: Information &amp; Energy. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         canvas { background-color: #f8fafc; border-radius: 8px; border: 1px solid #cbd5e1; }
         .hidden { display: none; }
@@ -13,86 +21,94 @@
         .tab-btn.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
         .tab-btn.inactive { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Wave Technology: Information & Energy",
+    "description": "Interactive science simulation for Wave Technology: Information & Energy. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/WaveInformationTechnology.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-
 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="bg-blue-600 text-white p-6">
-        <h1 class="text-3xl font-bold">Wave Technology: Capturing Information & Energy</h1>
-        <p class="mt-2 text-blue-100">Communicate how technological devices use wave behavior and wave-matter interactions to transmit information and capture energy (HS-PS4-5).</p>
-    </div>
-
-    <!-- Tabs -->
-    <div class="flex border-b bg-gray-50 p-4 gap-4">
-        <button id="tab-solar" class="tab-btn active px-6 py-2 rounded border font-semibold shadow-sm" onclick="switchTab('solar')">
+<div class="bg-blue-600 text-white p-6">
+<h1 class="text-3xl font-bold">Wave Technology: Capturing Information &amp; Energy</h1>
+<p class="mt-2 text-blue-100">Communicate how technological devices use wave behavior and wave-matter interactions to transmit information and capture energy (HS-PS4-5).</p>
+</div>
+<!-- Tabs -->
+<div class="flex border-b bg-gray-50 p-4 gap-4">
+<button class="tab-btn active px-6 py-2 rounded border font-semibold shadow-sm" id="tab-solar" onclick="switchTab('solar')">
             Solar Cell (Capturing Energy)
         </button>
-        <button id="tab-fiber" class="tab-btn inactive px-6 py-2 rounded border font-semibold shadow-sm" onclick="switchTab('fiber')">
+<button class="tab-btn inactive px-6 py-2 rounded border font-semibold shadow-sm" id="tab-fiber" onclick="switchTab('fiber')">
             Fiber Optics (Transmitting Information)
         </button>
-    </div>
-
-    <!-- Tab Content: Solar Cell -->
-    <div id="content-solar" class="p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 relative">
-                <canvas id="solarCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
-            </div>
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 p-4 rounded border">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Solar Panel Array</h3>
-                    <p class="text-sm text-gray-600 mb-4">Adjust the incident light (sunlight) interacting with the semiconductor matter to generate electricity.</p>
-
-                    <label class="block font-semibold text-gray-700 mb-1">Light Intensity:</label>
-                    <input type="range" id="intensity-slider" min="0" max="100" value="50" class="w-full mb-4" oninput="updateSolar()">
-
-                    <div class="p-3 bg-white border rounded shadow-inner text-center">
-                        <span class="block text-sm text-gray-500 font-bold uppercase mb-1">Power Output</span>
-                        <span id="power-output" class="text-3xl font-mono text-green-600 font-bold">50 W</span>
-                    </div>
-                </div>
-
-                <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
-                    <h3 class="font-bold text-yellow-900 mb-2">How it works:</h3>
-                    <p class="text-sm text-yellow-800 mb-2">When light waves (photons) strike the silicon semiconductor (matter), they transfer their energy to electrons.</p>
-                    <p class="text-sm text-yellow-800">If the energy is high enough, the electron breaks free. The solar cell's internal electric field forces these free electrons to flow in one direction, creating a usable electric current.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tab Content: Fiber Optics -->
-    <div id="content-fiber" class="p-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 relative">
-                <canvas id="fiberCanvas" width="600" height="400" class="w-full shadow-lg"></canvas>
-            </div>
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 p-4 rounded border">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Fiber Optic Data Transmission</h3>
-                    <p class="text-sm text-gray-600 mb-4">Adjust the entry angle of the laser to successfully transmit data through the glass core.</p>
-
-                    <label class="block font-semibold text-gray-700 mb-1">Laser Entry Angle: <span id="angle-display">15</span>&deg;</label>
-                    <input type="range" id="angle-slider" min="0" max="45" value="15" class="w-full mb-4" oninput="updateFiber()">
-
-                    <div class="p-3 bg-white border rounded shadow-inner text-center">
-                        <span class="block text-sm text-gray-500 font-bold uppercase mb-1">Transmission Status</span>
-                        <span id="fiber-status" class="text-xl font-bold text-green-600">Successful (Total Internal Reflection)</span>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 p-4 rounded border border-blue-200">
-                    <h3 class="font-bold text-blue-900 mb-2">How it works:</h3>
-                    <p class="text-sm text-blue-800 mb-2">Digital data (1s and 0s) is converted into pulses of light. This light travels through a glass core.</p>
-                    <p class="text-sm text-blue-800 font-bold mb-2">Total Internal Reflection:</p>
-                    <p class="text-sm text-blue-800">Because the glass core has a higher refractive index than the cladding, light hitting the boundary at a shallow angle bounces perfectly instead of passing through. This allows information to be transmitted vast distances with nearly zero loss.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
-
+<!-- Tab Content: Solar Cell -->
+<div class="p-6" id="content-solar">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 relative">
+<canvas class="w-full shadow-lg" height="400" id="solarCanvas" width="600"></canvas>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-gray-50 p-4 rounded border">
+<h3 class="text-xl font-bold text-gray-800 mb-2">Solar Panel Array</h3>
+<p class="text-sm text-gray-600 mb-4">Adjust the incident light (sunlight) interacting with the semiconductor matter to generate electricity.</p>
+<label class="block font-semibold text-gray-700 mb-1">Light Intensity:</label>
+<input class="w-full mb-4" id="intensity-slider" max="100" min="0" oninput="updateSolar()" type="range" value="50"/>
+<div class="p-3 bg-white border rounded shadow-inner text-center">
+<span class="block text-sm text-gray-500 font-bold uppercase mb-1">Power Output</span>
+<span class="text-3xl font-mono text-green-600 font-bold" id="power-output">50 W</span>
+</div>
+</div>
+<div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+<h3 class="font-bold text-yellow-900 mb-2">How it works:</h3>
+<p class="text-sm text-yellow-800 mb-2">When light waves (photons) strike the silicon semiconductor (matter), they transfer their energy to electrons.</p>
+<p class="text-sm text-yellow-800">If the energy is high enough, the electron breaks free. The solar cell's internal electric field forces these free electrons to flow in one direction, creating a usable electric current.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Content: Fiber Optics -->
+<div class="p-6 hidden" id="content-fiber">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 relative">
+<canvas class="w-full shadow-lg" height="400" id="fiberCanvas" width="600"></canvas>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-gray-50 p-4 rounded border">
+<h3 class="text-xl font-bold text-gray-800 mb-2">Fiber Optic Data Transmission</h3>
+<p class="text-sm text-gray-600 mb-4">Adjust the entry angle of the laser to successfully transmit data through the glass core.</p>
+<label class="block font-semibold text-gray-700 mb-1">Laser Entry Angle: <span id="angle-display">15</span>°</label>
+<input class="w-full mb-4" id="angle-slider" max="45" min="0" oninput="updateFiber()" type="range" value="15"/>
+<div class="p-3 bg-white border rounded shadow-inner text-center">
+<span class="block text-sm text-gray-500 font-bold uppercase mb-1">Transmission Status</span>
+<span class="text-xl font-bold text-green-600" id="fiber-status">Successful (Total Internal Reflection)</span>
+</div>
+</div>
+<div class="bg-blue-50 p-4 rounded border border-blue-200">
+<h3 class="font-bold text-blue-900 mb-2">How it works:</h3>
+<p class="text-sm text-blue-800 mb-2">Digital data (1s and 0s) is converted into pulses of light. This light travels through a glass core.</p>
+<p class="text-sm text-blue-800 font-bold mb-2">Total Internal Reflection:</p>
+<p class="text-sm text-blue-800">Because the glass core has a higher refractive index than the cladding, light hitting the boundary at a shallow angle bounces perfectly instead of passing through. This allows information to be transmitted vast distances with nearly zero loss.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <script>
     let activeTab = 'solar';
     let animationId = null;

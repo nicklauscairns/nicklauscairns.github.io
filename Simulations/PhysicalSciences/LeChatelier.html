@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Chatelier's Principle Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Le Chatelier's Principle Simulator</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/LeChatelier.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Le Chatelier's Principle Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Le Chatelier's Principle Simulator" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Le Chatelier's Principle Simulator, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Le Chatelier's Principle Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Inter', sans-serif; }
         .chamber {
             border: 4px solid #cbd5e1;
@@ -67,117 +75,119 @@
             100% { background-color: transparent; }
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Le Chatelier's Principle Simulator",
+    "description": "Interactive science simulation for Le Chatelier's Principle Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/LeChatelier.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
-    <div class="max-w-6xl mx-auto space-y-6">
-        <header class="border-b pb-4">
-            <h1 class="text-3xl font-bold text-slate-900">Le Chatelier's Principle Simulator</h1>
-            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-6: Refining Chemical Systems at Equilibrium</h2>
-            <p class="mt-2 text-slate-700">Explore how changing conditions (concentration, volume/pressure, and temperature) stresses a system at equilibrium, causing it to shift to counteract the stress and produce more or fewer products.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-            <!-- Controls Sidebar -->
-            <div class="lg:col-span-4 space-y-6">
-                <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-semibold text-lg mb-4 text-center border-b pb-2">The Reaction System</h3>
-
-                    <div class="text-center font-mono text-lg font-bold my-4 flex items-center justify-center space-x-2">
-                        <span class="text-blue-600">N₂</span>
-                        <span>+</span>
-                        <span class="text-green-600">3H₂</span>
-                        <span class="text-2xl px-2">&#8652;</span>
-                        <span class="text-purple-600">2NH₃</span>
-                        <span>+</span>
-                        <span class="text-red-500 text-sm">Heat (92 kJ)</span>
+<div class="max-w-6xl mx-auto space-y-6">
+<header class="border-b pb-4">
+<h1 class="text-3xl font-bold text-slate-900">Le Chatelier's Principle Simulator</h1>
+<h2 class="text-xl text-slate-600 mt-1">HS-PS1-6: Refining Chemical Systems at Equilibrium</h2>
+<p class="mt-2 text-slate-700">Explore how changing conditions (concentration, volume/pressure, and temperature) stresses a system at equilibrium, causing it to shift to counteract the stress and produce more or fewer products.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Controls Sidebar -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+<h3 class="font-semibold text-lg mb-4 text-center border-b pb-2">The Reaction System</h3>
+<div class="text-center font-mono text-lg font-bold my-4 flex items-center justify-center space-x-2">
+<span class="text-blue-600">N₂</span>
+<span>+</span>
+<span class="text-green-600">3H₂</span>
+<span class="text-2xl px-2">⇌</span>
+<span class="text-purple-600">2NH₃</span>
+<span>+</span>
+<span class="text-red-500 text-sm">Heat (92 kJ)</span>
+</div>
+<p class="text-sm text-slate-600 text-center mb-4">The Haber Process (Exothermic)</p>
+<h4 class="font-bold text-sm text-slate-500 uppercase tracking-wider mb-3">Apply Stress to System</h4>
+<!-- Concentration Controls -->
+<div class="space-y-2 mb-6 p-3 bg-slate-50 rounded border">
+<div class="font-medium text-sm mb-2">Concentration</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm py-1 rounded transition" id="addN2Btn">Add N₂ (Reactant)</button>
+<button class="bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm py-1 rounded transition" id="addNH3Btn">Add NH₃ (Product)</button>
+</div>
+</div>
+<!-- Volume/Pressure Controls -->
+<div class="space-y-2 mb-6 p-3 bg-slate-50 rounded border">
+<div class="font-medium text-sm mb-2">Volume &amp; Pressure</div>
+<input class="w-full" id="volumeSlider" max="100" min="50" type="range" value="100"/>
+<div class="flex justify-between text-xs text-slate-500">
+<span>High Pressure (Low Vol)</span>
+<span>Low Pressure (High Vol)</span>
+</div>
+</div>
+<!-- Temperature Controls -->
+<div class="space-y-2 p-3 bg-slate-50 rounded border">
+<div class="font-medium text-sm mb-2">Temperature</div>
+<input class="w-full" id="tempSlider" max="800" min="200" step="50" type="range" value="400"/>
+<div class="flex justify-between text-xs text-slate-500">
+<span>Cold</span>
+<span class="font-bold text-slate-700" id="tempDisplay">400 K</span>
+<span>Hot</span>
+</div>
+</div>
+<div class="mt-6 flex justify-center">
+<button class="px-6 py-2 border border-slate-300 rounded hover:bg-slate-50 transition font-medium" id="resetBtn">Reset System</button>
+</div>
+</div>
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
+<h4 class="font-bold mb-1">Constructing Explanations</h4>
+<p id="explanationText">The system is currently at equilibrium. Apply a stress using the controls above to see how the system shifts to counteract it.</p>
+</div>
+</div>
+<!-- Main Simulation Area -->
+<div class="lg:col-span-8 space-y-6">
+<!-- Reaction Chamber Visual -->
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 relative h-96 flex justify-center items-end pb-8">
+<h3 class="absolute top-4 left-4 font-semibold text-lg">Reaction Chamber</h3>
+<!-- Piston / Chamber setup -->
+<div class="chamber w-full max-w-md h-full" id="chamberContainer">
+<div class="piston h-[0%]" id="piston"></div>
+<!-- Drawing context for particles -->
+<canvas class="absolute top-0 left-0 w-full h-full z-0" id="particleCanvas"></canvas>
+<div class="heat-glow z-10" id="heatGlow"></div>
+<div class="cold-glow z-10" id="coldGlow"></div>
+</div>
+<div class="absolute right-4 top-4 flex flex-col space-y-2 text-sm bg-white/80 p-2 rounded shadow-sm border border-slate-200">
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-600 mr-2"></span>N₂ (Reactant)</div>
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>H₂ (Reactant)</div>
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-purple-600 mr-2"></span>NH₃ (Product)</div>
+</div>
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 font-bold text-2xl text-slate-700 bg-white/90 px-4 py-2 rounded-full shadow-lg opacity-0 transition-opacity duration-500 z-20" id="shiftIndicator">
+                        Shift Right →
                     </div>
-
-                    <p class="text-sm text-slate-600 text-center mb-4">The Haber Process (Exothermic)</p>
-
-                    <h4 class="font-bold text-sm text-slate-500 uppercase tracking-wider mb-3">Apply Stress to System</h4>
-
-                    <!-- Concentration Controls -->
-                    <div class="space-y-2 mb-6 p-3 bg-slate-50 rounded border">
-                        <div class="font-medium text-sm mb-2">Concentration</div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button id="addN2Btn" class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm py-1 rounded transition">Add N₂ (Reactant)</button>
-                            <button id="addNH3Btn" class="bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm py-1 rounded transition">Add NH₃ (Product)</button>
-                        </div>
-                    </div>
-
-                    <!-- Volume/Pressure Controls -->
-                    <div class="space-y-2 mb-6 p-3 bg-slate-50 rounded border">
-                        <div class="font-medium text-sm mb-2">Volume & Pressure</div>
-                        <input type="range" id="volumeSlider" min="50" max="100" value="100" class="w-full">
-                        <div class="flex justify-between text-xs text-slate-500">
-                            <span>High Pressure (Low Vol)</span>
-                            <span>Low Pressure (High Vol)</span>
-                        </div>
-                    </div>
-
-                    <!-- Temperature Controls -->
-                    <div class="space-y-2 p-3 bg-slate-50 rounded border">
-                        <div class="font-medium text-sm mb-2">Temperature</div>
-                        <input type="range" id="tempSlider" min="200" max="800" value="400" step="50" class="w-full">
-                        <div class="flex justify-between text-xs text-slate-500">
-                            <span>Cold</span>
-                            <span id="tempDisplay" class="font-bold text-slate-700">400 K</span>
-                            <span>Hot</span>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex justify-center">
-                        <button id="resetBtn" class="px-6 py-2 border border-slate-300 rounded hover:bg-slate-50 transition font-medium">Reset System</button>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-                    <h4 class="font-bold mb-1">Constructing Explanations</h4>
-                    <p id="explanationText">The system is currently at equilibrium. Apply a stress using the controls above to see how the system shifts to counteract it.</p>
-                </div>
-            </div>
-
-            <!-- Main Simulation Area -->
-            <div class="lg:col-span-8 space-y-6">
-                <!-- Reaction Chamber Visual -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 relative h-96 flex justify-center items-end pb-8">
-                    <h3 class="absolute top-4 left-4 font-semibold text-lg">Reaction Chamber</h3>
-
-                    <!-- Piston / Chamber setup -->
-                    <div class="chamber w-full max-w-md h-full" id="chamberContainer">
-                        <div class="piston h-[0%]" id="piston"></div>
-
-                        <!-- Drawing context for particles -->
-                        <canvas id="particleCanvas" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
-
-                        <div id="heatGlow" class="heat-glow z-10"></div>
-                        <div id="coldGlow" class="cold-glow z-10"></div>
-                    </div>
-
-                    <div class="absolute right-4 top-4 flex flex-col space-y-2 text-sm bg-white/80 p-2 rounded shadow-sm border border-slate-200">
-                        <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-600 mr-2"></span>N₂ (Reactant)</div>
-                        <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>H₂ (Reactant)</div>
-                        <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-purple-600 mr-2"></span>NH₃ (Product)</div>
-                    </div>
-
-                    <div id="shiftIndicator" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 font-bold text-2xl text-slate-700 bg-white/90 px-4 py-2 rounded-full shadow-lg opacity-0 transition-opacity duration-500 z-20">
-                        Shift Right &rarr;
-                    </div>
-                </div>
-
-                <!-- Data & Graphs -->
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-64">
-                    <h3 class="font-semibold text-lg mb-2">Concentration vs. Time</h3>
-                    <div class="h-48 relative">
-                        <canvas id="concentrationChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+<!-- Data & Graphs -->
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-64">
+<h3 class="font-semibold text-lg mb-2">Concentration vs. Time</h3>
+<div class="h-48 relative">
+<canvas id="concentrationChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // State
         const state = {
             N2: 20,

@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gravity & Electrostatics Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gravity &amp; Electrostatics Simulator</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/GravityAndElectrostaticsSimulator.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Gravity &amp; Electrostatics Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Gravity &amp; Electrostatics Simulator" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Gravity &amp; Electrostatics Simulator, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Gravity &amp; Electrostatics Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .slider { appearance: none; width: 100%; height: 8px; border-radius: 5px; background: #d1d5db; outline: none; opacity: 0.9; transition: opacity .2s; }
         .slider:hover { opacity: 1; }
@@ -22,175 +30,181 @@
         .vector-head { position: absolute; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid #ef4444; top: -4px; right: -10px; }
         .vector-head-reverse { border-left: none; border-right: 10px solid #ef4444; right: auto; left: -10px; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Gravity & Electrostatics Simulator",
+    "description": "Interactive science simulation for Gravity & Electrostatics Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/GravityAndElectrostaticsSimulator.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-800 p-4 md:p-8">
-
 <div class="max-w-6xl mx-auto space-y-6">
-    <!-- Header -->
-    <header class="bg-white p-6 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-blue-900">Gravity & Electrostatics Simulator</h1>
-            <p class="text-gray-600 mt-2">Explore Newton's Law of Gravitation and Coulomb's Law (HS-PS2-4)</p>
-        </div>
-        <div class="mt-4 md:mt-0 flex space-x-2 bg-gray-100 p-1 rounded-lg">
-            <button id="btn-single-view" class="px-4 py-2 rounded-md bg-white shadow-sm font-semibold text-blue-600 transition-colors">Single View</button>
-            <button id="btn-compare-view" class="px-4 py-2 rounded-md font-semibold text-gray-600 hover:text-blue-600 transition-colors">Compare View</button>
-        </div>
-    </header>
-
-    <!-- Controls -->
-    <div class="bg-white p-6 rounded-lg shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Distance -->
-        <div class="col-span-1 md:col-span-3 bg-blue-50 p-4 rounded-lg border border-blue-100">
-            <label class="block font-semibold mb-2">Distance (r): <span id="val-r">5.0</span> m</label>
-            <input type="range" id="slider-r" class="slider" min="1" max="10" step="0.1" value="5">
-        </div>
-
-        <!-- Mass Controls -->
-        <div class="space-y-4 bg-green-50 p-4 rounded-lg border border-green-100" id="mass-controls">
-            <h3 class="font-bold text-green-800 border-b border-green-200 pb-2">Gravity Controls</h3>
-            <div>
-                <label class="block font-medium mb-1">Mass 1 (m₁): <span id="val-m1">1000</span> kg</label>
-                <input type="range" id="slider-m1" class="slider" min="10" max="5000" step="10" value="1000">
-            </div>
-            <div>
-                <label class="block font-medium mb-1">Mass 2 (m₂): <span id="val-m2">1000</span> kg</label>
-                <input type="range" id="slider-m2" class="slider" min="10" max="5000" step="10" value="1000">
-            </div>
-        </div>
-
-        <!-- Charge Controls -->
-        <div class="space-y-4 bg-purple-50 p-4 rounded-lg border border-purple-100" id="charge-controls">
-            <h3 class="font-bold text-purple-800 border-b border-purple-200 pb-2">Electrostatics Controls</h3>
-            <div>
-                <label class="block font-medium mb-1">Charge 1 (q₁): <span id="val-q1">5.0</span> &mu;C</label>
-                <input type="range" id="slider-q1" class="slider" min="-10" max="10" step="0.1" value="5">
-            </div>
-            <div>
-                <label class="block font-medium mb-1">Charge 2 (q₂): <span id="val-q2">-5.0</span> &mu;C</label>
-                <input type="range" id="slider-q2" class="slider" min="-10" max="10" step="0.1" value="-5">
-            </div>
-        </div>
-
-        <!-- View Toggle (Single Mode Only) -->
-        <div class="flex flex-col justify-center items-center p-4" id="single-view-toggle-container">
-            <p class="font-semibold mb-3 text-gray-700">Current Simulation:</p>
-            <div class="flex bg-gray-200 rounded-lg p-1 w-full max-w-xs">
-                <button id="btn-show-gravity" class="flex-1 py-2 rounded-md bg-white shadow-sm font-semibold text-green-700">Gravity</button>
-                <button id="btn-show-electro" class="flex-1 py-2 rounded-md font-semibold text-gray-500 hover:text-purple-700">Electrostatics</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Simulation Canvas Area -->
-    <div id="sim-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <!-- Gravity Simulation -->
-        <div id="panel-gravity" class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
-            <h2 class="text-xl font-bold text-green-800 mb-4 text-center">Gravitational Force</h2>
-            <div class="sim-canvas mb-4" id="canvas-gravity">
-                <!-- Objects and Vectors will be injected here by JS -->
-                <div id="obj-m1" class="object obj-m1 shadow-md">m₁</div>
-                <div id="obj-m2" class="object obj-m2 shadow-md">m₂</div>
-                <!-- Force vectors on M1 and M2 -->
-                <div id="vec-m1" class="vector-line bg-green-600"><div class="vector-head border-l-[10px] border-l-green-600"></div></div>
-                <div id="vec-m2" class="vector-line bg-green-600"><div class="vector-head vector-head-reverse border-r-[10px] border-r-green-600"></div></div>
-            </div>
-            <div class="bg-gray-50 p-4 rounded border font-mono text-sm overflow-x-auto">
-                <p class="font-bold mb-2 text-green-700">Newton's Law of Gravitation:</p>
-                <p class="text-lg">F<sub>g</sub> = G &middot; (m₁ &middot; m₂) / r²</p>
-                <p class="mt-2 text-gray-600">G = 6.674 &times; 10<sup>-11</sup> N&middot;m²/kg²</p>
-                <p class="mt-2 text-blue-800 font-bold">Calculation:</p>
-                <p id="math-gravity">Fg = ...</p>
-            </div>
-        </div>
-
-        <!-- Electrostatics Simulation -->
-        <div id="panel-electro" class="bg-white p-6 rounded-lg shadow-sm flex flex-col hidden">
-            <h2 class="text-xl font-bold text-purple-800 mb-4 text-center">Electrostatic Force</h2>
-            <div class="sim-canvas mb-4" id="canvas-electro">
-                <div id="obj-q1" class="object shadow-md text-sm">q₁</div>
-                <div id="obj-q2" class="object shadow-md text-sm">q₂</div>
-                <div id="vec-q1" class="vector-line bg-purple-600"><div id="vec-head-q1" class="vector-head border-l-[10px] border-l-purple-600"></div></div>
-                <div id="vec-q2" class="vector-line bg-purple-600"><div id="vec-head-q2" class="vector-head vector-head-reverse border-r-[10px] border-r-purple-600"></div></div>
-            </div>
-            <div class="bg-gray-50 p-4 rounded border font-mono text-sm overflow-x-auto">
-                <p class="font-bold mb-2 text-purple-700">Coulomb's Law:</p>
-                <p class="text-lg">F<sub>e</sub> = k &middot; (|q₁ &middot; q₂|) / r²</p>
-                <p class="mt-2 text-gray-600">k = 8.987 &times; 10<sup>9</sup> N&middot;m²/C²</p>
-                <p class="mt-2 text-blue-800 font-bold">Calculation:</p>
-                <p id="math-electro">Fe = ...</p>
-                <p id="math-electro-dir" class="mt-1 font-bold"></p>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Data & Patterns -->
-    <div class="bg-white p-6 rounded-lg shadow-sm">
-        <div class="flex justify-between items-center mb-4">
-            <div class="flex justify-between items-center mb-2"><h2 class="text-2xl font-bold text-gray-800">Data & Patterns</h2>
-    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+<!-- Header -->
+<header class="bg-white p-6 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-center">
+<div>
+<h1 class="text-3xl font-bold text-blue-900">Gravity &amp; Electrostatics Simulator</h1>
+<p class="text-gray-600 mt-2">Explore Newton's Law of Gravitation and Coulomb's Law (HS-PS2-4)</p>
+</div>
+<div class="mt-4 md:mt-0 flex space-x-2 bg-gray-100 p-1 rounded-lg">
+<button class="px-4 py-2 rounded-md bg-white shadow-sm font-semibold text-blue-600 transition-colors" id="btn-single-view">Single View</button>
+<button class="px-4 py-2 rounded-md font-semibold text-gray-600 hover:text-blue-600 transition-colors" id="btn-compare-view">Compare View</button>
+</div>
+</header>
+<!-- Controls -->
+<div class="bg-white p-6 rounded-lg shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Distance -->
+<div class="col-span-1 md:col-span-3 bg-blue-50 p-4 rounded-lg border border-blue-100">
+<label class="block font-semibold mb-2">Distance (r): <span id="val-r">5.0</span> m</label>
+<input class="slider" id="slider-r" max="10" min="1" step="0.1" type="range" value="5"/>
+</div>
+<!-- Mass Controls -->
+<div class="space-y-4 bg-green-50 p-4 rounded-lg border border-green-100" id="mass-controls">
+<h3 class="font-bold text-green-800 border-b border-green-200 pb-2">Gravity Controls</h3>
+<div>
+<label class="block font-medium mb-1">Mass 1 (m₁): <span id="val-m1">1000</span> kg</label>
+<input class="slider" id="slider-m1" max="5000" min="10" step="10" type="range" value="1000"/>
+</div>
+<div>
+<label class="block font-medium mb-1">Mass 2 (m₂): <span id="val-m2">1000</span> kg</label>
+<input class="slider" id="slider-m2" max="5000" min="10" step="10" type="range" value="1000"/>
+</div>
+</div>
+<!-- Charge Controls -->
+<div class="space-y-4 bg-purple-50 p-4 rounded-lg border border-purple-100" id="charge-controls">
+<h3 class="font-bold text-purple-800 border-b border-purple-200 pb-2">Electrostatics Controls</h3>
+<div>
+<label class="block font-medium mb-1">Charge 1 (q₁): <span id="val-q1">5.0</span> μC</label>
+<input class="slider" id="slider-q1" max="10" min="-10" step="0.1" type="range" value="5"/>
+</div>
+<div>
+<label class="block font-medium mb-1">Charge 2 (q₂): <span id="val-q2">-5.0</span> μC</label>
+<input class="slider" id="slider-q2" max="10" min="-10" step="0.1" type="range" value="-5"/>
+</div>
+</div>
+<!-- View Toggle (Single Mode Only) -->
+<div class="flex flex-col justify-center items-center p-4" id="single-view-toggle-container">
+<p class="font-semibold mb-3 text-gray-700">Current Simulation:</p>
+<div class="flex bg-gray-200 rounded-lg p-1 w-full max-w-xs">
+<button class="flex-1 py-2 rounded-md bg-white shadow-sm font-semibold text-green-700" id="btn-show-gravity">Gravity</button>
+<button class="flex-1 py-2 rounded-md font-semibold text-gray-500 hover:text-purple-700" id="btn-show-electro">Electrostatics</button>
+</div>
+</div>
+</div>
+<!-- Simulation Canvas Area -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="sim-container">
+<!-- Gravity Simulation -->
+<div class="bg-white p-6 rounded-lg shadow-sm flex flex-col" id="panel-gravity">
+<h2 class="text-xl font-bold text-green-800 mb-4 text-center">Gravitational Force</h2>
+<div class="sim-canvas mb-4" id="canvas-gravity">
+<!-- Objects and Vectors will be injected here by JS -->
+<div class="object obj-m1 shadow-md" id="obj-m1">m₁</div>
+<div class="object obj-m2 shadow-md" id="obj-m2">m₂</div>
+<!-- Force vectors on M1 and M2 -->
+<div class="vector-line bg-green-600" id="vec-m1"><div class="vector-head border-l-[10px] border-l-green-600"></div></div>
+<div class="vector-line bg-green-600" id="vec-m2"><div class="vector-head vector-head-reverse border-r-[10px] border-r-green-600"></div></div>
+</div>
+<div class="bg-gray-50 p-4 rounded border font-mono text-sm overflow-x-auto">
+<p class="font-bold mb-2 text-green-700">Newton's Law of Gravitation:</p>
+<p class="text-lg">F<sub>g</sub> = G · (m₁ · m₂) / r²</p>
+<p class="mt-2 text-gray-600">G = 6.674 × 10<sup>-11</sup> N·m²/kg²</p>
+<p class="mt-2 text-blue-800 font-bold">Calculation:</p>
+<p id="math-gravity">Fg = ...</p>
+</div>
+</div>
+<!-- Electrostatics Simulation -->
+<div class="bg-white p-6 rounded-lg shadow-sm flex flex-col hidden" id="panel-electro">
+<h2 class="text-xl font-bold text-purple-800 mb-4 text-center">Electrostatic Force</h2>
+<div class="sim-canvas mb-4" id="canvas-electro">
+<div class="object shadow-md text-sm" id="obj-q1">q₁</div>
+<div class="object shadow-md text-sm" id="obj-q2">q₂</div>
+<div class="vector-line bg-purple-600" id="vec-q1"><div class="vector-head border-l-[10px] border-l-purple-600" id="vec-head-q1"></div></div>
+<div class="vector-line bg-purple-600" id="vec-q2"><div class="vector-head vector-head-reverse border-r-[10px] border-r-purple-600" id="vec-head-q2"></div></div>
+</div>
+<div class="bg-gray-50 p-4 rounded border font-mono text-sm overflow-x-auto">
+<p class="font-bold mb-2 text-purple-700">Coulomb's Law:</p>
+<p class="text-lg">F<sub>e</sub> = k · (|q₁ · q₂|) / r²</p>
+<p class="mt-2 text-gray-600">k = 8.987 × 10<sup>9</sup> N·m²/C²</p>
+<p class="mt-2 text-blue-800 font-bold">Calculation:</p>
+<p id="math-electro">Fe = ...</p>
+<p class="mt-1 font-bold" id="math-electro-dir"></p>
+</div>
+</div>
+</div>
+<!-- Data & Patterns -->
+<div class="bg-white p-6 rounded-lg shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<div class="flex justify-between items-center mb-2"><h2 class="text-2xl font-bold text-gray-800">Data &amp; Patterns</h2>
+<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
         Export CSV
     </button>
-    </div>
-            <div class="flex space-x-2">
-                <button id="btn-record-data" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition-colors font-semibold">Record Data Point</button>
-                <button id="btn-clear-data" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded transition-colors">Clear Data</button>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Table -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">r (m)</th>
-                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">m₁ (kg)</th>
-                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">m₂ (kg)</th>
-                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">Fg (N)</th>
-                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">q₁ (&mu;C)</th>
-                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">q₂ (&mu;C)</th>
-                            <th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">Fe (N)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="data-table-body" class="text-sm">
-                        <!-- Data rows will appear here -->
-                    </tbody>
-                </table>
-                <p id="no-data-msg" class="text-gray-500 text-center py-4 italic">No data recorded yet. Adjust sliders and click "Record Data Point".</p>
-            </div>
-
-            <!-- Chart -->
-            <div class="bg-gray-50 p-2 border rounded h-[400px] flex flex-col">
-                <div class="flex justify-between items-center mb-2 px-2">
-                    <label class="font-semibold text-sm">X-Axis:</label>
-                    <select id="chart-x-axis" class="border rounded p-1 text-sm bg-white">
-                        <option value="r">Distance (r)</option>
-                        <option value="m1">Mass 1 (m₁)</option>
-                        <option value="q1">Charge 1 (q₁)</option>
-                    </select>
-                </div>
-                <div class="flex-1 relative w-full h-full">
-                    <canvas id="dataChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NGSS Info -->
-    <div class="bg-gray-200 p-6 rounded-lg text-sm text-gray-700">
-        <h3 class="font-bold text-lg mb-2">About This Simulation</h3>
-        <p class="mb-2">Designed for <strong>NGSS HS-PS2-4</strong>: <em>Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.</em></p>
-        <ul class="list-disc pl-5 space-y-1">
-            <li><strong>Patterns:</strong> Observe how force changes inversely with the square of distance. Record data points to graph and visualize this nonlinear relationship.</li>
-            <li><strong>Using Mathematics:</strong> View the live calculations derived from the mathematical models of basic assumptions.</li>
-            <li><strong>Types of Interactions:</strong> Compare the differences (attraction vs repulsion) and similarities (inverse-square laws) of gravitational and electrostatic fields.</li>
-        </ul>
-    </div>
 </div>
-
+<div class="flex space-x-2">
+<button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition-colors font-semibold" id="btn-record-data">Record Data Point</button>
+<button class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded transition-colors" id="btn-clear-data">Clear Data</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Table -->
+<div class="overflow-x-auto">
+<table class="min-w-full bg-white border border-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">r (m)</th>
+<th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">m₁ (kg)</th>
+<th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">m₂ (kg)</th>
+<th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">Fg (N)</th>
+<th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">q₁ (μC)</th>
+<th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">q₂ (μC)</th>
+<th class="py-2 px-3 border-b text-left text-xs font-semibold text-gray-600 uppercase">Fe (N)</th>
+</tr>
+</thead>
+<tbody class="text-sm" id="data-table-body">
+<!-- Data rows will appear here -->
+</tbody>
+</table>
+<p class="text-gray-500 text-center py-4 italic" id="no-data-msg">No data recorded yet. Adjust sliders and click "Record Data Point".</p>
+</div>
+<!-- Chart -->
+<div class="bg-gray-50 p-2 border rounded h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-2 px-2">
+<label class="font-semibold text-sm">X-Axis:</label>
+<select class="border rounded p-1 text-sm bg-white" id="chart-x-axis">
+<option value="r">Distance (r)</option>
+<option value="m1">Mass 1 (m₁)</option>
+<option value="q1">Charge 1 (q₁)</option>
+</select>
+</div>
+<div class="flex-1 relative w-full h-full">
+<canvas id="dataChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+<!-- NGSS Info -->
+<div class="bg-gray-200 p-6 rounded-lg text-sm text-gray-700">
+<h3 class="font-bold text-lg mb-2">About This Simulation</h3>
+<p class="mb-2">Designed for <strong>NGSS HS-PS2-4</strong>: <em>Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.</em></p>
+<ul class="list-disc pl-5 space-y-1">
+<li><strong>Patterns:</strong> Observe how force changes inversely with the square of distance. Record data points to graph and visualize this nonlinear relationship.</li>
+<li><strong>Using Mathematics:</strong> View the live calculations derived from the mathematical models of basic assumptions.</li>
+<li><strong>Types of Interactions:</strong> Compare the differences (attraction vs repulsion) and similarities (inverse-square laws) of gravitational and electrostatic fields.</li>
+</ul>
+</div>
+</div>
 <script>
     // Constants
     const G = 6.674e-11;

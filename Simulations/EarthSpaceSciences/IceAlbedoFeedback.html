@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ice-Albedo Feedback Loop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ice-Albedo Feedback Loop</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/IceAlbedoFeedback.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Ice-Albedo Feedback Loop. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Ice-Albedo Feedback Loop" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Ice-Albedo Feedback Loop, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Ice-Albedo Feedback Loop. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { background-color: #0f172a; color: #f1f5f9; }
         .slider-thumb::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -65,93 +73,103 @@
         @keyframes fall { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(300px); opacity: 0; } }
         @keyframes reflect { 0% { transform: translateY(0); opacity: 0.8; } 100% { transform: translateY(-300px); opacity: 0; } }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Ice-Albedo Feedback Loop",
+    "description": "Interactive science simulation for Ice-Albedo Feedback Loop. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/IceAlbedoFeedback.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Ice-Albedo Feedback Loop</h1>
-            <p class="text-slate-300 max-w-3xl mx-auto">
+<div class="max-w-6xl mx-auto">
+<header class="text-center mb-8">
+<h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Ice-Albedo Feedback Loop</h1>
+<p class="text-slate-300 max-w-3xl mx-auto">
                 Analyze how a single change to Earth's surface (ice loss) creates a positive feedback loop that destabilizes the global climate system (HS-ESS2-2).
             </p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-
-            <!-- Simulation View -->
-            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg flex flex-col items-center">
-                <h2 class="text-xl font-bold text-slate-200 mb-6">Earth System Model</h2>
-
-                <div class="earth-container mb-6" id="earthView">
-                    <div class="landmass land1"></div>
-                    <div class="landmass land2"></div>
-                    <div class="ice-cap ice-north" id="northIce"></div>
-                    <div class="ice-cap ice-south" id="southIce"></div>
-                    <!-- Rays injected via JS -->
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full text-center">
-                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
-                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Global Temp</div>
-                        <div class="text-2xl font-mono text-red-400 font-bold" id="tempDisplay">14.0°C</div>
-                    </div>
-                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
-                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Avg Albedo</div>
-                        <div class="text-2xl font-mono text-blue-300 font-bold" id="albedoDisplay">0.30</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Controls & Data -->
-            <div class="lg:col-span-2 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg flex flex-col">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
-                    <h2 class="text-xl font-bold text-emerald-300">System Dynamics (Data Analysis)</h2>
-                    <div class="space-x-2">
-                        <button id="toggleBtn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded font-bold transition-colors">Start Simulation</button>
-                        <button id="resetBtn" class="bg-slate-600 hover:bg-slate-500 px-4 py-2 rounded font-bold transition-colors">Reset</button>
-                    </div>
-                </div>
-
-                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-slate-300">
-                            Initial GHG Forcing: <span id="ghgVal" class="text-amber-400 font-bold">Base (Equilibrium)</span>
-                        </label>
-                        <input type="range" id="ghgInput" min="0" max="2" step="0.1" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
-                        <p class="text-xs text-slate-400 mt-1">Simulates an initial trigger: increase in atmospheric greenhouse gases trapping more heat.</p>
-                    </div>
-
-                    <div class="bg-slate-900 p-3 rounded text-sm text-slate-300 font-mono h-24 overflow-y-auto" id="logPanel">
-                        > System initialized at equilibrium.<br>
-                        > Incoming solar radiation = Outgoing heat.<br>
-                    </div>
-                </div>
-
-                <div class="flex-grow min-h-[250px] relative w-full">
-                    <canvas id="feedbackChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
-            <h2 class="text-xl font-bold text-emerald-300 mb-3">Understanding the Feedback Loop</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-300">
-                <div>
-                    <h3 class="font-bold text-white mb-1">1. The Initial Trigger</h3>
-                    <p>Earth's climate is primarily driven by solar radiation. In equilibrium, energy in equals energy out. However, if an external factor (like increased greenhouse gases) traps more heat, the global temperature begins to rise.</p>
-                </div>
-                <div>
-                    <h3 class="font-bold text-white mb-1">2. Ice Melting & Albedo</h3>
-                    <p><strong>Albedo</strong> is a measure of how much light hits a surface and is reflected without being absorbed. Ice and snow have high albedo (~0.8), while ocean water has low albedo (~0.1). As temperatures rise, sea ice melts.</p>
-                </div>
-                <div>
-                    <h3 class="font-bold text-white mb-1">3. The Positive Feedback</h3>
-                    <p>Melting ice reveals dark ocean water. This lowers Earth's overall albedo. Earth now absorbs *more* solar energy than before. This extra absorbed energy further increases temperatures, melting even more ice. A <strong>positive feedback</strong> loop destabilizes the system, amplifying the original change.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+<!-- Simulation View -->
+<div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg flex flex-col items-center">
+<h2 class="text-xl font-bold text-slate-200 mb-6">Earth System Model</h2>
+<div class="earth-container mb-6" id="earthView">
+<div class="landmass land1"></div>
+<div class="landmass land2"></div>
+<div class="ice-cap ice-north" id="northIce"></div>
+<div class="ice-cap ice-south" id="southIce"></div>
+<!-- Rays injected via JS -->
+</div>
+<div class="grid grid-cols-2 gap-4 w-full text-center">
+<div class="bg-slate-900 p-3 rounded border border-slate-700">
+<div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Global Temp</div>
+<div class="text-2xl font-mono text-red-400 font-bold" id="tempDisplay">14.0°C</div>
+</div>
+<div class="bg-slate-900 p-3 rounded border border-slate-700">
+<div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Avg Albedo</div>
+<div class="text-2xl font-mono text-blue-300 font-bold" id="albedoDisplay">0.30</div>
+</div>
+</div>
+</div>
+<!-- Controls & Data -->
+<div class="lg:col-span-2 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg flex flex-col">
+<div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+<h2 class="text-xl font-bold text-emerald-300">System Dynamics (Data Analysis)</h2>
+<div class="space-x-2">
+<button class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded font-bold transition-colors" id="toggleBtn">Start Simulation</button>
+<button class="bg-slate-600 hover:bg-slate-500 px-4 py-2 rounded font-bold transition-colors" id="resetBtn">Reset</button>
+</div>
+</div>
+<div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium mb-2 text-slate-300">
+                            Initial GHG Forcing: <span class="text-amber-400 font-bold" id="ghgVal">Base (Equilibrium)</span>
+</label>
+<input class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb" id="ghgInput" max="2" min="0" step="0.1" type="range" value="0"/>
+<p class="text-xs text-slate-400 mt-1">Simulates an initial trigger: increase in atmospheric greenhouse gases trapping more heat.</p>
+</div>
+<div class="bg-slate-900 p-3 rounded text-sm text-slate-300 font-mono h-24 overflow-y-auto" id="logPanel">
+                        &gt; System initialized at equilibrium.<br/>
+                        &gt; Incoming solar radiation = Outgoing heat.<br/>
+</div>
+</div>
+<div class="flex-grow min-h-[250px] relative w-full">
+<canvas id="feedbackChart"></canvas>
+</div>
+</div>
+</div>
+<div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
+<h2 class="text-xl font-bold text-emerald-300 mb-3">Understanding the Feedback Loop</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-300">
+<div>
+<h3 class="font-bold text-white mb-1">1. The Initial Trigger</h3>
+<p>Earth's climate is primarily driven by solar radiation. In equilibrium, energy in equals energy out. However, if an external factor (like increased greenhouse gases) traps more heat, the global temperature begins to rise.</p>
+</div>
+<div>
+<h3 class="font-bold text-white mb-1">2. Ice Melting &amp; Albedo</h3>
+<p><strong>Albedo</strong> is a measure of how much light hits a surface and is reflected without being absorbed. Ice and snow have high albedo (~0.8), while ocean water has low albedo (~0.1). As temperatures rise, sea ice melts.</p>
+</div>
+<div>
+<h3 class="font-bold text-white mb-1">3. The Positive Feedback</h3>
+<p>Melting ice reveals dark ocean water. This lowers Earth's overall albedo. Earth now absorbs *more* solar energy than before. This extra absorbed energy further increases temperatures, melting even more ice. A <strong>positive feedback</strong> loop destabilizes the system, amplifying the original change.</p>
+</div>
+</div>
+</div>
+</div>
+<script>
         // DOM Elements
         const toggleBtn = document.getElementById('toggleBtn');
         const resetBtn = document.getElementById('resetBtn');

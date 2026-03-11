@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reaction Rates Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reaction Rates Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/ReactionRatesSimulation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Reaction Rates Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Reaction Rates Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Reaction Rates Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Reaction Rates Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Inter', sans-serif; }
         .slider-container { margin-bottom: 1rem; }
         .slider-label { display: flex; justify-content: space-between; font-weight: 500; font-size: 0.875rem; margin-bottom: 0.25rem; }
@@ -17,137 +25,151 @@
         th, td { border: 1px solid #e2e8f0; padding: 0.5rem; text-align: center; }
         th { background-color: #f8fafc; font-weight: 600; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Reaction Rates Simulation",
+    "description": "Interactive science simulation for Reaction Rates Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/ReactionRatesSimulation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-slate-800 p-6">
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-6 border-b pb-4">
-            <h1 class="text-3xl font-bold text-slate-900">Reaction Rates Simulation</h1>
-            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-5: Temperature, Concentration, and Collision Theory</h2>
-            <p class="mt-2 text-slate-700">Explore how changing the temperature or concentration of reacting particles affects the rate of a chemical reaction. According to collision theory, particles must collide with sufficient energy (activation energy) to react.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left Column: Controls & Simulation -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Simulation Canvas -->
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-semibold text-lg mb-2">Particle View</h3>
-                    <div class="relative w-full aspect-video">
-                        <canvas id="simCanvas" class="w-full h-full"></canvas>
-                        <div id="statusOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none bg-white/50 hidden">
-                            <span class="text-2xl font-bold text-slate-700">Simulation Paused</span>
+<div class="max-w-6xl mx-auto">
+<header class="mb-6 border-b pb-4">
+<h1 class="text-3xl font-bold text-slate-900">Reaction Rates Simulation</h1>
+<h2 class="text-xl text-slate-600 mt-1">HS-PS1-5: Temperature, Concentration, and Collision Theory</h2>
+<p class="mt-2 text-slate-700">Explore how changing the temperature or concentration of reacting particles affects the rate of a chemical reaction. According to collision theory, particles must collide with sufficient energy (activation energy) to react.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Left Column: Controls & Simulation -->
+<div class="lg:col-span-2 space-y-6">
+<!-- Simulation Canvas -->
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+<h3 class="font-semibold text-lg mb-2">Particle View</h3>
+<div class="relative w-full aspect-video">
+<canvas class="w-full h-full" id="simCanvas"></canvas>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none bg-white/50 hidden" id="statusOverlay">
+<span class="text-2xl font-bold text-slate-700">Simulation Paused</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-4">
+<div class="flex space-x-4 text-sm font-medium">
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>Reactant A</div>
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>Reactant B</div>
+<div class="flex items-center"><span class="w-3 h-3 rounded-full bg-purple-600 mr-2"></span>Product AB</div>
+</div>
+<div class="text-sm text-slate-600">
+                            Time: <span class="font-mono font-bold" id="timeDisplay">0.0</span> s
                         </div>
-                    </div>
-                    <div class="flex justify-between items-center mt-4">
-                        <div class="flex space-x-4 text-sm font-medium">
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>Reactant A</div>
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>Reactant B</div>
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-purple-600 mr-2"></span>Product AB</div>
-                        </div>
-                        <div class="text-sm text-slate-600">
-                            Time: <span id="timeDisplay" class="font-mono font-bold">0.0</span> s
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <div class="control-panel shadow-sm">
-                    <h3 class="font-semibold text-lg mb-4">Experimental Conditions</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="slider-container">
-                                <div class="slider-label">
-                                    <label for="temperatureSlider">Temperature (Kinetic Energy)</label>
-                                    <span id="temperatureVal" class="text-orange-600 font-bold">300 K</span>
-                                </div>
-                                <input type="range" id="temperatureSlider" min="100" max="600" step="10" value="300" class="w-full accent-orange-500">
-                                <p class="text-xs text-slate-500 mt-1">Increases particle speed and collision energy.</p>
-                            </div>
-                            <div class="slider-container mt-4">
-                                <div class="slider-label">
-                                    <label for="activationEnergySlider">Activation Energy Barrier</label>
-                                    <span id="activationEnergyVal" class="text-slate-600">Medium</span>
-                                </div>
-                                <input type="range" id="activationEnergySlider" min="1" max="100" step="1" value="50" class="w-full accent-slate-500">
-                                <p class="text-xs text-slate-500 mt-1">Minimum energy required for a successful collision.</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="slider-container">
-                                <div class="slider-label">
-                                    <label for="concentrationASlider">Initial Concentration [A]</label>
-                                    <span id="concentrationAVal" class="text-blue-600 font-bold">50 particles</span>
-                                </div>
-                                <input type="range" id="concentrationASlider" min="10" max="150" step="5" value="50" class="w-full accent-blue-500">
-                            </div>
-                            <div class="slider-container mt-4">
-                                <div class="slider-label">
-                                    <label for="concentrationBSlider">Initial Concentration [B]</label>
-                                    <span id="concentrationBVal" class="text-red-600 font-bold">50 particles</span>
-                                </div>
-                                <input type="range" id="concentrationBSlider" min="10" max="150" step="5" value="50" class="w-full accent-red-500">
-                                <p class="text-xs text-slate-500 mt-1">Increases collision frequency.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex space-x-3 mt-6">
-                        <button id="startBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition-colors">Start Experiment</button>
-                        <button id="pauseBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded font-medium transition-colors" disabled>Pause</button>
-                        <button id="resetBtn" class="bg-slate-600 hover:bg-slate-700 text-white px-6 py-2 rounded font-medium transition-colors">Reset</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Data & Explanation -->
-            <div class="space-y-6">
-                <!-- Graph -->
-                <div class="data-panel shadow-sm" style="max-height: 400px; display: flex; flex-direction: column;">
-                    <h3 class="font-semibold text-lg mb-2">Concentration vs. Time</h3>
-                    <div class="flex-grow relative">
-                        <canvas id="dataChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Data Log -->
-                <div class="data-panel shadow-sm overflow-hidden flex flex-col" style="max-height: 350px;">
-                    <div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-lg mb-2">Experimental Data</h3>
-    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+</div>
+</div>
+<!-- Controls -->
+<div class="control-panel shadow-sm">
+<h3 class="font-semibold text-lg mb-4">Experimental Conditions</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<div class="slider-container">
+<div class="slider-label">
+<label for="temperatureSlider">Temperature (Kinetic Energy)</label>
+<span class="text-orange-600 font-bold" id="temperatureVal">300 K</span>
+</div>
+<input class="w-full accent-orange-500" id="temperatureSlider" max="600" min="100" step="10" type="range" value="300"/>
+<p class="text-xs text-slate-500 mt-1">Increases particle speed and collision energy.</p>
+</div>
+<div class="slider-container mt-4">
+<div class="slider-label">
+<label for="activationEnergySlider">Activation Energy Barrier</label>
+<span class="text-slate-600" id="activationEnergyVal">Medium</span>
+</div>
+<input class="w-full accent-slate-500" id="activationEnergySlider" max="100" min="1" step="1" type="range" value="50"/>
+<p class="text-xs text-slate-500 mt-1">Minimum energy required for a successful collision.</p>
+</div>
+</div>
+<div>
+<div class="slider-container">
+<div class="slider-label">
+<label for="concentrationASlider">Initial Concentration [A]</label>
+<span class="text-blue-600 font-bold" id="concentrationAVal">50 particles</span>
+</div>
+<input class="w-full accent-blue-500" id="concentrationASlider" max="150" min="10" step="5" type="range" value="50"/>
+</div>
+<div class="slider-container mt-4">
+<div class="slider-label">
+<label for="concentrationBSlider">Initial Concentration [B]</label>
+<span class="text-red-600 font-bold" id="concentrationBVal">50 particles</span>
+</div>
+<input class="w-full accent-red-500" id="concentrationBSlider" max="150" min="10" step="5" type="range" value="50"/>
+<p class="text-xs text-slate-500 mt-1">Increases collision frequency.</p>
+</div>
+</div>
+</div>
+<div class="flex space-x-3 mt-6">
+<button class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition-colors" id="startBtn">Start Experiment</button>
+<button class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded font-medium transition-colors" disabled="" id="pauseBtn">Pause</button>
+<button class="bg-slate-600 hover:bg-slate-700 text-white px-6 py-2 rounded font-medium transition-colors" id="resetBtn">Reset</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Data & Explanation -->
+<div class="space-y-6">
+<!-- Graph -->
+<div class="data-panel shadow-sm" style="max-height: 400px; display: flex; flex-direction: column;">
+<h3 class="font-semibold text-lg mb-2">Concentration vs. Time</h3>
+<div class="flex-grow relative">
+<canvas id="dataChart"></canvas>
+</div>
+</div>
+<!-- Data Log -->
+<div class="data-panel shadow-sm overflow-hidden flex flex-col" style="max-height: 350px;">
+<div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-lg mb-2">Experimental Data</h3>
+<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
         Export CSV
     </button>
-    </div>
-                    <div class="overflow-y-auto flex-grow">
-                        <table id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th>Time (s)</th>
-                                    <th>[A]</th>
-                                    <th>[B]</th>
-                                    <th>[AB]</th>
-                                    <th>Rate (AB/s)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data rows go here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <button id="clearDataBtn" class="mt-3 w-full border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded text-sm transition-colors">Clear Data</button>
-                </div>
-
-                <!-- Educational Content -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-                    <h4 class="font-bold mb-2 flex items-center">
-                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+</div>
+<div class="overflow-y-auto flex-grow">
+<table id="dataTable">
+<thead>
+<tr>
+<th>Time (s)</th>
+<th>[A]</th>
+<th>[B]</th>
+<th>[AB]</th>
+<th>Rate (AB/s)</th>
+</tr>
+</thead>
+<tbody>
+<!-- Data rows go here -->
+</tbody>
+</table>
+</div>
+<button class="mt-3 w-full border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded text-sm transition-colors" id="clearDataBtn">Clear Data</button>
+</div>
+<!-- Educational Content -->
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
+<h4 class="font-bold mb-2 flex items-center">
+<svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                         Constructing Explanations
                     </h4>
-                    <p class="mb-2"><strong>Temperature:</strong> Raising temperature increases the average kinetic energy of particles. This means more particles have energy greater than the activation energy, leading to more successful collisions per second.</p>
-                    <p><strong>Concentration:</strong> Increasing concentration means more particles in the same volume. This increases the overall frequency of collisions, thereby increasing the reaction rate.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<p class="mb-2"><strong>Temperature:</strong> Raising temperature increases the average kinetic energy of particles. This means more particles have energy greater than the activation energy, leading to more successful collisions per second.</p>
+<p><strong>Concentration:</strong> Increasing concentration means more particles in the same volume. This increases the overall frequency of collisions, thereby increasing the reaction rate.</p>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Simulation State
         const state = {
             isRunning: false,

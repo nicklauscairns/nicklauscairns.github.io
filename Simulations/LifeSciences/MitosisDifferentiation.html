@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitosis and Cellular Differentiation Model (HS-LS1-4)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mitosis and Cellular Differentiation Model (HS-LS1-4)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/MitosisDifferentiation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Mitosis and Cellular Differentiation Model (HS-LS1-4). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Mitosis and Cellular Differentiation Model (HS-LS1-4)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Mitosis and Cellular Differentiation Model (HS-LS1-4), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Mitosis and Cellular Differentiation Model (HS-LS1-4). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
 
         #canvas-container {
@@ -44,113 +52,120 @@
             width: 16px; height: 16px; border-radius: 4px; display: inline-block; vertical-align: middle; margin-right: 6px; border: 1px solid rgba(255,255,255,0.2);
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Mitosis and Cellular Differentiation Model (HS-LS1-4)",
+    "description": "Interactive science simulation for Mitosis and Cellular Differentiation Model (HS-LS1-4). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/MitosisDifferentiation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-gray-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-slate-800">Growth and Development of Organisms</h1>
-            <p class="text-gray-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS1-4: Use a model to illustrate the role of cellular division (mitosis) and differentiation in producing and maintaining complex organisms.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
-
-            <!-- Left Column: Controls & Stages -->
-            <div class="lg:col-span-1 space-y-4 flex flex-col">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Development Stage</h2>
-                    <p class="text-sm text-gray-500 mb-4">Advance the organism's development to observe mitosis and cellular differentiation.</p>
-
-                    <div class="flex flex-col space-y-2">
-                        <button class="stage-btn active w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold" data-stage="zygote">
+<div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-slate-800">Growth and Development of Organisms</h1>
+<p class="text-gray-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS1-4: Use a model to illustrate the role of cellular division (mitosis) and differentiation in producing and maintaining complex organisms.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
+<!-- Left Column: Controls & Stages -->
+<div class="lg:col-span-1 space-y-4 flex flex-col">
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+<h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Development Stage</h2>
+<p class="text-sm text-gray-500 mb-4">Advance the organism's development to observe mitosis and cellular differentiation.</p>
+<div class="flex flex-col space-y-2">
+<button class="stage-btn active w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold" data-stage="zygote">
                             1. Zygote (Single Cell)
                         </button>
-                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="cleavage">
+<button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="cleavage">
                             2. Cleavage (Mitosis)
                         </button>
-                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="blastula">
+<button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="blastula">
                             3. Blastula (Hollow Ball)
                         </button>
-                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="gastrula">
+<button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="gastrula">
                             4. Gastrulation (Differentiation)
                         </button>
-                        <button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="tissue">
+<button class="stage-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 font-semibold text-slate-500" data-stage="tissue">
                             5. Specialized Tissues
                         </button>
-                    </div>
-
-                    <div class="mt-6 pt-4 border-t border-slate-200">
-                        <button id="btn-advance" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors flex justify-center items-center">
+</div>
+<div class="mt-6 pt-4 border-t border-slate-200">
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors flex justify-center items-center" id="btn-advance">
                             Advance Development
-                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
-                        </button>
-                        <button id="btn-reset" class="w-full mt-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded transition-colors">
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 5l7 7-7 7M5 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button class="w-full mt-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded transition-colors" id="btn-reset">
                             Restart from Zygote
                         </button>
-                    </div>
-                </div>
-
-                <!-- Stats Panel -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
-                    <h3 class="font-bold text-slate-700 border-b pb-2 mb-3">Organism Stats</h3>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
-                            <span class="text-sm font-semibold text-slate-600">Total Cells:</span>
-                            <span id="stat-count" class="font-mono font-bold text-blue-600 text-lg">1</span>
-                        </div>
-                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
-                            <span class="text-sm font-semibold text-slate-600">Process:</span>
-                            <span id="stat-process" class="text-sm font-bold text-slate-700">Fertilization</span>
-                        </div>
-                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
-                            <span class="text-sm font-semibold text-slate-600">Genetic Info:</span>
-                            <span id="stat-genetics" class="text-xs font-bold text-slate-700 text-right w-1/2">Identical</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Middle Column: Visualization -->
-            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col" style="min-height: 500px;">
-                <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-xl">
-                    <h2 class="font-bold text-slate-700 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+</div>
+</div>
+<!-- Stats Panel -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
+<h3 class="font-bold text-slate-700 border-b pb-2 mb-3">Organism Stats</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+<span class="text-sm font-semibold text-slate-600">Total Cells:</span>
+<span class="font-mono font-bold text-blue-600 text-lg" id="stat-count">1</span>
+</div>
+<div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+<span class="text-sm font-semibold text-slate-600">Process:</span>
+<span class="text-sm font-bold text-slate-700" id="stat-process">Fertilization</span>
+</div>
+<div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+<span class="text-sm font-semibold text-slate-600">Genetic Info:</span>
+<span class="text-xs font-bold text-slate-700 text-right w-1/2" id="stat-genetics">Identical</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Middle Column: Visualization -->
+<div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col" style="min-height: 500px;">
+<div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-xl">
+<h2 class="font-bold text-slate-700 flex items-center">
+<svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                         Cellular Model
                     </h2>
-                    <span id="stage-title" class="text-sm font-bold text-blue-600">Zygote</span>
-                </div>
-
-                <div id="canvas-container" class="flex-grow w-full h-full p-0">
-                    <canvas id="visual-canvas" width="600" height="600" class="w-full h-full"></canvas>
-                </div>
-
-                <!-- Legend -->
-                <div class="p-3 border-t bg-slate-800 rounded-b-xl flex flex-wrap gap-x-4 gap-y-2 justify-center text-xs font-medium text-slate-300" id="legend">
-                    <div class="flex items-center"><div class="legend-color" style="background-color: #cbd5e1;"></div>Stem Cell (Totipotent)</div>
-                </div>
-            </div>
-
-            <!-- Right Column: Context/Explanation -->
-            <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full overflow-y-auto">
-                <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Scientific Context</h2>
-
-                <div id="context-info" class="space-y-4 text-sm text-slate-600">
-                    <!-- Dynamic content injected here -->
-                </div>
-
-                <div class="mt-8 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-                    <h3 class="font-bold text-blue-800 mb-2">Key NGSS Concepts:</h3>
-                    <ul class="list-disc list-inside space-y-1 text-xs text-blue-900">
-                        <li><strong>Mitosis:</strong> Individual cells grow and divide, passing identical genetic material (DNA) to both daughter cells.</li>
-                        <li><strong>Differentiation:</strong> Cells specialize to form tissues and organs that work together to meet the needs of the whole organism.</li>
-                        <li><strong>Complexity:</strong> The organism begins as a single cell and produces a complex system through these two processes.</li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
+<span class="text-sm font-bold text-blue-600" id="stage-title">Zygote</span>
+</div>
+<div class="flex-grow w-full h-full p-0" id="canvas-container">
+<canvas class="w-full h-full" height="600" id="visual-canvas" width="600"></canvas>
+</div>
+<!-- Legend -->
+<div class="p-3 border-t bg-slate-800 rounded-b-xl flex flex-wrap gap-x-4 gap-y-2 justify-center text-xs font-medium text-slate-300" id="legend">
+<div class="flex items-center"><div class="legend-color" style="background-color: #cbd5e1;"></div>Stem Cell (Totipotent)</div>
+</div>
+</div>
+<!-- Right Column: Context/Explanation -->
+<div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full overflow-y-auto">
+<h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Scientific Context</h2>
+<div class="space-y-4 text-sm text-slate-600" id="context-info">
+<!-- Dynamic content injected here -->
+</div>
+<div class="mt-8 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+<h3 class="font-bold text-blue-800 mb-2">Key NGSS Concepts:</h3>
+<ul class="list-disc list-inside space-y-1 text-xs text-blue-900">
+<li><strong>Mitosis:</strong> Individual cells grow and divide, passing identical genetic material (DNA) to both daughter cells.</li>
+<li><strong>Differentiation:</strong> Cells specialize to form tissues and organs that work together to meet the needs of the whole organism.</li>
+<li><strong>Complexity:</strong> The organism begins as a single cell and produces a complex system through these two processes.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Data and State
         const stages = [
             {

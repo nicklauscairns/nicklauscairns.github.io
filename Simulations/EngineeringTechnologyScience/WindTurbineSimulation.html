@@ -1,14 +1,22 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wind Turbine Optimization Simulation</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wind Turbine Optimization Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/WindTurbineSimulation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Wind Turbine Optimization Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Wind Turbine Optimization Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Wind Turbine Optimization Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Wind Turbine Optimization Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         .turbine-container {
             position: relative;
             width: 200px;
@@ -54,136 +62,145 @@
             transform-origin: bottom center;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Wind Turbine Optimization Simulation",
+    "description": "Interactive science simulation for Wind Turbine Optimization Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/WindTurbineSimulation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen p-4 md:p-8">
-    <div class="max-w-7xl mx-auto">
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-4">Wind Turbine Design Optimization</h1>
-            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
-                <h2 class="text-xl font-semibold mb-2 text-blue-800">NGSS Alignment</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
-                        <strong class="text-blue-900 block mb-1">HS-ETS1-2</strong>
-                        <p class="text-xs text-blue-800">Design a solution to a complex real-world problem by breaking it down into smaller, more manageable problems.</p>
-                    </div>
-                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
-                        <strong class="text-blue-900 block mb-1">HS-ETS1-3</strong>
-                        <p class="text-xs text-blue-800">Evaluate a solution to a complex real-world problem based on prioritized criteria and trade-offs that account for a range of constraints.</p>
-                    </div>
-                    <div class="bg-blue-50 p-3 rounded border border-blue-100">
-                        <strong class="text-blue-900 block mb-1">HS-PS3-3</strong>
-                        <p class="text-xs text-blue-800">Design, build, and refine a device that works within given constraints to convert one form of energy into another form of energy.</p>
-                    </div>
-                </div>
-                <h2 class="text-xl font-semibold mb-2 text-green-800">Phenomenon & Task</h2>
-                <p class="text-sm">Wind turbines convert the kinetic energy of wind into electrical energy. However, extracting maximum energy depends on the design. How can we optimize blade length, pitch angle, and the number of blades to maximize power output at a specific wind speed? Use the simulation to conduct trials, log data, and find the optimal configuration.</p>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Controls Panel -->
-            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 h-full flex flex-col">
-                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Turbine Controls</h3>
-
-                <div class="space-y-5 flex-grow">
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-sm font-medium text-gray-700">Wind Speed</label>
-                            <span class="text-sm font-bold text-blue-600"><span id="wind-speed-val">10</span> m/s</span>
-                        </div>
-                        <input type="range" id="wind-speed" min="0" max="25" step="0.5" value="10" class="w-full cursor-pointer">
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-sm font-medium text-gray-700">Blade Length</label>
-                            <span class="text-sm font-bold text-blue-600"><span id="blade-length-val">50</span> m</span>
-                        </div>
-                        <input type="range" id="blade-length" min="20" max="100" step="1" value="50" class="w-full cursor-pointer">
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-sm font-medium text-gray-700">Pitch Angle</label>
-                            <span class="text-sm font-bold text-blue-600"><span id="pitch-angle-val">10</span>°</span>
-                        </div>
-                        <input type="range" id="pitch-angle" min="0" max="30" step="1" value="10" class="w-full cursor-pointer">
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <label class="text-sm font-medium text-gray-700">Number of Blades</label>
-                            <span class="text-sm font-bold text-blue-600"><span id="num-blades-val">3</span></span>
-                        </div>
-                        <input type="range" id="num-blades" min="1" max="6" step="1" value="3" class="w-full cursor-pointer">
-                    </div>
-                </div>
-
-                <div class="mt-6 pt-4 border-t border-gray-100">
-                    <button id="record-data" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+<div class="max-w-7xl mx-auto">
+<header class="mb-8">
+<h1 class="text-3xl font-bold text-gray-900 mb-4">Wind Turbine Design Optimization</h1>
+<div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+<h2 class="text-xl font-semibold mb-2 text-blue-800">NGSS Alignment</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+<div class="bg-blue-50 p-3 rounded border border-blue-100">
+<strong class="text-blue-900 block mb-1">HS-ETS1-2</strong>
+<p class="text-xs text-blue-800">Design a solution to a complex real-world problem by breaking it down into smaller, more manageable problems.</p>
+</div>
+<div class="bg-blue-50 p-3 rounded border border-blue-100">
+<strong class="text-blue-900 block mb-1">HS-ETS1-3</strong>
+<p class="text-xs text-blue-800">Evaluate a solution to a complex real-world problem based on prioritized criteria and trade-offs that account for a range of constraints.</p>
+</div>
+<div class="bg-blue-50 p-3 rounded border border-blue-100">
+<strong class="text-blue-900 block mb-1">HS-PS3-3</strong>
+<p class="text-xs text-blue-800">Design, build, and refine a device that works within given constraints to convert one form of energy into another form of energy.</p>
+</div>
+</div>
+<h2 class="text-xl font-semibold mb-2 text-green-800">Phenomenon &amp; Task</h2>
+<p class="text-sm">Wind turbines convert the kinetic energy of wind into electrical energy. However, extracting maximum energy depends on the design. How can we optimize blade length, pitch angle, and the number of blades to maximize power output at a specific wind speed? Use the simulation to conduct trials, log data, and find the optimal configuration.</p>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Controls Panel -->
+<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 h-full flex flex-col">
+<h3 class="text-lg font-semibold mb-4 border-b pb-2">Turbine Controls</h3>
+<div class="space-y-5 flex-grow">
+<div>
+<div class="flex justify-between mb-1">
+<label class="text-sm font-medium text-gray-700">Wind Speed</label>
+<span class="text-sm font-bold text-blue-600"><span id="wind-speed-val">10</span> m/s</span>
+</div>
+<input class="w-full cursor-pointer" id="wind-speed" max="25" min="0" step="0.5" type="range" value="10"/>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<label class="text-sm font-medium text-gray-700">Blade Length</label>
+<span class="text-sm font-bold text-blue-600"><span id="blade-length-val">50</span> m</span>
+</div>
+<input class="w-full cursor-pointer" id="blade-length" max="100" min="20" step="1" type="range" value="50"/>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<label class="text-sm font-medium text-gray-700">Pitch Angle</label>
+<span class="text-sm font-bold text-blue-600"><span id="pitch-angle-val">10</span>°</span>
+</div>
+<input class="w-full cursor-pointer" id="pitch-angle" max="30" min="0" step="1" type="range" value="10"/>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<label class="text-sm font-medium text-gray-700">Number of Blades</label>
+<span class="text-sm font-bold text-blue-600"><span id="num-blades-val">3</span></span>
+</div>
+<input class="w-full cursor-pointer" id="num-blades" max="6" min="1" step="1" type="range" value="3"/>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-gray-100">
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center" id="record-data">
+<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                         Record Trial
                     </button>
-                </div>
-            </div>
-
-            <!-- Visualization & Live Output -->
-            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col items-center">
-                <h3 class="text-lg font-semibold mb-4 w-full border-b pb-2 text-left">Live Output & Visualization</h3>
-
-                <div class="grid grid-cols-2 gap-4 w-full mb-8 text-center">
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 shadow-inner">
-                        <p class="text-xs text-blue-800 font-semibold uppercase tracking-wider mb-1">Power Output</p>
-                        <p class="text-3xl font-bold text-blue-900"><span id="power-output">0.0</span> <span class="text-lg font-normal">kW</span></p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg border border-green-100 shadow-inner">
-                        <p class="text-xs text-green-800 font-semibold uppercase tracking-wider mb-1">Efficiency (C<sub>p</sub>)</p>
-                        <p class="text-3xl font-bold text-green-900"><span id="efficiency-output">0.00</span></p>
-                    </div>
-                </div>
-
-                <div class="turbine-container">
-                    <div class="tower"></div>
-                    <div class="rotor-hub"></div>
-                    <div class="blades-container" id="turbine-blades">
-                        <!-- Blades will be injected here by JS -->
-                    </div>
-                </div>
-                <p class="text-xs text-gray-500 mt-4 text-center">Visual representation only. Blade size and rotational speed are scaled.</p>
-            </div>
-
-            <!-- Data & Graphing -->
-            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col">
-                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Trial Data</h3>
-
-                <div class="mb-4 flex-grow-0" style="position: relative; height: 200px; width: 100%">
-                    <canvas id="resultsChart"></canvas>
-                </div>
-
-                <div class="overflow-y-auto h-48 border border-gray-200 rounded mb-4 mt-2">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tr#</th>
-                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wind</th>
-                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Len</th>
-                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pitch</th>
-                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blds</th>
-                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Power</th>
-                            </tr>
-                        </thead>
-                        <tbody id="data-table-body" class="bg-white divide-y divide-gray-200">
-                            <!-- Data rows will be injected here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="flex space-x-3 mt-auto">
-                    <button id="clear-data" class="flex-1 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-semibold py-2 px-3 rounded text-sm transition">Clear Data</button>
-                    <button id="export-data" class="flex-1 bg-green-50 hover:bg-green-100 border border-green-200 text-green-700 font-semibold py-2 px-3 rounded text-sm transition">Export CSV</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+<!-- Visualization & Live Output -->
+<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col items-center">
+<h3 class="text-lg font-semibold mb-4 w-full border-b pb-2 text-left">Live Output &amp; Visualization</h3>
+<div class="grid grid-cols-2 gap-4 w-full mb-8 text-center">
+<div class="bg-blue-50 p-4 rounded-lg border border-blue-100 shadow-inner">
+<p class="text-xs text-blue-800 font-semibold uppercase tracking-wider mb-1">Power Output</p>
+<p class="text-3xl font-bold text-blue-900"><span id="power-output">0.0</span> <span class="text-lg font-normal">kW</span></p>
+</div>
+<div class="bg-green-50 p-4 rounded-lg border border-green-100 shadow-inner">
+<p class="text-xs text-green-800 font-semibold uppercase tracking-wider mb-1">Efficiency (C<sub>p</sub>)</p>
+<p class="text-3xl font-bold text-green-900"><span id="efficiency-output">0.00</span></p>
+</div>
+</div>
+<div class="turbine-container">
+<div class="tower"></div>
+<div class="rotor-hub"></div>
+<div class="blades-container" id="turbine-blades">
+<!-- Blades will be injected here by JS -->
+</div>
+</div>
+<p class="text-xs text-gray-500 mt-4 text-center">Visual representation only. Blade size and rotational speed are scaled.</p>
+</div>
+<!-- Data & Graphing -->
+<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col">
+<h3 class="text-lg font-semibold mb-4 border-b pb-2">Trial Data</h3>
+<div class="mb-4 flex-grow-0" style="position: relative; height: 200px; width: 100%">
+<canvas id="resultsChart"></canvas>
+</div>
+<div class="overflow-y-auto h-48 border border-gray-200 rounded mb-4 mt-2">
+<table class="min-w-full divide-y divide-gray-200 text-sm">
+<thead class="bg-gray-50 sticky top-0">
+<tr>
+<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Tr#</th>
+<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Wind</th>
+<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Len</th>
+<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Pitch</th>
+<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Blds</th>
+<th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Power</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200" id="data-table-body">
+<!-- Data rows will be injected here -->
+</tbody>
+</table>
+</div>
+<div class="flex space-x-3 mt-auto">
+<button class="flex-1 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-semibold py-2 px-3 rounded text-sm transition" id="clear-data">Clear Data</button>
+<button class="flex-1 bg-green-50 hover:bg-green-100 border border-green-200 text-green-700 font-semibold py-2 px-3 rounded text-sm transition" id="export-data">Export CSV</button>
+</div>
+</div>
+</div>
+</div>
+<script>
         // --- State and Constants ---
         const CONSTANTS = {
             AIR_DENSITY: 1.225, // kg/m^3 at sea level and 15C

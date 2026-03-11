@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big Bang Evidence Explorer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Big Bang Evidence Explorer</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/BigBangEvidenceExplorer.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Big Bang Evidence Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Big Bang Evidence Explorer" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Big Bang Evidence Explorer, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Big Bang Evidence Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -16,177 +24,180 @@
         canvas { border-radius: 0.5rem; background-color: #020617; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
         .info-panel { background-color: #1e293b; border-left: 4px solid #3b82f6; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Big Bang Evidence Explorer",
+    "description": "Interactive science simulation for Big Bang Evidence Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/BigBangEvidenceExplorer.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
-
-    <header class="text-center mb-6 w-full max-w-6xl">
-        <h1 class="text-3xl md:text-4xl font-bold text-blue-400 mb-2">Big Bang Evidence Explorer</h1>
-        <p class="text-slate-300">Investigate the astronomical evidence supporting the Big Bang Theory.</p>
-    </header>
-
-    <div class="w-full max-w-6xl mb-6">
-        <div class="flex flex-wrap border-b border-slate-700">
-            <button class="nav-btn active" onclick="openTab(event, 'redshift')">Expanding Universe (Redshift)</button>
-            <button class="nav-btn" onclick="openTab(event, 'composition')">Composition of Matter</button>
-            <button class="nav-btn" onclick="openTab(event, 'cmb')">Cosmic Microwave Background</button>
-        </div>
-    </div>
-
-    <main class="w-full max-w-6xl flex-grow flex flex-col">
-
-        <!-- Tab 1: Redshift -->
-        <section id="redshift" class="tab-content active flex-grow">
-             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-                <div class="flex flex-col gap-4">
-                    <h2 class="text-2xl font-semibold text-blue-300">Redshift and the Expanding Universe</h2>
-                    <p class="text-slate-300">Observe galaxies receding from Earth. Their light spectra are shifted towards the red end, indicating they are moving away. Faster moving galaxies exhibit a greater redshift.</p>
-                    <div class="bg-slate-800 p-4 rounded-lg flex-grow flex flex-col relative" style="min-height: 400px;">
-                        <canvas id="universeCanvas" class="w-full flex-grow mb-4 cursor-pointer"></canvas>
-
-                        <div class="flex items-center gap-4 mb-2">
-                            <label for="expansionSlider" class="text-sm font-semibold whitespace-nowrap">Time (Expansion):</label>
-                            <input type="range" id="expansionSlider" min="1" max="3" step="0.05" value="1" class="w-full accent-blue-500">
-                        </div>
-
-                        <div id="spectrumBox" class="bg-slate-900 p-3 rounded border border-slate-700 hidden mt-2">
-                            <h3 class="text-sm font-bold text-slate-300 mb-1">Galaxy Light Spectrum</h3>
-                            <div class="relative w-full h-12 bg-black rounded overflow-hidden">
-                                <!-- Reference Lines -->
-                                <div class="absolute top-0 bottom-0 left-[30%] w-0.5 bg-blue-500 opacity-50 z-10" title="Reference (Blue)"></div>
-                                <div class="absolute top-0 bottom-0 left-[70%] w-0.5 bg-red-500 opacity-50 z-10" title="Reference (Red)"></div>
-                                <!-- Background Gradient to simulate full spectrum -->
-                                <div class="absolute inset-0 bg-gradient-to-r from-violet-600 via-green-500 to-red-600 opacity-30"></div>
-
-                                <!-- Shifted Lines (Galaxy) -->
-                                <div id="shiftedLine1" class="absolute top-0 bottom-0 w-1 bg-white z-20 transition-all duration-200"></div>
-                                <div id="shiftedLine2" class="absolute top-0 bottom-0 w-1 bg-white z-20 transition-all duration-200"></div>
-                            </div>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-xs text-slate-400">Shift (<span id="redshiftValue">0</span>) indicates velocity: <span id="velocityValue" class="text-blue-400 font-mono">0</span> km/s</span>
-                                <button id="recordBtn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs py-1 px-3 rounded transition-colors">Record Data</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-4">
-                    <h2 class="text-2xl font-semibold text-blue-300">Hubble's Law Data</h2>
-                    <div class="bg-slate-800 p-4 rounded-lg flex-grow flex flex-col gap-4" style="max-height: 600px;">
-                        <div class="h-64 relative w-full">
-                            <canvas id="hubbleChart"></canvas>
-                        </div>
-                        <div class="overflow-y-auto max-h-48 rounded border border-slate-700 bg-slate-900">
-                            <table class="w-full text-sm text-left text-slate-300">
-                                <thead class="text-xs text-slate-400 bg-slate-800 uppercase sticky top-0">
-                                    <tr>
-                                        <th class="px-4 py-2">Galaxy</th>
-                                        <th class="px-4 py-2">Distance (Mpc)</th>
-                                        <th class="px-4 py-2">Velocity (km/s)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dataTableBody">
-                                    <!-- Data rows will be injected here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-             </div>
-        </section>
-
-        <!-- Tab 2: Composition -->
-        <section id="composition" class="tab-content flex-grow">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-                <div class="flex flex-col gap-4">
-                    <h2 class="text-2xl font-semibold text-blue-300">Primordial Composition</h2>
-                    <p class="text-slate-300">The Big Bang Theory predicts that the early universe was hot and dense enough for nuclear fusion to occur for a brief period. Big Bang Nucleosynthesis created mostly Hydrogen (~75% by mass) and Helium (~25%), with trace amounts of Lithium.</p>
-                    <div class="bg-slate-800 p-6 rounded-lg flex-grow flex flex-col items-center justify-center gap-6">
-                        <div class="relative w-48 h-48 rounded-full border-4 border-slate-600 bg-slate-900 overflow-hidden cursor-pointer group" id="sampleCloud" onclick="analyzeSample()">
-                            <!-- Simulated gas cloud -->
-                            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-900/50 via-purple-900/40 to-slate-900/80 blur-md"></div>
-                            <!-- Particles generated via JS -->
-                            <div id="particlesContainer" class="absolute inset-0"></div>
-
-                            <div class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span class="text-white font-bold text-lg pointer-events-none">Click to Analyze Sample</span>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <h3 class="font-bold text-slate-200 mb-2">Analysis Status</h3>
-                            <div id="analysisStatus" class="text-slate-400">Waiting for sample...</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-4">
-                    <h2 class="text-2xl font-semibold text-blue-300">Matter Distribution (By Mass)</h2>
-                     <div class="bg-slate-800 p-4 rounded-lg flex-grow flex items-center justify-center" style="max-height: 500px;">
-                        <div class="w-full max-w-sm">
-                            <canvas id="compositionChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-             </div>
-        </section>
-
-        <!-- Tab 3: CMB -->
-        <section id="cmb" class="tab-content flex-grow">
-             <div class="flex flex-col gap-4 h-full">
-                <h2 class="text-2xl font-semibold text-blue-300">Cosmic Microwave Background (CMB)</h2>
-                <p class="text-slate-300">The CMB is the remnant radiation from the hot, dense early universe. As the universe expanded, this radiation cooled and its wavelength stretched into the microwave spectrum we observe today at ~2.7 Kelvin.</p>
-
-                <div class="bg-slate-800 p-6 rounded-lg flex-grow flex flex-col gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label for="timeSlider" class="text-sm font-semibold flex justify-between">
-                            <span>Time since Big Bang</span>
-                            <span id="timeLabel" class="text-blue-400">~380,000 Years (Recombination)</span>
-                        </label>
-                        <input type="range" id="timeSlider" min="0" max="100" value="0" class="w-full accent-blue-500">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
-                        <!-- Universe Expansion Visual -->
-                        <div class="flex flex-col items-center gap-4">
-                            <h3 class="font-bold text-slate-300">Observable Universe Model</h3>
-                            <div class="relative w-full aspect-square max-w-[300px] flex items-center justify-center bg-black rounded-lg border border-slate-700 overflow-hidden">
-                                <div id="universeBox" class="rounded-full flex items-center justify-center transition-all duration-300" style="width: 20%; height: 20%; background-color: #ff4500;">
-                                    <div id="cmbWave" class="w-full h-full opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxwYXRoIGQ9Ik0wLDEwIFExMCwwIDIwLDEwIFQ0MCwxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPg==')] bg-repeat-x bg-center transition-all duration-300" style="background-size: 10px 10px;"></div>
-                                </div>
-                            </div>
-                            <div class="text-center text-sm text-slate-400">
-                                Temperature: <span id="tempLabel" class="font-mono text-orange-400 text-lg">~3000 K</span>
-                            </div>
-                        </div>
-
-                        <!-- Blackbody Radiation Spectrum -->
-                        <div class="flex flex-col gap-4">
-                            <h3 class="font-bold text-slate-300">Radiation Spectrum Peak</h3>
-                            <div class="flex-grow relative min-h-[250px] bg-slate-900 rounded border border-slate-700 p-2">
-                                <canvas id="cmbChart"></canvas>
-                            </div>
-                            <div class="text-sm text-slate-300">
-                                <p><strong>Peak Wavelength:</strong> <span id="wavelengthLabel" class="font-mono text-blue-400">970 nm (Infrared)</span></p>
-                                <p class="text-xs text-slate-500 mt-2">Note: As the universe expands, the peak wavelength shifts from infrared to microwave, and the temperature drops according to Wien's displacement law.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-             </div>
-        </section>
-
-    </main>
-
-    <footer class="w-full max-w-6xl mt-8 pt-4 border-t border-slate-700 text-sm text-slate-400">
-        <div class="info-panel p-4 rounded mb-4">
-            <h3 class="font-bold text-slate-200 mb-2">NGSS Alignment (HS-ESS1-2)</h3>
-            <ul class="list-disc pl-5 space-y-1">
-                <li><strong>ESS1.A:</strong> The study of stars' light spectra and brightness is used to identify compositional elements of stars, their movements, and their distances from Earth. The Big Bang theory is supported by observations of distant galaxies receding from our own, of the measured composition of stars and non-stellar gases, and of the maps of spectra of the primordial radiation (CMB).</li>
-                <li><strong>PS4.B:</strong> Atoms of each element emit and absorb characteristic frequencies of light. These characteristics allow identification of the presence of an element, even in microscopic quantities.</li>
-            </ul>
-        </div>
-        <p class="text-center">&copy; <script>document.write(new Date().getFullYear())</script> Science Simulations. Built for educational purposes.</p>
-    </footer>
-
-    <script>
+<header class="text-center mb-6 w-full max-w-6xl">
+<h1 class="text-3xl md:text-4xl font-bold text-blue-400 mb-2">Big Bang Evidence Explorer</h1>
+<p class="text-slate-300">Investigate the astronomical evidence supporting the Big Bang Theory.</p>
+</header>
+<div class="w-full max-w-6xl mb-6">
+<div class="flex flex-wrap border-b border-slate-700">
+<button class="nav-btn active" onclick="openTab(event, 'redshift')">Expanding Universe (Redshift)</button>
+<button class="nav-btn" onclick="openTab(event, 'composition')">Composition of Matter</button>
+<button class="nav-btn" onclick="openTab(event, 'cmb')">Cosmic Microwave Background</button>
+</div>
+</div>
+<main class="w-full max-w-6xl flex-grow flex flex-col">
+<!-- Tab 1: Redshift -->
+<section class="tab-content active flex-grow" id="redshift">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+<div class="flex flex-col gap-4">
+<h2 class="text-2xl font-semibold text-blue-300">Redshift and the Expanding Universe</h2>
+<p class="text-slate-300">Observe galaxies receding from Earth. Their light spectra are shifted towards the red end, indicating they are moving away. Faster moving galaxies exhibit a greater redshift.</p>
+<div class="bg-slate-800 p-4 rounded-lg flex-grow flex flex-col relative" style="min-height: 400px;">
+<canvas class="w-full flex-grow mb-4 cursor-pointer" id="universeCanvas"></canvas>
+<div class="flex items-center gap-4 mb-2">
+<label class="text-sm font-semibold whitespace-nowrap" for="expansionSlider">Time (Expansion):</label>
+<input class="w-full accent-blue-500" id="expansionSlider" max="3" min="1" step="0.05" type="range" value="1"/>
+</div>
+<div class="bg-slate-900 p-3 rounded border border-slate-700 hidden mt-2" id="spectrumBox">
+<h3 class="text-sm font-bold text-slate-300 mb-1">Galaxy Light Spectrum</h3>
+<div class="relative w-full h-12 bg-black rounded overflow-hidden">
+<!-- Reference Lines -->
+<div class="absolute top-0 bottom-0 left-[30%] w-0.5 bg-blue-500 opacity-50 z-10" title="Reference (Blue)"></div>
+<div class="absolute top-0 bottom-0 left-[70%] w-0.5 bg-red-500 opacity-50 z-10" title="Reference (Red)"></div>
+<!-- Background Gradient to simulate full spectrum -->
+<div class="absolute inset-0 bg-gradient-to-r from-violet-600 via-green-500 to-red-600 opacity-30"></div>
+<!-- Shifted Lines (Galaxy) -->
+<div class="absolute top-0 bottom-0 w-1 bg-white z-20 transition-all duration-200" id="shiftedLine1"></div>
+<div class="absolute top-0 bottom-0 w-1 bg-white z-20 transition-all duration-200" id="shiftedLine2"></div>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="text-xs text-slate-400">Shift (<span id="redshiftValue">0</span>) indicates velocity: <span class="text-blue-400 font-mono" id="velocityValue">0</span> km/s</span>
+<button class="bg-blue-600 hover:bg-blue-500 text-white text-xs py-1 px-3 rounded transition-colors" id="recordBtn">Record Data</button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h2 class="text-2xl font-semibold text-blue-300">Hubble's Law Data</h2>
+<div class="bg-slate-800 p-4 rounded-lg flex-grow flex flex-col gap-4" style="max-height: 600px;">
+<div class="h-64 relative w-full">
+<canvas id="hubbleChart"></canvas>
+</div>
+<div class="overflow-y-auto max-h-48 rounded border border-slate-700 bg-slate-900">
+<table class="w-full text-sm text-left text-slate-300">
+<thead class="text-xs text-slate-400 bg-slate-800 uppercase sticky top-0">
+<tr>
+<th class="px-4 py-2">Galaxy</th>
+<th class="px-4 py-2">Distance (Mpc)</th>
+<th class="px-4 py-2">Velocity (km/s)</th>
+</tr>
+</thead>
+<tbody id="dataTableBody">
+<!-- Data rows will be injected here -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Tab 2: Composition -->
+<section class="tab-content flex-grow" id="composition">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+<div class="flex flex-col gap-4">
+<h2 class="text-2xl font-semibold text-blue-300">Primordial Composition</h2>
+<p class="text-slate-300">The Big Bang Theory predicts that the early universe was hot and dense enough for nuclear fusion to occur for a brief period. Big Bang Nucleosynthesis created mostly Hydrogen (~75% by mass) and Helium (~25%), with trace amounts of Lithium.</p>
+<div class="bg-slate-800 p-6 rounded-lg flex-grow flex flex-col items-center justify-center gap-6">
+<div class="relative w-48 h-48 rounded-full border-4 border-slate-600 bg-slate-900 overflow-hidden cursor-pointer group" id="sampleCloud" onclick="analyzeSample()">
+<!-- Simulated gas cloud -->
+<div class="absolute inset-0 bg-gradient-to-tr from-indigo-900/50 via-purple-900/40 to-slate-900/80 blur-md"></div>
+<!-- Particles generated via JS -->
+<div class="absolute inset-0" id="particlesContainer"></div>
+<div class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white font-bold text-lg pointer-events-none">Click to Analyze Sample</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="font-bold text-slate-200 mb-2">Analysis Status</h3>
+<div class="text-slate-400" id="analysisStatus">Waiting for sample...</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h2 class="text-2xl font-semibold text-blue-300">Matter Distribution (By Mass)</h2>
+<div class="bg-slate-800 p-4 rounded-lg flex-grow flex items-center justify-center" style="max-height: 500px;">
+<div class="w-full max-w-sm">
+<canvas id="compositionChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Tab 3: CMB -->
+<section class="tab-content flex-grow" id="cmb">
+<div class="flex flex-col gap-4 h-full">
+<h2 class="text-2xl font-semibold text-blue-300">Cosmic Microwave Background (CMB)</h2>
+<p class="text-slate-300">The CMB is the remnant radiation from the hot, dense early universe. As the universe expanded, this radiation cooled and its wavelength stretched into the microwave spectrum we observe today at ~2.7 Kelvin.</p>
+<div class="bg-slate-800 p-6 rounded-lg flex-grow flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold flex justify-between" for="timeSlider">
+<span>Time since Big Bang</span>
+<span class="text-blue-400" id="timeLabel">~380,000 Years (Recombination)</span>
+</label>
+<input class="w-full accent-blue-500" id="timeSlider" max="100" min="0" type="range" value="0"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+<!-- Universe Expansion Visual -->
+<div class="flex flex-col items-center gap-4">
+<h3 class="font-bold text-slate-300">Observable Universe Model</h3>
+<div class="relative w-full aspect-square max-w-[300px] flex items-center justify-center bg-black rounded-lg border border-slate-700 overflow-hidden">
+<div class="rounded-full flex items-center justify-center transition-all duration-300" id="universeBox" style="width: 20%; height: 20%; background-color: #ff4500;">
+<div class="w-full h-full opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxwYXRoIGQ9Ik0wLDEwIFExMCwwIDIwLDEwIFQ0MCwxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPg==')] bg-repeat-x bg-center transition-all duration-300" id="cmbWave" style="background-size: 10px 10px;"></div>
+</div>
+</div>
+<div class="text-center text-sm text-slate-400">
+                                Temperature: <span class="font-mono text-orange-400 text-lg" id="tempLabel">~3000 K</span>
+</div>
+</div>
+<!-- Blackbody Radiation Spectrum -->
+<div class="flex flex-col gap-4">
+<h3 class="font-bold text-slate-300">Radiation Spectrum Peak</h3>
+<div class="flex-grow relative min-h-[250px] bg-slate-900 rounded border border-slate-700 p-2">
+<canvas id="cmbChart"></canvas>
+</div>
+<div class="text-sm text-slate-300">
+<p><strong>Peak Wavelength:</strong> <span class="font-mono text-blue-400" id="wavelengthLabel">970 nm (Infrared)</span></p>
+<p class="text-xs text-slate-500 mt-2">Note: As the universe expands, the peak wavelength shifts from infrared to microwave, and the temperature drops according to Wien's displacement law.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="w-full max-w-6xl mt-8 pt-4 border-t border-slate-700 text-sm text-slate-400">
+<div class="info-panel p-4 rounded mb-4">
+<h3 class="font-bold text-slate-200 mb-2">NGSS Alignment (HS-ESS1-2)</h3>
+<ul class="list-disc pl-5 space-y-1">
+<li><strong>ESS1.A:</strong> The study of stars' light spectra and brightness is used to identify compositional elements of stars, their movements, and their distances from Earth. The Big Bang theory is supported by observations of distant galaxies receding from our own, of the measured composition of stars and non-stellar gases, and of the maps of spectra of the primordial radiation (CMB).</li>
+<li><strong>PS4.B:</strong> Atoms of each element emit and absorb characteristic frequencies of light. These characteristics allow identification of the presence of an element, even in microscopic quantities.</li>
+</ul>
+</div>
+<p class="text-center">© <script>document.write(new Date().getFullYear())</script> Science Simulations. Built for educational purposes.</p>
+</footer>
+<script>
         function openTab(evt, tabName) {
             // Hide all tab content
             const tabcontent = document.getElementsByClassName("tab-content");

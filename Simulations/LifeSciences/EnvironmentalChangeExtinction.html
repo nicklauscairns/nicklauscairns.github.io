@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Environmental Change & Extinction Explorer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Environmental Change &amp; Extinction Explorer</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/EnvironmentalChangeExtinction.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Environmental Change &amp; Extinction Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Environmental Change &amp; Extinction Explorer" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Environmental Change &amp; Extinction Explorer, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Environmental Change &amp; Extinction Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Inter', sans-serif; }
         .tab-btn {
             @apply px-4 py-2 font-medium text-sm focus:outline-none transition-colors duration-200 border-b-2;
@@ -23,133 +31,133 @@
         .log-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .log-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Environmental Change & Extinction Explorer",
+    "description": "Interactive science simulation for Environmental Change & Extinction Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/EnvironmentalChangeExtinction.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
-
-    <!-- Header -->
-    <header class="bg-indigo-800 text-white p-4 shadow-md flex justify-between items-center z-10 shrink-0">
-        <div>
-            <h1 class="text-2xl font-bold tracking-wide">Environmental Change & Extinction</h1>
-            <p class="text-xs text-indigo-200 mt-1 max-w-3xl">NGSS HS-LS4-5: Evaluate the evidence supporting claims that changes in environmental conditions may result in: (1) increases in individuals, (2) emergence of new species, and (3) extinction.</p>
-        </div>
-        <div class="flex gap-3">
-            <button id="btn-pause" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded shadow font-semibold flex items-center gap-2 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Pause
+<!-- Header -->
+<header class="bg-indigo-800 text-white p-4 shadow-md flex justify-between items-center z-10 shrink-0">
+<div>
+<h1 class="text-2xl font-bold tracking-wide">Environmental Change &amp; Extinction</h1>
+<p class="text-xs text-indigo-200 mt-1 max-w-3xl">NGSS HS-LS4-5: Evaluate the evidence supporting claims that changes in environmental conditions may result in: (1) increases in individuals, (2) emergence of new species, and (3) extinction.</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded shadow font-semibold flex items-center gap-2 transition-colors" id="btn-pause">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> Pause
             </button>
-            <button id="btn-reset" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 rounded shadow font-semibold flex items-center gap-2 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Reset
+<button class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 rounded shadow font-semibold flex items-center gap-2 transition-colors" id="btn-reset">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> Reset
             </button>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex gap-4 p-4 min-h-0">
-
-        <!-- Left Panel: Controls & Environment State -->
-        <aside class="w-80 flex flex-col gap-4 shrink-0 overflow-y-auto">
-
-            <!-- Environmental Events -->
-            <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200">
-                <h2 class="font-bold text-lg text-indigo-800 mb-3 border-b pb-2 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Change Events
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex gap-4 p-4 min-h-0">
+<!-- Left Panel: Controls & Environment State -->
+<aside class="w-80 flex flex-col gap-4 shrink-0 overflow-y-auto">
+<!-- Environmental Events -->
+<div class="bg-white p-4 rounded-xl shadow-md border border-slate-200">
+<h2 class="font-bold text-lg text-indigo-800 mb-3 border-b pb-2 flex items-center gap-2">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> Change Events
                 </h2>
-                <p class="text-xs text-slate-500 mb-4">Trigger a major environmental disruption to observe the cause-and-effect impact on the ecosystem.</p>
-
-                <div class="space-y-3">
-                    <button id="btn-deforest" class="w-full text-left p-3 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors group">
-                        <div class="font-bold text-emerald-800 group-hover:text-emerald-900">🪓 Deforestation</div>
-                        <div class="text-xs text-emerald-600 mt-1">Rapidly removes habitat space and alters local temperature.</div>
-                    </button>
-
-                    <button id="btn-drought" class="w-full text-left p-3 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 transition-colors group">
-                        <div class="font-bold text-amber-800 group-hover:text-amber-900">☀️ Severe Drought</div>
-                        <div class="text-xs text-amber-600 mt-1">Dries up water sources, increasing temperature and reducing carrying capacity.</div>
-                    </button>
-
-                    <button id="btn-fertilizer" class="w-full text-left p-3 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 transition-colors group">
-                        <div class="font-bold text-purple-800 group-hover:text-purple-900">🧪 Fertilizer Runoff</div>
-                        <div class="text-xs text-purple-600 mt-1">Causes toxic algal blooms, destroying water quality but feeding certain pests.</div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Ecosystem Status -->
-            <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 flex-1 flex flex-col">
-                <h2 class="font-bold text-lg text-indigo-800 mb-3 border-b pb-2 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Environment State
+<p class="text-xs text-slate-500 mb-4">Trigger a major environmental disruption to observe the cause-and-effect impact on the ecosystem.</p>
+<div class="space-y-3">
+<button class="w-full text-left p-3 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors group" id="btn-deforest">
+<div class="font-bold text-emerald-800 group-hover:text-emerald-900">🪓 Deforestation</div>
+<div class="text-xs text-emerald-600 mt-1">Rapidly removes habitat space and alters local temperature.</div>
+</button>
+<button class="w-full text-left p-3 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 transition-colors group" id="btn-drought">
+<div class="font-bold text-amber-800 group-hover:text-amber-900">☀️ Severe Drought</div>
+<div class="text-xs text-amber-600 mt-1">Dries up water sources, increasing temperature and reducing carrying capacity.</div>
+</button>
+<button class="w-full text-left p-3 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 transition-colors group" id="btn-fertilizer">
+<div class="font-bold text-purple-800 group-hover:text-purple-900">🧪 Fertilizer Runoff</div>
+<div class="text-xs text-purple-600 mt-1">Causes toxic algal blooms, destroying water quality but feeding certain pests.</div>
+</button>
+</div>
+</div>
+<!-- Ecosystem Status -->
+<div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 flex-1 flex flex-col">
+<h2 class="font-bold text-lg text-indigo-800 mb-3 border-b pb-2 flex items-center gap-2">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> Environment State
                 </h2>
-
-                <div class="space-y-4 text-sm mt-2">
-                    <div>
-                        <div class="flex justify-between mb-1"><span class="font-medium text-slate-700">Habitat Area</span> <span id="val-habitat" class="font-bold">100%</span></div>
-                        <div class="w-full bg-slate-200 rounded-full h-2"><div id="bar-habitat" class="bg-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 100%"></div></div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1"><span class="font-medium text-slate-700">Water Quality</span> <span id="val-water" class="font-bold">100%</span></div>
-                        <div class="w-full bg-slate-200 rounded-full h-2"><div id="bar-water" class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width: 100%"></div></div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1"><span class="font-medium text-slate-700">Temperature</span> <span id="val-temp" class="font-bold text-amber-600">Stable</span></div>
-                        <div class="w-full bg-slate-200 rounded-full h-2"><div id="bar-temp" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 50%"></div></div>
-                    </div>
-                </div>
-
-                <div class="mt-auto pt-4 border-t mt-4 flex justify-between items-center text-xs text-slate-500">
-                    <span>Year: <strong id="val-year" class="text-indigo-700 text-lg">0</strong></span>
-                    <span id="status-event" class="px-2 py-1 bg-slate-100 rounded text-slate-600 font-medium border">Stable Equilibrium</span>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Right Panel: Data Logging & Explanation -->
-        <section class="flex-1 flex flex-col gap-4 min-w-0">
-
-            <!-- Chart Area -->
-            <div class="bg-white rounded-xl shadow-md border border-slate-200 flex-1 flex flex-col min-h-[50%]">
-                <div class="p-3 border-b bg-slate-50 rounded-t-xl flex justify-between items-center">
-                    <h2 class="font-bold text-slate-700">Population Dynamics (Evidence)</h2>
-                    <div class="flex gap-4 text-xs font-medium">
-                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Specialist (Amphibian)</div>
-                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> Generalist (Bird)</div>
-                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span> Pest (Insect)</div>
-                        <div id="legend-new" class="flex items-center gap-1 hidden opacity-50"><span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span> Diverged Specie</div>
-                    </div>
-                </div>
-                <div class="flex-1 p-4 relative">
-                    <canvas id="populationChart"></canvas>
-                </div>
-            </div>
-
-            <!-- SEP Tab Area -->
-            <div class="bg-white rounded-xl shadow-md border border-slate-200 h-64 shrink-0 flex flex-col">
-                <nav class="flex gap-2 border-b border-slate-200 bg-slate-50 px-2 pt-2" aria-label="Tabs">
-                    <button class="tab-btn active" data-tab="log">Event Log</button>
-                    <button class="tab-btn" data-tab="evaluate">Evaluate Evidence (SEP)</button>
-                </nav>
-
-                <div class="flex-1 relative p-3">
-
-                    <!-- Event Log Tab -->
-                    <div id="tab-log" class="absolute inset-0 p-3 block log-container overflow-y-auto bg-slate-50 rounded-b-lg font-mono text-xs">
-                        <ul id="event-list" class="space-y-2">
-                            <li class="text-slate-500">[Year 0] Ecosystem is stable. Monitoring populations...</li>
-                        </ul>
-                    </div>
-
-                    <!-- Explanation Tab -->
-                    <div id="tab-evaluate" class="absolute inset-0 p-3 hidden flex-col">
-                        <p class="text-sm text-slate-600 mb-2 font-medium">Use the chart data as evidence to evaluate a claim: <i>"The environmental change caused the extinction of one species and the rapid expansion of another."</i> Defend or critique this claim below.</p>
-                        <textarea class="flex-1 w-full border border-slate-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner" placeholder="E.g., When the Drought event occurred at Year 5, the chart shows the Specialist (Amphibian) population plummeted to 0 by Year 8 due to loss of water quality. This provides empirical evidence that species become extinct when they cannot survive in altered environments. Conversely, the Pest population expanded from 100 to 450 individuals because..."></textarea>
-                    </div>
-
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <script>
+<div class="space-y-4 text-sm mt-2">
+<div>
+<div class="flex justify-between mb-1"><span class="font-medium text-slate-700">Habitat Area</span> <span class="font-bold" id="val-habitat">100%</span></div>
+<div class="w-full bg-slate-200 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full transition-all duration-500" id="bar-habitat" style="width: 100%"></div></div>
+</div>
+<div>
+<div class="flex justify-between mb-1"><span class="font-medium text-slate-700">Water Quality</span> <span class="font-bold" id="val-water">100%</span></div>
+<div class="w-full bg-slate-200 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full transition-all duration-500" id="bar-water" style="width: 100%"></div></div>
+</div>
+<div>
+<div class="flex justify-between mb-1"><span class="font-medium text-slate-700">Temperature</span> <span class="font-bold text-amber-600" id="val-temp">Stable</span></div>
+<div class="w-full bg-slate-200 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full transition-all duration-500" id="bar-temp" style="width: 50%"></div></div>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t mt-4 flex justify-between items-center text-xs text-slate-500">
+<span>Year: <strong class="text-indigo-700 text-lg" id="val-year">0</strong></span>
+<span class="px-2 py-1 bg-slate-100 rounded text-slate-600 font-medium border" id="status-event">Stable Equilibrium</span>
+</div>
+</div>
+</aside>
+<!-- Right Panel: Data Logging & Explanation -->
+<section class="flex-1 flex flex-col gap-4 min-w-0">
+<!-- Chart Area -->
+<div class="bg-white rounded-xl shadow-md border border-slate-200 flex-1 flex flex-col min-h-[50%]">
+<div class="p-3 border-b bg-slate-50 rounded-t-xl flex justify-between items-center">
+<h2 class="font-bold text-slate-700">Population Dynamics (Evidence)</h2>
+<div class="flex gap-4 text-xs font-medium">
+<div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Specialist (Amphibian)</div>
+<div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> Generalist (Bird)</div>
+<div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span> Pest (Insect)</div>
+<div class="flex items-center gap-1 hidden opacity-50" id="legend-new"><span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span> Diverged Specie</div>
+</div>
+</div>
+<div class="flex-1 p-4 relative">
+<canvas id="populationChart"></canvas>
+</div>
+</div>
+<!-- SEP Tab Area -->
+<div class="bg-white rounded-xl shadow-md border border-slate-200 h-64 shrink-0 flex flex-col">
+<nav aria-label="Tabs" class="flex gap-2 border-b border-slate-200 bg-slate-50 px-2 pt-2">
+<button class="tab-btn active" data-tab="log">Event Log</button>
+<button class="tab-btn" data-tab="evaluate">Evaluate Evidence (SEP)</button>
+</nav>
+<div class="flex-1 relative p-3">
+<!-- Event Log Tab -->
+<div class="absolute inset-0 p-3 block log-container overflow-y-auto bg-slate-50 rounded-b-lg font-mono text-xs" id="tab-log">
+<ul class="space-y-2" id="event-list">
+<li class="text-slate-500">[Year 0] Ecosystem is stable. Monitoring populations...</li>
+</ul>
+</div>
+<!-- Explanation Tab -->
+<div class="absolute inset-0 p-3 hidden flex-col" id="tab-evaluate">
+<p class="text-sm text-slate-600 mb-2 font-medium">Use the chart data as evidence to evaluate a claim: <i>"The environmental change caused the extinction of one species and the rapid expansion of another."</i> Defend or critique this claim below.</p>
+<textarea class="flex-1 w-full border border-slate-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner" placeholder="E.g., When the Drought event occurred at Year 5, the chart shows the Specialist (Amphibian) population plummeted to 0 by Year 8 due to loss of water quality. This provides empirical evidence that species become extinct when they cannot survive in altered environments. Conversely, the Pest population expanded from 100 to 450 individuals because..."></textarea>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
         // Simulation State
         const state = {
             isRunning: true,

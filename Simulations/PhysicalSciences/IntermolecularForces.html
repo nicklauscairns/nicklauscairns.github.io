@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intermolecular Forces Investigation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Intermolecular Forces Investigation</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/IntermolecularForces.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Intermolecular Forces Investigation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Intermolecular Forces Investigation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Intermolecular Forces Investigation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Intermolecular Forces Investigation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Inter', sans-serif; }
         .beaker {
             width: 120px;
@@ -58,139 +66,145 @@
             transition: border-radius 0.5s, width 0.5s, height 0.5s;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Intermolecular Forces Investigation",
+    "description": "Interactive science simulation for Intermolecular Forces Investigation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/IntermolecularForces.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-800 p-6 min-h-screen">
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-6 border-b pb-4">
-            <h1 class="text-3xl font-bold text-slate-900">Intermolecular Forces Investigation</h1>
-            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-3: Bulk Properties and Electrical Forces</h2>
-            <p class="mt-2 text-slate-700">Investigate the bulk properties of different substances (like boiling point and surface tension) to gather evidence and infer the relative strength of electrical forces between their particles.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-            <!-- Controls Sidebar -->
-            <div class="lg:col-span-3 space-y-6">
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-semibold text-lg mb-4">Substance Selection</h3>
-                    <div class="space-y-3">
-                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 border border-transparent">
-                            <input type="radio" name="substance" value="nonpolar" class="form-radio text-blue-600" checked>
-                            <div>
-                                <div class="font-medium">Substance A</div>
-                                <div class="text-xs text-slate-500">e.g., Methane (CH₄)</div>
-                            </div>
-                        </label>
-                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 border border-transparent">
-                            <input type="radio" name="substance" value="polar" class="form-radio text-blue-600">
-                            <div>
-                                <div class="font-medium">Substance B</div>
-                                <div class="text-xs text-slate-500">e.g., Acetone (C₃H₆O)</div>
-                            </div>
-                        </label>
-                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 border border-transparent">
-                            <input type="radio" name="substance" value="hbond" class="form-radio text-blue-600">
-                            <div>
-                                <div class="font-medium">Substance C</div>
-                                <div class="text-xs text-slate-500">e.g., Water (H₂O)</div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-semibold text-lg mb-4">Investigation</h3>
-                    <div class="mb-4">
-                        <label for="tempSlider" class="block text-sm font-medium mb-1">Heat Energy Input (Temperature)</label>
-                        <input type="range" id="tempSlider" min="0" max="100" value="20" class="w-full">
-                        <div class="flex justify-between text-xs text-slate-500 mt-1">
-                            <span>0°C</span>
-                            <span id="tempValue" class="font-bold text-slate-700">20°C</span>
-                            <span>100°C</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-                    <h4 class="font-bold mb-1">Guide</h4>
-                    <p>Observe how heating affects the bulk liquid. Note the temperature at which the substance boils (particles separate entirely). Also observe the shape of the droplet on a flat surface.</p>
-                </div>
-            </div>
-
-            <!-- Main Simulation Area -->
-            <div class="lg:col-span-6 space-y-6">
-                <!-- Boiling Point Sim -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 text-center relative h-80 flex flex-col items-center justify-end pb-10">
-                    <h3 class="absolute top-4 left-4 font-semibold text-lg">Boiling Point Investigation</h3>
-                    <div class="text-right absolute top-4 right-4">
-                        <div class="text-sm text-slate-500">Current Temp</div>
-                        <div class="text-2xl font-bold font-mono" id="simTempDisplay">20°C</div>
-                    </div>
-
-                    <div class="beaker" id="beaker">
-                        <div class="liquid" id="liquid"></div>
-                        <!-- Particles injected via JS -->
-                    </div>
-                    <div class="heating-element mt-1" id="heatingElement"></div>
-
-                    <div id="boilingOverlay" class="absolute inset-0 bg-white/80 flex items-center justify-center hidden pointer-events-none">
-                        <span class="text-3xl font-bold text-red-600 animate-pulse">BOILING</span>
-                    </div>
-                </div>
-
-                <!-- Surface Tension Sim -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 text-center relative h-48 flex flex-col items-center justify-center">
-                    <h3 class="absolute top-4 left-4 font-semibold text-lg">Surface Tension (Droplet Shape)</h3>
-
-                    <div class="mt-8 flex flex-col items-center w-full">
-                        <div id="droplet" class="droplet bg-blue-300"></div>
-                        <div class="w-48 h-1 bg-slate-400 mt-1"></div> <!-- Surface -->
-                    </div>
-                    <p id="surfaceTensionLabel" class="mt-4 text-sm font-medium text-slate-600">Low Surface Tension</p>
-                </div>
-            </div>
-
-            <!-- Data & Analysis -->
-            <div class="lg:col-span-3 space-y-6">
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-full">
-                    <h3 class="font-semibold text-lg mb-4">Vapor Pressure Curve</h3>
-                    <div class="h-48 relative mb-6">
-                        <canvas id="vaporChart"></canvas>
-                    </div>
-
-                    <h3 class="font-semibold text-lg mb-2">Inferred Properties</h3>
-                    <div class="mb-2 text-right">
-    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+<div class="max-w-6xl mx-auto">
+<header class="mb-6 border-b pb-4">
+<h1 class="text-3xl font-bold text-slate-900">Intermolecular Forces Investigation</h1>
+<h2 class="text-xl text-slate-600 mt-1">HS-PS1-3: Bulk Properties and Electrical Forces</h2>
+<p class="mt-2 text-slate-700">Investigate the bulk properties of different substances (like boiling point and surface tension) to gather evidence and infer the relative strength of electrical forces between their particles.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Controls Sidebar -->
+<div class="lg:col-span-3 space-y-6">
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+<h3 class="font-semibold text-lg mb-4">Substance Selection</h3>
+<div class="space-y-3">
+<label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 border border-transparent">
+<input checked="" class="form-radio text-blue-600" name="substance" type="radio" value="nonpolar"/>
+<div>
+<div class="font-medium">Substance A</div>
+<div class="text-xs text-slate-500">e.g., Methane (CH₄)</div>
+</div>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 border border-transparent">
+<input class="form-radio text-blue-600" name="substance" type="radio" value="polar"/>
+<div>
+<div class="font-medium">Substance B</div>
+<div class="text-xs text-slate-500">e.g., Acetone (C₃H₆O)</div>
+</div>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 border border-transparent">
+<input class="form-radio text-blue-600" name="substance" type="radio" value="hbond"/>
+<div>
+<div class="font-medium">Substance C</div>
+<div class="text-xs text-slate-500">e.g., Water (H₂O)</div>
+</div>
+</label>
+</div>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+<h3 class="font-semibold text-lg mb-4">Investigation</h3>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1" for="tempSlider">Heat Energy Input (Temperature)</label>
+<input class="w-full" id="tempSlider" max="100" min="0" type="range" value="20"/>
+<div class="flex justify-between text-xs text-slate-500 mt-1">
+<span>0°C</span>
+<span class="font-bold text-slate-700" id="tempValue">20°C</span>
+<span>100°C</span>
+</div>
+</div>
+</div>
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
+<h4 class="font-bold mb-1">Guide</h4>
+<p>Observe how heating affects the bulk liquid. Note the temperature at which the substance boils (particles separate entirely). Also observe the shape of the droplet on a flat surface.</p>
+</div>
+</div>
+<!-- Main Simulation Area -->
+<div class="lg:col-span-6 space-y-6">
+<!-- Boiling Point Sim -->
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 text-center relative h-80 flex flex-col items-center justify-end pb-10">
+<h3 class="absolute top-4 left-4 font-semibold text-lg">Boiling Point Investigation</h3>
+<div class="text-right absolute top-4 right-4">
+<div class="text-sm text-slate-500">Current Temp</div>
+<div class="text-2xl font-bold font-mono" id="simTempDisplay">20°C</div>
+</div>
+<div class="beaker" id="beaker">
+<div class="liquid" id="liquid"></div>
+<!-- Particles injected via JS -->
+</div>
+<div class="heating-element mt-1" id="heatingElement"></div>
+<div class="absolute inset-0 bg-white/80 flex items-center justify-center hidden pointer-events-none" id="boilingOverlay">
+<span class="text-3xl font-bold text-red-600 animate-pulse">BOILING</span>
+</div>
+</div>
+<!-- Surface Tension Sim -->
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 text-center relative h-48 flex flex-col items-center justify-center">
+<h3 class="absolute top-4 left-4 font-semibold text-lg">Surface Tension (Droplet Shape)</h3>
+<div class="mt-8 flex flex-col items-center w-full">
+<div class="droplet bg-blue-300" id="droplet"></div>
+<div class="w-48 h-1 bg-slate-400 mt-1"></div> <!-- Surface -->
+</div>
+<p class="mt-4 text-sm font-medium text-slate-600" id="surfaceTensionLabel">Low Surface Tension</p>
+</div>
+</div>
+<!-- Data & Analysis -->
+<div class="lg:col-span-3 space-y-6">
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-full">
+<h3 class="font-semibold text-lg mb-4">Vapor Pressure Curve</h3>
+<div class="h-48 relative mb-6">
+<canvas id="vaporChart"></canvas>
+</div>
+<h3 class="font-semibold text-lg mb-2">Inferred Properties</h3>
+<div class="mb-2 text-right">
+<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
         Export CSV
     </button>
-    </div>
+</div>
 <table class="w-full text-sm border-collapse">
-                        <tbody>
-                            <tr class="border-b">
-                                <td class="py-2 text-slate-600">Boiling Point</td>
-                                <td class="py-2 font-medium text-right" id="bpValue">-161°C</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="py-2 text-slate-600">Relative IMF Strength</td>
-                                <td class="py-2 font-medium text-right" id="imfStrength">Weak</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="py-2 text-slate-600">Dominant Force Type</td>
-                                <td class="py-2 font-medium text-right text-xs" id="imfType">London Dispersion</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="mt-6 text-sm text-slate-700 bg-slate-50 p-3 rounded border border-slate-200">
-                        <strong>Explanation:</strong> <span id="imfExplanation">Substance A has weak intermolecular forces (London Dispersion). Little energy is required to overcome these attractive forces and separate the particles, resulting in a very low boiling point and weak surface tension (flatter droplet).</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
+<tbody>
+<tr class="border-b">
+<td class="py-2 text-slate-600">Boiling Point</td>
+<td class="py-2 font-medium text-right" id="bpValue">-161°C</td>
+</tr>
+<tr class="border-b">
+<td class="py-2 text-slate-600">Relative IMF Strength</td>
+<td class="py-2 font-medium text-right" id="imfStrength">Weak</td>
+</tr>
+<tr class="border-b">
+<td class="py-2 text-slate-600">Dominant Force Type</td>
+<td class="py-2 font-medium text-right text-xs" id="imfType">London Dispersion</td>
+</tr>
+</tbody>
+</table>
+<div class="mt-6 text-sm text-slate-700 bg-slate-50 p-3 rounded border border-slate-200">
+<strong>Explanation:</strong> <span id="imfExplanation">Substance A has weak intermolecular forces (London Dispersion). Little energy is required to overcome these attractive forces and separate the particles, resulting in a very low boiling point and weak surface tension (flatter droplet).</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Substance Data
         const substances = {
             nonpolar: {

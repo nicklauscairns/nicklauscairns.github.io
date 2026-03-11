@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Carbon Cycle Simulation (HS-LS2-5)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global Carbon Cycle Simulation (HS-LS2-5)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/CarbonCycle.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Global Carbon Cycle Simulation (HS-LS2-5). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Global Carbon Cycle Simulation (HS-LS2-5)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Global Carbon Cycle Simulation (HS-LS2-5), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Global Carbon Cycle Simulation (HS-LS2-5). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
 
         .canvas-container {
@@ -39,122 +47,129 @@
         .stat-hydro { border-bottom: 3px solid #3b82f6; }
         .stat-geo { border-bottom: 3px solid #f97316; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Global Carbon Cycle Simulation (HS-LS2-5)",
+    "description": "Interactive science simulation for Global Carbon Cycle Simulation (HS-LS2-5). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/CarbonCycle.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-slate-700">Global Carbon Cycle Model</h1>
-            <p class="text-slate-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS2-5: Develop a model to illustrate the role of photosynthesis and cellular respiration in the cycling of carbon among the biosphere, atmosphere, hydrosphere, and geosphere.</p>
-        </header>
-
-        <!-- Stats Bar -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="stat-box stat-atm">
-                <div class="stat-val" id="val-atm">800 GT</div>
-                <div class="stat-label">Atmosphere (CO₂)</div>
-            </div>
-            <div class="stat-box stat-bio">
-                <div class="stat-val" id="val-bio">2,000 GT</div>
-                <div class="stat-label">Biosphere (Life/Soil)</div>
-            </div>
-            <div class="stat-box stat-hydro">
-                <div class="stat-val" id="val-hydro">38,000 GT</div>
-                <div class="stat-label">Hydrosphere (Ocean)</div>
-            </div>
-            <div class="stat-box stat-geo">
-                <div class="stat-val" id="val-geo">4,000 GT</div>
-                <div class="stat-label">Geosphere (Fossil Fuels)</div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
-
-            <!-- Visualization -->
-            <div class="lg:col-span-2 canvas-container" style="min-height: 500px;">
-                <canvas id="carbon-canvas" width="800" height="500"></canvas>
-                <div class="absolute top-4 left-4 bg-white/80 p-2 rounded shadow-sm text-xs font-bold text-slate-600 backdrop-blur-sm">
-                    Sim Year: <span id="sim-year" class="font-mono text-blue-600 text-sm">2024</span>
-                </div>
-            </div>
-
-            <!-- Controls & Chart -->
-            <div class="lg:col-span-1 space-y-6 flex flex-col">
-
-                <div class="control-panel p-5">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h2 class="text-lg font-bold text-slate-700">Carbon Flux Controls</h2>
-                        <span class="text-xs text-slate-500 font-mono">1 Tick = 1 Year</span>
-                    </div>
-
-                    <div class="space-y-5">
-                        <!-- Photosynthesis vs Respiration -->
-                        <div>
-                            <label class="flex justify-between font-semibold text-sm text-green-700 mb-1">
-                                <span>Biosphere Balance</span>
-                            </label>
-                            <input type="range" id="flux-bio" min="-5" max="5" value="0" step="0.5" class="w-full accent-green-500">
-                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
-                                <span>&larr; More Respiration</span>
-                                <span>Balanced (0)</span>
-                                <span>More Photosynthesis &rarr;</span>
-                            </div>
-                        </div>
-
-                        <!-- Human Emissions -->
-                        <div>
-                            <label class="flex justify-between font-semibold text-sm text-orange-600 mb-1">
-                                <span>Fossil Fuel Combustion</span>
-                                <span id="val-emissions" class="font-mono bg-orange-100 px-1 rounded">10 GT/yr</span>
-                            </label>
-                            <input type="range" id="flux-emissions" min="0" max="30" value="10" step="1" class="w-full accent-orange-500">
-                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
-                                <span>Zero</span>
-                                <span>Current</span>
-                                <span>Extreme</span>
-                            </div>
-                        </div>
-
-                        <!-- Ocean Diffusion -->
-                        <div>
-                            <label class="flex justify-between font-semibold text-sm text-blue-600 mb-1">
-                                <span>Ocean Uptake</span>
-                                <span id="val-ocean" class="font-mono bg-blue-50 px-1 rounded">2 GT/yr</span>
-                            </label>
-                            <p class="text-[10px] text-slate-500 mb-2">The ocean naturally absorbs some excess CO₂.</p>
-                            <input type="range" id="flux-ocean" min="0" max="10" value="2" step="0.5" class="w-full accent-blue-500" disabled>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex gap-2">
-                        <button id="btn-play" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded shadow transition">Start Sim</button>
-                        <button id="btn-reset" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded shadow transition">Reset</button>
-                    </div>
-                </div>
-
-                <!-- Chart -->
-                <div class="control-panel p-5 flex-grow flex flex-col">
-                    <h2 class="text-lg font-bold text-slate-700 mb-2 border-b pb-2">Atmospheric CO₂ History</h2>
-                    <div class="relative w-full flex-grow min-h-[150px]">
-                        <canvas id="history-chart"></canvas>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Explanation -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-            <h3 class="font-bold text-slate-700 mb-2">Systems & Interactions</h3>
-            <p class="text-sm text-slate-600 mb-2">
-                <strong>Photosynthesis</strong> removes carbon from the atmosphere and stores it in the biosphere (plants). <strong>Cellular Respiration</strong> by animals and plants returns it to the atmosphere. Historically, these two processes balanced each other out.
+<div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-slate-700">Global Carbon Cycle Model</h1>
+<p class="text-slate-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS2-5: Develop a model to illustrate the role of photosynthesis and cellular respiration in the cycling of carbon among the biosphere, atmosphere, hydrosphere, and geosphere.</p>
+</header>
+<!-- Stats Bar -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="stat-box stat-atm">
+<div class="stat-val" id="val-atm">800 GT</div>
+<div class="stat-label">Atmosphere (CO₂)</div>
+</div>
+<div class="stat-box stat-bio">
+<div class="stat-val" id="val-bio">2,000 GT</div>
+<div class="stat-label">Biosphere (Life/Soil)</div>
+</div>
+<div class="stat-box stat-hydro">
+<div class="stat-val" id="val-hydro">38,000 GT</div>
+<div class="stat-label">Hydrosphere (Ocean)</div>
+</div>
+<div class="stat-box stat-geo">
+<div class="stat-val" id="val-geo">4,000 GT</div>
+<div class="stat-label">Geosphere (Fossil Fuels)</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+<!-- Visualization -->
+<div class="lg:col-span-2 canvas-container" style="min-height: 500px;">
+<canvas height="500" id="carbon-canvas" width="800"></canvas>
+<div class="absolute top-4 left-4 bg-white/80 p-2 rounded shadow-sm text-xs font-bold text-slate-600 backdrop-blur-sm">
+                    Sim Year: <span class="font-mono text-blue-600 text-sm" id="sim-year">2024</span>
+</div>
+</div>
+<!-- Controls & Chart -->
+<div class="lg:col-span-1 space-y-6 flex flex-col">
+<div class="control-panel p-5">
+<div class="flex justify-between items-center mb-4 border-b pb-2">
+<h2 class="text-lg font-bold text-slate-700">Carbon Flux Controls</h2>
+<span class="text-xs text-slate-500 font-mono">1 Tick = 1 Year</span>
+</div>
+<div class="space-y-5">
+<!-- Photosynthesis vs Respiration -->
+<div>
+<label class="flex justify-between font-semibold text-sm text-green-700 mb-1">
+<span>Biosphere Balance</span>
+</label>
+<input class="w-full accent-green-500" id="flux-bio" max="5" min="-5" step="0.5" type="range" value="0"/>
+<div class="flex justify-between text-[10px] text-slate-500 mt-1">
+<span>← More Respiration</span>
+<span>Balanced (0)</span>
+<span>More Photosynthesis →</span>
+</div>
+</div>
+<!-- Human Emissions -->
+<div>
+<label class="flex justify-between font-semibold text-sm text-orange-600 mb-1">
+<span>Fossil Fuel Combustion</span>
+<span class="font-mono bg-orange-100 px-1 rounded" id="val-emissions">10 GT/yr</span>
+</label>
+<input class="w-full accent-orange-500" id="flux-emissions" max="30" min="0" step="1" type="range" value="10"/>
+<div class="flex justify-between text-[10px] text-slate-500 mt-1">
+<span>Zero</span>
+<span>Current</span>
+<span>Extreme</span>
+</div>
+</div>
+<!-- Ocean Diffusion -->
+<div>
+<label class="flex justify-between font-semibold text-sm text-blue-600 mb-1">
+<span>Ocean Uptake</span>
+<span class="font-mono bg-blue-50 px-1 rounded" id="val-ocean">2 GT/yr</span>
+</label>
+<p class="text-[10px] text-slate-500 mb-2">The ocean naturally absorbs some excess CO₂.</p>
+<input class="w-full accent-blue-500" disabled="" id="flux-ocean" max="10" min="0" step="0.5" type="range" value="2"/>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded shadow transition" id="btn-play">Start Sim</button>
+<button class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded shadow transition" id="btn-reset">Reset</button>
+</div>
+</div>
+<!-- Chart -->
+<div class="control-panel p-5 flex-grow flex flex-col">
+<h2 class="text-lg font-bold text-slate-700 mb-2 border-b pb-2">Atmospheric CO₂ History</h2>
+<div class="relative w-full flex-grow min-h-[150px]">
+<canvas id="history-chart"></canvas>
+</div>
+</div>
+</div>
+</div>
+<!-- Explanation -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+<h3 class="font-bold text-slate-700 mb-2">Systems &amp; Interactions</h3>
+<p class="text-sm text-slate-600 mb-2">
+<strong>Photosynthesis</strong> removes carbon from the atmosphere and stores it in the biosphere (plants). <strong>Cellular Respiration</strong> by animals and plants returns it to the atmosphere. Historically, these two processes balanced each other out.
             </p>
-            <p class="text-sm text-slate-600">
-                <strong>Combustion</strong> takes carbon stored long ago in the geosphere (fossil fuels) and rapidly adds it to the atmosphere, disrupting the balance. The <strong>Hydrosphere</strong> (oceans) acts as a massive sink, slowly absorbing some of this excess carbon, but not fast enough to prevent atmospheric accumulation.
+<p class="text-sm text-slate-600">
+<strong>Combustion</strong> takes carbon stored long ago in the geosphere (fossil fuels) and rapidly adds it to the atmosphere, disrupting the balance. The <strong>Hydrosphere</strong> (oceans) acts as a massive sink, slowly absorbing some of this excess carbon, but not fast enough to prevent atmospheric accumulation.
             </p>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+<script>
         // Mathematical State (Values in Gigatons of Carbon - approximations for educational modeling)
         const INITIAL_STATE = {
             year: 2024,

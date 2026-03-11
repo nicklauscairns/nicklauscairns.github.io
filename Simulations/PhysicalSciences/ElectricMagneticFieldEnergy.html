@@ -1,80 +1,97 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electric & Magnetic Field Energy Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Electric &amp; Magnetic Field Energy Simulator</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/ElectricMagneticFieldEnergy.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Electric &amp; Magnetic Field Energy Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Electric &amp; Magnetic Field Energy Simulator" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Electric &amp; Magnetic Field Energy Simulator, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Electric &amp; Magnetic Field Energy Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         canvas { border: 1px solid #ccc; background-color: #f1f5f9; border-radius: 8px; cursor: crosshair; }
         .hidden { display: none; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Electric & Magnetic Field Energy Simulator",
+    "description": "Interactive science simulation for Electric & Magnetic Field Energy Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/ElectricMagneticFieldEnergy.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-
 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="bg-purple-600 text-white p-6">
-        <h1 class="text-3xl font-bold">Electric & Magnetic Field Energy</h1>
-        <p class="mt-2 text-purple-100">Model two objects interacting through fields to illustrate forces and changes in stored field energy (HS-PS3-5).</p>
-    </div>
-
-    <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- Controls -->
-        <div class="lg:col-span-1 bg-gray-50 p-4 rounded-lg border">
-            <h2 class="text-xl font-bold mb-4">System Setup</h2>
-
-            <div class="mb-4">
-                <label class="block font-semibold text-gray-700 mb-2">Interaction Type:</label>
-                <select id="interaction-type" class="w-full p-2 border rounded" onchange="updateInteraction()">
-                    <option value="electric_opp">Electric (Opposite Charges)</option>
-                    <option value="electric_same">Electric (Same Charges)</option>
-                    <option value="magnetic_opp">Magnetic (Opposite Poles)</option>
-                    <option value="magnetic_same">Magnetic (Same Poles)</option>
-                </select>
-            </div>
-
-            <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                <p class="text-sm text-blue-900 mb-2">
-                    <strong>Instructions:</strong> Drag Object 2 to change the relative position between the two objects.
+<div class="bg-purple-600 text-white p-6">
+<h1 class="text-3xl font-bold">Electric &amp; Magnetic Field Energy</h1>
+<p class="mt-2 text-purple-100">Model two objects interacting through fields to illustrate forces and changes in stored field energy (HS-PS3-5).</p>
+</div>
+<div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Controls -->
+<div class="lg:col-span-1 bg-gray-50 p-4 rounded-lg border">
+<h2 class="text-xl font-bold mb-4">System Setup</h2>
+<div class="mb-4">
+<label class="block font-semibold text-gray-700 mb-2">Interaction Type:</label>
+<select class="w-full p-2 border rounded" id="interaction-type" onchange="updateInteraction()">
+<option value="electric_opp">Electric (Opposite Charges)</option>
+<option value="electric_same">Electric (Same Charges)</option>
+<option value="magnetic_opp">Magnetic (Opposite Poles)</option>
+<option value="magnetic_same">Magnetic (Same Poles)</option>
+</select>
+</div>
+<div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+<p class="text-sm text-blue-900 mb-2">
+<strong>Instructions:</strong> Drag Object 2 to change the relative position between the two objects.
                 </p>
-                <p class="text-sm text-blue-900">
+<p class="text-sm text-blue-900">
                     Observe how the <strong>Force Vectors</strong> (arrows) and the <strong>Stored Field Energy</strong> change depending on their distance.
                 </p>
-            </div>
-
-            <!-- Energy Meter -->
-            <div class="mt-6 p-4 bg-white rounded border shadow-inner">
-                <h3 class="font-bold text-gray-800 mb-2">Energy Stored in Field</h3>
-                <div class="w-full bg-gray-200 rounded-full h-6 mb-2 overflow-hidden border">
-                    <div id="energy-bar" class="h-6 transition-all duration-200" style="width: 50%; background-color: #a855f7;"></div>
-                </div>
-                <div class="flex justify-between text-xs text-gray-500 font-bold uppercase">
-                    <span>Low Energy (Stable)</span>
-                    <span>High Energy (Unstable)</span>
-                </div>
-            </div>
-
-            <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                <h3 class="font-bold text-yellow-800 text-sm mb-1">DCI connection (PS3.C):</h3>
-                <p class="text-xs text-yellow-900">When two objects interacting through a field change relative position, the energy stored in the field is changed. Pushing repulsive objects together, or pulling attractive objects apart, requires work and increases stored potential energy.</p>
-            </div>
-        </div>
-
-        <!-- Canvas -->
-        <div class="lg:col-span-2 relative">
-            <canvas id="fieldCanvas" width="600" height="400" class="w-full shadow-sm"></canvas>
-
-            <div class="absolute top-4 right-4 bg-white/80 p-2 rounded border shadow text-sm">
-                Distance: <span id="dist-display" class="font-bold text-indigo-700">200</span> px<br>
-                Force: <span id="force-display" class="font-bold text-red-600">Medium</span>
-            </div>
-        </div>
-
-    </div>
 </div>
-
+<!-- Energy Meter -->
+<div class="mt-6 p-4 bg-white rounded border shadow-inner">
+<h3 class="font-bold text-gray-800 mb-2">Energy Stored in Field</h3>
+<div class="w-full bg-gray-200 rounded-full h-6 mb-2 overflow-hidden border">
+<div class="h-6 transition-all duration-200" id="energy-bar" style="width: 50%; background-color: #a855f7;"></div>
+</div>
+<div class="flex justify-between text-xs text-gray-500 font-bold uppercase">
+<span>Low Energy (Stable)</span>
+<span>High Energy (Unstable)</span>
+</div>
+</div>
+<div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+<h3 class="font-bold text-yellow-800 text-sm mb-1">DCI connection (PS3.C):</h3>
+<p class="text-xs text-yellow-900">When two objects interacting through a field change relative position, the energy stored in the field is changed. Pushing repulsive objects together, or pulling attractive objects apart, requires work and increases stored potential energy.</p>
+</div>
+</div>
+<!-- Canvas -->
+<div class="lg:col-span-2 relative">
+<canvas class="w-full shadow-sm" height="400" id="fieldCanvas" width="600"></canvas>
+<div class="absolute top-4 right-4 bg-white/80 p-2 rounded border shadow text-sm">
+                Distance: <span class="font-bold text-indigo-700" id="dist-display">200</span> px<br/>
+                Force: <span class="font-bold text-red-600" id="force-display">Medium</span>
+</div>
+</div>
+</div>
+</div>
 <script>
     const canvas = document.getElementById('fieldCanvas');
     const ctx = canvas.getContext('2d');

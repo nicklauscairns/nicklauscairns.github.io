@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conservation of Mass Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Conservation of Mass Simulator</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/ConservationOfMass.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Conservation of Mass Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Conservation of Mass Simulator" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Conservation of Mass Simulator, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Conservation of Mass Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Inter', sans-serif; }
         .atom {
             display: inline-flex; align-items: center; justify-content: center;
@@ -93,112 +101,118 @@
         }
         .coeff-input:focus { border-color: #3b82f6; outline: none; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Conservation of Mass Simulator",
+    "description": "Interactive science simulation for Conservation of Mass Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/ConservationOfMass.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
-    <div class="max-w-5xl mx-auto space-y-6">
-        <header class="border-b pb-4">
-            <h1 class="text-3xl font-bold text-slate-900">Conservation of Mass Simulator</h1>
-            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-7: Atoms and Mass are Conserved</h2>
-            <p class="mt-2 text-slate-700">Use mathematical representations (balancing equations) to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-            <!-- Controls & Equation -->
-            <div class="lg:col-span-12 space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h3 class="font-semibold text-lg">Reaction Equation</h3>
-                        <select id="reactionSelect" class="border-gray-300 rounded text-sm p-1">
-                            <option value="water">Water Synthesis: H₂ + O₂ &rarr; H₂O</option>
-                            <option value="methane">Methane Combustion: CH₄ + O₂ &rarr; CO₂ + H₂O</option>
-                            <option value="ammonia">Ammonia Synthesis: N₂ + H₂ &rarr; NH₃</option>
-                        </select>
-                    </div>
-
-                    <div id="equationArea" class="flex items-center justify-center space-x-4 text-2xl font-mono py-4">
-                        <!-- Equation inputs injected here -->
-                    </div>
-
-                    <div class="flex justify-center mt-4 space-x-4">
-                        <button id="checkBtn" class="px-6 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition">Check Balance</button>
-                        <button id="resetBtn" class="px-6 py-2 border border-slate-300 rounded font-medium hover:bg-slate-50 transition">Reset</button>
-                    </div>
-
-                    <div id="feedbackMsg" class="mt-4 text-center font-bold text-lg hidden"></div>
-                </div>
-            </div>
-
-            <!-- Visualization: Balance Scale -->
-            <div class="lg:col-span-8">
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 h-full">
-                    <h3 class="font-semibold text-lg mb-2">Mass Balance Visualizer</h3>
-
-                    <div class="scale-container">
-                        <div class="scale-beam" id="scaleBeam">
-                            <!-- Left Pan -->
-                            <div class="left-pan-container" id="leftPanContainer">
-                                <div class="pan-string" style="left: 0; transform: rotate(20deg);"></div>
-                                <div class="pan-string" style="right: 0; transform: rotate(-20deg);"></div>
-                                <div class="scale-pan" style="left: -75px;">
-                                    <div class="pan-content" id="leftPanContent"></div>
-                                </div>
-                            </div>
-
-                            <!-- Right Pan -->
-                            <div class="right-pan-container" id="rightPanContainer">
-                                <div class="pan-string" style="left: 0; transform: rotate(20deg);"></div>
-                                <div class="pan-string" style="right: 0; transform: rotate(-20deg);"></div>
-                                <div class="scale-pan" style="right: -75px;">
-                                    <div class="pan-content" id="rightPanContent"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="scale-post"></div>
-                        <div class="scale-base"></div>
-                    </div>
-
-                    <div class="flex justify-between mt-4 text-center font-mono text-lg font-bold">
-                        <div class="w-1/2 text-blue-700">Reactants Mass: <br><span id="leftMass">0</span> u</div>
-                        <div class="w-1/2 text-green-700">Products Mass: <br><span id="rightMass">0</span> u</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data & Analysis -->
-            <div class="lg:col-span-4">
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-full flex flex-col">
-                    <h3 class="font-semibold text-lg mb-4 border-b pb-2">Atom Inventory</h3>
-
-                    <div class="mb-2 text-right">
-    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+<div class="max-w-5xl mx-auto space-y-6">
+<header class="border-b pb-4">
+<h1 class="text-3xl font-bold text-slate-900">Conservation of Mass Simulator</h1>
+<h2 class="text-xl text-slate-600 mt-1">HS-PS1-7: Atoms and Mass are Conserved</h2>
+<p class="mt-2 text-slate-700">Use mathematical representations (balancing equations) to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Controls & Equation -->
+<div class="lg:col-span-12 space-y-6">
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+<div class="flex justify-between items-center mb-4 border-b pb-2">
+<h3 class="font-semibold text-lg">Reaction Equation</h3>
+<select class="border-gray-300 rounded text-sm p-1" id="reactionSelect">
+<option value="water">Water Synthesis: H₂ + O₂ → H₂O</option>
+<option value="methane">Methane Combustion: CH₄ + O₂ → CO₂ + H₂O</option>
+<option value="ammonia">Ammonia Synthesis: N₂ + H₂ → NH₃</option>
+</select>
+</div>
+<div class="flex items-center justify-center space-x-4 text-2xl font-mono py-4" id="equationArea">
+<!-- Equation inputs injected here -->
+</div>
+<div class="flex justify-center mt-4 space-x-4">
+<button class="px-6 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition" id="checkBtn">Check Balance</button>
+<button class="px-6 py-2 border border-slate-300 rounded font-medium hover:bg-slate-50 transition" id="resetBtn">Reset</button>
+</div>
+<div class="mt-4 text-center font-bold text-lg hidden" id="feedbackMsg"></div>
+</div>
+</div>
+<!-- Visualization: Balance Scale -->
+<div class="lg:col-span-8">
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 h-full">
+<h3 class="font-semibold text-lg mb-2">Mass Balance Visualizer</h3>
+<div class="scale-container">
+<div class="scale-beam" id="scaleBeam">
+<!-- Left Pan -->
+<div class="left-pan-container" id="leftPanContainer">
+<div class="pan-string" style="left: 0; transform: rotate(20deg);"></div>
+<div class="pan-string" style="right: 0; transform: rotate(-20deg);"></div>
+<div class="scale-pan" style="left: -75px;">
+<div class="pan-content" id="leftPanContent"></div>
+</div>
+</div>
+<!-- Right Pan -->
+<div class="right-pan-container" id="rightPanContainer">
+<div class="pan-string" style="left: 0; transform: rotate(20deg);"></div>
+<div class="pan-string" style="right: 0; transform: rotate(-20deg);"></div>
+<div class="scale-pan" style="right: -75px;">
+<div class="pan-content" id="rightPanContent"></div>
+</div>
+</div>
+</div>
+<div class="scale-post"></div>
+<div class="scale-base"></div>
+</div>
+<div class="flex justify-between mt-4 text-center font-mono text-lg font-bold">
+<div class="w-1/2 text-blue-700">Reactants Mass: <br/><span id="leftMass">0</span> u</div>
+<div class="w-1/2 text-green-700">Products Mass: <br/><span id="rightMass">0</span> u</div>
+</div>
+</div>
+</div>
+<!-- Data & Analysis -->
+<div class="lg:col-span-4">
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-full flex flex-col">
+<h3 class="font-semibold text-lg mb-4 border-b pb-2">Atom Inventory</h3>
+<div class="mb-2 text-right">
+<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
         Export CSV
     </button>
-    </div>
+</div>
 <table class="w-full text-center text-sm mb-4">
-                        <thead>
-                            <tr class="bg-slate-50 border-b">
-                                <th class="py-2">Element</th>
-                                <th class="py-2 text-blue-700">Reactants</th>
-                                <th class="py-2 text-green-700">Products</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventoryTable">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-
-                    <div class="bg-blue-50 border border-blue-200 rounded p-4 text-sm text-blue-900 mt-auto">
-                        <h4 class="font-bold mb-1">Scientific Principle</h4>
-                        <p>Matter cannot be created or destroyed in a chemical reaction. Therefore, the number of atoms of each element must be exactly the same in the reactants as in the products. The total mass on both sides of the equation must be perfectly balanced.</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
+<thead>
+<tr class="bg-slate-50 border-b">
+<th class="py-2">Element</th>
+<th class="py-2 text-blue-700">Reactants</th>
+<th class="py-2 text-green-700">Products</th>
+</tr>
+</thead>
+<tbody id="inventoryTable">
+<!-- Populated by JS -->
+</tbody>
+</table>
+<div class="bg-blue-50 border border-blue-200 rounded p-4 text-sm text-blue-900 mt-auto">
+<h4 class="font-bold mb-1">Scientific Principle</h4>
+<p>Matter cannot be created or destroyed in a chemical reaction. Therefore, the number of atoms of each element must be exactly the same in the reactants as in the products. The total mass on both sides of the equation must be perfectly balanced.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Data Definitions
         const elements = {
             'H': { color: '#a8a29e', mass: 1 },

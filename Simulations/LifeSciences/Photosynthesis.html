@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photosynthesis Rate Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Photosynthesis Rate Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/Photosynthesis.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Photosynthesis Rate Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Photosynthesis Rate Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Photosynthesis Rate Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Photosynthesis Rate Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0fdf4; /* Light green background */
@@ -56,135 +64,141 @@
             border: none;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Photosynthesis Rate Simulation",
+    "description": "Interactive science simulation for Photosynthesis Rate Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/Photosynthesis.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-gray-800 antialiased p-4">
-
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- Header & Controls -->
-        <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
-            <h1 class="text-2xl font-bold mb-2 text-green-700">Photosynthesis Rate Lab</h1>
-            <p class="text-sm text-gray-600 mb-6">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Header & Controls -->
+<div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
+<h1 class="text-2xl font-bold mb-2 text-green-700">Photosynthesis Rate Lab</h1>
+<p class="text-sm text-gray-600 mb-6">
                 Investigate how environmental factors affect the rate of photosynthesis in an aquatic plant (Elodea). Adjust the independent variables below and record the rate of oxygen production (bubbles/min).
                 Aligns with NGSS HS-LS1-5.
             </p>
-
-            <div class="space-y-5 flex-grow">
-                <!-- Variables -->
-                <div>
-                    <div class="flex justify-between">
-                        <label class="block text-sm font-medium text-gray-700" for="lightIntensity">Light Intensity (%)</label>
-                        <span id="lightIntensityVal" class="text-sm font-semibold text-yellow-600">50</span>
-                    </div>
-                    <input type="range" id="lightIntensity" min="0" max="100" value="50" class="w-full mt-1 bg-yellow-200">
-                    <p class="text-xs text-gray-500 mt-1">Distance from light source affects intensity.</p>
-                </div>
-
-                <div>
-                    <div class="flex justify-between">
-                        <label class="block text-sm font-medium text-gray-700" for="temperature">Temperature (&deg;C)</label>
-                        <span id="temperatureVal" class="text-sm font-semibold text-red-600">22</span>
-                    </div>
-                    <input type="range" id="temperature" min="0" max="50" value="22" class="w-full mt-1 bg-red-200">
-                </div>
-
-                <div>
-                    <div class="flex justify-between">
-                        <label class="block text-sm font-medium text-gray-700" for="co2Level">CO<sub>2</sub> Concentration (%)</label>
-                        <span id="co2LevelVal" class="text-sm font-semibold text-gray-600">0.04</span>
-                    </div>
-                    <input type="range" id="co2Level" min="0.00" max="0.50" step="0.01" value="0.04" class="w-full mt-1 bg-gray-200">
-                    <p class="text-xs text-gray-500 mt-1">Atmospheric average is ~0.04%.</p>
-                </div>
-
-                <div>
-                    <div class="flex justify-between">
-                        <label class="block text-sm font-medium text-gray-700" for="wavelength">Light Wavelength (nm)</label>
-                        <span id="wavelengthVal" class="text-sm font-semibold" style="color: #10b981;">550 (Green)</span>
-                    </div>
-                    <input type="range" id="wavelength" min="400" max="700" step="10" value="550" class="w-full mt-1" style="background: linear-gradient(to right, violet, blue, green, yellow, orange, red);">
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="mt-6 flex flex-col space-y-3">
-                <div class="p-3 bg-green-50 rounded-md border border-green-200 text-center">
-                    <span class="block text-xs text-green-800 uppercase font-semibold">Current Rate</span>
-                    <span id="currentRateDisplay" class="text-2xl font-bold text-green-600">0.0</span>
-                    <span class="text-sm text-green-700"> O<sub>2</sub> bubbles / min</span>
-                </div>
-
-                <button id="recordBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition flex justify-center items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+<div class="space-y-5 flex-grow">
+<!-- Variables -->
+<div>
+<div class="flex justify-between">
+<label class="block text-sm font-medium text-gray-700" for="lightIntensity">Light Intensity (%)</label>
+<span class="text-sm font-semibold text-yellow-600" id="lightIntensityVal">50</span>
+</div>
+<input class="w-full mt-1 bg-yellow-200" id="lightIntensity" max="100" min="0" type="range" value="50"/>
+<p class="text-xs text-gray-500 mt-1">Distance from light source affects intensity.</p>
+</div>
+<div>
+<div class="flex justify-between">
+<label class="block text-sm font-medium text-gray-700" for="temperature">Temperature (°C)</label>
+<span class="text-sm font-semibold text-red-600" id="temperatureVal">22</span>
+</div>
+<input class="w-full mt-1 bg-red-200" id="temperature" max="50" min="0" type="range" value="22"/>
+</div>
+<div>
+<div class="flex justify-between">
+<label class="block text-sm font-medium text-gray-700" for="co2Level">CO<sub>2</sub> Concentration (%)</label>
+<span class="text-sm font-semibold text-gray-600" id="co2LevelVal">0.04</span>
+</div>
+<input class="w-full mt-1 bg-gray-200" id="co2Level" max="0.50" min="0.00" step="0.01" type="range" value="0.04"/>
+<p class="text-xs text-gray-500 mt-1">Atmospheric average is ~0.04%.</p>
+</div>
+<div>
+<div class="flex justify-between">
+<label class="block text-sm font-medium text-gray-700" for="wavelength">Light Wavelength (nm)</label>
+<span class="text-sm font-semibold" id="wavelengthVal" style="color: #10b981;">550 (Green)</span>
+</div>
+<input class="w-full mt-1" id="wavelength" max="700" min="400" step="10" style="background: linear-gradient(to right, violet, blue, green, yellow, orange, red);" type="range" value="550"/>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="mt-6 flex flex-col space-y-3">
+<div class="p-3 bg-green-50 rounded-md border border-green-200 text-center">
+<span class="block text-xs text-green-800 uppercase font-semibold">Current Rate</span>
+<span class="text-2xl font-bold text-green-600" id="currentRateDisplay">0.0</span>
+<span class="text-sm text-green-700"> O<sub>2</sub> bubbles / min</span>
+</div>
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition flex justify-center items-center" id="recordBtn">
+<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                     Record Data Point
                 </button>
-            </div>
-        </div>
-
-        <!-- Simulation View & Data/Graphing -->
-        <div class="lg:col-span-2 flex flex-col space-y-6">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Visual Simulation -->
-                <div class="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col">
-                    <h2 class="text-lg font-semibold mb-2 text-gray-700">Experiment View</h2>
-                    <div class="canvas-container relative flex-grow">
-                        <canvas id="simCanvas"></canvas>
-                    </div>
-                </div>
-
-                <!-- Data Table -->
-                <div class="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col max-h-80 md:max-h-full">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="text-lg font-semibold text-gray-700">Data Table</h2>
-                        <button id="clearDataBtn" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 py-1 px-2 rounded transition">Clear Data</button>
-                    </div>
-                    <div class="overflow-y-auto flex-grow border border-gray-200 rounded">
-                        <table class="min-w-full text-sm text-left text-gray-500">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
-                                <tr>
-                                    <th scope="col" class="px-3 py-2">Trial</th>
-                                    <th scope="col" class="px-3 py-2">Light</th>
-                                    <th scope="col" class="px-3 py-2">Temp</th>
-                                    <th scope="col" class="px-3 py-2">CO<sub>2</sub></th>
-                                    <th scope="col" class="px-3 py-2">Wave</th>
-                                    <th scope="col" class="px-3 py-2 font-bold text-black">Rate</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dataTableBody">
-                                <!-- Data rows go here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <button id="exportCsvBtn" class="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1.5 px-4 border border-gray-300 rounded shadow-sm text-sm transition">
+</div>
+</div>
+<!-- Simulation View & Data/Graphing -->
+<div class="lg:col-span-2 flex flex-col space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Visual Simulation -->
+<div class="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col">
+<h2 class="text-lg font-semibold mb-2 text-gray-700">Experiment View</h2>
+<div class="canvas-container relative flex-grow">
+<canvas id="simCanvas"></canvas>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col max-h-80 md:max-h-full">
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-lg font-semibold text-gray-700">Data Table</h2>
+<button class="text-xs bg-red-100 hover:bg-red-200 text-red-700 py-1 px-2 rounded transition" id="clearDataBtn">Clear Data</button>
+</div>
+<div class="overflow-y-auto flex-grow border border-gray-200 rounded">
+<table class="min-w-full text-sm text-left text-gray-500">
+<thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+<tr>
+<th class="px-3 py-2" scope="col">Trial</th>
+<th class="px-3 py-2" scope="col">Light</th>
+<th class="px-3 py-2" scope="col">Temp</th>
+<th class="px-3 py-2" scope="col">CO<sub>2</sub></th>
+<th class="px-3 py-2" scope="col">Wave</th>
+<th class="px-3 py-2 font-bold text-black" scope="col">Rate</th>
+</tr>
+</thead>
+<tbody id="dataTableBody">
+<!-- Data rows go here -->
+</tbody>
+</table>
+</div>
+<button class="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1.5 px-4 border border-gray-300 rounded shadow-sm text-sm transition" id="exportCsvBtn">
                         Export to CSV
                     </button>
-                </div>
-            </div>
-
-            <!-- Graph Analysis -->
-            <div class="bg-white p-4 rounded-lg shadow-md h-72 flex flex-col">
-                <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-semibold text-gray-700">Graph Analysis</h2>
-                    <div class="flex items-center space-x-2">
-                        <label for="xAxisSelect" class="text-sm text-gray-600">X-Axis:</label>
-                        <select id="xAxisSelect" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 p-1">
-                            <option value="light">Light Intensity (%)</option>
-                            <option value="temp">Temperature (&deg;C)</option>
-                            <option value="co2">CO2 Conc. (%)</option>
-                            <option value="wave">Wavelength (nm)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="relative w-full h-full pb-4 flex-grow">
-                    <canvas id="analysisChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
+</div>
+</div>
+<!-- Graph Analysis -->
+<div class="bg-white p-4 rounded-lg shadow-md h-72 flex flex-col">
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-lg font-semibold text-gray-700">Graph Analysis</h2>
+<div class="flex items-center space-x-2">
+<label class="text-sm text-gray-600" for="xAxisSelect">X-Axis:</label>
+<select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 p-1" id="xAxisSelect">
+<option value="light">Light Intensity (%)</option>
+<option value="temp">Temperature (°C)</option>
+<option value="co2">CO2 Conc. (%)</option>
+<option value="wave">Wavelength (nm)</option>
+</select>
+</div>
+</div>
+<div class="relative w-full h-full pb-4 flex-grow">
+<canvas id="analysisChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+<script>
         // --- Canvas Setup & Visuals ---
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');

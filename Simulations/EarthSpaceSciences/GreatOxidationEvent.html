@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Great Oxidation Event</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Great Oxidation Event</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/GreatOxidationEvent.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for The Great Oxidation Event. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="The Great Oxidation Event" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, The Great Oxidation Event, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for The Great Oxidation Event. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { background-color: #0f172a; color: #f8fafc; }
         .sim-container {
             position: relative;
@@ -111,104 +119,110 @@
             border-radius: 50%;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "The Great Oxidation Event",
+    "description": "Interactive science simulation for The Great Oxidation Event. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/GreatOxidationEvent.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Coevolution of Earth & Life</h1>
-            <p class="text-slate-300 max-w-4xl mx-auto text-sm md:text-base">
+<div class="max-w-6xl mx-auto">
+<header class="text-center mb-8">
+<h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Coevolution of Earth &amp; Life</h1>
+<p class="text-slate-300 max-w-4xl mx-auto text-sm md:text-base">
                 Simulate the Great Oxidation Event (HS-ESS2-7). Observe how the emergence of photosynthetic life fundamentally altered Earth's atmosphere, geology, and paved the way for complex aerobic life.
             </p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-
-            <!-- Controls & Timeline -->
-            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-xl flex flex-col gap-6">
-                <div>
-                    <h2 class="text-xl font-bold text-emerald-300 mb-2 border-b border-slate-600 pb-2">Simulation Controls</h2>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold mb-1 flex justify-between">
-                            <span>Cyanobacteria Population:</span>
-                            <span id="popVal" class="text-green-400">0</span>
-                        </label>
-                        <input type="range" id="popSlider" min="0" max="50" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
-                        <p class="text-xs text-slate-400 mt-1">Add early photosynthetic life to the anoxic ocean.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+<!-- Controls & Timeline -->
+<div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-xl flex flex-col gap-6">
+<div>
+<h2 class="text-xl font-bold text-emerald-300 mb-2 border-b border-slate-600 pb-2">Simulation Controls</h2>
+<div class="mb-4">
+<label class="block text-sm font-bold mb-1 flex justify-between">
+<span>Cyanobacteria Population:</span>
+<span class="text-green-400" id="popVal">0</span>
+</label>
+<input class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb" id="popSlider" max="50" min="0" type="range" value="0"/>
+<p class="text-xs text-slate-400 mt-1">Add early photosynthetic life to the anoxic ocean.</p>
+</div>
+</div>
+<div class="bg-slate-900 p-4 rounded border border-slate-700 flex-grow flex flex-col">
+<div class="text-xs text-slate-400 uppercase tracking-wider mb-2 font-bold">Geochemical State</div>
+<div class="mb-3">
+<div class="flex justify-between text-xs mb-1">
+<span class="text-slate-300">Ocean Dissolved Iron (Fe²⁺)</span>
+<span class="text-amber-500 font-mono" id="ironVal">100%</span>
+</div>
+<div class="w-full bg-slate-700 h-2 rounded overflow-hidden">
+<div class="bg-amber-600 h-full w-full transition-all duration-300" id="ironBar"></div>
+</div>
+</div>
+<div class="mb-3">
+<div class="flex justify-between text-xs mb-1">
+<span class="text-slate-300">Atmospheric Oxygen (O₂)</span>
+<span class="text-blue-300 font-mono" id="o2Val">0.0%</span>
+</div>
+<div class="w-full bg-slate-700 h-2 rounded overflow-hidden">
+<div class="bg-blue-400 h-full w-0 transition-all duration-300" id="o2Bar"></div>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-slate-700">
+<button class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold transition-colors" id="toggleBtn">Start Time</button>
+</div>
+</div>
+</div>
+<!-- Simulation View -->
+<div class="lg:col-span-2 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl relative">
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-lg font-bold text-slate-200">Archaean Eon Environment</h2>
+<div class="text-sm font-mono text-amber-300">
+                        Time: <span class="font-bold text-white" id="timeDisplay">2.50</span> Billion Yrs Ago
                     </div>
-                </div>
-
-                <div class="bg-slate-900 p-4 rounded border border-slate-700 flex-grow flex flex-col">
-                    <div class="text-xs text-slate-400 uppercase tracking-wider mb-2 font-bold">Geochemical State</div>
-
-                    <div class="mb-3">
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-slate-300">Ocean Dissolved Iron (Fe²⁺)</span>
-                            <span id="ironVal" class="text-amber-500 font-mono">100%</span>
-                        </div>
-                        <div class="w-full bg-slate-700 h-2 rounded overflow-hidden">
-                            <div id="ironBar" class="bg-amber-600 h-full w-full transition-all duration-300"></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-slate-300">Atmospheric Oxygen (O₂)</span>
-                            <span id="o2Val" class="text-blue-300 font-mono">0.0%</span>
-                        </div>
-                        <div class="w-full bg-slate-700 h-2 rounded overflow-hidden">
-                            <div id="o2Bar" class="bg-blue-400 h-full w-0 transition-all duration-300"></div>
-                        </div>
-                    </div>
-
-                    <div class="mt-auto pt-4 border-t border-slate-700">
-                        <button id="toggleBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold transition-colors">Start Time</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Simulation View -->
-            <div class="lg:col-span-2 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl relative">
-                <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-bold text-slate-200">Archaean Eon Environment</h2>
-                    <div class="text-sm font-mono text-amber-300">
-                        Time: <span id="timeDisplay" class="font-bold text-white">2.50</span> Billion Yrs Ago
-                    </div>
-                </div>
-
-                <div class="sim-container" id="simView">
-                    <!-- Sky and Ocean background via CSS -->
-                    <div class="ozone-layer" id="ozoneLayer">Ozone (O₃) Shield Active</div>
-
-                    <!-- Dynamic Elements -->
-                    <div id="biologyContainer" class="absolute inset-0 top-[40%]"></div>
-
-                    <div class="bif-layer" id="bifLayer">
+</div>
+<div class="sim-container" id="simView">
+<!-- Sky and Ocean background via CSS -->
+<div class="ozone-layer" id="ozoneLayer">Ozone (O₃) Shield Active</div>
+<!-- Dynamic Elements -->
+<div class="absolute inset-0 top-[40%]" id="biologyContainer"></div>
+<div class="bif-layer" id="bifLayer">
                         Banded Iron Formations
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Graph -->
-        <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl">
-            <div class="h-64 w-full">
-                <canvas id="historyChart"></canvas>
-            </div>
-        </div>
-
-        <div class="mt-6 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
-            <h2 class="text-lg font-bold text-emerald-300 mb-2">Scientific Argument (HS-ESS2-7)</h2>
-            <div class="text-sm text-slate-300 space-y-2">
-                <p><strong>Claim:</strong> Life and Earth's physical systems coevolved, with biological processes driving major geological and atmospheric changes.</p>
-                <p><strong>Evidence 1 (The Sink):</strong> Early oceans were full of dissolved iron (Fe²⁺). When cyanobacteria evolved photosynthesis, they released O₂ as a byproduct. Initially, this O₂ did not build up in the atmosphere; instead, it reacted with dissolved iron to form insoluble iron oxides (rust), which precipitated to the ocean floor creating <em>Banded Iron Formations (BIFs)</em>.</p>
-                <p><strong>Evidence 2 (The Outgassing):</strong> Once the ocean's iron sink was exhausted, free O₂ began outgassing into the atmosphere. This changed the sky from a methane/CO₂ haze to a clear blue, and allowed the formation of the stratospheric Ozone (O₃) layer, shielding Earth from UV radiation.</p>
-                <p><strong>Evidence 3 (New Life):</strong> The oxygen-rich environment was toxic to many early microbes, but it allowed for the evolution of new, energy-efficient aerobic metabolisms and eventually complex eukaryotic life.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+</div>
+<!-- Graph -->
+<div class="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl">
+<div class="h-64 w-full">
+<canvas id="historyChart"></canvas>
+</div>
+</div>
+<div class="mt-6 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+<h2 class="text-lg font-bold text-emerald-300 mb-2">Scientific Argument (HS-ESS2-7)</h2>
+<div class="text-sm text-slate-300 space-y-2">
+<p><strong>Claim:</strong> Life and Earth's physical systems coevolved, with biological processes driving major geological and atmospheric changes.</p>
+<p><strong>Evidence 1 (The Sink):</strong> Early oceans were full of dissolved iron (Fe²⁺). When cyanobacteria evolved photosynthesis, they released O₂ as a byproduct. Initially, this O₂ did not build up in the atmosphere; instead, it reacted with dissolved iron to form insoluble iron oxides (rust), which precipitated to the ocean floor creating <em>Banded Iron Formations (BIFs)</em>.</p>
+<p><strong>Evidence 2 (The Outgassing):</strong> Once the ocean's iron sink was exhausted, free O₂ began outgassing into the atmosphere. This changed the sky from a methane/CO₂ haze to a clear blue, and allowed the formation of the stratospheric Ozone (O₃) layer, shielding Earth from UV radiation.</p>
+<p><strong>Evidence 3 (New Life):</strong> The oxygen-rich environment was toxic to many early microbes, but it allowed for the evolution of new, energy-efficient aerobic metabolisms and eventually complex eukaryotic life.</p>
+</div>
+</div>
+</div>
+<script>
         // State
         const INITIAL_TIME = 2.50; // Billion years ago
 
