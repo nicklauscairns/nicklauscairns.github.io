@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Water Infrastructure Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0fdf4; /* Light green tint representing environmental focus */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+        }
+        .header-bg {
+            background: linear-gradient(to right, #0284c7, #0ea5e9); /* Blue gradient for water */
+        }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="header-bg text-white p-4 shadow-md flex justify-between items-center z-10 flex-shrink-0">
+        <div>
+            <h1 class="text-2xl font-bold"><i class="fas fa-tint mr-2"></i>City Water Infrastructure Simulation</h1>
+            <p class="text-sm opacity-90">NGSS HS-ETS1-1: Define criteria and constraints for a major global challenge.</p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-right">
+                <span class="text-xs uppercase font-bold tracking-wider opacity-80">Current Year</span>
+                <div class="text-xl font-bold" id="current-year-display">2025</div>
+            </div>
+             <button id="info-btn" class="bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors">
+                <i class="fas fa-info-circle text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="flex-grow flex overflow-hidden">
+
+        <!-- Sidebar: Constraints & Controls -->
+        <aside class="w-1/3 p-4 overflow-y-auto border-r border-gray-200 bg-gray-50 flex-shrink-0 flex flex-col">
+
+            <!-- Phase 1: Define Constraints -->
+            <div id="setup-phase" class="flex-grow flex flex-col">
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold mb-2 text-sky-800 border-b-2 border-sky-200 pb-1">1. Define Constraints</h2>
+                    <p class="text-sm text-gray-600 mb-4">Set the boundaries for your city's water infrastructure project. You must solve the water shortage within these limits.</p>
+                </div>
+
+                <div class="space-y-4 flex-grow">
+                    <div class="card bg-blue-50/50">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Max Budget (Millions $)</label>
+                        <input type="range" id="max-budget" min="50" max="500" value="200" class="w-full mb-2">
+                        <div class="flex justify-between text-sm font-bold text-blue-800">
+                            <span>$50M</span>
+                            <span id="budget-val" class="text-lg bg-white px-2 rounded shadow-sm">$200M</span>
+                            <span>$500M</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Constraint: Total spending cannot exceed this amount.</p>
+                    </div>
+
+                    <div class="card bg-green-50/50">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Min Target Water Capacity (ML/day)</label>
+                        <input type="range" id="min-capacity" min="100" max="500" value="300" class="w-full mb-2">
+                        <div class="flex justify-between text-sm font-bold text-green-800">
+                            <span>100</span>
+                            <span id="capacity-val" class="text-lg bg-white px-2 rounded shadow-sm">300</span>
+                            <span>500</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Criterion: Must produce at least this much clean water per day.</p>
+                    </div>
+
+                    <div class="card bg-purple-50/50">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Max Environmental Impact Score</label>
+                        <input type="range" id="max-env-impact" min="10" max="100" value="50" class="w-full mb-2">
+                        <div class="flex justify-between text-sm font-bold text-purple-800">
+                            <span>Strict (10)</span>
+                            <span id="env-val" class="text-lg bg-white px-2 rounded shadow-sm">50</span>
+                            <span>Loose (100)</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Constraint: Lower numbers mean less pollution and disruption.</p>
+                    </div>
+                </div>
+
+                <button id="start-btn" class="mt-4 w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded shadow-md transition-colors text-lg">
+                    Approve Constraints & Start Planning
+                </button>
+            </div>
+
+            <!-- Phase 2: Action Phase (Hidden initially) -->
+            <div id="action-phase" class="hidden flex-grow flex flex-col">
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold mb-2 text-sky-800 border-b-2 border-sky-200 pb-1">2. Propose Solutions</h2>
+                    <p class="text-sm text-gray-600 mb-2">Select projects to increase water supply or decrease demand. Watch your budget and environmental impact!</p>
+                </div>
+
+                <div class="space-y-3 flex-grow overflow-y-auto pr-2" id="project-list">
+                    <!-- Project buttons will be injected here via JS -->
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-300">
+                     <button id="advance-year-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded shadow-md transition-colors text-lg flex justify-center items-center">
+                        <i class="fas fa-forward mr-2"></i> Advance 1 Year
+                    </button>
+                    <button id="reset-btn" class="mt-2 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition-colors text-sm">
+                        Reset Simulation
+                    </button>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Main Dashboard: Visualization & Metrics -->
+        <main class="w-2/3 p-4 overflow-y-auto bg-gray-100 flex flex-col">
+
+            <!-- Top Metrics Row -->
+            <div class="grid grid-cols-4 gap-4 mb-4">
+                <div class="card p-3 border-l-4 border-blue-500">
+                    <h3 class="text-xs text-gray-500 uppercase font-bold">Budget Spent</h3>
+                    <div class="text-xl font-bold text-gray-800 mt-1"><span id="metric-budget">0</span> / <span id="target-budget" class="text-sm text-gray-500">200</span> M$</div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                      <div class="bg-blue-500 h-1.5 rounded-full" id="bar-budget" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="card p-3 border-l-4 border-green-500">
+                    <h3 class="text-xs text-gray-500 uppercase font-bold">Water Capacity</h3>
+                    <div class="text-xl font-bold text-gray-800 mt-1"><span id="metric-capacity">150</span> <span class="text-sm font-normal">ML/d</span></div>
+                    <div class="text-xs text-gray-500 mt-1">Target: <span id="target-capacity">300</span> ML/d</div>
+                </div>
+
+                <div class="card p-3 border-l-4 border-purple-500">
+                    <h3 class="text-xs text-gray-500 uppercase font-bold">Env. Impact</h3>
+                    <div class="text-xl font-bold text-gray-800 mt-1"><span id="metric-env">0</span> / <span id="target-env" class="text-sm text-gray-500">50</span></div>
+                     <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                      <div class="bg-purple-500 h-1.5 rounded-full" id="bar-env" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="card p-3 border-l-4 border-yellow-500 relative overflow-hidden">
+                    <h3 class="text-xs text-gray-500 uppercase font-bold">Public Approval</h3>
+                    <div class="text-2xl font-bold text-gray-800 mt-1" id="metric-approval">75%</div>
+                    <i class="fas fa-users absolute -bottom-2 -right-2 text-4xl text-yellow-100 opacity-50"></i>
+                </div>
+            </div>
+
+            <!-- Charts Area -->
+            <div class="flex-grow grid grid-cols-1 grid-rows-2 gap-4">
+                <div class="card flex flex-col min-h-[250px]">
+                    <h3 class="text-sm font-bold text-gray-700 mb-2 border-b pb-1">Water Supply vs Demand Over Time</h3>
+                    <div class="flex-grow relative w-full h-full">
+                        <canvas id="waterChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 min-h-[250px]">
+                    <div class="card flex flex-col">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 border-b pb-1">Active Projects Log</h3>
+                        <div class="flex-grow overflow-y-auto text-sm" id="log-area">
+                            <p class="text-gray-500 italic">No projects started yet. Waiting for constraints to be defined.</p>
+                        </div>
+                    </div>
+
+                    <div class="card flex flex-col">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 border-b pb-1">Evaluation Status</h3>
+                        <div id="evaluation-status" class="flex-grow flex flex-col justify-center items-center text-center p-4">
+                            <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-3"></i>
+                            <h4 class="font-bold text-gray-700">Setup Phase</h4>
+                            <p class="text-sm text-gray-500 mt-2">Define your criteria and constraints to begin.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="fixed inset-0 bg-black/50 hidden flex justify-center items-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-2xl shadow-xl">
+            <h2 class="text-2xl font-bold mb-4 text-sky-800">About This Simulation</h2>
+            <div class="prose text-sm text-gray-700 space-y-3">
+                <p><strong>NGSS HS-ETS1-1:</strong> Analyze a major global challenge to specify qualitative and quantitative criteria and constraints for solutions that account for societal needs and wants.</p>
+                <p>In this simulation, you act as a city planner addressing a major global challenge: securing a reliable clean water supply for a growing population.</p>
+                <h3 class="font-bold text-lg mt-4">Instructions:</h3>
+                <ol class="list-decimal pl-5 space-y-1">
+                    <li><strong>Define Constraints:</strong> First, you must explicitly set the quantitative boundaries for your project (budget limit, environmental impact limit) and the criteria for success (target water capacity).</li>
+                    <li><strong>Propose Solutions:</strong> Once constraints are set, choose from various engineering and social solutions. Each has trade-offs regarding cost, water yield, environmental damage, and public approval.</li>
+                    <li><strong>Analyze Impacts:</strong> Advance time year by year to see how your choices affect the city. Try to meet your target water capacity without violating your budget or environmental constraints.</li>
+                </ol>
+            </div>
+            <button id="close-modal" class="mt-6 bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded w-full">
+                Understood
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Game State Variables
+        let state = {
+            phase: 'setup', // 'setup' or 'action'
+            year: 2025,
+
+            // Constraints & Criteria
+            constraints: {
+                maxBudget: 200,      // Millions $
+                minCapacity: 300,    // ML/day
+                maxEnvImpact: 50     // Points (0-100 scale, lower is better)
+            },
+
+            // Current Metrics
+            metrics: {
+                budgetSpent: 0,
+                waterCapacity: 150,  // Starting capacity
+                envImpact: 0,
+                publicApproval: 75,   // Percentage
+                populationDemand: 160 // Starting demand ML/day
+            },
+
+            activeProjects: []
+        };
+
+        // Project Database
+        const availableProjects = [
+            {
+                id: 'desal',
+                name: 'Desalination Plant',
+                type: 'engineering',
+                cost: 80,
+                capacityBoost: 100,
+                envPenalty: 25,
+                approvalBoost: 5,
+                timeToBuild: 2,
+                desc: 'Highly effective but expensive and causes significant coastal environmental impact.'
+            },
+            {
+                id: 'repair',
+                name: 'Pipe Network Repair',
+                type: 'maintenance',
+                cost: 40,
+                capacityBoost: 45,
+                envPenalty: 2,
+                approvalBoost: 10,
+                timeToBuild: 1,
+                desc: 'Fixes leaks in the aging infrastructure. Cost-effective, low environmental impact.'
+            },
+            {
+                id: 'reservoir',
+                name: 'New Inland Reservoir',
+                type: 'engineering',
+                cost: 60,
+                capacityBoost: 80,
+                envPenalty: 20,
+                approvalBoost: -5, // Public might oppose flooding land
+                timeToBuild: 3,
+                desc: 'Provides a large water reserve but requires flooding land, displacing habitats and facing some public pushback.'
+            },
+            {
+                id: 'conservation',
+                name: 'Public Conservation Campaign',
+                type: 'social',
+                cost: 10,
+                capacityBoost: 20, // Modeled as an "effective capacity" boost by reducing demand
+                envPenalty: 0,
+                approvalBoost: -10, // People dislike being told to use less water initially
+                timeToBuild: 0,
+                desc: 'Inexpensive and environmentally friendly, but unpopular and yields lower immediate results.'
+            },
+            {
+                id: 'recycling',
+                name: 'Wastewater Recycling Facility',
+                type: 'engineering',
+                cost: 50,
+                capacityBoost: 60,
+                envPenalty: 5,
+                approvalBoost: -15, // "Yuck factor"
+                timeToBuild: 2,
+                desc: 'Highly sustainable and moderate cost, but faces severe public opposition due to perceived cleanliness issues.'
+            }
+        ];
+
+        // --- DOM Elements ---
+
+        // Setup UI
+        const setupPhase = document.getElementById('setup-phase');
+        const actionPhase = document.getElementById('action-phase');
+
+        // Setup Inputs
+        const budgetInput = document.getElementById('max-budget');
+        const capacityInput = document.getElementById('min-capacity');
+        const envInput = document.getElementById('max-env-impact');
+
+        // Setup Value Displays
+        const budgetVal = document.getElementById('budget-val');
+        const capacityVal = document.getElementById('capacity-val');
+        const envVal = document.getElementById('env-val');
+
+        // Buttons
+        const startBtn = document.getElementById('start-btn');
+        const advanceBtn = document.getElementById('advance-year-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const infoBtn = document.getElementById('info-btn');
+        const closeModalBtn = document.getElementById('close-modal');
+        const infoModal = document.getElementById('info-modal');
+
+        // Metrics Displays
+        const metricBudget = document.getElementById('metric-budget');
+        const targetBudget = document.getElementById('target-budget');
+        const metricCapacity = document.getElementById('metric-capacity');
+        const targetCapacity = document.getElementById('target-capacity');
+        const metricEnv = document.getElementById('metric-env');
+        const targetEnv = document.getElementById('target-env');
+        const metricApproval = document.getElementById('metric-approval');
+        const currentYearDisplay = document.getElementById('current-year-display');
+
+        // Progress Bars
+        const barBudget = document.getElementById('bar-budget');
+        const barEnv = document.getElementById('bar-env');
+
+        // Output Areas
+        const projectListArea = document.getElementById('project-list');
+        const logArea = document.getElementById('log-area');
+        const evaluationStatus = document.getElementById('evaluation-status');
+
+        // --- Event Listeners ---
+
+        // Modal
+        infoBtn.addEventListener('click', () => infoModal.classList.remove('hidden'));
+        closeModalBtn.addEventListener('click', () => infoModal.classList.add('hidden'));
+
+        // Setup Sliders
+        budgetInput.addEventListener('input', (e) => budgetVal.textContent = `$${e.target.value}M`);
+        capacityInput.addEventListener('input', (e) => capacityVal.textContent = e.target.value);
+        envInput.addEventListener('input', (e) => envVal.textContent = e.target.value);
+
+        // Core Actions
+        startBtn.addEventListener('click', startGame);
+        advanceBtn.addEventListener('click', advanceYear);
+        resetBtn.addEventListener('click', resetGame);
+
+        // --- Functions ---
+
+        function init() {
+            // Initial render of values
+            budgetVal.textContent = `$${budgetInput.value}M`;
+            capacityVal.textContent = capacityInput.value;
+            envVal.textContent = envInput.value;
+        }
+
+        function startGame() {
+            // 1. Lock in constraints
+            state.constraints.maxBudget = parseInt(budgetInput.value);
+            state.constraints.minCapacity = parseInt(capacityInput.value);
+            state.constraints.maxEnvImpact = parseInt(envInput.value);
+
+            // 2. Update UI
+            setupPhase.classList.add('hidden');
+            actionPhase.classList.remove('hidden');
+            state.phase = 'action';
+
+            // Populate targets in dashboard
+            targetBudget.textContent = state.constraints.maxBudget;
+            targetCapacity.textContent = state.constraints.minCapacity;
+            targetEnv.textContent = state.constraints.maxEnvImpact;
+
+            // Render initial project list
+            renderProjectList();
+
+            // Clear log and update eval
+            logArea.innerHTML = '';
+            addLogEntry(state.year, 'Constraints formalized. City planning initiated.', 'text-sky-600');
+            updateDashboard();
+            evaluateStatus();
+        }
+
+        function renderProjectList() {
+            projectListArea.innerHTML = '';
+
+            availableProjects.forEach(proj => {
+                const isBuilt = state.activeProjects.some(ap => ap.id === proj.id);
+                const canAfford = (state.metrics.budgetSpent + proj.cost) <= state.constraints.maxBudget;
+
+                let btnHtml = '';
+                if (isBuilt) {
+                    btnHtml = `<button disabled class="w-full bg-gray-300 text-gray-500 font-bold py-1 px-2 rounded mt-2 text-sm cursor-not-allowed">Active / Built</button>`;
+                } else if (!canAfford) {
+                    btnHtml = `<button disabled class="w-full bg-red-100 text-red-500 border border-red-300 font-bold py-1 px-2 rounded mt-2 text-sm cursor-not-allowed">Insufficient Budget</button>`;
+                } else {
+                    btnHtml = `<button onclick="startProject('${proj.id}')" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300 font-bold py-1 px-2 rounded mt-2 text-sm transition-colors">Start Project ($${proj.cost}M)</button>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded border ${isBuilt ? 'border-green-400 bg-green-50' : 'border-gray-200 bg-white'}`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-sm text-gray-800">${proj.name}</h4>
+                        <span class="text-xs font-mono bg-gray-100 px-1 rounded">${proj.timeToBuild}yr</span>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-1 h-10 overflow-hidden text-ellipsis">${proj.desc}</p>
+                    <div class="grid grid-cols-3 gap-1 mt-2 text-xs">
+                        <div class="text-blue-700 font-semibold">+${proj.capacityBoost} ML</div>
+                        <div class="text-purple-700 font-semibold">+${proj.envPenalty} Env</div>
+                        <div class="${proj.approvalBoost >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">${proj.approvalBoost > 0 ? '+' : ''}${proj.approvalBoost}% Appr</div>
+                    </div>
+                    ${btnHtml}
+                `;
+                projectListArea.appendChild(card);
+            });
+        }
+
+        // Expose to window for onclick handlers in dynamically created HTML
+        window.startProject = function(projectId) {
+            const proj = availableProjects.find(p => p.id === projectId);
+            if (!proj) return;
+
+            // Deduct cost immediately
+            state.metrics.budgetSpent += proj.cost;
+
+            // Add to active projects with a completion timer
+            state.activeProjects.push({
+                ...proj,
+                yearsRemaining: proj.timeToBuild
+            });
+
+            addLogEntry(state.year, `Initiated: ${proj.name}. Cost: $${proj.cost}M. Completion in ${proj.timeToBuild} years.`, 'text-blue-600');
+
+            // Re-render UI
+            renderProjectList();
+            updateDashboard();
+            evaluateStatus();
+        };
+
+        function advanceYear() {
+            state.year++;
+            currentYearDisplay.textContent = state.year;
+
+            // Population/Demand naturally grows
+            state.metrics.populationDemand += Math.floor(Math.random() * 5) + 5; // 5-10 ML/d increase per year
+
+            let projectsCompletedThisYear = false;
+
+            // Process active projects
+            state.activeProjects.forEach(proj => {
+                if (proj.yearsRemaining > 0) {
+                    proj.yearsRemaining--;
+                }
+
+                // Need to handle projects that finish THIS year (which could have started with 0 years and thus just decayed to 0, or decayed from 1 to 0)
+                // However, since we decrement it, if it's 0 it finishes this turn
+                // Wait, if a project starts with 0, we shouldn't decrement it, it's already 0. We should process it on the first turn.
+                // Let's change the logic: Add a flag `completed` to avoid processing multiple times
+                if (proj.yearsRemaining === 0 && !proj.completed) {
+                    proj.completed = true;
+                    // Project completes! Apply persistent effects
+                    state.metrics.waterCapacity += proj.capacityBoost;
+                    state.metrics.envImpact += proj.envPenalty;
+                    state.metrics.publicApproval = Math.max(0, Math.min(100, state.metrics.publicApproval + proj.approvalBoost));
+
+                    addLogEntry(state.year, `COMPLETED: ${proj.name}. Capacity +${proj.capacityBoost}, Env +${proj.envPenalty}.`, 'text-green-600 font-bold');
+                    projectsCompletedThisYear = true;
+                }
+            });
+
+            if (!projectsCompletedThisYear) {
+                 addLogEntry(state.year, `Year advanced. Demand grew to ${state.metrics.populationDemand} ML/d.`, 'text-gray-500');
+            }
+
+            // Passive approval decay if demand > capacity
+            if (state.metrics.populationDemand > state.metrics.waterCapacity) {
+                const deficit = state.metrics.populationDemand - state.metrics.waterCapacity;
+                const penalty = Math.ceil(deficit / 10);
+                state.metrics.publicApproval = Math.max(0, state.metrics.publicApproval - penalty);
+                addLogEntry(state.year, `Water shortage! Approval dropped by ${penalty}%.`, 'text-red-500');
+            } else {
+                 // Slight recovery if surplus
+                 state.metrics.publicApproval = Math.min(100, state.metrics.publicApproval + 2);
+            }
+
+            renderProjectList();
+            updateDashboard();
+            evaluateStatus();
+
+            // Trigger chart update (will be defined in next step)
+            if (typeof window.updateChart === 'function') {
+                window.updateChart(state.year, state.metrics.waterCapacity, state.metrics.populationDemand);
+            }
+        }
+
+        function updateDashboard() {
+            metricBudget.textContent = state.metrics.budgetSpent;
+            metricCapacity.textContent = state.metrics.waterCapacity;
+            metricEnv.textContent = state.metrics.envImpact;
+            metricApproval.textContent = `${state.metrics.publicApproval}%`;
+
+            // Update progress bars
+            const budgetPct = Math.min(100, (state.metrics.budgetSpent / state.constraints.maxBudget) * 100);
+            barBudget.style.width = `${budgetPct}%`;
+            if (budgetPct > 90) barBudget.classList.replace('bg-blue-500', 'bg-red-500');
+
+            const envPct = Math.min(100, (state.metrics.envImpact / state.constraints.maxEnvImpact) * 100);
+            barEnv.style.width = `${envPct}%`;
+            if (envPct > 90) barEnv.classList.replace('bg-purple-500', 'bg-red-500');
+
+            // Color code capacity text based on demand
+            if (state.metrics.waterCapacity < state.metrics.populationDemand) {
+                metricCapacity.classList.replace('text-gray-800', 'text-red-600');
+            } else {
+                metricCapacity.classList.replace('text-red-600', 'text-gray-800');
+            }
+        }
+
+        function evaluateStatus() {
+            // Evaluate criteria and constraints
+            const overBudget = state.metrics.budgetSpent > state.constraints.maxBudget;
+            const envViolated = state.metrics.envImpact > state.constraints.maxEnvImpact;
+            const capacityMet = state.metrics.waterCapacity >= state.constraints.minCapacity;
+            const lowApproval = state.metrics.publicApproval < 20;
+
+            let html = '';
+
+            if (overBudget) {
+                html = `<div class="text-red-600"><i class="fas fa-times-circle text-3xl mb-2"></i><br><b>Constraint Failed</b><br>You exceeded the maximum budget constraint. City is bankrupt.</div>`;
+                gameOver();
+            } else if (envViolated) {
+                html = `<div class="text-red-600"><i class="fas fa-times-circle text-3xl mb-2"></i><br><b>Constraint Failed</b><br>Environmental impact constraint violated. Fined by EPA.</div>`;
+                gameOver();
+            } else if (lowApproval) {
+                html = `<div class="text-red-600"><i class="fas fa-user-times text-3xl mb-2"></i><br><b>Constraint Failed</b><br>Public approval too low. You have been voted out of office.</div>`;
+                gameOver();
+            } else if (capacityMet && state.metrics.waterCapacity >= state.metrics.populationDemand) {
+                html = `<div class="text-green-600"><i class="fas fa-check-circle text-3xl mb-2"></i><br><b>Criteria Met!</b><br>Target capacity reached within constraints!</div>`;
+            } else {
+                html = `<div class="text-blue-600"><i class="fas fa-hard-hat text-3xl mb-2"></i><br><b>In Progress</b><br>Build projects to meet the capacity target.</div>`;
+            }
+
+            evaluationStatus.innerHTML = html;
+        }
+
+        function gameOver() {
+            advanceBtn.disabled = true;
+            advanceBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            // Disable all project buttons
+            const btns = projectListArea.querySelectorAll('button');
+            btns.forEach(btn => btn.disabled = true);
+        }
+
+        function resetGame() {
+            state = {
+                phase: 'setup',
+                year: 2025,
+                constraints: { maxBudget: 200, minCapacity: 300, maxEnvImpact: 50 },
+                metrics: { budgetSpent: 0, waterCapacity: 150, envImpact: 0, publicApproval: 75, populationDemand: 160 },
+                activeProjects: []
+            };
+
+            setupPhase.classList.remove('hidden');
+            actionPhase.classList.add('hidden');
+
+            currentYearDisplay.textContent = state.year;
+            advanceBtn.disabled = false;
+            advanceBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            barBudget.classList.remove('bg-red-500'); barBudget.classList.add('bg-blue-500');
+            barEnv.classList.remove('bg-red-500'); barEnv.classList.add('bg-purple-500');
+
+            logArea.innerHTML = '<p class="text-gray-500 italic">No projects started yet. Waiting for constraints to be defined.</p>';
+            evaluationStatus.innerHTML = `
+                <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-3"></i>
+                <h4 class="font-bold text-gray-700">Setup Phase</h4>
+                <p class="text-sm text-gray-500 mt-2">Define your criteria and constraints to begin.</p>
+            `;
+
+            // Reset Chart if exists
+            if (typeof window.resetChart === 'function') window.resetChart();
+
+            init();
+        }
+
+        function addLogEntry(year, msg, colorClass) {
+            // Remove initial placeholder if present
+            const ph = logArea.querySelector('p.italic');
+            if (ph) ph.remove();
+
+            const p = document.createElement('p');
+            p.className = `mb-1 border-b border-gray-100 pb-1 ${colorClass}`;
+            p.innerHTML = `<span class="font-mono text-gray-400 mr-2">[${year}]</span> ${msg}`;
+            logArea.prepend(p);
+        }
+
+        // --- Chart.js Integration ---
+
+        let waterChart;
+
+        function initChart() {
+            const ctx = document.getElementById('waterChart').getContext('2d');
+            waterChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [2025],
+                    datasets: [
+                        {
+                            label: 'Water Capacity (ML/d)',
+                            data: [150],
+                            borderColor: 'rgba(59, 130, 246, 1)', // Blue
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Population Demand (ML/d)',
+                            data: [160],
+                            borderColor: 'rgba(239, 68, 68, 1)', // Red
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 500
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.updateChart = function(year, capacity, demand) {
+            if (!waterChart) return;
+            waterChart.data.labels.push(year);
+            waterChart.data.datasets[0].data.push(capacity);
+            waterChart.data.datasets[1].data.push(demand);
+            waterChart.update();
+        };
+
+        window.resetChart = function() {
+            if (!waterChart) return;
+            waterChart.data.labels = [2025];
+            waterChart.data.datasets[0].data = [150];
+            waterChart.data.datasets[1].data = [160];
+            waterChart.update();
+        };
+
+        // Initialize UI values on load
+        window.onload = () => {
+            init();
+            initChart();
+        };
+
+    </script>
+</body>
+</html>

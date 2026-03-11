@@ -37,7 +37,7 @@ def test_em_radiation():
 
         # 2. Test Ionizing Radiation (Gamma Rays)
         page.evaluate("document.getElementById('em-slider').value = 7;")
-        page.evaluate("document.getElementById('em-slider').dispatchEvent(new Event('input'))")
+        page.evaluate("window.updateRadiation(7);")
 
         # Verify it reset on switch IMMEDIATELY before particles spawn
         gamma_initial_dmg = page.evaluate("window.testingTools.getDamage()")
