@@ -307,8 +307,9 @@
             // Simplified approximation: G_max is roughly proportional to V^2 * sin(angle) / (BC * constant)
             // Actually, in standard simplified analytical models, max G is independent of BC,
             // but depends heavily on entry angle and velocity: G_max ~ V^2 * sin(angle) / (2 * e * g * H)
-            // We use a simplified empirical model for educational purposes
-            const gForce = (Math.pow(CONSTANTS.ENTRY_VELOCITY / 1000, 2) * Math.sin(angleRad) * 4.5);
+            // We use a simplified empirical model for educational purposes, adding a slight BC dependence
+            // to make the engineering trade-offs between mass, shield size, and G-forces more dynamic for students.
+            const gForce = (Math.pow(CONSTANTS.ENTRY_VELOCITY / 1000, 2) * Math.sin(angleRad) * 4.5) + (ballisticCoefficient * 0.01);
 
             // Peak Heating Rate / Temperature
             // Convective heating rate is proportional to sqrt(density) * V^3
