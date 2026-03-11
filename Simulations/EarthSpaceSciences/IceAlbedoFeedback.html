@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ice-Albedo Feedback Loop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #0f172a; color: #f1f5f9; }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #38bdf8;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .earth-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+            background: radial-gradient(circle at 30% 30%, #3b82f6 0%, #1e3a8a 100%);
+        }
+        .landmass {
+            position: absolute;
+            background: #22c55e;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+        }
+        .land1 { top: 20%; left: 10%; width: 40%; height: 30%; transform: rotate(15deg); }
+        .land2 { bottom: 30%; right: 15%; width: 45%; height: 25%; transform: rotate(-25deg); }
+        .ice-cap {
+            position: absolute;
+            background: #f8fafc;
+            width: 100%;
+            left: 0;
+            transition: height 0.5s ease;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+        .ice-north { top: -5%; height: 25%; border-radius: 0 0 50% 50%; }
+        .ice-south { bottom: -5%; height: 25%; border-radius: 50% 50% 0 0; }
+        .sun-ray {
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom, transparent, #fbbf24, #fef3c7);
+            top: -60px;
+            animation: fall 2s linear infinite;
+            opacity: 0.6;
+        }
+        .reflection {
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to top, transparent, #93c5fd, #ffffff);
+            animation: reflect 2s linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes fall { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(300px); opacity: 0; } }
+        @keyframes reflect { 0% { transform: translateY(0); opacity: 0.8; } 100% { transform: translateY(-300px); opacity: 0; } }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Ice-Albedo Feedback Loop</h1>
+            <p class="text-slate-300 max-w-3xl mx-auto">
+                Analyze how a single change to Earth's surface (ice loss) creates a positive feedback loop that destabilizes the global climate system (HS-ESS2-2).
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
+            <!-- Simulation View -->
+            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg flex flex-col items-center">
+                <h2 class="text-xl font-bold text-slate-200 mb-6">Earth System Model</h2>
+
+                <div class="earth-container mb-6" id="earthView">
+                    <div class="landmass land1"></div>
+                    <div class="landmass land2"></div>
+                    <div class="ice-cap ice-north" id="northIce"></div>
+                    <div class="ice-cap ice-south" id="southIce"></div>
+                    <!-- Rays injected via JS -->
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 w-full text-center">
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Global Temp</div>
+                        <div class="text-2xl font-mono text-red-400 font-bold" id="tempDisplay">14.0°C</div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Avg Albedo</div>
+                        <div class="text-2xl font-mono text-blue-300 font-bold" id="albedoDisplay">0.30</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls & Data -->
+            <div class="lg:col-span-2 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg flex flex-col">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                    <h2 class="text-xl font-bold text-emerald-300">System Dynamics (Data Analysis)</h2>
+                    <div class="space-x-2">
+                        <button id="toggleBtn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded font-bold transition-colors">Start Simulation</button>
+                        <button id="resetBtn" class="bg-slate-600 hover:bg-slate-500 px-4 py-2 rounded font-bold transition-colors">Reset</button>
+                    </div>
+                </div>
+
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">
+                            Initial GHG Forcing: <span id="ghgVal" class="text-amber-400 font-bold">Base (Equilibrium)</span>
+                        </label>
+                        <input type="range" id="ghgInput" min="0" max="2" step="0.1" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
+                        <p class="text-xs text-slate-400 mt-1">Simulates an initial trigger: increase in atmospheric greenhouse gases trapping more heat.</p>
+                    </div>
+
+                    <div class="bg-slate-900 p-3 rounded text-sm text-slate-300 font-mono h-24 overflow-y-auto" id="logPanel">
+                        > System initialized at equilibrium.<br>
+                        > Incoming solar radiation = Outgoing heat.<br>
+                    </div>
+                </div>
+
+                <div class="flex-grow min-h-[250px] relative w-full">
+                    <canvas id="feedbackChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
+            <h2 class="text-xl font-bold text-emerald-300 mb-3">Understanding the Feedback Loop</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-300">
+                <div>
+                    <h3 class="font-bold text-white mb-1">1. The Initial Trigger</h3>
+                    <p>Earth's climate is primarily driven by solar radiation. In equilibrium, energy in equals energy out. However, if an external factor (like increased greenhouse gases) traps more heat, the global temperature begins to rise.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white mb-1">2. Ice Melting & Albedo</h3>
+                    <p><strong>Albedo</strong> is a measure of how much light hits a surface and is reflected without being absorbed. Ice and snow have high albedo (~0.8), while ocean water has low albedo (~0.1). As temperatures rise, sea ice melts.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white mb-1">3. The Positive Feedback</h3>
+                    <p>Melting ice reveals dark ocean water. This lowers Earth's overall albedo. Earth now absorbs *more* solar energy than before. This extra absorbed energy further increases temperatures, melting even more ice. A <strong>positive feedback</strong> loop destabilizes the system, amplifying the original change.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const toggleBtn = document.getElementById('toggleBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const ghgInput = document.getElementById('ghgInput');
+        const ghgVal = document.getElementById('ghgVal');
+        const tempDisplay = document.getElementById('tempDisplay');
+        const albedoDisplay = document.getElementById('albedoDisplay');
+        const northIce = document.getElementById('northIce');
+        const southIce = document.getElementById('southIce');
+        const earthView = document.getElementById('earthView');
+        const logPanel = document.getElementById('logPanel');
+
+        // Chart Setup
+        const ctx = document.getElementById('feedbackChart').getContext('2d');
+        const feedbackChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Global Temp (°C)',
+                        data: [],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        yAxisID: 'y',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Ice Coverage (%)',
+                        data: [],
+                        borderColor: '#93c5fd',
+                        borderDash: [5, 5],
+                        yAxisID: 'y1',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 0 },
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { labels: { color: '#cbd5e1' } }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Time (Years)', color: '#94a3b8' },
+                        ticks: { color: '#94a3b8' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'Temperature (°C)', color: '#ef4444' },
+                        ticks: { color: '#ef4444' },
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        suggestedMin: 13,
+                        suggestedMax: 18
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Ice Coverage (%)', color: '#93c5fd' },
+                        ticks: { color: '#93c5fd' },
+                        grid: { drawOnChartArea: false },
+                        min: 0,
+                        max: 30
+                    }
+                }
+            }
+        });
+
+        // Simulation State
+        const INITIAL_TEMP = 14.0;
+        const INITIAL_ICE = 25.0; // percent of globe
+        const ICE_ALBEDO = 0.8;
+        const OCEAN_ALBEDO = 0.1;
+        const LAND_ALBEDO = 0.2;
+        const LAND_PERCENT = 30; // constant
+
+        // Expose to window for playwright tests
+        window.simState = {
+            isRunning: false,
+            time: 0,
+            temp: INITIAL_TEMP,
+            iceCoverage: INITIAL_ICE, // %
+            albedo: 0.30
+        };
+
+        let lastLogTemp = INITIAL_TEMP;
+        let lastLogIce = INITIAL_ICE;
+
+        function logMsg(msg) {
+            const el = document.createElement('div');
+            el.innerHTML = `> <span class="text-slate-500">[Yr ${Math.floor(window.simState.time)}]</span> ${msg}`;
+            logPanel.appendChild(el);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        function calculateAlbedo(icePct) {
+            // Earth albedo = weighted average of surfaces
+            // Simplified: Land is constant. Ice replaces Ocean.
+            const oceanPct = 100 - LAND_PERCENT - icePct;
+
+            const totalReflectivity =
+                (icePct / 100 * ICE_ALBEDO) +
+                (oceanPct / 100 * OCEAN_ALBEDO) +
+                (LAND_PERCENT / 100 * LAND_ALBEDO);
+
+            return totalReflectivity;
+        }
+
+        function updateVisuals() {
+            tempDisplay.textContent = window.simState.temp.toFixed(1) + "°C";
+            albedoDisplay.textContent = window.simState.albedo.toFixed(3);
+
+            // Map ice coverage (0-30%) to CSS height (0-25%)
+            // 25% height is max initial
+            const visualHeight = (window.simState.iceCoverage / INITIAL_ICE) * 25;
+            northIce.style.height = `${Math.max(0, visualHeight)}%`;
+            southIce.style.height = `${Math.max(0, visualHeight)}%`;
+
+            // Update chart
+            if (Math.floor(window.simState.time) % 2 === 0) {
+                feedbackChart.data.labels.push(Math.floor(window.simState.time));
+                feedbackChart.data.datasets[0].data.push(window.simState.temp);
+                feedbackChart.data.datasets[1].data.push(window.simState.iceCoverage);
+
+                // Keep chart from getting too crowded
+                if (feedbackChart.data.labels.length > 50) {
+                    feedbackChart.data.labels.shift();
+                    feedbackChart.data.datasets[0].data.shift();
+                    feedbackChart.data.datasets[1].data.shift();
+                }
+                feedbackChart.update();
+            }
+        }
+
+        function initRays() {
+            // Add some decorative solar rays hitting and reflecting off the ice
+            for(let i=0; i<5; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'sun-ray';
+                ray.style.left = `${20 + i*15}%`;
+                ray.style.animationDelay = `${Math.random() * 2}s`;
+                earthView.appendChild(ray);
+
+                // Reflections (only visible if there is ice, handled by CSS mostly, but we'll put them near poles)
+                const ref = document.createElement('div');
+                ref.className = 'reflection';
+                ref.style.left = `${20 + i*15}%`;
+                ref.style.bottom = '10%';
+                ref.style.animationDelay = `${Math.random() * 2}s`;
+                earthView.appendChild(ref);
+            }
+        }
+
+        // Event Listeners
+        ghgInput.addEventListener('input', (e) => {
+            const v = parseFloat(e.target.value);
+            if (v === 0) ghgVal.textContent = "Base (Equilibrium)";
+            else if (v < 0.8) ghgVal.textContent = "Low (+1 W/m²)";
+            else if (v < 1.5) ghgVal.textContent = "Moderate (+2 W/m²)";
+            else ghgVal.textContent = "High (+3 W/m²)";
+
+            // Manual trigger starts sim
+            if (!window.simState.isRunning && v > 0) {
+                toggleSim();
+                logMsg(`GHG forcing increased. Extra heat trapped.`);
+            }
+        });
+
+        function toggleSim() {
+            window.simState.isRunning = !window.simState.isRunning;
+            if (window.simState.isRunning) {
+                toggleBtn.textContent = 'Pause Simulation';
+                toggleBtn.classList.replace('bg-emerald-600', 'bg-amber-600');
+                toggleBtn.classList.replace('hover:bg-emerald-500', 'hover:bg-amber-500');
+            } else {
+                toggleBtn.textContent = 'Resume Simulation';
+                toggleBtn.classList.replace('bg-amber-600', 'bg-emerald-600');
+                toggleBtn.classList.replace('hover:bg-amber-500', 'hover:bg-emerald-500');
+            }
+        }
+
+        toggleBtn.addEventListener('click', toggleSim);
+
+        resetBtn.addEventListener('click', () => {
+            window.simState.isRunning = false;
+            window.simState.time = 0;
+            window.simState.temp = INITIAL_TEMP;
+            window.simState.iceCoverage = INITIAL_ICE;
+            window.simState.albedo = calculateAlbedo(INITIAL_ICE);
+
+            ghgInput.value = 0;
+            ghgVal.textContent = "Base (Equilibrium)";
+
+            toggleBtn.textContent = 'Start Simulation';
+            toggleBtn.classList.remove('bg-amber-600', 'hover:bg-amber-500');
+            toggleBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+
+            feedbackChart.data.labels = [];
+            feedbackChart.data.datasets[0].data = [];
+            feedbackChart.data.datasets[1].data = [];
+            feedbackChart.update();
+
+            logPanel.innerHTML = '> System initialized at equilibrium.<br>> Incoming solar radiation = Outgoing heat.<br>';
+            lastLogTemp = INITIAL_TEMP;
+            lastLogIce = INITIAL_ICE;
+
+            updateVisuals();
+        });
+
+        // Main Loop
+        let lastTime = 0;
+        function loop(timestamp) {
+            if (window.simState.isRunning) {
+                const dt = (timestamp - lastTime) / 1000 || 0;
+                if (dt < 0.1) { // cap dt
+
+                    // 1 time unit = 1 year
+                    const timeStep = 1.0;
+                    window.simState.time += timeStep;
+
+                    // 1. Calculate incoming vs outgoing energy
+                    const ghgForcing = parseFloat(ghgInput.value) * 1.5; // Artificial scaling for visual effect
+
+                    // Albedo effect: lower albedo = more energy absorbed = heating
+                    // Base albedo is 0.30. If it drops to 0.28, we have +0.02 extra energy factor
+                    const albedoForcing = (0.30 - window.simState.albedo) * 15.0;
+
+                    const totalForcing = ghgForcing + albedoForcing;
+
+                    // 2. Update Temperature (slow thermal inertia)
+                    // If forcing > 0, temp rises.
+                    window.simState.temp += totalForcing * 0.05 * timeStep;
+
+                    // 3. Update Ice Coverage based on Temp
+                    // Ice melts if Temp > 14.0.
+                    if (window.simState.temp > 14.0) {
+                        const meltRate = (window.simState.temp - 14.0) * 0.5 * timeStep;
+                        window.simState.iceCoverage = Math.max(0, window.simState.iceCoverage - meltRate);
+                    }
+
+                    // 4. Update Albedo based on new Ice Coverage
+                    window.simState.albedo = calculateAlbedo(window.simState.iceCoverage);
+
+                    // Logging logic
+                    if (window.simState.temp - lastLogTemp > 1.0) {
+                        logMsg(`Temp rose by 1°C. Ice is melting.`);
+                        lastLogTemp = window.simState.temp;
+                    }
+                    if (lastLogIce - window.simState.iceCoverage > 5.0) {
+                        logMsg(`Significant ice loss. Albedo decreased to ${window.simState.albedo.toFixed(2)}. Positive feedback accelerating warming!`);
+                        lastLogIce = window.simState.iceCoverage;
+                    }
+                    if (window.simState.iceCoverage <= 0 && lastLogIce > 0) {
+                        logMsg(`CRITICAL: All sea ice melted. Albedo feedback maximized.`);
+                        lastLogIce = -1; // prevent re-logging
+                    }
+
+                    updateVisuals();
+                }
+            }
+
+            lastTime = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        // Boot
+        window.simState.albedo = calculateAlbedo(INITIAL_ICE);
+        initRays();
+        updateVisuals();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

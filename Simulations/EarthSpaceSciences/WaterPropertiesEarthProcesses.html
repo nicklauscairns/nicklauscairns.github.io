@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Properties & Earth Processes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .tab-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-bottom: 2px solid #60a5fa;
+        }
+        canvas {
+            background-color: #1e293b;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            width: 100%;
+        }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #60a5fa;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-5xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Water Properties & Earth Processes</h1>
+            <p class="text-slate-300 max-w-3xl mx-auto text-sm md:text-base">
+                Investigate how the unique physical and chemical properties of water—its expansion upon freezing, its ability to dissolve minerals, and its capacity to transport materials—shape Earth's surface.
+            </p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap border-b border-slate-700 mb-6 rounded-t-lg overflow-hidden bg-slate-800/50">
+            <button class="tab-btn active flex-1 py-3 px-4 font-bold text-slate-300 hover:bg-slate-700 transition-colors focus:outline-none" onclick="switchTab('frost')">
+                ❄️ Frost Wedging
+            </button>
+            <button class="tab-btn flex-1 py-3 px-4 font-bold text-slate-300 hover:bg-slate-700 transition-colors border-l border-slate-700 focus:outline-none" onclick="switchTab('dissolve')">
+                🧪 Chemical Weathering
+            </button>
+            <button class="tab-btn flex-1 py-3 px-4 font-bold text-slate-300 hover:bg-slate-700 transition-colors border-l border-slate-700 focus:outline-none" onclick="switchTab('stream')">
+                🌊 Stream Transport
+            </button>
+        </div>
+
+        <!-- LAB 1: Frost Wedging -->
+        <div id="tab-frost" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 flex flex-col gap-6 shadow-lg">
+                <div>
+                    <h2 class="text-xl font-bold text-blue-300 mb-2 border-b border-slate-600 pb-2">Frost Wedging Lab</h2>
+                    <p class="text-sm text-slate-400 mb-4">Water is unique because it expands by about 9% when it freezes into ice. Investigate how cyclic freezing and thawing breaks apart solid rock.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1 flex justify-between">
+                            <span>Temperature:</span>
+                            <span id="tempVal" class="text-amber-400">10 °C</span>
+                        </label>
+                        <input type="range" id="tempSlider" min="-20" max="20" value="10" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1 flex justify-between">
+                            <span>Water in Crevice:</span>
+                            <span id="waterVal" class="text-blue-400">50%</span>
+                        </label>
+                        <input type="range" id="waterSlider" min="10" max="100" value="50" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
+                    </div>
+                </div>
+
+                <div class="mt-auto bg-slate-900 p-4 rounded border border-slate-700">
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Internal Rock Strain</div>
+                    <div class="w-full bg-slate-700 h-4 rounded overflow-hidden">
+                        <div id="strainBar" class="bg-red-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                    <div class="text-center text-xs mt-1 text-slate-300 font-mono" id="strainText">0 MPa (Safe)</div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-lg relative">
+                <canvas id="frostCanvas" width="600" height="400"></canvas>
+                <div id="frostAlert" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-900/90 text-white px-6 py-3 rounded-lg font-bold border-2 border-red-500 hidden z-10">
+                    ROCK FRACTURED!
+                    <button class="block mt-2 mx-auto text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded" onclick="resetFrost()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAB 2: Chemical Weathering -->
+        <div id="tab-dissolve" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 flex flex-col gap-6 shadow-lg">
+                <div>
+                    <h2 class="text-xl font-bold text-green-300 mb-2 border-b border-slate-600 pb-2">Chemical Weathering Lab</h2>
+                    <p class="text-sm text-slate-400 mb-4">Water is a universal solvent. When rainwater absorbs CO₂ from the atmosphere or soil, it becomes carbonic acid, which dissolves minerals like calcite (limestone).</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1 flex justify-between">
+                            <span>Water Acidity (pH):</span>
+                            <span id="phVal" class="text-green-400">7.0 (Neutral)</span>
+                        </label>
+                        <input type="range" id="phSlider" min="4.0" max="7.0" step="0.1" value="7.0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1 flex justify-between">
+                            <span>Rock Type:</span>
+                        </label>
+                        <select id="rockType" class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-sm text-white">
+                            <option value="limestone">Limestone (Calcite - highly soluble)</option>
+                            <option value="granite">Granite (Silicates - slightly soluble)</option>
+                            <option value="quartz">Quartz (Highly resistant)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-auto bg-slate-900 p-4 rounded border border-slate-700 text-center">
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mb-2">Mass Remaining</div>
+                    <div class="text-4xl font-mono text-white font-bold" id="massDisplay">100.0 g</div>
+                    <button class="mt-4 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm font-bold transition-colors" onclick="resetChem()">Reset Sample</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-lg">
+                <canvas id="chemCanvas" width="600" height="400"></canvas>
+            </div>
+        </div>
+
+        <!-- LAB 3: Stream Transport -->
+        <div id="tab-stream" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 flex flex-col gap-6 shadow-lg">
+                <div>
+                    <h2 class="text-xl font-bold text-cyan-300 mb-2 border-b border-slate-600 pb-2">Stream Transport Lab</h2>
+                    <p class="text-sm text-slate-400 mb-4">Moving water exerts force. Observe how stream velocity dictates the size of materials that can be eroded, transported, and deposited (Hjulström curve concept).</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1 flex justify-between">
+                            <span>Stream Velocity:</span>
+                            <span id="velVal" class="text-cyan-400">0.0 m/s</span>
+                        </label>
+                        <input type="range" id="velSlider" min="0" max="200" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb">
+                    </div>
+
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-xs">
+                        <div class="font-bold text-slate-300 mb-1">Particle Legend:</div>
+                        <div class="flex items-center gap-2 mb-1"><div class="w-2 h-2 rounded-full bg-yellow-600"></div> Sand (Light)</div>
+                        <div class="flex items-center gap-2 mb-1"><div class="w-3 h-3 rounded-full bg-slate-400"></div> Gravel (Medium)</div>
+                        <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full bg-slate-600"></div> Cobble (Heavy)</div>
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                    <button class="w-full bg-cyan-700 hover:bg-cyan-600 py-2 rounded font-bold transition-colors" onclick="addSediments()">Dump Sediments</button>
+                    <button class="w-full bg-slate-700 hover:bg-slate-600 py-2 rounded font-bold transition-colors mt-2" onclick="resetStream()">Clear Bed</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-lg">
+                <canvas id="streamCanvas" width="600" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Navigation ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
+
+            // Ensure proper canvas sizing/rendering on tab switch
+            if(tabId === 'frost') drawFrost();
+            if(tabId === 'stream') drawStream();
+        }
+
+        // --- GLOBAL LOOP ---
+        let lastTime = 0;
+        function loop(timestamp) {
+            const dt = (timestamp - lastTime) / 1000 || 0;
+            if (dt < 0.1) {
+                // Only update active tab to save processing
+                if (!document.getElementById('tab-frost').classList.contains('hidden')) updateFrost(dt);
+                if (!document.getElementById('tab-dissolve').classList.contains('hidden')) updateChem(dt);
+                if (!document.getElementById('tab-stream').classList.contains('hidden')) updateStream(dt);
+            }
+            lastTime = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        // ==========================================
+        // LAB 1: Frost Wedging
+        // ==========================================
+        const frostCanvas = document.getElementById('frostCanvas');
+        const frostCtx = frostCanvas.getContext('2d');
+        const tempSlider = document.getElementById('tempSlider');
+        const waterSlider = document.getElementById('waterSlider');
+        const strainBar = document.getElementById('strainBar');
+        const frostAlert = document.getElementById('frostAlert');
+
+        let rockFractured = false;
+        let iceExpansion = 0; // 0 to 1
+        let rockStrain = 0; // 0 to 100
+
+        function resetFrost() {
+            rockFractured = false;
+            rockStrain = 0;
+            iceExpansion = 0;
+            tempSlider.value = 10;
+            document.getElementById('tempVal').textContent = '10 °C';
+            frostAlert.classList.add('hidden');
+        }
+
+        function updateFrost(dt) {
+            if (rockFractured) return;
+
+            const temp = parseFloat(tempSlider.value);
+            const waterVol = parseFloat(waterSlider.value) / 100;
+
+            document.getElementById('tempVal').textContent = `${temp} °C`;
+            document.getElementById('tempVal').className = temp <= 0 ? 'text-blue-300 font-bold' : 'text-amber-400 font-bold';
+            document.getElementById('waterVal').textContent = `${(waterVol*100).toFixed(0)}%`;
+
+            // Phase change dynamics
+            if (temp <= 0) {
+                // Freezing: expansion approaches 1.0 (9% volume increase represented visually)
+                if (iceExpansion < 1.0) iceExpansion += dt * 0.5 * Math.abs(temp)/10;
+            } else {
+                // Melting
+                if (iceExpansion > 0) iceExpansion -= dt * 2.0;
+            }
+
+            iceExpansion = Math.max(0, Math.min(1, iceExpansion));
+
+            // Strain Calculation: Force = Volume * Expansion.
+            // If water is low, it expands into empty space (no strain).
+            // If water is high, it pushes against rock walls.
+            let targetStrain = 0;
+            if (waterVol > 0.4) {
+                // The fuller the crevice, the more the expansion pushes walls
+                const stressFactor = (waterVol - 0.4) / 0.6; // 0 to 1
+                targetStrain = iceExpansion * stressFactor * 100;
+            }
+
+            // Smooth strain visually
+            rockStrain += (targetStrain - rockStrain) * 0.1;
+
+            // UI Updates
+            strainBar.style.width = `${rockStrain}%`;
+
+            if (rockStrain > 90) {
+                document.getElementById('strainText').textContent = `${rockStrain.toFixed(1)} MPa (CRITICAL)`;
+                strainBar.className = 'bg-red-500 h-full transition-all duration-300';
+            } else if (rockStrain > 50) {
+                document.getElementById('strainText').textContent = `${rockStrain.toFixed(1)} MPa (High)`;
+                strainBar.className = 'bg-amber-500 h-full transition-all duration-300';
+            } else {
+                document.getElementById('strainText').textContent = `${rockStrain.toFixed(1)} MPa (Safe)`;
+                strainBar.className = 'bg-emerald-500 h-full transition-all duration-300';
+            }
+
+            if (rockStrain > 95 && !rockFractured) {
+                rockFractured = true;
+                frostAlert.classList.remove('hidden');
+            }
+
+            drawFrost();
+
+            // Expose for tests
+            window.frostState = { strain: rockStrain, fractured: rockFractured };
+        }
+
+        function drawFrost() {
+            frostCtx.clearRect(0, 0, frostCanvas.width, frostCanvas.height);
+
+            const cx = frostCanvas.width / 2;
+            const cy = frostCanvas.height / 2;
+            const waterVol = parseFloat(waterSlider.value) / 100;
+
+            // Base crack width expands with strain, huge jump if fractured
+            let crackWidth = 40 + (rockStrain * 0.3);
+            if (rockFractured) crackWidth = 120;
+
+            // Draw Rock Left
+            frostCtx.beginPath();
+            frostCtx.moveTo(0, 0);
+            frostCtx.lineTo(cx - crackWidth/2, 0);
+            frostCtx.lineTo(cx - crackWidth/2 + 20, cy);
+            frostCtx.lineTo(cx - crackWidth/2 - 10, frostCanvas.height);
+            frostCtx.lineTo(0, frostCanvas.height);
+            frostCtx.fillStyle = '#64748b'; // slate-500
+            frostCtx.fill();
+            frostCtx.strokeStyle = '#475569';
+            frostCtx.lineWidth = 4;
+            frostCtx.stroke();
+
+            // Draw Rock Right
+            frostCtx.beginPath();
+            frostCtx.moveTo(frostCanvas.width, 0);
+            frostCtx.lineTo(cx + crackWidth/2, 0);
+            frostCtx.lineTo(cx + crackWidth/2 - 20, cy);
+            frostCtx.lineTo(cx + crackWidth/2 + 10, frostCanvas.height);
+            frostCtx.lineTo(frostCanvas.width, frostCanvas.height);
+            frostCtx.fillStyle = '#64748b';
+            frostCtx.fill();
+            frostCtx.stroke();
+
+            // Draw fracture lines if broken
+            if (rockFractured) {
+                frostCtx.beginPath();
+                frostCtx.moveTo(cx - crackWidth/2 + 20, cy);
+                frostCtx.lineTo(cx - crackWidth - 50, cy + 50);
+                frostCtx.moveTo(cx + crackWidth/2 - 20, cy);
+                frostCtx.lineTo(cx + crackWidth + 60, cy - 20);
+                frostCtx.strokeStyle = '#1e293b';
+                frostCtx.lineWidth = 3;
+                frostCtx.stroke();
+            }
+
+            // Draw Water/Ice in crevice
+            if (!rockFractured) {
+                const fillY = frostCanvas.height - (frostCanvas.height * waterVol);
+
+                frostCtx.beginPath();
+                frostCtx.moveTo(cx - crackWidth/2 + 20 - ((cy - fillY)*0.05), fillY);
+                frostCtx.lineTo(cx + crackWidth/2 - 20 + ((cy - fillY)*0.05), fillY);
+                frostCtx.lineTo(cx + crackWidth/2 + 10, frostCanvas.height);
+                frostCtx.lineTo(cx - crackWidth/2 - 10, frostCanvas.height);
+
+                // Color interpolates from water (blue) to ice (white/cyan) based on expansion
+                const r = Math.floor(59 + (iceExpansion * 150));
+                const g = Math.floor(130 + (iceExpansion * 100));
+                const b = Math.floor(246 + (iceExpansion * 9));
+                frostCtx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.8)`;
+                frostCtx.fill();
+
+                // Ice expansion bulge visualization
+                if (iceExpansion > 0.1) {
+                    frostCtx.beginPath();
+                    frostCtx.ellipse(cx, fillY, crackWidth/2, iceExpansion*10, 0, 0, Math.PI*2);
+                    frostCtx.fillStyle = `rgba(200, 240, 255, 0.9)`;
+                    frostCtx.fill();
+                }
+            }
+        }
+
+
+        // ==========================================
+        // LAB 2: Chemical Weathering
+        // ==========================================
+        const chemCanvas = document.getElementById('chemCanvas');
+        const chemCtx = chemCanvas.getContext('2d');
+        const phSlider = document.getElementById('phSlider');
+        const rockSelect = document.getElementById('rockType');
+
+        let rockMass = 100.0;
+        let particles = [];
+
+        function resetChem() {
+            rockMass = 100.0;
+            particles = [];
+            document.getElementById('massDisplay').textContent = "100.0 g";
+            document.getElementById('massDisplay').style.color = 'white';
+        }
+
+        rockSelect.addEventListener('change', resetChem);
+
+        function updateChem(dt) {
+            if (rockMass <= 0) return;
+
+            const ph = parseFloat(phSlider.value);
+            document.getElementById('phVal').textContent = ph === 7.0 ? "7.0 (Neutral)" : `${ph.toFixed(1)} (Acidic)`;
+
+            // Acidity factor: 7 = 0 rate, 4 = High rate
+            const acidity = (7.0 - ph) / 3.0; // 0 to 1
+
+            // Material factor
+            let solubility = 0;
+            if (rockSelect.value === 'limestone') solubility = 1.0;
+            else if (rockSelect.value === 'granite') solubility = 0.1;
+            else if (rockSelect.value === 'quartz') solubility = 0.001;
+
+            // Dissolution rate
+            const rate = acidity * solubility * 10.0; // max 10g per second
+
+            if (rate > 0) {
+                rockMass = Math.max(0, rockMass - (rate * dt));
+
+                // Spawn dissolved ion particles for visual effect
+                if (Math.random() < rate * dt * 2) {
+                    particles.push({
+                        x: chemCanvas.width/2 + (Math.random()-0.5)*100,
+                        y: chemCanvas.height/2 + (Math.random()-0.5)*100,
+                        vx: (Math.random()-0.5)*20,
+                        vy: -20 - Math.random()*20,
+                        alpha: 1.0
+                    });
+                }
+            }
+
+            document.getElementById('massDisplay').textContent = rockMass.toFixed(1) + " g";
+            if (rockMass < 10) document.getElementById('massDisplay').style.color = '#ef4444';
+            else if (rockMass < 50) document.getElementById('massDisplay').style.color = '#fbbf24';
+            else document.getElementById('massDisplay').style.color = 'white';
+
+            // Update particles
+            particles.forEach(p => {
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.alpha -= dt * 0.5;
+            });
+            particles = particles.filter(p => p.alpha > 0);
+
+            drawChem();
+
+            // Expose for tests
+            window.chemState = { mass: rockMass };
+        }
+
+        function drawChem() {
+            chemCtx.clearRect(0, 0, chemCanvas.width, chemCanvas.height);
+
+            // Draw Water Background
+            const ph = parseFloat(phSlider.value);
+            // Acidic = slightly greenish/yellow tint, Neutral = pure blue
+            const rTint = Math.floor((7.0 - ph) * 20);
+            const gTint = Math.floor(150 + (7.0 - ph) * 30);
+            chemCtx.fillStyle = `rgba(${rTint}, ${gTint}, 255, 0.3)`;
+            chemCtx.fillRect(0, 0, chemCanvas.width, chemCanvas.height);
+
+            const cx = chemCanvas.width / 2;
+            const cy = chemCanvas.height / 2 + 50;
+
+            // Draw Rock
+            if (rockMass > 0) {
+                const radius = Math.sqrt(rockMass) * 8; // Scale visually
+
+                chemCtx.beginPath();
+                // Make it look rocky, not perfectly circular
+                for(let i=0; i<Math.PI*2; i+=0.5) {
+                    // Seeded random based on angle so it doesn't jitter
+                    const noise = Math.sin(i*5)*5;
+                    const x = cx + (radius + noise) * Math.cos(i);
+                    const y = cy + (radius + noise) * Math.sin(i);
+                    if(i===0) chemCtx.moveTo(x,y);
+                    else chemCtx.lineTo(x,y);
+                }
+                chemCtx.closePath();
+
+                if (rockSelect.value === 'limestone') chemCtx.fillStyle = '#cbd5e1';
+                else if (rockSelect.value === 'granite') chemCtx.fillStyle = '#94a3b8';
+                else chemCtx.fillStyle = '#e2e8f0';
+
+                chemCtx.fill();
+                chemCtx.strokeStyle = '#475569';
+                chemCtx.lineWidth = 2;
+                chemCtx.stroke();
+            }
+
+            // Draw dissolved particles
+            particles.forEach(p => {
+                chemCtx.beginPath();
+                chemCtx.arc(p.x, p.y, 3, 0, Math.PI*2);
+                chemCtx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+                chemCtx.fill();
+            });
+        }
+
+
+        // ==========================================
+        // LAB 3: Stream Transport
+        // ==========================================
+        const streamCanvas = document.getElementById('streamCanvas');
+        const streamCtx = streamCanvas.getContext('2d');
+        const velSlider = document.getElementById('velSlider');
+
+        let sediments = []; // {x, y, type, radius, mass, resting}
+
+        function resetStream() {
+            sediments = [];
+        }
+
+        function addSediments() {
+            for(let i=0; i<30; i++) {
+                // Types: 0=sand, 1=gravel, 2=cobble
+                const r = Math.random();
+                let type = 0;
+                if (r > 0.6) type = 1;
+                if (r > 0.9) type = 2;
+
+                const props = [
+                    { r: 2, m: 1, c: '#ca8a04' }, // Sand
+                    { r: 5, m: 10, c: '#94a3b8' }, // Gravel
+                    { r: 12, m: 100, c: '#475569' } // Cobble
+                ];
+
+                sediments.push({
+                    x: Math.random() * 100, // drop on left side
+                    y: streamCanvas.height - 20 - Math.random()*50,
+                    type: type,
+                    r: props[type].r,
+                    m: props[type].m,
+                    c: props[type].c,
+                    resting: false
+                });
+            }
+        }
+
+        function updateStream(dt) {
+            const vel = parseFloat(velSlider.value);
+            document.getElementById('velVal').textContent = (vel/100).toFixed(1) + " m/s";
+
+            sediments.forEach(s => {
+                // Physics: Stream velocity applies horizontal force.
+                // Heavy items need more velocity to move (Hjulström).
+
+                // Force = Velocity. Acceleration = F/m.
+                // vel goes 0 to 200. Sand m=1, Gravel m=10, Cobble m=100.
+                const force = vel * 1.0;
+                // If velocity < threshold for mass, it shouldn't move.
+                const friction = s.m * 0.8;
+
+                let netForce = force - friction;
+
+                if (netForce > 0) {
+                    s.x += (netForce / s.m) * dt * 50;
+                    s.resting = false;
+                } else {
+                    s.resting = true;
+                }
+
+                // Gravity / settling
+                if (s.y < streamCanvas.height - s.r - 5) {
+                    s.y += 50 * dt;
+                }
+
+                // Wrap around for continuous flow visualization
+                if (s.x > streamCanvas.width + 20) {
+                    s.x = -20;
+                }
+            });
+
+            drawStream();
+
+            // Expose for tests
+            window.streamState = {
+                velocity: vel,
+                particlesMoving: sediments.filter(s => !s.resting).length,
+                sandMoving: sediments.filter(s => !s.resting && s.type === 0).length,
+                cobbleMoving: sediments.filter(s => !s.resting && s.type === 2).length
+            };
+        }
+
+        function drawStream() {
+            streamCtx.clearRect(0, 0, streamCanvas.width, streamCanvas.height);
+
+            // Draw Stream Bed
+            streamCtx.fillStyle = '#451a03'; // dark brown earth
+            streamCtx.fillRect(0, streamCanvas.height - 10, streamCanvas.width, 10);
+
+            // Draw Water
+            const vel = parseFloat(velSlider.value);
+            // Water visually moves faster if vel is high
+            const timeOffset = (Date.now() / 1000) * vel;
+
+            streamCtx.beginPath();
+            streamCtx.moveTo(0, streamCanvas.height - 10);
+
+            // wavy top surface
+            for(let x=0; x<=streamCanvas.width; x+=20) {
+                const y = streamCanvas.height - 80 + Math.sin(x*0.05 + timeOffset)*5;
+                streamCtx.lineTo(x, y);
+            }
+
+            streamCtx.lineTo(streamCanvas.width, streamCanvas.height - 10);
+            streamCtx.fillStyle = 'rgba(14, 165, 233, 0.4)'; // cyan-500 transparent
+            streamCtx.fill();
+
+            // Draw flow lines if moving
+            if (vel > 0) {
+                streamCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+                streamCtx.lineWidth = 2;
+                for(let i=0; i<5; i++) {
+                    const lineX = (timeOffset*50 + i*150) % streamCanvas.width;
+                    const lineY = streamCanvas.height - 40 - i*10;
+                    streamCtx.beginPath();
+                    streamCtx.moveTo(lineX, lineY);
+                    streamCtx.lineTo(lineX + 40, lineY);
+                    streamCtx.stroke();
+                }
+            }
+
+            // Draw Sediments
+            // Sort by type so big ones render on top or behind nicely
+            sediments.sort((a,b) => b.type - a.type).forEach(s => {
+                streamCtx.beginPath();
+                streamCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+                streamCtx.fillStyle = s.c;
+                streamCtx.fill();
+                streamCtx.strokeStyle = 'rgba(0,0,0,0.5)';
+                streamCtx.lineWidth = 1;
+                streamCtx.stroke();
+            });
+        }
+
+        // Start loop
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

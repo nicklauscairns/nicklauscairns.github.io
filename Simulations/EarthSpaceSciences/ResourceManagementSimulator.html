@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainable Resource Management Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .policy-btn {
+            transition: all 0.2s;
+            border-width: 2px;
+            border-color: transparent;
+        }
+        .policy-btn.active {
+            border-color: #38bdf8;
+            background-color: #1e293b;
+        }
+        .stat-bar { transition: width 0.5s ease; }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Sustainable Resource Management Simulator</h1>
+            <p class="text-slate-300 max-w-4xl mx-auto text-sm md:text-base">
+                Evaluate cost-benefit ratios of energy/resource extraction (HS-ESS3-2) and model how human management impacts population sustainability and biodiversity (HS-ESS3-3).
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Panel: Policies -->
+            <div class="lg:col-span-4 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl flex flex-col gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-emerald-300 mb-2 border-b border-slate-600 pb-2">Policy Decisions</h2>
+                    <p class="text-xs text-slate-400 mb-4">Select energy and land management strategies to support your growing population.</p>
+                </div>
+
+                <div class="space-y-4 flex-grow">
+                    <!-- Energy Policy -->
+                    <div>
+                        <h3 class="text-sm font-bold text-amber-400 mb-2 uppercase tracking-wider">Energy Generation</h3>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button id="btn-coal" class="policy-btn active w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" onclick="setPolicy('energy', 'coal')">
+                                <div class="font-bold">Coal Power</div>
+                                <div class="text-xs text-slate-400 mt-1">High energy, low cost. High pollution.</div>
+                            </button>
+                            <button id="btn-gas" class="policy-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" onclick="setPolicy('energy', 'gas')">
+                                <div class="font-bold">Natural Gas</div>
+                                <div class="text-xs text-slate-400 mt-1">Medium energy, med cost. Mod pollution.</div>
+                            </button>
+                            <button id="btn-renew" class="policy-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" onclick="setPolicy('energy', 'renew')">
+                                <div class="font-bold">Renewable (Solar/Wind)</div>
+                                <div class="text-xs text-slate-400 mt-1">Low energy initially, high cost. Zero pollution.</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Land/Ag Policy -->
+                    <div>
+                        <h3 class="text-sm font-bold text-green-400 mb-2 uppercase tracking-wider">Land Management</h3>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button id="btn-intensive" class="policy-btn active w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" onclick="setPolicy('land', 'intensive')">
+                                <div class="font-bold">Intensive Agriculture</div>
+                                <div class="text-xs text-slate-400 mt-1">High food yield. Destroys habitat (low biodiversity).</div>
+                            </button>
+                            <button id="btn-balanced" class="policy-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" onclick="setPolicy('land', 'balanced')">
+                                <div class="font-bold">Balanced Zoning</div>
+                                <div class="text-xs text-slate-400 mt-1">Medium food. Preserves some habitat.</div>
+                            </button>
+                            <button id="btn-conserve" class="policy-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" onclick="setPolicy('land', 'conserve')">
+                                <div class="font-bold">Strict Conservation</div>
+                                <div class="text-xs text-slate-400 mt-1">Low food yield. High biodiversity protection.</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel: State & Graph -->
+            <div class="lg:col-span-8 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-200">Simulation Dashboard</h2>
+                    <div class="flex gap-2">
+                        <span class="font-mono text-slate-300 bg-slate-900 px-3 py-1 rounded border border-slate-700">Year: <span id="yearDisplay" class="font-bold text-white">0</span></span>
+                        <button id="playBtn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-1 rounded font-bold transition-colors">Start Sim</button>
+                        <button id="resetBtn" class="bg-red-600 hover:bg-red-500 px-4 py-1 rounded font-bold transition-colors">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Metrics -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold mb-1">Population (Millions)</div>
+                        <div class="text-2xl font-mono text-white" id="popVal">10.0</div>
+                        <div class="w-full bg-slate-800 h-1.5 mt-2 rounded overflow-hidden">
+                            <div id="popBar" class="bg-blue-400 h-full stat-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold mb-1">Budget Reserves</div>
+                        <div class="text-2xl font-mono text-white" id="fundVal">$100B</div>
+                        <div class="w-full bg-slate-800 h-1.5 mt-2 rounded overflow-hidden">
+                            <div id="fundBar" class="bg-amber-400 h-full stat-bar" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold mb-1">Biodiversity Index</div>
+                        <div class="text-2xl font-mono text-white" id="bioVal">100%</div>
+                        <div class="w-full bg-slate-800 h-1.5 mt-2 rounded overflow-hidden">
+                            <div id="bioBar" class="bg-green-400 h-full stat-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-xs text-slate-400 uppercase font-bold mb-1">Pollution Level</div>
+                        <div class="text-2xl font-mono text-white" id="polVal">0%</div>
+                        <div class="w-full bg-slate-800 h-1.5 mt-2 rounded overflow-hidden">
+                            <div id="polBar" class="bg-red-500 h-full stat-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Warnings -->
+                <div id="warningPanel" class="mb-4 text-sm font-bold text-red-400 hidden bg-red-900/30 p-2 rounded border border-red-800">
+                    Warning: Population is starving due to insufficient food production!
+                </div>
+
+                <!-- Chart -->
+                <div class="flex-grow min-h-[300px] bg-slate-900 p-2 rounded border border-slate-700 relative">
+                    <canvas id="simChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State Definition ---
+        const INITIAL_STATE = {
+            year: 0,
+            isRunning: false,
+
+            // Core Metrics
+            population: 10.0, // Millions
+            funds: 100.0, // Billions $
+            biodiversity: 100.0, // %
+            pollution: 0.0, // %
+
+            // Policies
+            energyPolicy: 'coal', // coal, gas, renew
+            landPolicy: 'intensive', // intensive, balanced, conserve
+
+            // Deficits
+            starving: false,
+            powerOutage: false,
+            bankrupt: false
+        };
+
+        let state = JSON.parse(JSON.stringify(INITIAL_STATE));
+        window.simState = state; // for testing
+
+        // DOM Elements
+        const btnPlay = document.getElementById('playBtn');
+        const btnReset = document.getElementById('resetBtn');
+        const warningPanel = document.getElementById('warningPanel');
+
+        // --- Policy Configuration Matrix ---
+        // Cost/Benefit Matrix (Per Year impacts)
+        const policies = {
+            energy: {
+                coal: { cost: 2, energyOutput: 15, pollutionRate: 2.0, bioDamage: 0.5 },
+                gas: { cost: 4, energyOutput: 12, pollutionRate: 0.8, bioDamage: 0.2 },
+                renew: { cost: 10, energyOutput: 8, pollutionRate: -0.5, bioDamage: 0.0 } // -pollution = cleanup over time
+            },
+            land: {
+                intensive: { cost: 1, foodOutput: 15, bioDamage: 1.5, polDamage: 0.5 },
+                balanced: { cost: 3, foodOutput: 10, bioDamage: 0.2, polDamage: 0.1 },
+                conserve: { cost: 5, foodOutput: 6, bioDamage: -0.5, polDamage: 0.0 } // -bioDamage = habitat recovery
+            }
+        };
+
+        // --- UI Logic ---
+        window.setPolicy = function(category, type) {
+            state[category + 'Policy'] = type;
+
+            // Update active button styling
+            const prefix = category === 'energy' ? 'btn-' : 'btn-';
+            ['coal', 'gas', 'renew', 'intensive', 'balanced', 'conserve'].forEach(id => {
+                const el = document.getElementById(`btn-${id}`);
+                if (el && (
+                    (category === 'energy' && ['coal', 'gas', 'renew'].includes(id)) ||
+                    (category === 'land' && ['intensive', 'balanced', 'conserve'].includes(id))
+                )) {
+                    el.classList.remove('active');
+                }
+            });
+            document.getElementById(`btn-${type}`).classList.add('active');
+        };
+
+        btnPlay.addEventListener('click', () => {
+            state.isRunning = !state.isRunning;
+            if (state.isRunning) {
+                btnPlay.textContent = 'Pause Sim';
+                btnPlay.className = 'bg-amber-600 hover:bg-amber-500 px-4 py-1 rounded font-bold transition-colors';
+            } else {
+                btnPlay.textContent = 'Resume Sim';
+                btnPlay.className = 'bg-emerald-600 hover:bg-emerald-500 px-4 py-1 rounded font-bold transition-colors';
+            }
+        });
+
+        btnReset.addEventListener('click', () => {
+            state = JSON.parse(JSON.stringify(INITIAL_STATE));
+            window.simState = state;
+
+            setPolicy('energy', 'coal');
+            setPolicy('land', 'intensive');
+
+            btnPlay.textContent = 'Start Sim';
+            btnPlay.className = 'bg-emerald-600 hover:bg-emerald-500 px-4 py-1 rounded font-bold transition-colors';
+            warningPanel.classList.add('hidden');
+
+            chart.data.labels = [];
+            chart.data.datasets.forEach(ds => ds.data = []);
+            chart.update();
+            updateUI();
+        });
+
+        // --- Chart Setup ---
+        const ctx = document.getElementById('simChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'Population (M)', data: [], borderColor: '#60a5fa', tension: 0.3, yAxisID: 'y' },
+                    { label: 'Biodiversity (%)', data: [], borderColor: '#4ade80', tension: 0.3, yAxisID: 'y1' },
+                    { label: 'Pollution (%)', data: [], borderColor: '#ef4444', borderDash: [5,5], tension: 0.3, yAxisID: 'y1' }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { type: 'linear', position: 'left', title: { display: true, text: 'Population (M)', color: '#60a5fa' }, ticks: { color: '#60a5fa' } },
+                    y1: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: true, text: 'Percentage (%)', color: '#94a3b8' }, ticks: { color: '#94a3b8' }, grid: { drawOnChartArea: false } }
+                }
+            }
+        });
+
+        // --- Simulation Math ---
+        let lastTime = 0;
+        let chartTimer = 0;
+
+        function updatePhysics(dt) {
+            // dt is fraction of a second. Let's make 1 real sec = 1 sim year
+            const yearStep = dt;
+            state.year += yearStep;
+
+            // Get Current Policy Impacts
+            const ep = policies.energy[state.energyPolicy];
+            const lp = policies.land[state.landPolicy];
+
+            // 1. Calculate Demands based on Population
+            // Base demand: 1 unit per million people
+            const energyDemand = state.population * 1.0;
+            const foodDemand = state.population * 1.0;
+
+            // 2. Apply Costs
+            const totalCost = (ep.cost + lp.cost) * yearStep;
+            // Tax revenue scales with population, but drops if pollution is too high (sick workforce)
+            const economyHealth = Math.max(0.1, 1.0 - (state.pollution / 200));
+            const revenue = state.population * 0.8 * economyHealth * yearStep;
+
+            state.funds += (revenue - totalCost);
+            if (state.funds < 0) state.bankrupt = true;
+            else state.bankrupt = false;
+
+            // 3. Check Supply vs Demand
+            // Output does not automatically scale to demand. It is flat based on policy.
+            // If demand > output, there is a deficit.
+            state.powerOutage = energyDemand > ep.energyOutput;
+            state.starving = foodDemand > lp.foodOutput;
+
+            // 4. Update Environmental Impacts
+            state.pollution += (ep.pollutionRate + lp.polDamage) * yearStep;
+            state.pollution = Math.max(0, Math.min(100, state.pollution));
+
+            state.biodiversity -= (ep.bioDamage + lp.bioDamage) * yearStep;
+            // High pollution also passively damages biodiversity
+            if (state.pollution > 50) state.biodiversity -= (state.pollution - 50) * 0.05 * yearStep;
+            state.biodiversity = Math.max(0, Math.min(100, state.biodiversity));
+
+            // 5. Update Population Dynamics
+            // Base growth rate
+            let growthRate = 0.05; // 5% per year
+
+            if (state.starving) growthRate -= 0.10; // starvation kills
+            if (state.powerOutage) growthRate -= 0.02; // lack of power slows growth
+            if (state.pollution > 70) growthRate -= 0.05; // severe pollution kills
+            if (state.biodiversity < 10) growthRate -= 0.05; // ecological collapse kills
+            if (state.bankrupt) growthRate -= 0.02; // poor services
+
+            state.population += state.population * growthRate * yearStep;
+            if (state.population < 0) state.population = 0;
+
+            // Cap renewables scaling over time (simulating tech improvement)
+            if (state.energyPolicy === 'renew') {
+                policies.energy.renew.energyOutput += 0.5 * yearStep; // gradually becomes better
+                policies.energy.renew.cost -= 0.1 * yearStep; // gradually becomes cheaper
+                if (policies.energy.renew.cost < 2) policies.energy.renew.cost = 2;
+            }
+
+            updateUI();
+
+            // Log data
+            chartTimer += dt;
+            if (chartTimer >= 1.0) {
+                chartTimer = 0;
+                chart.data.labels.push(Math.floor(state.year));
+                chart.data.datasets[0].data.push(state.population);
+                chart.data.datasets[1].data.push(state.biodiversity);
+                chart.data.datasets[2].data.push(state.pollution);
+
+                if (chart.data.labels.length > 50) {
+                    chart.data.labels.shift();
+                    chart.data.datasets.forEach(ds => ds.data.shift());
+                }
+                chart.update();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('yearDisplay').textContent = Math.floor(state.year);
+
+            document.getElementById('popVal').textContent = state.population.toFixed(1);
+            document.getElementById('popBar').style.width = Math.min(100, (state.population / 50) * 100) + '%';
+
+            document.getElementById('fundVal').textContent = '$' + state.funds.toFixed(0) + 'B';
+            document.getElementById('fundBar').style.width = Math.min(100, Math.max(0, state.funds / 2)) + '%';
+            document.getElementById('fundBar').className = state.funds < 0 ? 'bg-red-500 h-full stat-bar' : 'bg-amber-400 h-full stat-bar';
+
+            document.getElementById('bioVal').textContent = state.biodiversity.toFixed(1) + '%';
+            document.getElementById('bioBar').style.width = state.biodiversity + '%';
+            document.getElementById('bioBar').className = state.biodiversity < 30 ? 'bg-red-500 h-full stat-bar' : 'bg-green-400 h-full stat-bar';
+
+            document.getElementById('polVal').textContent = state.pollution.toFixed(1) + '%';
+            document.getElementById('polBar').style.width = state.pollution + '%';
+
+            // Warnings
+            let warnings = [];
+            if (state.starving) warnings.push("Population is starving! Insufficient food production.");
+            if (state.powerOutage) warnings.push("Rolling blackouts! Energy demand exceeds supply.");
+            if (state.bankrupt) warnings.push("City is bankrupt! Unable to afford current infrastructure.");
+            if (state.biodiversity < 10) warnings.push("Ecological collapse imminent! Biosphere failing.");
+            if (state.pollution > 80) warnings.push("Toxic environment! Pollution is causing severe health crises.");
+
+            if (warnings.length > 0) {
+                warningPanel.classList.remove('hidden');
+                warningPanel.innerHTML = warnings.join('<br>');
+            } else {
+                warningPanel.classList.add('hidden');
+            }
+        }
+
+        function loop(timestamp) {
+            if (state.isRunning) {
+                const dt = (timestamp - lastTime) / 1000 || 0;
+                if (dt < 0.2) { // limit delta for stability
+                    updatePhysics(dt);
+                }
+            }
+            lastTime = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        // Boot
+        updateUI();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
