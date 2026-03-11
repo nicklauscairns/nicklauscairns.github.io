@@ -95,6 +95,8 @@ Apply concepts of statistics and probability to explain the variation and distri
 ### HS-LS4-1
 Communicate scientific information that common ancestry and biological evolution are supported by multiple lines of empirical evidence.
 
+- [Evidence of Common Ancestry Explorer](CommonAncestryEvidence.html) - An interactive explorer to compare DNA sequences, amino acid sequences, and anatomical homologies to find empirical evidence of common ancestry.
+
 ### HS-LS4-2
 Construct an explanation based on evidence that the process of evolution primarily results from four factors: (1) the potential for a species to increase in number, (2) the heritable genetic variation of individuals in a species due to mutation and sexual reproduction, (3) competition for limited resources, and (4) the proliferation of those organisms that are better able to survive and reproduce in the environment.
 

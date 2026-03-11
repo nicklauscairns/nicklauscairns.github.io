@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence of Common Ancestry Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .match { color: #15803d; font-weight: bold; background-color: #dcfce7; } /* green-700 on green-100 */
+        .mismatch { color: #b91c1c; background-color: #fee2e2; } /* red-700 on red-100 */
+        .seq-box { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.1em; word-wrap: break-word; }
+
+        .tab-btn {
+            @apply px-4 py-2 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200;
+        }
+        .tab-btn.active {
+            @apply border-blue-500 text-blue-600;
+        }
+        .tab-btn:not(.active) {
+            @apply border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-blue-800 text-white p-4 shadow-md">
+        <h1 class="text-2xl font-bold">Evidence of Common Ancestry</h1>
+        <p class="text-sm mt-1">NGSS HS-LS4-1: Communicate scientific information that common ancestry and biological evolution are supported by multiple lines of empirical evidence.</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-7xl mx-auto w-full">
+
+        <!-- Sidebar Controls & Communication Area -->
+        <aside class="w-full lg:w-1/3 flex flex-col gap-4 overflow-y-auto">
+
+            <section class="bg-white rounded-lg shadow-md p-4">
+                <h2 class="text-lg font-semibold border-b pb-2 mb-4 text-blue-900">1. Select Species to Compare</h2>
+
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Species A (Reference)</label>
+                        <select id="species-a-select" class="w-full border-gray-300 rounded shadow-sm p-2 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 border">
+                            <!-- Options populated via JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Species B</label>
+                        <select id="species-b-select" class="w-full border-gray-300 rounded shadow-sm p-2 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 border">
+                            <!-- Options populated via JS -->
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col">
+                <h2 class="text-lg font-semibold border-b pb-2 mb-4 text-blue-900">Communication & Analysis</h2>
+                <p class="text-xs text-gray-600 mb-3 leading-relaxed">
+                    <strong>SEP: Communicating Information.</strong> Based on the patterns of similarity you observe in the data (DNA, Amino Acids, Anatomy), construct a paragraph explaining how this empirical evidence supports the theory of common ancestry.
+                </p>
+                <textarea id="analysis-log" class="flex-1 w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="E.g., The high degree of sequence similarity between Human and Chimpanzee Cytochrome C (98%) indicates a recent common ancestor..."></textarea>
+            </section>
+
+        </aside>
+
+        <!-- Evidence Display Area -->
+        <section class="w-full lg:w-2/3 bg-white rounded-lg shadow-md p-0 flex flex-col overflow-hidden">
+
+            <!-- Tabs -->
+            <nav class="flex border-b border-gray-200 bg-gray-50 px-4 pt-4" aria-label="Tabs">
+                <button class="tab-btn active" data-tab="dna">DNA Sequence (CYTB)</button>
+                <button class="tab-btn" data-tab="amino">Amino Acid (Cytochrome C)</button>
+                <button class="tab-btn" data-tab="anatomy">Anatomical Homology</button>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="p-6 overflow-y-auto flex-1 bg-white relative">
+
+                <!-- Summary Stats -->
+                <div id="similarity-stats" class="mb-6 p-4 bg-blue-50 rounded border border-blue-100 hidden">
+                    <h3 class="text-blue-800 font-bold text-lg flex items-center justify-between">
+                        <span>Similarity Score</span>
+                        <span id="score-percent" class="text-2xl">--%</span>
+                    </h3>
+                    <p id="score-desc" class="text-sm text-blue-600 mt-1">Comparing <span id="lbl-sp-a" class="font-semibold"></span> to <span id="lbl-sp-b" class="font-semibold"></span></p>
+                </div>
+
+                <!-- DNA Tab -->
+                <div id="tab-dna" class="tab-content block">
+                    <h3 class="font-semibold text-lg mb-2">Cytochrome b Gene Fragment (DNA)</h3>
+                    <p class="text-sm text-gray-600 mb-4">DNA sequences encode genetic information. Overlapping sequences between species indicate descent from a common ancestor. <br><span class="match text-xs px-1">Green</span> = Match, <span class="mismatch text-xs px-1">Red</span> = Mismatch/Mutation.</p>
+
+                    <div class="space-y-4">
+                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
+                            <h4 id="dna-name-a" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species A</h4>
+                            <div id="dna-seq-a" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
+                        </div>
+                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
+                            <h4 id="dna-name-b" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species B</h4>
+                            <div id="dna-seq-b" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amino Tab -->
+                <div id="tab-amino" class="tab-content hidden">
+                    <h3 class="font-semibold text-lg mb-2">Cytochrome c Protein Fragment (Amino Acids)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Amino acid sequences form proteins. Because the genetic code is nearly universal, similarities in protein structure provide strong evidence for evolutionary relationships.</p>
+
+                    <div class="space-y-4">
+                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
+                            <h4 id="aa-name-a" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species A</h4>
+                            <div id="aa-seq-a" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
+                        </div>
+                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
+                            <h4 id="aa-name-b" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species B</h4>
+                            <div id="aa-seq-b" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anatomy Tab -->
+                <div id="tab-anatomy" class="tab-content hidden">
+                    <h3 class="font-semibold text-lg mb-2">Homologous Structures (Forelimbs)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Anatomical evidence shows that different species share similar bone structures, even if they have adapted for different functions (e.g., grasping, flying, swimming), indicating a shared mammalian ancestor.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div class="text-center p-4 border rounded bg-gray-50 h-64 flex flex-col justify-center items-center">
+                            <h4 id="anat-name-a" class="font-bold text-gray-700 mb-2">Species A</h4>
+                            <!-- Placeholder for SVG drawing -->
+                            <div id="anat-svg-a" class="w-full h-40 flex justify-center items-center italic text-gray-400">SVG Rendering</div>
+                        </div>
+                        <div class="text-center p-4 border rounded bg-gray-50 h-64 flex flex-col justify-center items-center">
+                            <h4 id="anat-name-b" class="font-bold text-gray-700 mb-2">Species B</h4>
+                            <!-- Placeholder for SVG drawing -->
+                            <div id="anat-svg-b" class="w-full h-40 flex justify-center items-center italic text-gray-400">SVG Rendering</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Interactive Data and Logic -->
+    <script>
+        // Data Structure aligned with LS4.A: Evidence of Common Ancestry
+        const speciesData = {
+            "human": {
+                name: "Human (Homo sapiens)",
+                dna: "ATGACCAACATCCGAAAAACCCACCCACTACTAAAAACAATCAACAACTCCCTAATCGACCTCCCA",
+                amino: "GDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLME",
+                anatomy: "human"
+            },
+            "chimpanzee": {
+                name: "Chimpanzee (Pan troglodytes)",
+                dna: "ATGACCAACATCCGAAAAACCCACCCACTAATAAAAACAATCAACAACTCCCTAATCGACCTCCTA",
+                amino: "GDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLME", // Identical AA despite DNA changes
+                anatomy: "chimpanzee"
+            },
+            "mouse": {
+                name: "House Mouse (Mus musculus)",
+                dna: "ATGACCAACATCCGAAAAACACACCCACTAATAAAAACAATCAACAACTCCCTAATTGACCTCCCA", // slightly more different
+                amino: "GDVEKGKKIFVQKCAQCHTVEKGGKHKTGPNLHGLFGRKTGQAAGFSYTDANKNKGITWGEDTLME",
+                anatomy: "mouse"
+            },
+            "chicken": {
+                name: "Chicken (Gallus gallus)",
+                dna: "ATGACCAACATCCGAAAAACTCACCCACTACTAAAAACAATCAACAACTCTCTAATCGACCTCCCA",
+                amino: "GDIEKGKKIFVQKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAEGFSYTDANKNKGITWGEDTLME",
+                anatomy: "chicken"
+            }
+        };
+
+        // DOM Elements
+        const selectA = document.getElementById('species-a-select');
+        const selectB = document.getElementById('species-b-select');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Populate Selects
+        function populateSelects() {
+            Object.keys(speciesData).forEach(key => {
+                let optA = document.createElement('option');
+                optA.value = key;
+                optA.textContent = speciesData[key].name;
+                selectA.appendChild(optA);
+
+                let optB = document.createElement('option');
+                optB.value = key;
+                optB.textContent = speciesData[key].name;
+                selectB.appendChild(optB);
+            });
+            // Default selection
+            selectA.value = "human";
+            selectB.value = "chimpanzee";
+        }
+
+        // Tab Switching Logic
+        let activeTab = "dna";
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Update buttons
+                tabBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.classList.add('text-gray-500', 'border-transparent');
+                });
+                btn.classList.add('active');
+                btn.classList.remove('text-gray-500', 'border-transparent');
+
+                // Update contents
+                activeTab = btn.getAttribute('data-tab');
+                tabContents.forEach(content => {
+                    if(content.id === `tab-${activeTab}`) {
+                        content.classList.remove('hidden');
+                        content.classList.add('block');
+                    } else {
+                        content.classList.add('hidden');
+                        content.classList.remove('block');
+                    }
+                });
+
+                // Re-render comparison based on new tab
+                compareSpecies();
+            });
+        });
+
+        // SVG Drawing Logic for Anatomy
+        function drawAnatomy(elementId, speciesType) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = ''; // clear
+
+            let svgNS = "http://www.w3.org/2000/svg";
+            let svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("viewBox", "0 0 100 100");
+            svg.classList.add("w-full", "h-full");
+
+            // Define base homologous colors
+            // Humerus = Blue, Radius = Red, Ulna = Green, Carpals/Phalanges = Yellow/Orange
+            const colors = { humerus: '#3b82f6', radius: '#ef4444', ulna: '#22c55e', digits: '#f59e0b' };
+
+            let group = document.createElementNS(svgNS, "g");
+            group.setAttribute("stroke", "#333");
+            group.setAttribute("stroke-width", "2");
+            group.setAttribute("stroke-linejoin", "round");
+            group.setAttribute("stroke-linecap", "round");
+
+            if (speciesType === 'human' || speciesType === 'chimpanzee') {
+                // Generalized Primate Arm
+                group.innerHTML = `
+                    <line x1="50" y1="10" x2="50" y2="40" stroke="${colors.humerus}" stroke-width="6"/> <!-- Humerus -->
+                    <line x1="45" y1="40" x2="40" y2="70" stroke="${colors.radius}" stroke-width="4"/> <!-- Radius -->
+                    <line x1="55" y1="40" x2="60" y2="70" stroke="${colors.ulna}" stroke-width="4"/> <!-- Ulna -->
+                    <circle cx="50" cy="75" r="5" fill="${colors.digits}" stroke="none"/> <!-- Carpals -->
+                    <line x1="50" y1="75" x2="35" y2="90" stroke="${colors.digits}" stroke-width="2"/> <!-- Digits -->
+                    <line x1="50" y1="75" x2="45" y2="95" stroke="${colors.digits}" stroke-width="2"/>
+                    <line x1="50" y1="75" x2="55" y2="95" stroke="${colors.digits}" stroke-width="2"/>
+                    <line x1="50" y1="75" x2="65" y2="90" stroke="${colors.digits}" stroke-width="2"/>
+                `;
+            } else if (speciesType === 'mouse') {
+                // Quadruped Leg (shorter, robust)
+                group.innerHTML = `
+                    <line x1="50" y1="20" x2="50" y2="50" stroke="${colors.humerus}" stroke-width="5"/> <!-- Humerus -->
+                    <line x1="46" y1="50" x2="46" y2="80" stroke="${colors.radius}" stroke-width="3"/> <!-- Radius -->
+                    <line x1="54" y1="50" x2="54" y2="80" stroke="${colors.ulna}" stroke-width="3"/> <!-- Ulna -->
+                    <ellipse cx="50" cy="85" rx="8" ry="3" fill="${colors.digits}" stroke="none"/> <!-- Carpals -->
+                    <line x1="45" y1="85" x2="40" y2="95" stroke="${colors.digits}" stroke-width="2"/> <!-- Digits -->
+                    <line x1="50" y1="85" x2="50" y2="95" stroke="${colors.digits}" stroke-width="2"/>
+                    <line x1="55" y1="85" x2="60" y2="95" stroke="${colors.digits}" stroke-width="2"/>
+                `;
+            } else if (speciesType === 'chicken') {
+                // Wing (fused digits, long radius/ulna)
+                group.innerHTML = `
+                    <line x1="50" y1="10" x2="70" y2="35" stroke="${colors.humerus}" stroke-width="6"/> <!-- Humerus -->
+                    <line x1="70" y1="35" x2="30" y2="60" stroke="${colors.radius}" stroke-width="3"/> <!-- Radius -->
+                    <line x1="70" y1="35" x2="25" y2="70" stroke="${colors.ulna}" stroke-width="4"/> <!-- Ulna -->
+                    <ellipse cx="25" cy="65" rx="5" ry="5" fill="${colors.digits}" stroke="none"/> <!-- Carpals -->
+                    <line x1="25" y1="65" x2="10" y2="80" stroke="${colors.digits}" stroke-width="3"/> <!-- Fused Digits -->
+                `;
+            }
+
+            svg.appendChild(group);
+            container.appendChild(svg);
+        }
+
+        // Comparison Logic
+        function compareSequences(seq1, seq2) {
+            let html1 = '';
+            let html2 = '';
+            let matches = 0;
+            let length = Math.min(seq1.length, seq2.length);
+
+            for(let i = 0; i < length; i++) {
+                if(seq1[i] === seq2[i]) {
+                    html1 += `<span class="match">${seq1[i]}</span>`;
+                    html2 += `<span class="match">${seq2[i]}</span>`;
+                    matches++;
+                } else {
+                    html1 += `<span class="mismatch">${seq1[i]}</span>`;
+                    html2 += `<span class="mismatch">${seq2[i]}</span>`;
+                }
+            }
+
+            // Append any remaining length if seqs are different sizes
+            if (seq1.length > length) html1 += seq1.substring(length);
+            if (seq2.length > length) html2 += seq2.substring(length);
+
+            return {
+                html1,
+                html2,
+                percent: ((matches / length) * 100).toFixed(1)
+            };
+        }
+
+        function compareSpecies() {
+            const spA = speciesData[selectA.value];
+            const spB = speciesData[selectB.value];
+
+            // Show Stats box if comparing different species
+            const statsBox = document.getElementById('similarity-stats');
+            if (selectA.value === selectB.value) {
+                statsBox.classList.add('hidden');
+            } else {
+                statsBox.classList.remove('hidden');
+                document.getElementById('lbl-sp-a').textContent = spA.name;
+                document.getElementById('lbl-sp-b').textContent = spB.name;
+            }
+
+            if (activeTab === 'dna') {
+                document.getElementById('dna-name-a').textContent = spA.name;
+                document.getElementById('dna-name-b').textContent = spB.name;
+
+                const result = compareSequences(spA.dna, spB.dna);
+                document.getElementById('dna-seq-a').innerHTML = result.html1;
+                document.getElementById('dna-seq-b').innerHTML = result.html2;
+                document.getElementById('score-percent').textContent = `${result.percent}%`;
+
+                // Expose globally for testing
+                window.lastDnaScore = result.percent;
+
+            } else if (activeTab === 'amino') {
+                document.getElementById('aa-name-a').textContent = spA.name;
+                document.getElementById('aa-name-b').textContent = spB.name;
+
+                const result = compareSequences(spA.amino, spB.amino);
+                document.getElementById('aa-seq-a').innerHTML = result.html1;
+                document.getElementById('aa-seq-b').innerHTML = result.html2;
+                document.getElementById('score-percent').textContent = `${result.percent}%`;
+
+                // Expose globally for testing
+                window.lastAminoScore = result.percent;
+
+            } else if (activeTab === 'anatomy') {
+                document.getElementById('anat-name-a').textContent = spA.name;
+                document.getElementById('anat-name-b').textContent = spB.name;
+
+                drawAnatomy('anat-svg-a', spA.anatomy);
+                drawAnatomy('anat-svg-b', spB.anatomy);
+
+                document.getElementById('score-percent').textContent = "Homologous Structure Match";
+                document.getElementById('score-percent').className = "text-xl font-semibold text-green-700";
+            } else {
+                // Reset styling for percent tabs
+                document.getElementById('score-percent').className = "text-2xl";
+            }
+        }
+
+        // Global exposing for automated tests
+        window.compareSpecies = compareSpecies;
+        window.speciesData = speciesData;
+
+        // Listeners
+        selectA.addEventListener('change', compareSpecies);
+        selectB.addEventListener('change', compareSpecies);
+
+        // Init
+        populateSelects();
+        compareSpecies();
+
+    </script>
+</body>
+</html>
