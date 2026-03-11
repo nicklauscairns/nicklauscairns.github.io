@@ -119,3 +119,5 @@ Evaluate the evidence supporting claims that changes in environmental conditions
 
 ### HS-LS4-6
 Create or revise a simulation to test a solution to mitigate adverse impacts of human activity on biodiversity.*
+
+- [Habitat Fragmentation Mitigation](HabitatFragmentationMitigation.html) - An interactive computational model to test engineering solutions (wildlife corridors) that mitigate the adverse impacts of habitat fragmentation on genetic variation and population size.
