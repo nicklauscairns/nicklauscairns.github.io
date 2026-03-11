@@ -161,6 +161,8 @@
         cells.forEach(c => { c.damage = 0; c.vibration = 0; });
     }
 
+    window.updateRadiation = updateRadiation;
+
     function emitWave() {
         const band = SPECTRUM[currentBand];
         // The higher the frequency, the closer together the waves spawn
