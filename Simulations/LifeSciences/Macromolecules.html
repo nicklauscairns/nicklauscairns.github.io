@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macromolecule Biosynthesis Model (HS-LS1-6)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
+
+        .atom {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-weight: bold; font-size: 1.2rem; color: white;
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.3), 1px 1px 3px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .atom-C { background-color: #334155; } /* Dark Gray */
+        .atom-H { background-color: #e2e8f0; color: #334155; } /* Light Gray/White */
+        .atom-O { background-color: #ef4444; } /* Red */
+        .atom-N { background-color: #3b82f6; } /* Blue */
+
+        .molecule-container {
+            display: flex; flex-wrap: wrap; gap: 4px; padding: 12px;
+            background-color: white; border: 2px dashed #cbd5e1; border-radius: 12px;
+            min-height: 80px; align-items: center; justify-content: center;
+        }
+
+        .action-btn { transition: all 0.2s; }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .inventory-box {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: white; border-radius: 8px; padding: 10px; border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .inventory-count {
+            font-family: monospace; font-size: 1.5rem; font-weight: bold; margin-top: 8px; color: #475569;
+        }
+
+        /* Simple CSS connection lines for synthesized molecule visualization */
+        .synth-bond {
+            width: 15px; height: 4px; background-color: #94a3b8; display: inline-block;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .anim-pop { animation: pop 0.3s ease-out; }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-5xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-slate-800">Macromolecule Biosynthesis</h1>
+            <p class="text-slate-600 mt-2 max-w-3xl mx-auto">NGSS HS-LS1-6: Construct and revise an explanation based on evidence for how carbon, hydrogen, and oxygen from sugar molecules may combine with other elements to form amino acids and/or other large carbon-based molecules.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+
+            <!-- Left Side: Source & Inventory -->
+            <div class="space-y-6 flex flex-col">
+
+                <!-- Step 1: Sugar Source -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h2 class="text-xl font-bold text-slate-700">1. Source: Glucose (Sugar)</h2>
+                        <span class="font-mono font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">C<sub>6</sub>H<sub>12</sub>O<sub>6</sub></span>
+                    </div>
+
+                    <p class="text-sm text-slate-600 mb-4">Glucose is produced via photosynthesis. It serves as the primary hydrocarbon backbone for building other molecules.</p>
+
+                    <div class="molecule-container" id="glucose-pool">
+                        <!-- Render 1 Glucose molecule visually -->
+                        <div class="flex items-center gap-1">
+                            <span class="font-bold text-sm mr-2 text-slate-400">Carbon Backbone:</span>
+                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
+                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
+                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
+                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
+                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
+                            <div class="atom atom-C">C</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex justify-center">
+                        <button id="btn-breakdown" class="action-btn bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded shadow">
+                            Break Down Sugar (Metabolism)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Available Atoms (Inventory) -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">2. Available Atomic Inventory</h2>
+                    <p class="text-sm text-slate-600 mb-4">These atoms are now available to synthesize new molecules.</p>
+
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="inventory-box">
+                            <div class="atom atom-C">C</div>
+                            <span class="text-xs text-slate-500 mt-1">Carbon</span>
+                            <div class="inventory-count" id="inv-C">0</div>
+                        </div>
+                        <div class="inventory-box">
+                            <div class="atom atom-H">H</div>
+                            <span class="text-xs text-slate-500 mt-1">Hydrogen</span>
+                            <div class="inventory-count" id="inv-H">0</div>
+                        </div>
+                        <div class="inventory-box">
+                            <div class="atom atom-O">O</div>
+                            <span class="text-xs text-slate-500 mt-1">Oxygen</span>
+                            <div class="inventory-count" id="inv-O">0</div>
+                        </div>
+                        <div class="inventory-box bg-blue-50 border-blue-200 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-blue-500 text-white text-[10px] px-1 rounded-bl">Soil/Air</div>
+                            <div class="atom atom-N">N</div>
+                            <span class="text-xs text-slate-500 mt-1">Nitrogen</span>
+                            <div class="flex items-center mt-2">
+                                <button class="bg-slate-200 hover:bg-slate-300 px-2 rounded-l font-bold text-slate-600" onclick="adjustInventory('N', -1)">-</button>
+                                <div class="inventory-count mx-2 mt-0" id="inv-N">0</div>
+                                <button class="bg-slate-200 hover:bg-slate-300 px-2 rounded-r font-bold text-slate-600" onclick="adjustInventory('N', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Synthesis & Results -->
+            <div class="space-y-6 flex flex-col">
+
+                <!-- Step 3: Synthesis Target -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h2 class="text-xl font-bold text-slate-700">3. Synthesize Macromolecule</h2>
+                        <select id="target-molecule" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 font-bold">
+                            <option value="glycine">Amino Acid: Glycine (C₂H₅NO₂)</option>
+                            <option value="alanine">Amino Acid: Alanine (C₃H₇NO₂)</option>
+                            <option value="glycerol">Lipid Backbone: Glycerol (C₃H₈O₃)</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
+                        <h3 class="font-bold text-slate-700 text-sm mb-2">Required Atoms:</h3>
+                        <div class="flex gap-4 font-mono text-lg" id="requirement-display">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <button id="btn-synthesize" class="action-btn bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded shadow text-lg" disabled>
+                            Synthesize Molecule
+                        </button>
+                    </div>
+                    <div id="synth-error" class="text-red-500 text-sm text-center mt-2 font-semibold h-5"></div>
+                </div>
+
+                <!-- Step 4: Constructed Molecules -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h2 class="text-xl font-bold text-slate-700">4. Synthesized Products</h2>
+                        <button id="btn-reset" class="text-sm text-slate-500 hover:text-slate-700 underline">Reset All</button>
+                    </div>
+
+                    <div id="products-area" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                        <!-- Synthesized molecules appear here -->
+                        <div class="text-center text-slate-400 italic py-8" id="empty-products">
+                            No molecules synthesized yet.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evidence/Explanation Box -->
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm">
+                    <h3 class="font-bold text-blue-800 mb-1">Scientific Evidence (HS-LS1-6)</h3>
+                    <p class="text-sm text-blue-900">
+                        Notice how the <strong>Carbon, Hydrogen, and Oxygen</strong> required to build Amino Acids and Lipids originate entirely from the Sugar (Glucose) molecule. The plant must absorb <strong>Nitrogen</strong> from its environment (soil) to form Amino Acids, the building blocks of proteins.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let inventory = { C: 0, H: 0, O: 0, N: 0 };
+        let products = [];
+
+        // Molecule Recipes
+        const recipes = {
+            glycine: { name: 'Glycine (Amino Acid)', req: { C: 2, H: 5, N: 1, O: 2 }, color: '#3b82f6', formula: 'C₂H₅NO₂' },
+            alanine: { name: 'Alanine (Amino Acid)', req: { C: 3, H: 7, N: 1, O: 2 }, color: '#8b5cf6', formula: 'C₃H₇NO₂' },
+            glycerol: { name: 'Glycerol (Lipid)', req: { C: 3, H: 8, N: 0, O: 3 }, color: '#f59e0b', formula: 'C₃H₈O₃' }
+        };
+
+        // DOM Elements
+        const elInvC = document.getElementById('inv-C');
+        const elInvH = document.getElementById('inv-H');
+        const elInvO = document.getElementById('inv-O');
+        const elInvN = document.getElementById('inv-N');
+
+        const btnBreakdown = document.getElementById('btn-breakdown');
+        const btnSynthesize = document.getElementById('btn-synthesize');
+        const btnReset = document.getElementById('btn-reset');
+        const selectTarget = document.getElementById('target-molecule');
+        const elReqDisplay = document.getElementById('requirement-display');
+        const elError = document.getElementById('synth-error');
+        const elProducts = document.getElementById('products-area');
+        const elEmptyProducts = document.getElementById('empty-products');
+        const elGlucosePool = document.getElementById('glucose-pool');
+
+        // Initialize
+        function init() {
+            setupEventListeners();
+            updateRequirementsDisplay();
+            updateInventoryUI();
+            checkSynthesisAvailability();
+        }
+
+        function setupEventListeners() {
+            btnBreakdown.addEventListener('click', breakdownSugar);
+            btnSynthesize.addEventListener('click', synthesizeMolecule);
+            btnReset.addEventListener('click', resetSimulation);
+            selectTarget.addEventListener('change', () => {
+                updateRequirementsDisplay();
+                checkSynthesisAvailability();
+                elError.textContent = '';
+            });
+        }
+
+        function breakdownSugar() {
+            // Add atoms from 1 Glucose (C6H12O6) to inventory
+            inventory.C += 6;
+            inventory.H += 12;
+            inventory.O += 6;
+
+            // Visual feedback
+            elGlucosePool.classList.add('anim-pop');
+            setTimeout(() => elGlucosePool.classList.remove('anim-pop'), 300);
+
+            updateInventoryUI();
+            checkSynthesisAvailability();
+            elError.textContent = '';
+        }
+
+        // Global function for the +/- buttons on Nitrogen
+        window.adjustInventory = function(element, amount) {
+            if (inventory[element] + amount >= 0) {
+                inventory[element] += amount;
+                updateInventoryUI();
+                checkSynthesisAvailability();
+                elError.textContent = '';
+            }
+        };
+
+        function updateInventoryUI() {
+            elInvC.textContent = inventory.C;
+            elInvH.textContent = inventory.H;
+            elInvO.textContent = inventory.O;
+            elInvN.textContent = inventory.N;
+
+            // Highlight text if positive
+            elInvC.style.color = inventory.C > 0 ? '#16a34a' : '#475569';
+            elInvH.style.color = inventory.H > 0 ? '#16a34a' : '#475569';
+            elInvO.style.color = inventory.O > 0 ? '#16a34a' : '#475569';
+            elInvN.style.color = inventory.N > 0 ? '#16a34a' : '#475569';
+        }
+
+        function updateRequirementsDisplay() {
+            const targetId = selectTarget.value;
+            const req = recipes[targetId].req;
+
+            let html = '';
+            if(req.C > 0) html += `<div class="flex items-center gap-1"><span class="text-slate-500">C:</span><span class="${inventory.C >= req.C ? 'text-green-600' : 'text-red-500'}">${req.C}</span></div>`;
+            if(req.H > 0) html += `<div class="flex items-center gap-1"><span class="text-slate-500">H:</span><span class="${inventory.H >= req.H ? 'text-green-600' : 'text-red-500'}">${req.H}</span></div>`;
+            if(req.O > 0) html += `<div class="flex items-center gap-1"><span class="text-slate-500">O:</span><span class="${inventory.O >= req.O ? 'text-green-600' : 'text-red-500'}">${req.O}</span></div>`;
+            if(req.N > 0) html += `<div class="flex items-center gap-1"><span class="text-blue-500">N:</span><span class="${inventory.N >= req.N ? 'text-green-600' : 'text-red-500'}">${req.N}</span></div>`;
+
+            elReqDisplay.innerHTML = html;
+        }
+
+        function checkSynthesisAvailability() {
+            const targetId = selectTarget.value;
+            const req = recipes[targetId].req;
+
+            const canBuild =
+                inventory.C >= req.C &&
+                inventory.H >= req.H &&
+                inventory.O >= req.O &&
+                inventory.N >= req.N;
+
+            btnSynthesize.disabled = !canBuild;
+            updateRequirementsDisplay(); // Update colors
+        }
+
+        function synthesizeMolecule() {
+            const targetId = selectTarget.value;
+            const recipe = recipes[targetId];
+
+            // Double check safety
+            if (inventory.C < recipe.req.C || inventory.H < recipe.req.H ||
+                inventory.O < recipe.req.O || inventory.N < recipe.req.N) {
+                elError.textContent = "Insufficient atoms in inventory!";
+                return;
+            }
+
+            // Deduct from inventory
+            inventory.C -= recipe.req.C;
+            inventory.H -= recipe.req.H;
+            inventory.O -= recipe.req.O;
+            inventory.N -= recipe.req.N;
+
+            updateInventoryUI();
+            checkSynthesisAvailability();
+
+            // Add to products
+            products.push(targetId);
+            renderProducts();
+
+            elError.textContent = ''; // Clear errors
+        }
+
+        function renderProducts() {
+            if (products.length > 0) {
+                elEmptyProducts.style.display = 'none';
+            } else {
+                elEmptyProducts.style.display = 'block';
+                const productElements = document.querySelectorAll('.product-item');
+                productElements.forEach(el => el.remove());
+                return;
+            }
+
+            // Only add the newest one to avoid re-rendering the whole list
+            const latestTargetId = products[products.length - 1];
+            const recipe = recipes[latestTargetId];
+
+            const prodEl = document.createElement('div');
+            prodEl.className = 'product-item bg-slate-50 border border-slate-200 rounded-lg p-3 flex justify-between items-center shadow-sm anim-pop';
+            prodEl.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-4 h-8 rounded-full" style="background-color: ${recipe.color};"></div>
+                    <div>
+                        <div class="font-bold text-slate-700">${recipe.name}</div>
+                        <div class="text-xs text-slate-500 font-mono">Synthesized from Sugar backbone</div>
+                    </div>
+                </div>
+                <div class="font-bold font-mono text-lg text-slate-600 bg-white px-3 py-1 rounded shadow-inner border border-slate-100">
+                    ${recipe.formula}
+                </div>
+            `;
+
+            // Insert at top
+            elProducts.insertBefore(prodEl, elProducts.firstChild);
+        }
+
+        function resetSimulation() {
+            inventory = { C: 0, H: 0, O: 0, N: 0 };
+            products = [];
+
+            // Remove all product elements
+            const productElements = document.querySelectorAll('.product-item');
+            productElements.forEach(el => el.remove());
+            elEmptyProducts.style.display = 'block';
+
+            updateInventoryUI();
+            checkSynthesisAvailability();
+            elError.textContent = '';
+        }
+
+        // Run
+        init();
+    </script>
+</body>
+</html>

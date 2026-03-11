@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Behavior and Survival Model (HS-LS2-8)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
+
+        #sim-canvas {
+            width: 100%; height: 500px; background-color: #0f172a; border-radius: 8px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); cursor: crosshair;
+        }
+
+        .behavior-btn { transition: all 0.2s; border: 2px solid transparent; }
+        .behavior-btn.active { border-color: #3b82f6; background-color: #eff6ff; color: #1d4ed8; }
+
+        .table-container { max-height: 250px; overflow-y: auto; }
+        th { position: sticky; top: 0; background: #f1f5f9; z-index: 10; }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-blue-800">Group Behavior & Survival</h1>
+            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS2-8: Evaluate the evidence for the role of group behavior on individual and species’ chances to survive and reproduce.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
+
+            <!-- Left: Controls -->
+            <div class="panel lg:col-span-1 flex flex-col space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">1. Select Prey Behavior</h2>
+                    <div class="space-y-3">
+                        <button class="behavior-btn active w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold py-3 px-4 rounded text-left flex flex-col" data-behavior="solitary">
+                            <span class="text-base">Solitary (Individual)</span>
+                            <span class="text-[10px] font-normal mt-1">Prey move independently and randomly. No grouping.</span>
+                        </button>
+                        <button class="behavior-btn w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold py-3 px-4 rounded text-left flex flex-col" data-behavior="flocking">
+                            <span class="text-base">Flocking (Group)</span>
+                            <span class="text-[10px] font-normal mt-1">Prey use cohesion, alignment, and separation to move as a unified school/flock.</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">2. Simulation Settings</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="flex justify-between text-xs font-bold text-slate-500 mb-1">Initial Prey</label>
+                            <span class="font-mono text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded w-full block text-center">100 Individuals</span>
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-xs font-bold text-slate-500 mb-1">Predators</label>
+                            <span class="font-mono text-red-600 font-bold bg-red-50 px-2 py-1 rounded w-full block text-center">3 Predators</span>
+                        </div>
+                        <div class="bg-amber-50 p-2 rounded text-xs text-amber-800 border border-amber-200">
+                            <strong>Predator Confusion Effect:</strong> Predators suffer an accuracy penalty when diving into a dense cluster of prey.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                    <button id="btn-start" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded shadow transition">
+                        Start Hunting Phase
+                    </button>
+                    <p class="text-center text-[10px] text-slate-500 mt-2">Hunt lasts for 20 seconds.</p>
+                </div>
+            </div>
+
+            <!-- Middle: Canvas -->
+            <div class="panel lg:col-span-2 p-4 flex flex-col relative">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-bold text-slate-700">Environment View</h2>
+                    <span id="timer-display" class="font-mono font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">Time: 20.0s</span>
+                </div>
+
+                <canvas id="sim-canvas"></canvas>
+
+                <!-- Status Overlay -->
+                <div id="status-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500">
+                    <div class="bg-black/80 text-white px-6 py-4 rounded-xl text-2xl font-bold shadow-2xl backdrop-blur-sm" id="status-text">
+                        Hunt Over
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Data Collection -->
+            <div class="panel lg:col-span-1 flex flex-col">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-lg font-bold text-slate-700">Evidence Log</h2>
+                    <button id="btn-clear-log" class="text-xs text-slate-400 hover:text-slate-600 underline">Clear Data</button>
+                </div>
+
+                <p class="text-xs text-slate-500 mb-3">Collect empirical evidence across multiple trials to evaluate the claim.</p>
+
+                <div class="table-container border rounded flex-grow">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr>
+                                <th class="p-2 border-b">Trial</th>
+                                <th class="p-2 border-b">Behavior</th>
+                                <th class="p-2 border-b text-right">Survivors</th>
+                                <th class="p-2 border-b text-right">Surv %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-log">
+                            <!-- JS populated -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 bg-slate-50 p-3 rounded border border-slate-200">
+                    <h3 class="text-xs font-bold text-slate-700 mb-1 uppercase">Averages</h3>
+                    <div class="flex justify-between text-sm">
+                        <span>Solitary:</span>
+                        <span id="avg-solitary" class="font-mono font-bold text-blue-600">--%</span>
+                    </div>
+                    <div class="flex justify-between text-sm mt-1">
+                        <span>Flocking:</span>
+                        <span id="avg-flocking" class="font-mono font-bold text-green-600">--%</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const NUM_PREY = 100;
+        const NUM_PREDATORS = 3;
+        const HUNT_DURATION = 20; // seconds
+
+        // State
+        let currentBehavior = 'solitary'; // 'solitary' or 'flocking'
+        let isRunning = false;
+        let timeLeft = HUNT_DURATION;
+        let lastTime = 0;
+        let animationId = null;
+        let trialCount = 0;
+
+        let logs = [];
+
+        // Entities
+        let preyList = [];
+        let predators = [];
+
+        // DOM
+        const canvas = document.getElementById('sim-canvas');
+        const ctx = canvas.getContext('2d');
+        let cw = canvas.width;
+        let ch = canvas.height;
+
+        const btnStart = document.getElementById('btn-start');
+        const btnClear = document.getElementById('btn-clear-log');
+        const btnsBehavior = document.querySelectorAll('.behavior-btn');
+        const elTimer = document.getElementById('timer-display');
+        const elStatusOverlay = document.getElementById('status-overlay');
+        const elStatusText = document.getElementById('status-text');
+        const elDataLog = document.getElementById('data-log');
+
+        function init() {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            setupEventListeners();
+            resetEntities();
+            drawFrame(); // Initial draw
+        }
+
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            cw = rect.width;
+            ch = rect.height;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        function setupEventListeners() {
+            btnsBehavior.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (isRunning) return; // Lock behavior during sim
+                    btnsBehavior.forEach(b => b.classList.remove('active'));
+                    const targetBtn = e.target.closest('.behavior-btn');
+                    targetBtn.classList.add('active');
+                    currentBehavior = targetBtn.getAttribute('data-behavior');
+                    resetEntities();
+                    drawFrame();
+                });
+            });
+
+            btnStart.addEventListener('click', () => {
+                if (!isRunning) startSimulation();
+            });
+
+            btnClear.addEventListener('click', () => {
+                logs = [];
+                updateLogTable();
+            });
+
+            // For testing script
+            window.triggerHunt = () => { if(!isRunning) startSimulation(); };
+            window.forceEndHunt = endSimulation;
+        }
+
+        // Vector Math Helpers
+        function distSq(p1, p2) { return (p1.x - p2.x)**2 + (p1.y - p2.y)**2; }
+        function normalize(v) {
+            const mag = Math.sqrt(v.x**2 + v.y**2);
+            if (mag === 0) return {x:0, y:0};
+            return {x: v.x/mag, y: v.y/mag};
+        }
+
+        class Prey {
+            constructor() {
+                this.x = Math.random() * cw;
+                this.y = Math.random() * ch;
+                const angle = Math.random() * Math.PI * 2;
+                this.vx = Math.cos(angle) * 2;
+                this.vy = Math.sin(angle) * 2;
+                this.speed = 2.5;
+                this.alive = true;
+            }
+
+            update(others, predators) {
+                if (!this.alive) return;
+
+                let dx = 0, dy = 0;
+
+                // Evade predators (highest priority)
+                let nearestPredDistSq = Infinity;
+                let evasion = {x: 0, y: 0};
+
+                predators.forEach(pred => {
+                    const d2 = distSq(this, pred);
+                    if (d2 < 10000) { // 100px evasion radius
+                        nearestPredDistSq = Math.min(nearestPredDistSq, d2);
+                        evasion.x += (this.x - pred.x) / d2; // Weight by inverse distance
+                        evasion.y += (this.y - pred.y) / d2;
+                    }
+                });
+
+                if (nearestPredDistSq < Infinity) {
+                    const normEvade = normalize(evasion);
+                    dx += normEvade.x * 5; // Strong evasion force
+                    dy += normEvade.y * 5;
+                } else if (currentBehavior === 'flocking') {
+                    // Boids Algorithm: Cohesion, Alignment, Separation
+                    let cohesion = {x: 0, y: 0}, align = {x: 0, y: 0}, sep = {x: 0, y: 0};
+                    let neighborCount = 0;
+
+                    others.forEach(other => {
+                        if (other !== this && other.alive) {
+                            const d2 = distSq(this, other);
+                            if (d2 < 4000) { // ~63px radius
+                                neighborCount++;
+                                cohesion.x += other.x; cohesion.y += other.y;
+                                align.x += other.vx; align.y += other.vy;
+
+                                if (d2 < 400) { // ~20px separation radius
+                                    sep.x += (this.x - other.x) / d2;
+                                    sep.y += (this.y - other.y) / d2;
+                                }
+                            }
+                        }
+                    });
+
+                    if (neighborCount > 0) {
+                        cohesion.x = (cohesion.x / neighborCount - this.x) * 0.05;
+                        cohesion.y = (cohesion.y / neighborCount - this.y) * 0.05;
+
+                        align.x = (align.x / neighborCount) * 0.05;
+                        align.y = (align.y / neighborCount) * 0.05;
+
+                        sep.x *= 10; sep.y *= 10;
+
+                        dx += cohesion.x + align.x + sep.x;
+                        dy += cohesion.y + align.y + sep.y;
+                    }
+                } else {
+                    // Solitary: Wander randomly
+                    dx += (Math.random() - 0.5) * 0.5;
+                    dy += (Math.random() - 0.5) * 0.5;
+                }
+
+                // Apply forces
+                this.vx += dx;
+                this.vy += dy;
+
+                // Normalize speed
+                const norm = normalize({x: this.vx, y: this.vy});
+                this.vx = norm.x * this.speed;
+                this.vy = norm.y * this.speed;
+
+                // Move
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Wrap around edges
+                if (this.x < 0) this.x = cw;
+                if (this.x > cw) this.x = 0;
+                if (this.y < 0) this.y = ch;
+                if (this.y > ch) this.y = 0;
+            }
+
+            draw() {
+                if (!this.alive) return;
+                ctx.fillStyle = currentBehavior === 'flocking' ? '#38bdf8' : '#94a3b8'; // Sky blue if flocking, slate if solitary
+                ctx.beginPath();
+
+                // Draw as a little triangle pointing in direction of velocity
+                const angle = Math.atan2(this.vy, this.vx);
+                ctx.translate(this.x, this.y);
+                ctx.rotate(angle);
+                ctx.moveTo(6, 0);
+                ctx.lineTo(-4, 4);
+                ctx.lineTo(-4, -4);
+                ctx.closePath();
+                ctx.fill();
+                ctx.rotate(-angle);
+                ctx.translate(-this.x, -this.y);
+            }
+        }
+
+        class Predator {
+            constructor() {
+                this.x = Math.random() * cw;
+                this.y = Math.random() * ch;
+                this.vx = 0;
+                this.vy = 0;
+                this.speed = 2.8; // Slightly faster than prey
+                this.target = null;
+                this.cooldown = 0;
+            }
+
+            update(preyList) {
+                if (this.cooldown > 0) {
+                    this.cooldown--;
+                    this.x += this.vx * 0.5; // Drift slowly while eating
+                    this.y += this.vy * 0.5;
+                    return;
+                }
+
+                // Find target
+                let nearest = null;
+                let minDistSq = Infinity;
+                let localPreyDensity = 0; // Count nearby prey for confusion effect
+
+                preyList.forEach(p => {
+                    if (p.alive) {
+                        const d2 = distSq(this, p);
+                        if (d2 < 10000) localPreyDensity++;
+
+                        if (d2 < minDistSq) {
+                            minDistSq = d2;
+                            nearest = p;
+                        }
+                    }
+                });
+
+                this.target = nearest;
+
+                if (this.target) {
+                    // Hunt
+                    const dist = Math.sqrt(minDistSq);
+
+                    // Confusion Effect: If density is high (flocking), accuracy drops
+                    let catchRadius = 8;
+                    if (localPreyDensity > 10) {
+                        catchRadius = 2; // Very hard to catch a specific individual in a dense flock
+                        // Add jitter to predator movement (confusion)
+                        this.x += (Math.random() - 0.5) * 4;
+                        this.y += (Math.random() - 0.5) * 4;
+                    }
+
+                    if (dist < catchRadius) {
+                        // Caught!
+                        this.target.alive = false;
+                        this.cooldown = 60; // 1 second cooldown (at 60fps)
+                    } else {
+                        // Chase
+                        const norm = normalize({x: this.target.x - this.x, y: this.target.y - this.y});
+                        this.vx = norm.x * this.speed;
+                        this.vy = norm.y * this.speed;
+                        this.x += this.vx;
+                        this.y += this.vy;
+                    }
+                } else {
+                    // Wander
+                    this.vx += (Math.random() - 0.5);
+                    this.vy += (Math.random() - 0.5);
+                    const norm = normalize({x: this.vx, y: this.vy});
+                    this.vx = norm.x * (this.speed * 0.5);
+                    this.vy = norm.y * (this.speed * 0.5);
+                    this.x += this.vx;
+                    this.y += this.vy;
+                }
+
+                // Wrap
+                if (this.x < 0) this.x = cw;
+                if (this.x > cw) this.x = 0;
+                if (this.y < 0) this.y = ch;
+                if (this.y > ch) this.y = 0;
+            }
+
+            draw() {
+                ctx.fillStyle = this.cooldown > 0 ? '#fca5a5' : '#ef4444'; // Lighter red when eating
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 6, 0, Math.PI*2);
+                ctx.fill();
+
+                // Draw target line if hunting
+                if (this.target && this.cooldown === 0) {
+                    ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.target.x, this.target.y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function resetEntities() {
+            preyList = [];
+            predators = [];
+            for (let i = 0; i < NUM_PREY; i++) preyList.push(new Prey());
+            for (let i = 0; i < NUM_PREDATORS; i++) predators.push(new Predator());
+
+            timeLeft = HUNT_DURATION;
+            elTimer.textContent = `Time: ${timeLeft.toFixed(1)}s`;
+        }
+
+        function startSimulation() {
+            isRunning = true;
+            btnStart.disabled = true;
+            btnStart.classList.replace('bg-green-600', 'bg-slate-400');
+            btnsBehavior.forEach(b => b.disabled = true);
+
+            resetEntities();
+
+            elStatusOverlay.classList.replace('opacity-100', 'opacity-0');
+
+            lastTime = performance.now();
+            animationId = requestAnimationFrame(simLoop);
+        }
+
+        function endSimulation() {
+            isRunning = false;
+            cancelAnimationFrame(animationId);
+
+            btnStart.disabled = false;
+            btnStart.classList.replace('bg-slate-400', 'bg-green-600');
+            btnsBehavior.forEach(b => b.disabled = false);
+
+            const survivors = preyList.filter(p => p.alive).length;
+            const survPercent = (survivors / NUM_PREY) * 100;
+
+            elStatusText.innerHTML = `Hunt Over<br><span class="text-lg font-normal">${survivors} Survived (${currentBehavior})</span>`;
+            elStatusOverlay.classList.replace('opacity-0', 'opacity-100');
+
+            logResult(survivors, survPercent);
+        }
+
+        function simLoop(timestamp) {
+            if (!isRunning) return;
+
+            const dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            timeLeft -= dt;
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                elTimer.textContent = `Time: 0.0s`;
+                endSimulation();
+                return;
+            }
+
+            elTimer.textContent = `Time: ${timeLeft.toFixed(1)}s`;
+
+            // Logic Update
+            preyList.forEach(p => p.update(preyList, predators));
+            predators.forEach(p => p.update(preyList));
+
+            drawFrame();
+
+            animationId = requestAnimationFrame(simLoop);
+        }
+
+        function drawFrame() {
+            ctx.clearRect(0, 0, cw, ch);
+            preyList.forEach(p => p.draw());
+            predators.forEach(p => p.draw());
+        }
+
+        function logResult(survivors, percent) {
+            trialCount++;
+            logs.push({ trial: trialCount, behavior: currentBehavior, survivors, percent });
+            updateLogTable();
+        }
+
+        function updateLogTable() {
+            elDataLog.innerHTML = '';
+
+            // Populate table in reverse order (newest first)
+            for (let i = logs.length - 1; i >= 0; i--) {
+                const log = logs[i];
+                const bColor = log.behavior === 'flocking' ? 'text-green-700' : 'text-blue-700';
+                const html = `
+                    <tr class="border-b hover:bg-slate-50 transition">
+                        <td class="p-2">${log.trial}</td>
+                        <td class="p-2 capitalize font-semibold ${bColor}">${log.behavior}</td>
+                        <td class="p-2 text-right font-mono">${log.survivors}</td>
+                        <td class="p-2 text-right font-mono font-bold">${log.percent.toFixed(0)}%</td>
+                    </tr>
+                `;
+                elDataLog.insertAdjacentHTML('beforeend', html);
+            }
+
+            // Calculate Averages
+            const solLogs = logs.filter(l => l.behavior === 'solitary');
+            const flockLogs = logs.filter(l => l.behavior === 'flocking');
+
+            const avgSol = solLogs.length ? (solLogs.reduce((a,b) => a + b.percent, 0) / solLogs.length) : 0;
+            const avgFlock = flockLogs.length ? (flockLogs.reduce((a,b) => a + b.percent, 0) / flockLogs.length) : 0;
+
+            document.getElementById('avg-solitary').textContent = solLogs.length ? `${avgSol.toFixed(1)}%` : '--%';
+            document.getElementById('avg-flocking').textContent = flockLogs.length ? `${avgFlock.toFixed(1)}%` : '--%';
+        }
+
+        init();
+    </script>
+</body>
+</html>

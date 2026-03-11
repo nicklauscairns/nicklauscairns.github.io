@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Carbon Cycle Simulation (HS-LS2-5)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
+
+        .canvas-container {
+            background-color: #e0f2fe; /* Light blue sky */
+            border-radius: 12px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #carbon-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .control-panel {
+            background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;
+        }
+
+        input[type="range"] { accent-color: #0ea5e9; }
+
+        .stat-box { text-align: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .stat-val { font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #334155; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: #64748b; margin-top: 4px; }
+
+        /* Specific coloring for stats */
+        .stat-atm { border-bottom: 3px solid #38bdf8; }
+        .stat-bio { border-bottom: 3px solid #22c55e; }
+        .stat-hydro { border-bottom: 3px solid #3b82f6; }
+        .stat-geo { border-bottom: 3px solid #f97316; }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-slate-700">Global Carbon Cycle Model</h1>
+            <p class="text-slate-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS2-5: Develop a model to illustrate the role of photosynthesis and cellular respiration in the cycling of carbon among the biosphere, atmosphere, hydrosphere, and geosphere.</p>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="stat-box stat-atm">
+                <div class="stat-val" id="val-atm">800 GT</div>
+                <div class="stat-label">Atmosphere (CO₂)</div>
+            </div>
+            <div class="stat-box stat-bio">
+                <div class="stat-val" id="val-bio">2,000 GT</div>
+                <div class="stat-label">Biosphere (Life/Soil)</div>
+            </div>
+            <div class="stat-box stat-hydro">
+                <div class="stat-val" id="val-hydro">38,000 GT</div>
+                <div class="stat-label">Hydrosphere (Ocean)</div>
+            </div>
+            <div class="stat-box stat-geo">
+                <div class="stat-val" id="val-geo">4,000 GT</div>
+                <div class="stat-label">Geosphere (Fossil Fuels)</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+
+            <!-- Visualization -->
+            <div class="lg:col-span-2 canvas-container" style="min-height: 500px;">
+                <canvas id="carbon-canvas" width="800" height="500"></canvas>
+                <div class="absolute top-4 left-4 bg-white/80 p-2 rounded shadow-sm text-xs font-bold text-slate-600 backdrop-blur-sm">
+                    Sim Year: <span id="sim-year" class="font-mono text-blue-600 text-sm">2024</span>
+                </div>
+            </div>
+
+            <!-- Controls & Chart -->
+            <div class="lg:col-span-1 space-y-6 flex flex-col">
+
+                <div class="control-panel p-5">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h2 class="text-lg font-bold text-slate-700">Carbon Flux Controls</h2>
+                        <span class="text-xs text-slate-500 font-mono">1 Tick = 1 Year</span>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- Photosynthesis vs Respiration -->
+                        <div>
+                            <label class="flex justify-between font-semibold text-sm text-green-700 mb-1">
+                                <span>Biosphere Balance</span>
+                            </label>
+                            <input type="range" id="flux-bio" min="-5" max="5" value="0" step="0.5" class="w-full accent-green-500">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                <span>&larr; More Respiration</span>
+                                <span>Balanced (0)</span>
+                                <span>More Photosynthesis &rarr;</span>
+                            </div>
+                        </div>
+
+                        <!-- Human Emissions -->
+                        <div>
+                            <label class="flex justify-between font-semibold text-sm text-orange-600 mb-1">
+                                <span>Fossil Fuel Combustion</span>
+                                <span id="val-emissions" class="font-mono bg-orange-100 px-1 rounded">10 GT/yr</span>
+                            </label>
+                            <input type="range" id="flux-emissions" min="0" max="30" value="10" step="1" class="w-full accent-orange-500">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                <span>Zero</span>
+                                <span>Current</span>
+                                <span>Extreme</span>
+                            </div>
+                        </div>
+
+                        <!-- Ocean Diffusion -->
+                        <div>
+                            <label class="flex justify-between font-semibold text-sm text-blue-600 mb-1">
+                                <span>Ocean Uptake</span>
+                                <span id="val-ocean" class="font-mono bg-blue-50 px-1 rounded">2 GT/yr</span>
+                            </label>
+                            <p class="text-[10px] text-slate-500 mb-2">The ocean naturally absorbs some excess CO₂.</p>
+                            <input type="range" id="flux-ocean" min="0" max="10" value="2" step="0.5" class="w-full accent-blue-500" disabled>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex gap-2">
+                        <button id="btn-play" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded shadow transition">Start Sim</button>
+                        <button id="btn-reset" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded shadow transition">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="control-panel p-5 flex-grow flex flex-col">
+                    <h2 class="text-lg font-bold text-slate-700 mb-2 border-b pb-2">Atmospheric CO₂ History</h2>
+                    <div class="relative w-full flex-grow min-h-[150px]">
+                        <canvas id="history-chart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Explanation -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <h3 class="font-bold text-slate-700 mb-2">Systems & Interactions</h3>
+            <p class="text-sm text-slate-600 mb-2">
+                <strong>Photosynthesis</strong> removes carbon from the atmosphere and stores it in the biosphere (plants). <strong>Cellular Respiration</strong> by animals and plants returns it to the atmosphere. Historically, these two processes balanced each other out.
+            </p>
+            <p class="text-sm text-slate-600">
+                <strong>Combustion</strong> takes carbon stored long ago in the geosphere (fossil fuels) and rapidly adds it to the atmosphere, disrupting the balance. The <strong>Hydrosphere</strong> (oceans) acts as a massive sink, slowly absorbing some of this excess carbon, but not fast enough to prevent atmospheric accumulation.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Mathematical State (Values in Gigatons of Carbon - approximations for educational modeling)
+        const INITIAL_STATE = {
+            year: 2024,
+            atm: 800,   // Atmosphere
+            bio: 2000,  // Biosphere (plants/soil)
+            hydro: 38000, // Hydrosphere (surface/deep ocean)
+            geo: 4000   // Geosphere (fossil fuels)
+        };
+
+        let state = JSON.parse(JSON.stringify(INITIAL_STATE));
+        let isRunning = false;
+        let intervalId = null;
+        let historyChart = null;
+
+        // Visual Particles State
+        let particles = [];
+
+        // DOM Elements
+        const elValAtm = document.getElementById('val-atm');
+        const elValBio = document.getElementById('val-bio');
+        const elValHydro = document.getElementById('val-hydro');
+        const elValGeo = document.getElementById('val-geo');
+        const elSimYear = document.getElementById('sim-year');
+
+        const elFluxBio = document.getElementById('flux-bio');
+        const elFluxEmissions = document.getElementById('flux-emissions');
+        const elValEmissions = document.getElementById('val-emissions');
+        const elValOcean = document.getElementById('val-ocean');
+
+        const btnPlay = document.getElementById('btn-play');
+        const btnReset = document.getElementById('btn-reset');
+
+        const canvas = document.getElementById('carbon-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Layout constants for canvas
+        const regions = {
+            atm: { x: 0, y: 0, w: 800, h: 200, color: '#e0f2fe' }, // Sky
+            bio: { x: 0, y: 200, w: 300, h: 150, color: '#dcfce7' }, // Land/Trees
+            geo: { x: 0, y: 350, w: 300, h: 150, color: '#fef3c7' }, // Underground
+            hydro: { x: 300, y: 200, w: 500, h: 300, color: '#2563eb' } // Ocean
+        };
+
+        function init() {
+            setupCanvas();
+            initChart();
+            setupEventListeners();
+            updateUI();
+            drawLoop();
+
+            // Seed initial particles
+            seedParticles();
+        }
+
+        function setupCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        function initChart() {
+            const chartCtx = document.getElementById('history-chart').getContext('2d');
+            historyChart = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                    labels: [state.year],
+                    datasets: [{
+                        label: 'Atmospheric Carbon (GT)',
+                        data: [state.atm],
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { display: false }, // Hide x axis labels to save space
+                        y: {
+                            suggestedMin: 700,
+                            suggestedMax: 1000,
+                            title: { display: true, text: 'GT Carbon' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            elFluxEmissions.addEventListener('input', (e) => {
+                elValEmissions.textContent = `${e.target.value} GT/yr`;
+            });
+
+            btnPlay.addEventListener('click', toggleSimulation);
+            btnReset.addEventListener('click', resetSimulation);
+
+            // Expose for Playwright
+            window.updateSimulation = () => { /* No-op, just for UI triggering if needed */ };
+        }
+
+        function toggleSimulation() {
+            if (isRunning) {
+                clearInterval(intervalId);
+                isRunning = false;
+                btnPlay.textContent = "Start Sim";
+                btnPlay.classList.replace('bg-amber-500', 'bg-blue-600');
+                btnPlay.classList.replace('hover:bg-amber-600', 'hover:bg-blue-700');
+            } else {
+                isRunning = true;
+                btnPlay.textContent = "Pause Sim";
+                btnPlay.classList.replace('bg-blue-600', 'bg-amber-500');
+                btnPlay.classList.replace('hover:bg-blue-700', 'hover:bg-amber-600');
+                intervalId = setInterval(tick, 1000); // 1 tick = 1 year = 1 second real time
+            }
+        }
+
+        function resetSimulation() {
+            if (isRunning) toggleSimulation();
+
+            state = JSON.parse(JSON.stringify(INITIAL_STATE));
+
+            // Reset chart
+            historyChart.data.labels = [state.year];
+            historyChart.data.datasets[0].data = [state.atm];
+            historyChart.update();
+
+            elFluxBio.value = 0;
+            elFluxEmissions.value = 10;
+            elValEmissions.textContent = "10 GT/yr";
+
+            particles = [];
+            seedParticles();
+
+            updateUI();
+        }
+
+        function tick() {
+            state.year++;
+
+            // Get inputs
+            const bioBalance = parseFloat(elFluxBio.value); // Positive = Photosynthesis > Resp
+            const emissions = parseFloat(elFluxEmissions.value);
+
+            // Dynamic Ocean Uptake (Simplification: absorbs a fraction of excess over baseline 600)
+            let oceanUptake = 0;
+            if (state.atm > 600) {
+                oceanUptake = (state.atm - 600) * 0.01; // Absorbs ~1% of excess per year
+            }
+            // Cap it loosely
+            oceanUptake = Math.min(oceanUptake, 5);
+            elValOcean.textContent = `${oceanUptake.toFixed(1)} GT/yr`;
+
+            // Calculate Fluxes
+
+            // 1. Bio Flux (Atm <-> Bio)
+            if (bioBalance > 0 && state.atm > 0) {
+                // More photosynthesis
+                const amount = Math.min(bioBalance, state.atm);
+                state.atm -= amount;
+                state.bio += amount;
+                emitParticles('atm', 'bio', amount * 2);
+            } else if (bioBalance < 0 && state.bio > 0) {
+                // More respiration / deforestation
+                const amount = Math.min(Math.abs(bioBalance), state.bio);
+                state.bio -= amount;
+                state.atm += amount;
+                emitParticles('bio', 'atm', amount * 2);
+            }
+
+            // 2. Human Emissions (Geo -> Atm)
+            if (emissions > 0 && state.geo > 0) {
+                const amount = Math.min(emissions, state.geo);
+                state.geo -= amount;
+                state.atm += amount;
+                emitParticles('geo', 'atm', amount);
+            }
+
+            // 3. Ocean Diffusion (Atm -> Hydro)
+            if (oceanUptake > 0 && state.atm > 0) {
+                const amount = Math.min(oceanUptake, state.atm);
+                state.atm -= amount;
+                state.hydro += amount;
+                emitParticles('atm', 'hydro', amount);
+            }
+
+            updateUI();
+
+            // Update chart
+            historyChart.data.labels.push(state.year);
+            historyChart.data.datasets[0].data.push(Math.round(state.atm));
+            // Keep last 50 data points
+            if (historyChart.data.labels.length > 50) {
+                historyChart.data.labels.shift();
+                historyChart.data.datasets[0].data.shift();
+            }
+            historyChart.update('none'); // Update without animation for performance
+        }
+
+        function updateUI() {
+            elSimYear.textContent = state.year;
+
+            // Format numbers
+            elValAtm.textContent = `${Math.round(state.atm).toLocaleString()} GT`;
+            elValBio.textContent = `${Math.round(state.bio).toLocaleString()} GT`;
+            elValHydro.textContent = `${Math.round(state.hydro).toLocaleString()} GT`;
+            elValGeo.textContent = `${Math.round(state.geo).toLocaleString()} GT`;
+
+            // Add visual warning if Atm gets too high
+            if (state.atm > 1000) {
+                elValAtm.classList.add('text-red-600');
+            } else {
+                elValAtm.classList.remove('text-red-600');
+            }
+        }
+
+        // --- Visual Canvas Logic ---
+
+        class CarbonParticle {
+            constructor(startX, startY, targetRegion) {
+                this.x = startX;
+                this.y = startY;
+                this.targetRegion = targetRegion;
+
+                // Assign a random target within the destination region
+                const reg = regions[targetRegion];
+                this.tx = reg.x + Math.random() * reg.w;
+                this.ty = reg.y + Math.random() * reg.h;
+
+                this.speed = 0.02 + Math.random() * 0.03;
+                this.arrived = false;
+            }
+
+            update() {
+                if (this.arrived) return;
+
+                const dx = this.tx - this.x;
+                const dy = this.ty - this.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist < 5) {
+                    this.arrived = true;
+                } else {
+                    this.x += dx * this.speed;
+                    this.y += dy * this.speed;
+                }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#475569'; // slate-600 (Carbon color)
+                ctx.fill();
+            }
+        }
+
+        function seedParticles() {
+            // Add background static particles to represent scale
+            for(let i=0; i<30; i++) emitParticles('atm', 'atm', 1);
+            for(let i=0; i<60; i++) emitParticles('bio', 'bio', 1);
+            for(let i=0; i<100; i++) emitParticles('geo', 'geo', 1);
+            for(let i=0; i<150; i++) emitParticles('hydro', 'hydro', 1);
+
+            // Force them to arrive immediately
+            particles.forEach(p => { p.x = p.tx; p.y = p.ty; p.arrived = true; });
+        }
+
+        function emitParticles(fromRegionId, toRegionId, count) {
+            const fromReg = regions[fromRegionId];
+            // Visual cap
+            const safeCount = Math.min(count, 10);
+
+            for(let i=0; i<safeCount; i++) {
+                const sx = fromReg.x + Math.random() * fromReg.w;
+                const sy = fromReg.y + Math.random() * fromReg.h;
+                particles.push(new CarbonParticle(sx, sy, toRegionId));
+            }
+
+            // Cap total particles to avoid lag
+            if (particles.length > 500) {
+                // Remove some arrived particles
+                for(let i=0; i<particles.length; i++) {
+                    if (particles[i].arrived) {
+                        particles.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        }
+
+        function drawLoop() {
+            const w = 800; // Reference internal width
+            const h = 500;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw regions
+            // Atm (Gradient)
+            const atmGrad = ctx.createLinearGradient(0, 0, 0, 200);
+            atmGrad.addColorStop(0, '#bae6fd');
+            atmGrad.addColorStop(1, '#f8fafc');
+            ctx.fillStyle = atmGrad;
+            ctx.fillRect(0, 0, 800, 200);
+
+            // Geo
+            ctx.fillStyle = '#fcd34d'; // Amber-300
+            ctx.fillRect(0, 350, 300, 150);
+
+            // Bio (Land)
+            ctx.fillStyle = '#86efac'; // Green-300
+            ctx.fillRect(0, 200, 300, 150);
+
+            // Draw some trees
+            ctx.fillStyle = '#166534'; // Dark green
+            for(let i=0; i<5; i++) {
+                const tx = 50 + i*40;
+                ctx.fillRect(tx+10, 180, 6, 20); // trunk
+                ctx.beginPath(); ctx.arc(tx+13, 170, 15, 0, Math.PI*2); ctx.fill(); // leaves
+            }
+
+            // Factory
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(200, 150, 60, 50); // bldg
+            ctx.fillRect(240, 120, 10, 30); // smokestack
+
+            // Hydro (Ocean)
+            const oceanGrad = ctx.createLinearGradient(300, 200, 300, 500);
+            oceanGrad.addColorStop(0, '#3b82f6'); // Blue-500 surface
+            oceanGrad.addColorStop(1, '#1e3a8a'); // Blue-900 deep
+            ctx.fillStyle = oceanGrad;
+            // Draw wave edge
+            ctx.beginPath();
+            ctx.moveTo(300, 200);
+            for(let i=300; i<=800; i+=20) {
+                ctx.lineTo(i, 200 + Math.sin(i*0.05 + Date.now()*0.002)*5);
+            }
+            ctx.lineTo(800, 500);
+            ctx.lineTo(300, 500);
+            ctx.fill();
+
+            // Update and Draw Particles
+            particles.forEach(p => {
+                p.update();
+                p.draw(ctx);
+            });
+
+            // Draw overlay text labels
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fillRect(350, 220, 100, 20);
+            ctx.fillStyle = '#1e3a8a';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Hydrosphere', 360, 234);
+
+            requestAnimationFrame(drawLoop);
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

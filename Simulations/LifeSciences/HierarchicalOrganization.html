@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchical Organization of Interacting Systems (HS-LS1-2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0fdf4; }
+
+        .level-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .level-btn.active {
+            background-color: #166534;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .level-btn:not(.active):hover {
+            background-color: #bbf7d0;
+        }
+
+        /* Breadcrumb connector line */
+        .connector {
+            flex-grow: 1;
+            height: 4px;
+            background-color: #86efac;
+            margin: 0 10px;
+            border-radius: 2px;
+            position: relative;
+            z-index: 0;
+        }
+
+        #canvas-container {
+            background-color: #ffffff;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.06);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .info-panel {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* System selector active state */
+        .system-btn.active {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        #visual-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-green-100">
+            <h1 class="text-3xl font-extrabold text-green-800">Hierarchical Organization of Multicellular Organisms</h1>
+            <p class="text-gray-600 mt-2 max-w-3xl mx-auto">NGSS HS-LS1-2: Develop and use a model to illustrate the hierarchical organization of interacting systems that provide specific functions within multicellular organisms.</p>
+        </header>
+
+        <!-- System Selection -->
+        <div class="bg-white p-4 rounded-xl shadow-sm flex justify-center gap-4">
+            <button class="system-btn active px-6 py-2 border-2 border-gray-200 rounded-lg font-bold text-gray-600 transition-colors" data-system="digestive">Digestive System</button>
+            <button class="system-btn px-6 py-2 border-2 border-gray-200 rounded-lg font-bold text-gray-600 transition-colors" data-system="respiratory">Respiratory System</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+
+            <!-- Left Column: Navigation & Info -->
+            <div class="lg:col-span-1 space-y-6 flex flex-col">
+
+                <!-- Hierarchy Navigation -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2 text-gray-700">Organization Levels</h2>
+                    <p class="text-sm text-gray-500 mb-6">Select a level to explore how parts combine to form a more complex system.</p>
+
+                    <div class="flex flex-col space-y-4 relative">
+                        <!-- Vertical line connecting buttons -->
+                        <div class="absolute left-6 top-6 bottom-6 w-1 bg-green-200 z-0"></div>
+
+                        <button class="level-btn active w-full flex items-center p-3 rounded-lg border border-green-200 bg-white z-10" data-level="1">
+                            <div class="w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold mr-3 border-2 border-white shadow-sm">1</div>
+                            <span class="font-bold text-lg">Cell</span>
+                        </button>
+
+                        <button class="level-btn w-full flex items-center p-3 rounded-lg border border-green-200 bg-white z-10" data-level="2">
+                            <div class="w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold mr-3 border-2 border-white shadow-sm">2</div>
+                            <span class="font-bold text-lg">Tissue</span>
+                        </button>
+
+                        <button class="level-btn w-full flex items-center p-3 rounded-lg border border-green-200 bg-white z-10" data-level="3">
+                            <div class="w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold mr-3 border-2 border-white shadow-sm">3</div>
+                            <span class="font-bold text-lg">Organ</span>
+                        </button>
+
+                        <button class="level-btn w-full flex items-center p-3 rounded-lg border border-green-200 bg-white z-10" data-level="4">
+                            <div class="w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold mr-3 border-2 border-white shadow-sm">4</div>
+                            <span class="font-bold text-lg">Organ System</span>
+                        </button>
+
+                        <button class="level-btn w-full flex items-center p-3 rounded-lg border border-green-200 bg-white z-10" data-level="5">
+                            <div class="w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold mr-3 border-2 border-white shadow-sm">5</div>
+                            <span class="font-bold text-lg">Organism</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contextual Info Panel -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-blue-100 flex-grow info-panel" id="info-panel">
+                    <h3 class="text-lg font-extrabold text-blue-800 mb-2 uppercase tracking-wide" id="info-title">Enterocyte (Intestinal Cell)</h3>
+                    <div class="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wider" id="info-level-name">Level 1: Cell</div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-gray-700 border-b pb-1 mb-2">Structure</h4>
+                            <p class="text-gray-600 text-sm" id="info-structure">Columnar epithelial cells with microvilli (brush border) on their apical surface to increase surface area.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 border-b pb-1 mb-2">Specific Function</h4>
+                            <p class="text-gray-600 text-sm" id="info-function">Absorbs nutrients (water, sugars, peptides, lipids) from the lumen of the intestine into the bloodstream.</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 mt-4">
+                            <h4 class="font-bold text-blue-800 mb-1 text-sm">Hierarchy Interaction</h4>
+                            <p class="text-blue-900 text-sm italic" id="info-interaction">Millions of these specialized cells work together to form the epithelial tissue layer.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Visualization Model -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col relative" style="min-height: 500px;">
+                <div class="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
+                    <h2 class="font-bold text-gray-700 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                        Visual Model
+                    </h2>
+                    <div class="flex items-center space-x-2 text-sm text-gray-500 font-mono">
+                        <span>Scale:</span>
+                        <span id="scale-indicator" class="font-bold text-blue-600">Microscopic (10µm)</span>
+                    </div>
+                </div>
+
+                <div id="canvas-container" class="flex-grow w-full h-full p-2 relative">
+                    <!-- Canvas for dynamic rendering -->
+                    <canvas id="visual-canvas" width="800" height="600"></canvas>
+
+                    <!-- Overlay hints -->
+                    <div class="absolute bottom-4 right-4 bg-white/90 px-3 py-1 rounded shadow text-xs font-semibold text-gray-600 pointer-events-none" id="hint-text">
+                        Select higher levels to zoom out
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // System Data Dictionary
+        const hierarchyData = {
+            digestive: {
+                name: "Digestive System",
+                levels: [
+                    {
+                        id: 1, name: "Cell", title: "Enterocyte (Epithelial Cell)",
+                        scale: "Microscopic (10µm)",
+                        structure: "Columnar epithelial cells characterized by a 'brush border' of microvilli on their apical (top) surface.",
+                        function: "Absorbs water, sugars, peptides, and lipids from the lumen (inside) of the small intestine into the bloodstream.",
+                        interaction: "Millions of individual enterocytes link tightly together to form an impermeable barrier and absorptive surface layer."
+                    },
+                    {
+                        id: 2, name: "Tissue", title: "Intestinal Epithelium",
+                        scale: "Microscopic (1mm)",
+                        structure: "A single layer of cells (simple columnar epithelium) folded into finger-like projections called villi.",
+                        function: "Provides a massive surface area to maximize the rate of nutrient absorption and acts as a barrier against pathogens.",
+                        interaction: "The epithelial tissue covers the inner surface of the intestine organ, interacting directly with digested food."
+                    },
+                    {
+                        id: 3, name: "Organ", title: "Small Intestine",
+                        scale: "Macroscopic (5cm wide)",
+                        structure: "A long, coiled muscular tube composed of multiple tissue layers (mucosa, submucosa, muscularis, serosa).",
+                        function: "The primary site of chemical digestion and nutrient absorption in the body.",
+                        interaction: "Connects the stomach to the large intestine, relying on secretions from the pancreas and liver to function."
+                    },
+                    {
+                        id: 4, name: "Organ System", title: "Digestive System",
+                        scale: "Macroscopic (1m)",
+                        structure: "A continuous tube (GI tract) running from mouth to anus, plus accessory organs (liver, pancreas, gallbladder).",
+                        function: "Ingests food, breaks it down chemically and mechanically, absorbs nutrients into the blood, and excretes waste.",
+                        interaction: "Interacts with the circulatory system to distribute absorbed nutrients to all cells in the organism."
+                    },
+                    {
+                        id: 5, name: "Organism", title: "Human Body",
+                        scale: "Macroscopic (1.8m)",
+                        structure: "A complex entity made of 11 interdependent organ systems.",
+                        function: "Maintains homeostasis, grows, responds to stimuli, and reproduces.",
+                        interaction: "The organism relies on the digestive system to provide the raw materials and energy needed by every other system (e.g., muscle, nervous)."
+                    }
+                ]
+            },
+            respiratory: {
+                name: "Respiratory System",
+                levels: [
+                    {
+                        id: 1, name: "Cell", title: "Type I Pneumocyte",
+                        scale: "Microscopic (10µm)",
+                        structure: "Extremely thin, squamous (flat) epithelial cells.",
+                        function: "Provides the minimal barrier thickness required for rapid gas exchange (O2 and CO2) via simple diffusion.",
+                        interaction: "These cells link together to form the incredibly thin walls of the alveoli sacs."
+                    },
+                    {
+                        id: 2, name: "Tissue", title: "Alveolar Epithelium",
+                        scale: "Microscopic (0.5mm)",
+                        structure: "Clusters of tiny, balloon-like air sacs (alveoli) surrounded by a dense network of pulmonary capillaries.",
+                        function: "The specific site where oxygen from inhaled air enters the blood, and carbon dioxide leaves the blood to be exhaled.",
+                        interaction: "Millions of alveoli tissues bundle together to form the spongy mass of the lung organ."
+                    },
+                    {
+                        id: 3, name: "Organ", title: "Lung",
+                        scale: "Macroscopic (20cm)",
+                        structure: "Large, spongy, paired organs situated within the thoracic cavity, containing branching airways (bronchioles) leading to alveoli.",
+                        function: "Facilitates the intake of oxygen gas and the exhalation of carbon dioxide waste.",
+                        interaction: "Works in tandem with the heart (cardiovascular system) to oxygenate blood for the entire body."
+                    },
+                    {
+                        id: 4, name: "Organ System", title: "Respiratory System",
+                        scale: "Macroscopic (0.5m)",
+                        structure: "Includes the nasal cavity, pharynx, larynx, trachea, bronchi, and lungs.",
+                        function: "Responsible for ventilation (breathing) and supplying the body's blood with constant oxygen while removing carbon dioxide.",
+                        interaction: "Provides the oxygen required by the mitochondria in all cells for cellular respiration (energy production)."
+                    },
+                    {
+                        id: 5, name: "Organism", title: "Human Body",
+                        scale: "Macroscopic (1.8m)",
+                        structure: "A complex entity made of 11 interdependent organ systems.",
+                        function: "Maintains homeostasis, grows, responds to stimuli, and reproduces.",
+                        interaction: "The organism cannot survive more than a few minutes without the continuous oxygen supply provided by the respiratory system."
+                    }
+                ]
+            }
+        };
+
+        // Application State
+        let currentSystem = 'digestive';
+        let currentLevel = 1;
+
+        // DOM Elements
+        const elSystemBtns = document.querySelectorAll('.system-btn');
+        const elLevelBtns = document.querySelectorAll('.level-btn');
+
+        // Info Panel Elements
+        const elInfoTitle = document.getElementById('info-title');
+        const elInfoLevelName = document.getElementById('info-level-name');
+        const elInfoStructure = document.getElementById('info-structure');
+        const elInfoFunction = document.getElementById('info-function');
+        const elInfoInteraction = document.getElementById('info-interaction');
+        const elScaleIndicator = document.getElementById('scale-indicator');
+        const elHintText = document.getElementById('hint-text');
+
+        // Initialization
+        function init() {
+            setupEventListeners();
+            updateUI();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // System selection
+            elSystemBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const system = e.target.getAttribute('data-system');
+                    if (system !== currentSystem) {
+                        currentSystem = system;
+
+                        // Update active state of system buttons
+                        elSystemBtns.forEach(b => {
+                            b.classList.remove('active', 'bg-blue-50', 'text-blue-700', 'border-blue-400');
+                            b.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+                        });
+                        e.target.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+                        e.target.classList.add('active', 'bg-blue-50', 'text-blue-700', 'border-blue-400');
+
+                        // Reset to level 1 on system change
+                        currentLevel = 1;
+                        updateUI();
+                    }
+                });
+            });
+
+            // Level selection
+            elLevelBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Get closest button element in case child element was clicked
+                    const targetBtn = e.target.closest('.level-btn');
+                    const level = parseInt(targetBtn.getAttribute('data-level'));
+
+                    if (level !== currentLevel) {
+                        currentLevel = level;
+                        updateUI();
+                    }
+                });
+            });
+        }
+
+        // Core Update Logic
+        function updateUI() {
+            updateLevelButtons();
+            updateInfoPanel();
+            drawCanvas(); // Placeholder call for Step 3
+        }
+
+        function updateLevelButtons() {
+            elLevelBtns.forEach(btn => {
+                const btnLevel = parseInt(btn.getAttribute('data-level'));
+                const iconDiv = btn.querySelector('div');
+                const spanTxt = btn.querySelector('span');
+
+                // Reset styles
+                btn.className = 'level-btn w-full flex items-center p-3 rounded-lg border border-green-200 bg-white z-10';
+                iconDiv.className = 'w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold mr-3 border-2 border-white shadow-sm transition-colors';
+                spanTxt.className = 'font-bold text-lg text-gray-700 transition-colors';
+
+                if (btnLevel === currentLevel) {
+                    // Active Selection
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-white');
+                    iconDiv.classList.replace('bg-green-100', 'bg-white');
+                    iconDiv.classList.replace('text-green-800', 'text-green-700');
+                    spanTxt.classList.replace('text-gray-700', 'text-white');
+                } else if (btnLevel < currentLevel) {
+                    // Past Selection (Breadcrumb trail)
+                    btn.classList.replace('border-green-200', 'border-green-400');
+                    btn.classList.replace('bg-white', 'bg-green-50');
+                    iconDiv.classList.replace('bg-green-100', 'bg-green-500');
+                    iconDiv.classList.replace('text-green-800', 'text-white');
+                }
+            });
+
+            // Update hint text based on direction
+            if (currentLevel === 5) {
+                elHintText.textContent = "Select lower levels to zoom in";
+            } else if (currentLevel === 1) {
+                elHintText.textContent = "Select higher levels to zoom out";
+            } else {
+                elHintText.textContent = "Select levels to explore hierarchy";
+            }
+        }
+
+        function updateInfoPanel() {
+            const data = hierarchyData[currentSystem].levels[currentLevel - 1];
+
+            // Update text content
+            elInfoTitle.textContent = data.title;
+            elInfoLevelName.textContent = `Level ${data.id}: ${data.name}`;
+            elInfoStructure.textContent = data.structure;
+            elInfoFunction.textContent = data.function;
+            elInfoInteraction.textContent = data.interaction;
+            elScaleIndicator.textContent = data.scale;
+
+            // Trigger animation
+            const panel = document.getElementById('info-panel');
+            panel.classList.remove('info-panel');
+            void panel.offsetWidth; // Trigger reflow to restart animation
+            panel.classList.add('info-panel');
+        }
+
+        function drawCanvas() {
+            const canvas = document.getElementById('visual-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Handle high-DPI displays for crisp rendering
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+
+            // Only set dimensions if they changed to avoid flickering
+            if(canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            const w = rect.width;
+            const h = rect.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            // Common colors
+            const cRed = '#ef4444';
+            const cBlue = '#3b82f6';
+            const cGreen = '#10b981';
+            const cPink = '#fbcfe8';
+            const cDarkPink = '#be185d';
+            const cBrown = '#b45309';
+
+            if (currentSystem === 'digestive') {
+                if (currentLevel === 1) {
+                    // Level 1: Enterocyte Cell
+                    ctx.fillStyle = cPink;
+                    ctx.strokeStyle = cDarkPink;
+                    ctx.lineWidth = 4;
+
+                    // Main cell body
+                    ctx.beginPath();
+                    ctx.rect(cx - 60, cy - 80, 120, 200);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Microvilli (Brush border)
+                    ctx.beginPath();
+                    for(let i=0; i<6; i++) {
+                        let vx = cx - 50 + (i*20);
+                        ctx.moveTo(vx - 5, cy - 80);
+                        ctx.lineTo(vx, cy - 120);
+                        ctx.lineTo(vx + 5, cy - 80);
+                    }
+                    ctx.fillStyle = cPink;
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Nucleus
+                    ctx.fillStyle = '#7e22ce'; // purple
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy + 60, 30, 20, 0, 0, Math.PI*2);
+                    ctx.fill();
+
+                    // Mitochondria
+                    ctx.fillStyle = '#ea580c'; // orange
+                    ctx.beginPath();
+                    ctx.ellipse(cx - 30, cy, 10, 20, Math.PI/4, 0, Math.PI*2);
+                    ctx.ellipse(cx + 30, cy, 10, 20, -Math.PI/4, 0, Math.PI*2);
+                    ctx.fill();
+
+                } else if (currentLevel === 2) {
+                    // Level 2: Intestinal Epithelium Tissue (Villi)
+                    ctx.fillStyle = cPink;
+                    ctx.strokeStyle = cDarkPink;
+                    ctx.lineWidth = 2;
+
+                    // Draw multiple villi
+                    for(let v=-1; v<=1; v++) {
+                        let vx = cx + (v * 150);
+
+                        // Capillary network inside villi
+                        ctx.strokeStyle = cRed;
+                        ctx.beginPath(); ctx.moveTo(vx-10, cy+150); ctx.lineTo(vx-10, cy-50); ctx.stroke();
+                        ctx.strokeStyle = cBlue;
+                        ctx.beginPath(); ctx.moveTo(vx+10, cy+150); ctx.lineTo(vx+10, cy-50); ctx.stroke();
+
+                        // Epithelial cell layer
+                        ctx.strokeStyle = cDarkPink;
+                        ctx.beginPath();
+                        ctx.moveTo(vx - 40, cy + 150);
+                        ctx.lineTo(vx - 40, cy - 80);
+                        ctx.arc(vx, cy - 80, 40, Math.PI, 0);
+                        ctx.lineTo(vx + 40, cy + 150);
+                        ctx.stroke();
+
+                        // Draw individual cells along the edge
+                        for(let i=0; i<15; i++) {
+                            // Left side
+                            ctx.beginPath(); ctx.moveTo(vx-40, cy+150 - i*15); ctx.lineTo(vx-25, cy+150 - i*15); ctx.stroke();
+                            // Right side
+                            ctx.beginPath(); ctx.moveTo(vx+40, cy+150 - i*15); ctx.lineTo(vx+25, cy+150 - i*15); ctx.stroke();
+                        }
+                    }
+
+                } else if (currentLevel === 3) {
+                    // Level 3: Small Intestine Organ
+                    ctx.strokeStyle = cPink;
+                    ctx.lineWidth = 40;
+
+                    // Coiled tube
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 100, cy - 100);
+                    ctx.bezierCurveTo(cx + 150, cy - 150, cx + 150, cy, cx, cy);
+                    ctx.bezierCurveTo(cx - 150, cy, cx - 150, cy + 150, cx + 100, cy + 100);
+                    ctx.stroke();
+
+                    // Add some segmentation/texture lines
+                    ctx.strokeStyle = cDarkPink;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    for(let i=0; i<10; i++) {
+                        ctx.moveTo(cx - 60 + i*10, cy - 80 + i*5);
+                        ctx.lineTo(cx - 40 + i*10, cy - 110 + i*5);
+                    }
+                    ctx.stroke();
+
+                } else if (currentLevel === 4) {
+                    // Level 4: Digestive System
+                    ctx.lineWidth = 4;
+
+                    // Esophagus & Stomach
+                    ctx.strokeStyle = cPink;
+                    ctx.fillStyle = cPink;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy - 150);
+                    ctx.lineTo(cx, cy - 50); // Esophagus
+                    ctx.stroke();
+
+                    // Stomach
+                    ctx.beginPath();
+                    ctx.ellipse(cx + 40, cy - 30, 50, 30, Math.PI/4, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Liver
+                    ctx.fillStyle = cBrown;
+                    ctx.strokeStyle = '#78350f';
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 10, cy - 60);
+                    ctx.lineTo(cx - 80, cy - 10);
+                    ctx.lineTo(cx + 10, cy - 10);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Intestines
+                    ctx.fillStyle = cPink;
+                    ctx.strokeStyle = cDarkPink;
+                    // Large intestine (frame)
+                    ctx.beginPath();
+                    ctx.rect(cx - 80, cy + 20, 160, 100);
+                    ctx.stroke();
+                    // Small intestine (coil)
+                    ctx.lineWidth = 15;
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 40, cy + 40);
+                    ctx.lineTo(cx + 40, cy + 40);
+                    ctx.lineTo(cx - 40, cy + 80);
+                    ctx.lineTo(cx + 40, cy + 80);
+                    ctx.stroke();
+
+                } else if (currentLevel === 5) {
+                    // Level 5: Organism (Human Outline with Digestive System)
+                    ctx.strokeStyle = '#9ca3af';
+                    ctx.lineWidth = 4;
+
+                    // Head
+                    ctx.beginPath(); ctx.arc(cx, cy - 180, 40, 0, Math.PI*2); ctx.stroke();
+                    // Torso
+                    ctx.beginPath(); ctx.roundRect(cx - 60, cy - 140, 120, 200, 20); ctx.stroke();
+                    // Arms
+                    ctx.beginPath(); ctx.moveTo(cx - 60, cy - 120); ctx.lineTo(cx - 100, cy); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(cx + 60, cy - 120); ctx.lineTo(cx + 100, cy); ctx.stroke();
+                    // Legs
+                    ctx.beginPath(); ctx.moveTo(cx - 30, cy + 60); ctx.lineTo(cx - 30, cy + 200); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(cx + 30, cy + 60); ctx.lineTo(cx + 30, cy + 200); ctx.stroke();
+
+                    // Highlight Digestive System inside
+                    ctx.strokeStyle = cPink;
+                    ctx.lineWidth = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy - 170); // Mouth
+                    ctx.lineTo(cx, cy - 80); // Esophagus
+                    ctx.stroke();
+
+                    ctx.fillStyle = cPink;
+                    ctx.beginPath(); ctx.arc(cx + 20, cy - 60, 20, 0, Math.PI*2); ctx.fill(); // Stomach
+
+                    ctx.beginPath(); ctx.rect(cx - 30, cy - 20, 60, 60); ctx.stroke(); // Intestines
+                }
+
+            } else if (currentSystem === 'respiratory') {
+                if (currentLevel === 1) {
+                    // Level 1: Type I Pneumocyte Cell (very flat/thin)
+                    ctx.fillStyle = '#fde047'; // yellow
+                    ctx.strokeStyle = '#ca8a04';
+                    ctx.lineWidth = 4;
+
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 150, 20, 0, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Nucleus (bulging)
+                    ctx.fillStyle = '#7e22ce';
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 30, 25, 0, 0, Math.PI*2);
+                    ctx.fill();
+
+                    // Show O2/CO2 exchange arrows
+                    ctx.fillStyle = cBlue; // O2
+                    ctx.fillText("O₂", cx - 80, cy - 40);
+                    ctx.beginPath(); ctx.moveTo(cx-80, cy-30); ctx.lineTo(cx-80, cy+30); ctx.stroke(); // Arrow down
+
+                    ctx.fillStyle = cRed; // CO2
+                    ctx.fillText("CO₂", cx + 80, cy + 60);
+                    ctx.beginPath(); ctx.moveTo(cx+80, cy+30); ctx.lineTo(cx+80, cy-30); ctx.stroke(); // Arrow up
+
+                } else if (currentLevel === 2) {
+                    // Level 2: Alveolar Epithelium (Tissue)
+                    ctx.strokeStyle = '#ca8a04';
+                    ctx.lineWidth = 3;
+
+                    // Draw a cluster of alveoli sacs
+                    ctx.beginPath();
+                    ctx.arc(cx, cy - 40, 50, Math.PI, 0); // Top
+                    ctx.arc(cx + 40, cy + 20, 50, -Math.PI/2, Math.PI/2); // Right
+                    ctx.arc(cx, cy + 60, 50, 0, Math.PI); // Bottom
+                    ctx.arc(cx - 40, cy + 20, 50, Math.PI/2, -Math.PI/2); // Left
+                    ctx.fillStyle = '#fef08a';
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Draw Bronchiole tube
+                    ctx.fillStyle = '#cbd5e1';
+                    ctx.fillRect(cx - 20, cy - 150, 40, 70);
+                    ctx.strokeRect(cx - 20, cy - 150, 40, 70);
+
+                    // Capillary network wrapping it
+                    ctx.strokeStyle = cBlue; // Deoxygenated entering
+                    ctx.lineWidth = 5;
+                    ctx.beginPath(); ctx.moveTo(cx - 80, cy - 80); ctx.bezierCurveTo(cx - 100, cy, cx, cy + 120, cx, cy + 100); ctx.stroke();
+
+                    ctx.strokeStyle = cRed; // Oxygenated leaving
+                    ctx.beginPath(); ctx.moveTo(cx, cy + 100); ctx.bezierCurveTo(cx + 100, cy + 120, cx + 100, cy, cx + 80, cy - 80); ctx.stroke();
+
+                } else if (currentLevel === 3) {
+                    // Level 3: Lung (Organ)
+                    ctx.fillStyle = '#fca5a5';
+                    ctx.strokeStyle = cRed;
+                    ctx.lineWidth = 4;
+
+                    // Lung shape
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy - 120);
+                    ctx.bezierCurveTo(cx + 100, cy - 100, cx + 150, cy + 100, cx + 80, cy + 150);
+                    ctx.lineTo(cx - 20, cy + 150);
+                    ctx.bezierCurveTo(cx - 20, cy, cx - 20, cy - 50, cx, cy - 120);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Bronchial tree inside
+                    ctx.strokeStyle = '#cbd5e1';
+                    ctx.lineWidth = 8;
+                    ctx.beginPath(); ctx.moveTo(cx, cy - 150); ctx.lineTo(cx + 20, cy - 50); ctx.stroke(); // Main
+                    ctx.lineWidth = 4;
+                    ctx.beginPath(); ctx.moveTo(cx + 20, cy - 50); ctx.lineTo(cx + 80, cy); ctx.stroke(); // Branch 1
+                    ctx.beginPath(); ctx.moveTo(cx + 20, cy - 50); ctx.lineTo(cx + 40, cy + 80); ctx.stroke(); // Branch 2
+
+                } else if (currentLevel === 4) {
+                    // Level 4: Respiratory System
+                    ctx.strokeStyle = '#cbd5e1'; // Trachea color
+                    ctx.lineWidth = 12;
+
+                    // Trachea
+                    ctx.beginPath(); ctx.moveTo(cx, cy - 150); ctx.lineTo(cx, cy - 50); ctx.stroke();
+
+                    // Bronchi
+                    ctx.beginPath(); ctx.moveTo(cx, cy - 50); ctx.lineTo(cx - 60, cy); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(cx, cy - 50); ctx.lineTo(cx + 60, cy); ctx.stroke();
+
+                    // Lungs
+                    ctx.fillStyle = '#fca5a5';
+                    ctx.strokeStyle = cRed;
+                    ctx.lineWidth = 3;
+
+                    // Left Lung
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 60, cy - 20);
+                    ctx.bezierCurveTo(cx - 120, cy, cx - 140, cy + 100, cx - 80, cy + 120);
+                    ctx.lineTo(cx - 20, cy + 120);
+                    ctx.lineTo(cx - 60, cy - 20);
+                    ctx.fill(); ctx.stroke();
+
+                    // Right Lung
+                    ctx.beginPath();
+                    ctx.moveTo(cx + 60, cy - 20);
+                    ctx.bezierCurveTo(cx + 120, cy, cx + 140, cy + 100, cx + 80, cy + 120);
+                    ctx.lineTo(cx + 20, cy + 120);
+                    ctx.lineTo(cx + 60, cy - 20);
+                    ctx.fill(); ctx.stroke();
+
+                    // Diaphragm
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 6;
+                    ctx.beginPath(); ctx.moveTo(cx - 100, cy + 140); ctx.quadraticCurveTo(cx, cy + 100, cx + 100, cy + 140); ctx.stroke();
+
+                } else if (currentLevel === 5) {
+                    // Level 5: Organism (Human Outline with Respiratory System)
+                    ctx.strokeStyle = '#9ca3af';
+                    ctx.lineWidth = 4;
+
+                    // Head
+                    ctx.beginPath(); ctx.arc(cx, cy - 180, 40, 0, Math.PI*2); ctx.stroke();
+                    // Torso
+                    ctx.beginPath(); ctx.roundRect(cx - 60, cy - 140, 120, 200, 20); ctx.stroke();
+                    // Arms
+                    ctx.beginPath(); ctx.moveTo(cx - 60, cy - 120); ctx.lineTo(cx - 100, cy); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(cx + 60, cy - 120); ctx.lineTo(cx + 100, cy); ctx.stroke();
+                    // Legs
+                    ctx.beginPath(); ctx.moveTo(cx - 30, cy + 60); ctx.lineTo(cx - 30, cy + 200); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(cx + 30, cy + 60); ctx.lineTo(cx + 30, cy + 200); ctx.stroke();
+
+                    // Highlight Respiratory System inside
+                    ctx.strokeStyle = '#38bdf8'; // Blue-ish air
+                    ctx.lineWidth = 4;
+                    ctx.beginPath(); ctx.moveTo(cx, cy - 180); ctx.lineTo(cx, cy - 80); ctx.stroke(); // Trachea
+
+                    ctx.fillStyle = '#fca5a5';
+                    ctx.beginPath(); ctx.ellipse(cx - 25, cy - 40, 20, 40, 0, 0, Math.PI*2); ctx.fill(); // Left Lung
+                    ctx.beginPath(); ctx.ellipse(cx + 25, cy - 40, 20, 40, 0, 0, Math.PI*2); ctx.fill(); // Right Lung
+                }
+            }
+        }
+
+        // Start App
+        init();
+    </script>
+</body>
+</html>

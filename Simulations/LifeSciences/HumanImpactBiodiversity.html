@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Impact & Biodiversity Solutions (HS-LS2-7)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
+
+        input[type="range"] { accent-color: #3b82f6; width: 100%; }
+        input[type="range"].slider-danger { accent-color: #ef4444; }
+        input[type="range"].slider-solution { accent-color: #10b981; }
+
+        .progress-bar-bg { background-color: #e2e8f0; border-radius: 999px; height: 24px; width: 100%; overflow: hidden; }
+        .progress-bar-fill { height: 100%; transition: width 0.3s ease, background-color 0.3s ease; }
+
+        #eco-canvas {
+            width: 100%; height: 300px; background-color: #86efac; border-radius: 8px; border: 2px solid #cbd5e1; transition: background-color 1s ease;
+        }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-slate-700">Biodiversity & Engineering Solutions</h1>
+            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS2-7: Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment and biodiversity. Constraints include cost, environmental impact, and reliability.</p>
+        </header>
+
+        <!-- Main Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+
+            <!-- Left: Human Impacts (The Problem) -->
+            <div class="panel border-t-4 border-t-red-500 lg:col-span-1 flex flex-col">
+                <h2 class="text-xl font-bold mb-4 text-slate-700">Human Activities</h2>
+                <p class="text-xs text-slate-500 mb-6">These activities naturally scale up with human population growth, degrading the local ecosystem.</p>
+
+                <div class="space-y-6 flex-grow">
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                            <span>Urbanization & Deforestation</span>
+                            <span id="val-urban" class="text-red-600 font-mono">0%</span>
+                        </label>
+                        <input type="range" id="slider-urban" min="0" max="100" value="0" class="slider-danger">
+                        <p class="text-[10px] text-slate-400 mt-1">Destroys habitat and fragments populations.</p>
+                    </div>
+
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                            <span>Agricultural Runoff (Pollution)</span>
+                            <span id="val-poll" class="text-red-600 font-mono">0%</span>
+                        </label>
+                        <input type="range" id="slider-poll" min="0" max="100" value="0" class="slider-danger">
+                        <p class="text-[10px] text-slate-400 mt-1">Causes eutrophication, killing aquatic life in rivers.</p>
+                    </div>
+
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                            <span>Invasive Species Intro</span>
+                            <span id="val-inv" class="text-red-600 font-mono">0%</span>
+                        </label>
+                        <input type="range" id="slider-inv" min="0" max="100" value="0" class="slider-danger">
+                        <p class="text-[10px] text-slate-400 mt-1">Outcompetes native flora/fauna for resources.</p>
+                    </div>
+                </div>
+
+                <button id="btn-max-impact" class="w-full mt-4 bg-red-100 hover:bg-red-200 text-red-800 font-bold py-2 rounded text-sm transition">Simulate 50 Years Growth</button>
+            </div>
+
+            <!-- Middle: The Ecosystem (Visualization & Score) -->
+            <div class="panel lg:col-span-1 flex flex-col items-center">
+                <h2 class="text-xl font-bold mb-2 text-slate-700">Local Ecosystem Status</h2>
+
+                <!-- Score Indicator -->
+                <div class="w-full mb-4">
+                    <div class="flex justify-between text-sm font-bold mb-1">
+                        <span>Biodiversity Index:</span>
+                        <span id="val-biodiversity">100 / 100</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="bar-biodiversity" class="progress-bar-fill bg-green-500" style="width: 100%;"></div>
+                    </div>
+                    <div class="text-center text-xs font-bold mt-2" id="status-label">Pristine Wilderness</div>
+                </div>
+
+                <!-- Canvas Visual -->
+                <canvas id="eco-canvas"></canvas>
+            </div>
+
+            <!-- Right: Engineering Solutions (The Mitigation) -->
+            <div class="panel border-t-4 border-t-green-500 lg:col-span-1 flex flex-col">
+                <h2 class="text-xl font-bold mb-1 text-slate-700">Engineering Solutions</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">City Budget Remaining:</span>
+                    <span id="val-budget" class="text-lg font-mono font-bold text-blue-600">$10.0M</span>
+                </div>
+
+                <p class="text-xs text-slate-500 mb-4">Allocate budget to implement solutions. Tradeoffs must be made as you cannot afford everything.</p>
+
+                <div class="space-y-6 flex-grow">
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                            <span>Wildlife Corridors / Protected Parks</span>
+                            <span id="cost-parks" class="text-green-600 font-mono">Lvl 0</span>
+                        </label>
+                        <input type="range" id="sol-parks" min="0" max="5" value="0" class="slider-solution">
+                        <p class="text-[10px] text-slate-400 mt-1">Mitigates Urbanization. Cost: $2M per level.</p>
+                    </div>
+
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                            <span>Water Treatment Facilities</span>
+                            <span id="cost-water" class="text-green-600 font-mono">Lvl 0</span>
+                        </label>
+                        <input type="range" id="sol-water" min="0" max="5" value="0" class="slider-solution">
+                        <p class="text-[10px] text-slate-400 mt-1">Mitigates Pollution. Cost: $1.5M per level.</p>
+                    </div>
+
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+                            <span>Invasive Eradication Program</span>
+                            <span id="cost-erad" class="text-green-600 font-mono">Lvl 0</span>
+                        </label>
+                        <input type="range" id="sol-erad" min="0" max="5" value="0" class="slider-solution">
+                        <p class="text-[10px] text-slate-400 mt-1">Mitigates Invasives. Cost: $1M per level.</p>
+                    </div>
+                </div>
+
+                <button id="btn-reset" class="w-full mt-4 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 rounded text-sm transition">Reset Scenario</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Constants & State
+        const INITIAL_BUDGET = 10.0; // $10M
+
+        let state = {
+            impacts: { urban: 0, poll: 0, inv: 0 },
+            solutions: { parks: 0, water: 0, erad: 0 },
+            budget: INITIAL_BUDGET,
+            biodiversity: 100 // 0 to 100
+        };
+
+        // DOM Elements
+        const ui = {
+            impacts: {
+                urban: document.getElementById('slider-urban'),
+                poll: document.getElementById('slider-poll'),
+                inv: document.getElementById('slider-inv')
+            },
+            vals: {
+                urban: document.getElementById('val-urban'),
+                poll: document.getElementById('val-poll'),
+                inv: document.getElementById('val-inv')
+            },
+            sols: {
+                parks: document.getElementById('sol-parks'),
+                water: document.getElementById('sol-water'),
+                erad: document.getElementById('sol-erad')
+            },
+            costs: {
+                parks: document.getElementById('cost-parks'),
+                water: document.getElementById('cost-water'),
+                erad: document.getElementById('cost-erad')
+            },
+            budget: document.getElementById('val-budget'),
+            bio: {
+                val: document.getElementById('val-biodiversity'),
+                bar: document.getElementById('bar-biodiversity'),
+                label: document.getElementById('status-label')
+            },
+            btnMax: document.getElementById('btn-max-impact'),
+            btnReset: document.getElementById('btn-reset'),
+            canvas: document.getElementById('eco-canvas')
+        };
+
+        const ctx = ui.canvas.getContext('2d');
+
+        // Initialization
+        function init() {
+            setupCanvas();
+            setupEventListeners();
+            calculateState();
+        }
+
+        function setupCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = ui.canvas.getBoundingClientRect();
+            ui.canvas.width = rect.width * dpr;
+            ui.canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        function setupEventListeners() {
+            // Impact Sliders
+            ['urban', 'poll', 'inv'].forEach(key => {
+                ui.impacts[key].addEventListener('input', (e) => {
+                    state.impacts[key] = parseInt(e.target.value);
+                    ui.vals[key].textContent = `${state.impacts[key]}%`;
+                    calculateState();
+                });
+            });
+
+            // Solution Sliders (with Budget Constraints)
+            ['parks', 'water', 'erad'].forEach(key => {
+                ui.sols[key].addEventListener('input', (e) => {
+                    handleSolutionChange(key, parseInt(e.target.value));
+                });
+            });
+
+            ui.btnMax.addEventListener('click', () => {
+                state.impacts = { urban: 80, poll: 90, inv: 70 };
+                Object.keys(state.impacts).forEach(k => {
+                    ui.impacts[k].value = state.impacts[k];
+                    ui.vals[k].textContent = `${state.impacts[k]}%`;
+                });
+                calculateState();
+            });
+
+            ui.btnReset.addEventListener('click', () => {
+                state.impacts = { urban: 0, poll: 0, inv: 0 };
+                state.solutions = { parks: 0, water: 0, erad: 0 };
+
+                Object.keys(state.impacts).forEach(k => {
+                    ui.impacts[k].value = 0; ui.vals[k].textContent = "0%";
+                });
+                Object.keys(state.solutions).forEach(k => {
+                    ui.sols[k].value = 0; ui.costs[k].textContent = "Lvl 0";
+                });
+
+                calculateState();
+            });
+        }
+
+        function handleSolutionChange(changedKey, newValue) {
+            // Calculate hypothetical cost
+            const costs = { parks: 2.0, water: 1.5, erad: 1.0 };
+
+            // Backup old value in case we can't afford it
+            const oldValue = state.solutions[changedKey];
+            state.solutions[changedKey] = newValue;
+
+            // Recalculate total cost
+            let totalCost =
+                (state.solutions.parks * costs.parks) +
+                (state.solutions.water * costs.water) +
+                (state.solutions.erad * costs.erad);
+
+            if (totalCost > INITIAL_BUDGET) {
+                // Reject change, revert
+                state.solutions[changedKey] = oldValue;
+                ui.sols[changedKey].value = oldValue;
+                // Flash budget red
+                ui.budget.classList.add('text-red-600');
+                setTimeout(() => ui.budget.classList.remove('text-red-600'), 300);
+            } else {
+                // Accept change
+                ui.costs[changedKey].textContent = `Lvl ${newValue}`;
+                calculateState();
+            }
+        }
+
+        function calculateState() {
+            // Update Budget
+            const costs = { parks: 2.0, water: 1.5, erad: 1.0 };
+            const spent = (state.solutions.parks * costs.parks) + (state.solutions.water * costs.water) + (state.solutions.erad * costs.erad);
+            state.budget = INITIAL_BUDGET - spent;
+            ui.budget.textContent = `$${state.budget.toFixed(1)}M`;
+
+            // Calculate Effective Impacts (Impact - Solution Mitigation)
+            // Each solution level mitigates ~20% of the maximum impact
+            let effUrban = Math.max(0, state.impacts.urban - (state.solutions.parks * 20));
+            let effPoll = Math.max(0, state.impacts.poll - (state.solutions.water * 20));
+            let effInv = Math.max(0, state.impacts.inv - (state.solutions.erad * 20));
+
+            // Calculate Biodiversity Score (100 - average of effective impacts)
+            // Weighting: Urbanization hits hardest, then pollution, then invasives
+            const totalDamage = (effUrban * 0.4) + (effPoll * 0.35) + (effInv * 0.25);
+            state.biodiversity = Math.max(0, Math.min(100, 100 - totalDamage));
+
+            updateUI();
+            drawCanvas(); // Step 3
+        }
+
+        function updateUI() {
+            const bio = state.biodiversity;
+            ui.bio.val.textContent = `${Math.round(bio)} / 100`;
+            ui.bio.bar.style.width = `${bio}%`;
+
+            if (bio > 80) {
+                ui.bio.bar.className = 'progress-bar-fill bg-green-500';
+                ui.bio.label.textContent = "High Biodiversity (Stable)";
+                ui.bio.label.className = "text-center text-xs font-bold mt-2 text-green-600";
+                ui.canvas.style.borderColor = '#86efac';
+            } else if (bio > 40) {
+                ui.bio.bar.className = 'progress-bar-fill bg-yellow-400';
+                ui.bio.label.textContent = "Moderate Biodiversity (Stressed)";
+                ui.bio.label.className = "text-center text-xs font-bold mt-2 text-yellow-600";
+                ui.canvas.style.borderColor = '#fde047';
+            } else {
+                ui.bio.bar.className = 'progress-bar-fill bg-red-500';
+                ui.bio.label.textContent = "Low Biodiversity (Collapsing)";
+                ui.bio.label.className = "text-center text-xs font-bold mt-2 text-red-600";
+                ui.canvas.style.borderColor = '#fca5a5';
+            }
+        }
+
+        function drawCanvas() {
+            const w = ui.canvas.width / (window.devicePixelRatio || 1);
+            const h = ui.canvas.height / (window.devicePixelRatio || 1);
+
+            // Effective state calculations
+            const bio = state.biodiversity;
+            const effUrban = Math.max(0, state.impacts.urban - (state.solutions.parks * 20));
+            const effPoll = Math.max(0, state.impacts.poll - (state.solutions.water * 20));
+            const effInv = Math.max(0, state.impacts.inv - (state.solutions.erad * 20));
+
+            ctx.clearRect(0, 0, w, h);
+
+            // 1. Background (Forest/Land)
+            // Starts green, turns brown/gray with urbanization
+            const landGreen = Math.floor((bio / 100) * 163);
+            ctx.fillStyle = `rgb(${180 - effUrban}, ${150 + landGreen}, ${180 - effUrban})`;
+            ctx.fillRect(0, 0, w, h);
+
+            // 2. River (Pollution impact)
+            // Starts blue, turns brown/sludge with pollution
+            ctx.beginPath();
+            ctx.moveTo(w * 0.2, 0);
+            ctx.bezierCurveTo(w * 0.4, h * 0.3, w * 0.1, h * 0.7, w * 0.3, h);
+            ctx.lineTo(w * 0.5, h);
+            ctx.bezierCurveTo(w * 0.3, h * 0.7, w * 0.6, h * 0.3, w * 0.4, 0);
+
+            const rBlue = Math.max(50, 250 - (effPoll * 2));
+            const rRed = Math.min(139, effPoll * 2);
+            const rGreen = Math.min(69, effPoll);
+            ctx.fillStyle = `rgb(${rRed}, ${100+rGreen}, ${rBlue})`;
+            ctx.fill();
+
+            // 3. Flora (Trees)
+            // Number of trees decreases with Urbanization
+            const numTrees = Math.floor(40 * (1 - (effUrban / 100)));
+            ctx.fillStyle = '#166534'; // Dark green
+            for(let i=0; i<numTrees; i++) {
+                // Fixed pseudo-random positions based on index
+                const tx = (i * 87) % w;
+                const ty = (i * 43) % h;
+                // Avoid river roughly
+                if (tx > w*0.1 && tx < w*0.6) continue;
+
+                ctx.fillRect(tx, ty, 4, 10);
+                ctx.beginPath(); ctx.arc(tx+2, ty-2, 8, 0, Math.PI*2); ctx.fill();
+            }
+
+            // 4. Fauna (Native Animals)
+            // Decreases with overall biodiversity loss
+            const numAnimals = Math.floor(25 * (bio / 100));
+            ctx.fillStyle = '#3b82f6'; // Blue dots for native
+            for(let i=0; i<numAnimals; i++) {
+                const ax = (i * 61) % w;
+                const ay = (i * 73) % h;
+                ctx.beginPath(); ctx.arc(ax, ay, 3, 0, Math.PI*2); ctx.fill();
+            }
+
+            // 5. Invasive Species
+            // Increases with effective invasive stat
+            const numInvasive = Math.floor(30 * (effInv / 100));
+            ctx.fillStyle = '#ef4444'; // Red spikes for invasive
+            for(let i=0; i<numInvasive; i++) {
+                const ix = (i * 53) % w;
+                const iy = (i * 89) % h;
+                ctx.beginPath();
+                ctx.moveTo(ix, iy-4); ctx.lineTo(ix-3, iy+3); ctx.lineTo(ix+3, iy+3);
+                ctx.fill();
+            }
+
+            // 6. Urban Sprawl (City blocks)
+            if (effUrban > 0) {
+                const numBuildings = Math.floor(effUrban / 5);
+                ctx.fillStyle = '#64748b'; // Gray buildings
+                for(let i=0; i<numBuildings; i++) {
+                    const bx = w - 20 - ((i*30) % (w/2));
+                    const by = h - 20 - ((i*40) % h);
+                    ctx.fillRect(bx, by, 15, 15 + (i%3)*10);
+                }
+            }
+        }
+
+        // Run
+        init();
+    </script>
+</body>
+</html>

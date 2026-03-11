@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aerobic vs Anaerobic Respiration (HS-LS2-3)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0fdfa; }
+
+        .environment-panel { transition: background-color 0.5s ease; border-radius: 12px; }
+        .aerobic-bg { background-color: #ecfeff; border: 2px solid #5eead4; }
+        .anaerobic-bg { background-color: #fffbeb; border: 2px solid #fcd34d; }
+
+        .molecule {
+            display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-family: monospace; font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.1);
+        }
+        .glucose { background-color: #f3f4f6; color: #334155; }
+        .oxygen { background-color: #dbeafe; color: #1d4ed8; }
+        .co2 { background-color: #fee2e2; color: #b91c1c; }
+        .water { background-color: #e0f2fe; color: #2563eb; }
+        .lactic { background-color: #fef08a; color: #a16207; }
+
+        .atp-burst {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white; font-weight: bold; border-radius: 50%;
+            box-shadow: 0 0 15px #fbbf24;
+            transition: all 0.3s ease;
+        }
+
+        .flow-arrow {
+            display: flex; flex-direction: column; align-items: center; color: #64748b; font-weight: bold;
+        }
+
+        input[type="range"] { accent-color: #0ea5e9; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .anim-pulse { animation: pulse 2s infinite ease-in-out; }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-5xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-teal-700">Cycling of Matter & Energy Flow</h1>
+            <h2 class="text-xl font-bold text-slate-600 mt-1">Aerobic vs. Anaerobic Conditions</h2>
+            <p class="text-slate-500 mt-2 text-sm max-w-4xl mx-auto">NGSS HS-LS2-3: Construct and revise an explanation based on evidence for the cycling of matter and flow of energy in aerobic and anaerobic conditions.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+
+            <!-- Controls -->
+            <div class="md:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">Environmental Conditions</h3>
+
+                    <div class="mb-6">
+                        <label class="flex justify-between font-semibold text-slate-600 mb-2">
+                            <span>Oxygen Availability</span>
+                            <span id="o2-val" class="text-blue-600 font-mono bg-blue-50 px-2 rounded">High (100%)</span>
+                        </label>
+                        <input type="range" id="o2-slider" min="0" max="100" value="100" class="w-full">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>None (Anaerobic)</span>
+                            <span>Abundant (Aerobic)</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="flex justify-between font-semibold text-slate-600 mb-2">
+                            <span>Energy Demand</span>
+                            <span id="energy-val" class="text-amber-600 font-mono bg-amber-50 px-2 rounded">Resting</span>
+                        </label>
+                        <input type="range" id="energy-slider" min="1" max="3" value="1" step="1" class="w-full accent-amber-500">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>Low</span>
+                            <span>Med</span>
+                            <span>High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mt-4">
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">Current State:</h4>
+                    <div id="state-indicator" class="text-lg font-extrabold text-teal-600 mb-2">Aerobic Respiration</div>
+                    <p id="state-desc" class="text-xs text-slate-500">Oxygen is plentiful. The cell can fully break down glucose to extract maximum energy.</p>
+                </div>
+            </div>
+
+            <!-- Visualization / Model -->
+            <div class="md:col-span-2 environment-panel aerobic-bg p-6 flex flex-col justify-between relative" id="env-panel">
+                <h3 class="absolute top-3 left-4 font-bold text-slate-400 uppercase tracking-widest text-xs" id="env-label">Muscle Cell (Oxygenated)</h3>
+
+                <!-- Inputs -->
+                <div class="flex justify-center items-end space-x-8 mt-6 h-20">
+                    <div class="text-center">
+                        <div class="text-xs font-bold text-slate-500 mb-1">Food Source</div>
+                        <div class="molecule glucose">Glucose (C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>)</div>
+                    </div>
+                    <div class="text-center transition-opacity duration-300" id="o2-input-container">
+                        <div class="text-xs font-bold text-slate-500 mb-1">From Environment</div>
+                        <div class="molecule oxygen">Oxygen (6 O<sub>2</sub>)</div>
+                    </div>
+                </div>
+
+                <!-- Process Flow -->
+                <div class="flex justify-center my-8">
+                    <div class="flow-arrow">
+                        <div class="h-16 w-1 bg-slate-300 relative">
+                            <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] border-t-slate-300"></div>
+                        </div>
+                        <span class="bg-white px-3 py-1 rounded-full border border-slate-200 text-sm mt-1 shadow-sm z-10" id="process-label">Cellular Respiration</span>
+                    </div>
+                </div>
+
+                <!-- Outputs (Matter & Energy) -->
+                <div class="flex flex-col items-center">
+
+                    <div class="w-full flex justify-between items-center bg-white/60 p-4 rounded-xl border border-white/50 backdrop-blur-sm">
+                        <!-- Matter Outputs -->
+                        <div class="flex-1 border-r border-slate-200 pr-4">
+                            <h4 class="text-xs font-bold text-slate-500 mb-3 text-center uppercase">Matter Cycling (Waste)</h4>
+                            <div id="matter-outputs" class="flex flex-wrap justify-center gap-3 min-h-[40px]">
+                                <div class="molecule co2">6 CO<sub>2</sub></div>
+                                <div class="molecule water">6 H<sub>2</sub>O</div>
+                            </div>
+                        </div>
+
+                        <!-- Energy Outputs -->
+                        <div class="flex-1 pl-4 flex flex-col items-center">
+                            <h4 class="text-xs font-bold text-slate-500 mb-3 text-center uppercase">Energy Flow (Useful)</h4>
+                            <div id="atp-output" class="atp-burst w-24 h-24 text-xl anim-pulse">
+                                36 ATP
+                            </div>
+                            <div class="text-xs text-amber-600 font-bold mt-2 text-center" id="efficiency-label">High Efficiency Yield</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence Construction -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <h3 class="font-bold text-slate-700 border-b pb-2 mb-3">Constructing an Explanation</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600">
+                <div>
+                    <h4 class="font-semibold text-teal-700 mb-1">Aerobic Conditions (With Oxygen)</h4>
+                    <p>When oxygen is present, cells can fully oxidize glucose into Carbon Dioxide and Water. This complete breakdown cycles matter back to the environment in forms usable by plants, and transfers a massive amount of energy (up to 36 ATP) to power complex life processes.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-amber-700 mb-1">Anaerobic Conditions (Without Oxygen)</h4>
+                    <p>When oxygen is absent or depleted (e.g., heavy sprinting), the cell must use fermentation. The glucose is only partially broken down into Lactic Acid (or Ethanol in yeast). Matter is not fully cycled into simple gases, and only a tiny fraction of energy (2 ATP) is transferred, making it unsustainable for long periods in complex organisms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const elO2Slider = document.getElementById('o2-slider');
+        const elO2Val = document.getElementById('o2-val');
+        const elEnergySlider = document.getElementById('energy-slider');
+        const elEnergyVal = document.getElementById('energy-val');
+
+        const elStateIndicator = document.getElementById('state-indicator');
+        const elStateDesc = document.getElementById('state-desc');
+        const elEnvPanel = document.getElementById('env-panel');
+        const elEnvLabel = document.getElementById('env-label');
+
+        const elO2Input = document.getElementById('o2-input-container');
+        const elProcessLabel = document.getElementById('process-label');
+        const elMatterOutputs = document.getElementById('matter-outputs');
+        const elAtpOutput = document.getElementById('atp-output');
+        const elEfficiencyLabel = document.getElementById('efficiency-label');
+
+        // Logic state
+        let currentProcess = 'aerobic'; // 'aerobic', 'anaerobic', or 'mixed'
+
+        function init() {
+            setupEventListeners();
+            updateSimulation();
+        }
+
+        function setupEventListeners() {
+            elO2Slider.addEventListener('input', updateSimulation);
+            elEnergySlider.addEventListener('input', updateSimulation);
+
+            // Expose for Playwright testing
+            window.updateSimulation = updateSimulation;
+        }
+
+        function updateSimulation() {
+            const o2 = parseInt(elO2Slider.value);
+            const energyDemand = parseInt(elEnergySlider.value);
+
+            // Determine textual representations
+            let o2Text = 'High';
+            if (o2 < 20) o2Text = 'Depleted';
+            else if (o2 < 60) o2Text = 'Low';
+            else if (o2 < 90) o2Text = 'Moderate';
+
+            elO2Val.textContent = `${o2Text} (${o2}%)`;
+
+            let energyText = 'Resting';
+            let glucoseNeeded = 1;
+            if (energyDemand === 2) { energyText = 'Walking'; glucoseNeeded = 3; }
+            if (energyDemand === 3) { energyText = 'Sprinting'; glucoseNeeded = 8; }
+            elEnergyVal.textContent = energyText;
+
+            // Core Logic: Are we Aerobic or Anaerobic?
+            // If oxygen supply can't meet energy demand, we shift to anaerobic
+            // arbitrary threshold: need roughly 20% O2 per unit of energy demand to stay aerobic
+            const o2Threshold = energyDemand * 25;
+
+            if (o2 >= o2Threshold) {
+                currentProcess = 'aerobic';
+            } else if (o2 === 0) {
+                currentProcess = 'anaerobic';
+            } else {
+                currentProcess = 'mixed';
+            }
+
+            renderUI(energyDemand, o2);
+        }
+
+        function renderUI(demand, o2Level) {
+            // UI Styling based on process
+            if (currentProcess === 'aerobic') {
+                elEnvPanel.className = 'md:col-span-2 environment-panel aerobic-bg p-6 flex flex-col justify-between relative';
+                elEnvLabel.textContent = 'Muscle Cell (Oxygenated)';
+                elStateIndicator.textContent = 'Aerobic Respiration';
+                elStateIndicator.className = 'text-lg font-extrabold text-teal-600 mb-2';
+                elStateDesc.textContent = 'Oxygen supply meets energy demand. Glucose is fully oxidized into CO2 and H2O.';
+
+                elO2Input.style.opacity = '1';
+                elProcessLabel.textContent = 'Aerobic Cellular Respiration';
+
+                // Outputs
+                elMatterOutputs.innerHTML = `
+                    <div class="molecule co2">${demand * 6} CO<sub>2</sub></div>
+                    <div class="molecule water">${demand * 6} H<sub>2</sub>O</div>
+                `;
+
+                const atpYield = demand * 36;
+                elAtpOutput.innerHTML = `${atpYield} ATP`;
+                elAtpOutput.style.width = demand === 1 ? '6rem' : (demand === 2 ? '8rem' : '10rem');
+                elAtpOutput.style.height = demand === 1 ? '6rem' : (demand === 2 ? '8rem' : '10rem');
+                elAtpOutput.className = 'atp-burst text-xl anim-pulse';
+                elEfficiencyLabel.textContent = 'High Efficiency Yield (36 ATP/Glucose)';
+                elEfficiencyLabel.className = 'text-xs text-teal-600 font-bold mt-2 text-center';
+
+            } else if (currentProcess === 'anaerobic') {
+                elEnvPanel.className = 'md:col-span-2 environment-panel anaerobic-bg p-6 flex flex-col justify-between relative';
+                elEnvLabel.textContent = 'Muscle Cell (Oxygen Depleted)';
+                elStateIndicator.textContent = 'Anaerobic Fermentation';
+                elStateIndicator.className = 'text-lg font-extrabold text-amber-600 mb-2';
+                elStateDesc.textContent = 'No oxygen available. Cell must rely entirely on fermentation to survive.';
+
+                elO2Input.style.opacity = '0.2'; // Greyed out
+                elProcessLabel.textContent = 'Lactic Acid Fermentation';
+
+                // Matter Outputs (Glucose -> 2 Lactic Acid)
+                elMatterOutputs.innerHTML = `
+                    <div class="molecule lactic">${demand * 2} Lactic Acid<br><span class="text-[10px] font-normal">(C<sub>3</sub>H<sub>6</sub>O<sub>3</sub>)</span></div>
+                `;
+
+                const atpYield = demand * 2;
+                elAtpOutput.innerHTML = `${atpYield} ATP`;
+                elAtpOutput.style.width = '4rem';
+                elAtpOutput.style.height = '4rem';
+                elAtpOutput.className = 'atp-burst text-sm'; // No pulse animation
+                elEfficiencyLabel.textContent = 'Low Efficiency Yield (2 ATP/Glucose)';
+                elEfficiencyLabel.className = 'text-xs text-amber-600 font-bold mt-2 text-center';
+            } else {
+                // Mixed state (Oxygen deficit, but some present)
+                elEnvPanel.className = 'md:col-span-2 environment-panel bg-yellow-50 border-2 border-yellow-300 p-6 flex flex-col justify-between relative';
+                elEnvLabel.textContent = 'Muscle Cell (Oxygen Deficit)';
+                elStateIndicator.textContent = 'Mixed / Oxygen Debt';
+                elStateIndicator.className = 'text-lg font-extrabold text-orange-500 mb-2';
+                elStateDesc.textContent = 'Oxygen supply is insufficient for demand. Aerobic respiration maxes out; fermentation makes up the energy gap.';
+
+                elO2Input.style.opacity = '0.6';
+                elProcessLabel.textContent = 'Respiration + Fermentation';
+
+                // Calculate mixed output based on fake logic
+                const aerobicGlucose = Math.max(1, Math.floor((o2Level / 100) * demand));
+                const anaerobicGlucose = demand - aerobicGlucose;
+
+                elMatterOutputs.innerHTML = `
+                    <div class="molecule co2">${aerobicGlucose * 6} CO<sub>2</sub></div>
+                    <div class="molecule water">${aerobicGlucose * 6} H<sub>2</sub>O</div>
+                    <div class="molecule lactic mt-2">${anaerobicGlucose * 2} Lactic Acid</div>
+                `;
+
+                const atpYield = (aerobicGlucose * 36) + (anaerobicGlucose * 2);
+                elAtpOutput.innerHTML = `${atpYield} ATP`;
+                elAtpOutput.style.width = '7rem';
+                elAtpOutput.style.height = '7rem';
+                elAtpOutput.className = 'atp-burst text-lg anim-pulse';
+                elEfficiencyLabel.textContent = 'Decreasing Efficiency';
+                elEfficiencyLabel.className = 'text-xs text-orange-500 font-bold mt-2 text-center';
+            }
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

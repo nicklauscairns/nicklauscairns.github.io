@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trophic Energy Pyramid Model (HS-LS2-4)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+
+        .pyramid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            min-height: 400px;
+            padding: 20px;
+            background: linear-gradient(to bottom, #f0f9ff, #dcfce7);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trophic-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            transition: all 0.5s ease-in-out;
+            margin-top: 2px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .level-1 { background-color: #166534; } /* Producers: Dark Green */
+        .level-2 { background-color: #eab308; } /* Primary Consumers: Yellow */
+        .level-3 { background-color: #f97316; } /* Secondary Consumers: Orange */
+        .level-4 { background-color: #ef4444; } /* Tertiary Consumers: Red */
+
+        .data-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Heat/Waste Loss Indicators */
+        .heat-loss {
+            position: absolute;
+            right: -60px;
+            color: #dc2626;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            opacity: 0.8;
+        }
+
+        .heat-arrow {
+            width: 30px; height: 2px; background-color: #dc2626; position: relative; margin-right: 5px;
+        }
+        .heat-arrow::after {
+            content: ''; position: absolute; right: 0; top: -4px;
+            border-left: 6px solid #dc2626; border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+        }
+
+        input[type="range"] { accent-color: #22c55e; }
+    </style>
+</head>
+<body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl font-extrabold text-green-700">Ecological Energy Pyramid</h1>
+            <p class="text-slate-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS2-4: Use mathematical representations to support claims for the cycling of matter and flow of energy among organisms in an ecosystem.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+
+            <!-- Controls & Math Input -->
+            <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Mathematical Inputs</h2>
+
+                <div class="space-y-6 flex-grow">
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-600 mb-2">
+                            <span>Primary Producer Energy</span>
+                            <span id="producer-energy-val" class="text-green-700 font-mono bg-green-50 px-2 rounded">10,000 J</span>
+                        </label>
+                        <input type="range" id="producer-energy" min="1000" max="100000" step="1000" value="10000" class="w-full">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>1k J</span>
+                            <span>(Joules)</span>
+                            <span>100k J</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="flex justify-between font-semibold text-slate-600 mb-2">
+                            <span>Ecological Transfer Efficiency</span>
+                            <span id="efficiency-val" class="text-blue-600 font-mono bg-blue-50 px-2 rounded">10%</span>
+                        </label>
+                        <input type="range" id="efficiency" min="1" max="25" step="1" value="10" class="w-full accent-blue-500">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>1%</span>
+                            <span>The "10% Rule"</span>
+                            <span>25%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mt-6">
+                    <h3 class="font-bold text-blue-800 text-sm mb-2">Mathematical Model</h3>
+                    <p class="text-xs text-blue-900 mb-2 font-mono">Energy<sub>next</sub> = Energy<sub>prev</sub> &times; (Efficiency / 100)</p>
+                    <p class="text-xs text-blue-900 font-mono">Loss<sub>heat/waste</sub> = Energy<sub>prev</sub> - Energy<sub>next</sub></p>
+                </div>
+            </div>
+
+            <!-- Visualization Pyramid -->
+            <div class="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                <h2 class="text-xl font-bold mb-4 text-center text-slate-700">Energy & Biomass Transfer</h2>
+
+                <div class="pyramid-container" id="pyramid-container">
+                    <!-- Javascript will render the blocks here -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Data Table & Conservation Evidence -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Energy Conservation Data Table</h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-50">
+                            <th class="p-3 border-b border-slate-200">Trophic Level</th>
+                            <th class="p-3 border-b border-slate-200 text-right">Energy Available (J)</th>
+                            <th class="p-3 border-b border-slate-200 text-right">Energy Lost to Heat/Waste (J)</th>
+                            <th class="p-3 border-b border-slate-200 text-right text-blue-700">Total Accounted For (J)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table" class="font-mono">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 p-4 bg-green-50 border-l-4 border-green-500 rounded text-sm text-slate-700">
+                <p><strong>Evidence for Conservation:</strong> At every link in the food web, energy is conserved. The energy available at any trophic level exactly equals the energy transferred to the next level <em>plus</em> the energy lost to the environment through cellular respiration (heat) and metabolic waste.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const elProducerEnergySlider = document.getElementById('producer-energy');
+        const elProducerEnergyVal = document.getElementById('producer-energy-val');
+        const elEfficiencySlider = document.getElementById('efficiency');
+        const elEfficiencyVal = document.getElementById('efficiency-val');
+
+        const elPyramidContainer = document.getElementById('pyramid-container');
+        const elDataTable = document.getElementById('data-table');
+
+        // Trophic Level Names and Styles
+        const levelsInfo = [
+            { name: "Primary Producers (Plants/Algae)", class: "level-1", height: 100 },
+            { name: "Primary Consumers (Herbivores)", class: "level-2", height: 80 },
+            { name: "Secondary Consumers (Carnivores)", class: "level-3", height: 60 },
+            { name: "Tertiary Consumers (Apex Predators)", class: "level-4", height: 50 }
+        ];
+
+        function init() {
+            setupEventListeners();
+            updateModel();
+        }
+
+        function setupEventListeners() {
+            elProducerEnergySlider.addEventListener('input', updateModel);
+            elEfficiencySlider.addEventListener('input', updateModel);
+
+            // Expose for Playwright tests
+            window.updateModel = updateModel;
+        }
+
+        function formatNumber(num) {
+            // Format to max 2 decimal places if needed, add commas
+            return Number(num.toFixed(2)).toLocaleString('en-US');
+        }
+
+        function updateModel() {
+            const initialEnergy = parseFloat(elProducerEnergySlider.value);
+            const efficiencyRate = parseFloat(elEfficiencySlider.value) / 100;
+
+            elProducerEnergyVal.textContent = `${formatNumber(initialEnergy)} J`;
+            elEfficiencyVal.textContent = `${elEfficiencySlider.value}%`;
+
+            calculateAndRender(initialEnergy, efficiencyRate);
+        }
+
+        function calculateAndRender(initialEnergy, efficiency) {
+            let currentEnergy = initialEnergy;
+            let dataRows = [];
+            let pyramidHTML = '';
+
+            // We build the pyramid from bottom to top, but visually we want Tertiary on top.
+            // HTML flex-direction: column-reverse or just building the array in reverse works.
+            // We'll calculate forward, then render in reverse.
+
+            const levelData = [];
+
+            for (let i = 0; i < levelsInfo.length; i++) {
+                const energyAvailable = currentEnergy;
+                let energyTransferredToNext = 0;
+                let energyLost = 0;
+
+                if (i < levelsInfo.length - 1) {
+                    energyTransferredToNext = energyAvailable * efficiency;
+                    energyLost = energyAvailable - energyTransferredToNext;
+                } else {
+                    // Apex predator loses all its energy eventually (no next level shown)
+                    energyLost = energyAvailable;
+                }
+
+                levelData.push({
+                    info: levelsInfo[i],
+                    energy: energyAvailable,
+                    lost: energyLost,
+                    transferred: energyTransferredToNext
+                });
+
+                // Prepare for next iteration
+                currentEnergy = energyTransferredToNext;
+            }
+
+            // --- Render Pyramid (Reverse order for correct visual stacking) ---
+            for (let i = levelData.length - 1; i >= 0; i--) {
+                const data = levelData[i];
+
+                // Calculate visual width based on energy relative to initial
+                // Use a logarithmic-like scale or power scale so higher levels are visible even at 1%
+                // Width = max_width * (energy / initialEnergy)^0.3 (to compress the visual difference slightly)
+                const widthPercent = Math.max(5, Math.pow(data.energy / initialEnergy, 0.4) * 100);
+
+                // Don't show tertiary if energy is basically 0 (< 0.01 J)
+                if (data.energy < 0.01) continue;
+
+                pyramidHTML += `
+                    <div class="trophic-level ${data.info.class} rounded-t-sm" style="width: ${widthPercent}%; height: ${data.info.height}px;">
+                        <div class="flex flex-col items-center justify-center w-full relative">
+                            <span class="text-sm md:text-base px-2 truncate w-full text-center">${data.info.name}</span>
+                            <span class="font-mono text-lg bg-black/20 px-2 rounded mt-1">${formatNumber(data.energy)} J</span>
+
+                            <!-- Heat loss visual -->
+                            <div class="heat-loss hidden md:flex">
+                                <div class="heat-arrow"></div>
+                                ${formatNumber(data.lost)} J
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            elPyramidContainer.innerHTML = pyramidHTML;
+
+            // --- Render Data Table (Forward order) ---
+            let tableHTML = '';
+            levelData.forEach((data, index) => {
+                if (data.energy < 0.01 && index > 0) return; // Skip if negligible
+
+                const totalAccounted = data.transferred + data.lost;
+
+                tableHTML += `
+                    <tr class="border-b border-slate-100 hover:bg-blue-50 transition-colors">
+                        <td class="p-3 font-sans font-semibold text-slate-700">${data.info.name}</td>
+                        <td class="p-3 text-right font-bold text-green-700">${formatNumber(data.energy)}</td>
+                        <td class="p-3 text-right text-red-600">${formatNumber(data.lost)}</td>
+                        <td class="p-3 text-right font-bold text-blue-700 bg-blue-50/50">${formatNumber(totalAccounted)}</td>
+                    </tr>
+                `;
+            });
+
+            elDataTable.innerHTML = tableHTML;
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
