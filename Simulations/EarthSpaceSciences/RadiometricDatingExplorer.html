@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiometric Dating & Earth's History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .canvas-container { border-radius: 0.5rem; background-color: #1e293b; box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); }
+        .info-panel { background-color: #1e293b; border-left: 4px solid #10b981; }
+        canvas { touch-action: none; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
+
+    <header class="text-center mb-8 w-full max-w-6xl">
+        <h1 class="text-3xl md:text-4xl font-bold text-emerald-400 mb-2">Radiometric Dating Explorer</h1>
+        <p class="text-slate-300">Apply scientific reasoning to understand how radioactive decay reveals the age of ancient Earth materials and meteorites.</p>
+    </header>
+
+    <main class="w-full max-w-6xl flex-grow flex flex-col gap-8">
+
+        <!-- Controls & Simulation Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Controls Sidebar -->
+            <div class="bg-slate-800 p-6 rounded-lg flex flex-col gap-6 lg:col-span-1 shadow-lg">
+                <h2 class="text-xl font-bold text-emerald-300 border-b border-slate-700 pb-2">Simulation Controls</h2>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-semibold text-slate-300">Select Isotope System:</label>
+                    <select id="isotopeSelect" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-slate-200 outline-none focus:border-emerald-500">
+                        <option value="U238" data-halflife="4.5">Uranium-238 &rarr; Lead-206 (Half-life: ~4.5 Billion Yrs)</option>
+                        <option value="K40" data-halflife="1.25">Potassium-40 &rarr; Argon-40 (Half-life: ~1.25 Billion Yrs)</option>
+                        <option value="C14" data-halflife="0.00000573">Carbon-14 &rarr; Nitrogen-14 (Half-life: 5,730 Yrs) *Not for early Earth</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-semibold text-slate-300 flex justify-between">
+                        <span>Simulation Speed:</span>
+                        <span id="speedLabel" class="text-emerald-400">1x</span>
+                    </label>
+                    <input type="range" id="speedSlider" min="1" max="50" value="10" class="w-full accent-emerald-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <button id="startBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded font-bold transition-colors">Start Decay</button>
+                    <button id="pauseBtn" class="bg-amber-600 hover:bg-amber-500 text-white py-2 rounded font-bold transition-colors" disabled>Pause</button>
+                    <button id="resetBtn" class="col-span-2 bg-slate-600 hover:bg-slate-500 text-white py-2 rounded font-bold transition-colors">Reset Sample</button>
+                </div>
+
+                <div class="mt-4 p-4 bg-slate-900 rounded border border-slate-700 flex flex-col gap-2">
+                    <h3 class="font-bold text-slate-300">Challenge Mode</h3>
+                    <p class="text-xs text-slate-400">Analyze an unknown sample from the early solar system.</p>
+                    <button id="generateUnknownBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded font-bold transition-colors mt-2">Generate Unknown Meteorite</button>
+                </div>
+            </div>
+
+            <!-- Visualization Area -->
+            <div class="bg-slate-800 p-6 rounded-lg flex flex-col gap-4 lg:col-span-2 shadow-lg relative">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-emerald-300">Rock Sample (Microscopic View)</h2>
+                    <div class="flex gap-4 text-sm">
+                        <span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div> Parent Isotope</span>
+                        <span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-blue-500"></div> Daughter Isotope</span>
+                    </div>
+                </div>
+
+                <div class="canvas-container relative w-full h-80 flex items-center justify-center overflow-hidden border border-slate-700">
+                    <canvas id="rockCanvas" class="absolute inset-0 w-full h-full"></canvas>
+
+                    <!-- Overlay for challenge mode -->
+                    <div id="challengeOverlay" class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center hidden z-10 p-6 text-center">
+                        <h3 class="text-2xl font-bold text-indigo-400 mb-2">Unknown Sample Retrieved</h3>
+                        <p class="mb-4 text-slate-300 max-w-md">Use the mass spectrometer (table below) to find the parent/daughter ratio. Then, use the characteristic decay graph to estimate the absolute age of this sample.</p>
+                        <div class="flex gap-4 items-center mb-6">
+                            <input type="number" id="guessInput" placeholder="Estimated Age (Billion Yrs)" step="0.1" class="px-3 py-2 rounded bg-slate-800 border border-slate-600 text-white w-64 focus:outline-none focus:border-indigo-500">
+                            <button id="submitGuessBtn" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded font-bold text-white transition-colors">Submit</button>
+                        </div>
+                        <div id="challengeFeedback" class="text-lg font-bold h-8"></div>
+                        <button id="cancelChallengeBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times; Close</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 text-center mt-2">
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-sm text-slate-400 uppercase tracking-wide">Time Elapsed</div>
+                        <div id="timeDisplay" class="text-2xl font-mono text-emerald-400">0.00</div>
+                        <div class="text-xs text-slate-500">Billion Years</div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-sm text-slate-400 uppercase tracking-wide">Parent (Red)</div>
+                        <div id="parentCount" class="text-2xl font-mono text-red-400">100%</div>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                        <div class="text-sm text-slate-400 uppercase tracking-wide">Daughter (Blue)</div>
+                        <div id="daughterCount" class="text-2xl font-mono text-blue-400">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graph Area -->
+        <div class="bg-slate-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-bold text-emerald-300 mb-4">Decay Curve (Exponential Law)</h2>
+            <div class="w-full h-[400px] relative">
+                <canvas id="decayChart"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="w-full max-w-6xl mt-8 pt-4 border-t border-slate-700 text-sm text-slate-400">
+        <div class="info-panel p-4 rounded mb-4">
+            <h3 class="font-bold text-slate-200 mb-2">NGSS Alignment</h3>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>HS-ESS1-6:</strong> Apply scientific reasoning and evidence from ancient Earth materials, meteorites, and other planetary surfaces to construct an account of Earth’s formation and early history.</li>
+                <li><strong>ESS1.C (The History of Planet Earth):</strong> Lunar rocks, asteroids, and meteorites have changed little over billions of years. Studying these objects can provide information about Earth’s formation and early history.</li>
+                <li><strong>PS1.C (Nuclear Processes):</strong> Spontaneous radioactive decays follow a characteristic exponential decay law. Nuclear lifetimes allow radiometric dating to be used to determine the ages of rocks and other materials.</li>
+                <li><strong>SEP: Constructing Explanations:</strong> Apply scientific reasoning to link evidence to the claims...</li>
+                <li><strong>CC: Stability and Change:</strong> Constructing explanations of how things change and how they remain stable.</li>
+            </ul>
+        </div>
+        <p class="text-center">&copy; <script>document.write(new Date().getFullYear())</script> Science Simulations. Built for educational purposes.</p>
+    </footer>
+
+    <script>
+        // --- State and DOM Elements ---
+        const canvas = document.getElementById('rockCanvas');
+        const ctx = canvas.getContext('2d');
+        const chartCanvas = document.getElementById('decayChart');
+        const chartCtx = chartCanvas.getContext('2d');
+
+        const isotopeSelect = document.getElementById('isotopeSelect');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedLabel = document.getElementById('speedLabel');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const timeDisplay = document.getElementById('timeDisplay');
+        const parentCountDisplay = document.getElementById('parentCount');
+        const daughterCountDisplay = document.getElementById('daughterCount');
+
+        let particles = [];
+        const numParticles = 400; // Represents a sample size
+        let isRunning = false;
+        let timeElapsed = 0; // In billions of years
+        let halfLife = 4.5; // Default for U-238
+        let decayConstant = 0;
+        let animationFrameId;
+        let decayChart;
+        let nextChartUpdate = 0; // throttle chart updates
+
+        // --- Initialization ---
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            drawRock();
+        }
+
+        function initParticles(parentRatio = 1.0) {
+            particles = [];
+            for (let i = 0; i < numParticles; i++) {
+                // Randomly distribute particles uniformly within the unit circle (which maps to the ellipse later)
+                // Use polar coordinates for uniform distribution
+                const angle = Math.random() * 2 * Math.PI;
+                const r = Math.sqrt(Math.random()); // sqrt ensures uniform area distribution
+
+                // Map from -1 to 1 space to 0 to 1 space for x and y
+                const normalizedX = (r * Math.cos(angle) + 1) / 2;
+                const normalizedY = (r * Math.sin(angle) + 1) / 2;
+
+                particles.push({
+                    x: normalizedX, // 0 to 1 relative position
+                    y: normalizedY,
+                    isParent: Math.random() < parentRatio // true if Parent, false if Daughter
+                });
+            }
+        }
+
+        function updateHalfLife() {
+            const selectedOption = isotopeSelect.options[isotopeSelect.selectedIndex];
+            halfLife = parseFloat(selectedOption.getAttribute('data-halflife'));
+            decayConstant = Math.LN2 / halfLife; // lambda = ln(2) / t_1/2
+
+            // Adjust time display unit if C14 is selected (it's in years, not billions)
+            const unitLabel = document.querySelector('#timeDisplay + div');
+            if (isotopeSelect.value === 'C14') {
+                unitLabel.textContent = 'Years';
+            } else {
+                unitLabel.textContent = 'Billion Years';
+            }
+        }
+
+        function initChart() {
+            if (decayChart) {
+                decayChart.destroy();
+            }
+
+            decayChart = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                    labels: [0], // Time
+                    datasets: [
+                        {
+                            label: 'Parent Isotope (%)',
+                            data: [100],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Daughter Isotope (%)',
+                            data: [0],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: 'Time', color: '#cbd5e1' },
+                            grid: { color: '#334155' },
+                            ticks: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: halfLife * 5
+                        },
+                        y: {
+                            title: { display: true, text: 'Percentage (%)', color: '#cbd5e1' },
+                            grid: { color: '#334155' },
+                            ticks: { color: '#cbd5e1' },
+                            min: 0,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1' } }
+                    },
+                    animation: false // Disable animation for performance during rapid updates
+                }
+            });
+            updateChartXAxisLabel();
+        }
+
+        function updateChartXAxisLabel() {
+             if(decayChart) {
+                 const unit = (isotopeSelect.value === 'C14') ? 'Years' : 'Billion Years';
+                 decayChart.options.scales.x.title.text = `Time (${unit})`;
+                 decayChart.options.scales.x.suggestedMax = halfLife * 5;
+                 decayChart.update();
+             }
+        }
+
+        function resetSimulation() {
+            isRunning = false;
+            cancelAnimationFrame(animationFrameId);
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            timeElapsed = 0;
+            nextChartUpdate = 0;
+            updateHalfLife();
+            initParticles(1.0); // Start 100% parent
+            updateDisplays();
+            drawRock();
+            initChart();
+        }
+
+        // --- Drawing Logic ---
+        function drawRock() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw background rock shape (rough circle/oval)
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const rx = Math.min(canvas.width, canvas.height) * 0.4;
+            const ry = rx * 0.8;
+
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx, ry, 0, 0, 2 * Math.PI);
+            ctx.fillStyle = '#334155'; // Dark slate rock color
+            ctx.fill();
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw particles
+            particles.forEach(p => {
+                // Map relative 0-1 coords to the bounding box of the ellipse
+                const px = cx - rx + (p.x * rx * 2);
+                const py = cy - ry + (p.y * ry * 2);
+
+                // Particles are already distributed within the unit circle logic in initParticles.
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = p.isParent ? '#ef4444' : '#3b82f6'; // Red for parent, Blue for daughter
+                ctx.fill();
+            });
+        }
+
+        // --- Simulation Loop ---
+        function updateSimulation() {
+            if (!isRunning) return;
+
+            // Advance time
+            const speed = parseFloat(speedSlider.value);
+            // If half-life is tiny (C14), speed needs to be scaled to years instead of billions of years
+            const timeStep = (isotopeSelect.value === 'C14') ? (speed * 100) : (speed * 0.01);
+            timeElapsed += timeStep;
+
+            // Exponential Decay Logic
+            // The probability of decay in time dt is lambda * dt
+            // For a discrete simulation step, P(decay) = 1 - e^(-lambda * dt)
+            const decayProb = 1 - Math.exp(-decayConstant * timeStep);
+
+            let decayedThisStep = 0;
+            particles.forEach(p => {
+                if (p.isParent) {
+                    if (Math.random() < decayProb) {
+                        p.isParent = false;
+                        decayedThisStep++;
+                    }
+                }
+            });
+
+            updateDisplays();
+            drawRock();
+            updateChart();
+
+            // Stop condition (when parent is mostly gone to save processing, or arbitrary time limit)
+            const parentCount = particles.filter(p => p.isParent).length;
+            if (parentCount === 0 || timeElapsed > halfLife * 10) {
+                isRunning = false;
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+            } else {
+                animationFrameId = requestAnimationFrame(updateSimulation);
+            }
+        }
+
+        function updateDisplays() {
+            let pCount = 0;
+            let dCount = 0;
+            particles.forEach(p => {
+                if (p.isParent) pCount++;
+                else dCount++;
+            });
+
+            const total = pCount + dCount;
+            const pPct = ((pCount / total) * 100).toFixed(1);
+            const dPct = ((dCount / total) * 100).toFixed(1);
+
+            // Formatting time
+            if (isotopeSelect.value === 'C14') {
+                timeDisplay.textContent = Math.round(timeElapsed).toLocaleString();
+            } else {
+                timeDisplay.textContent = timeElapsed.toFixed(2);
+            }
+
+            parentCountDisplay.textContent = `${pPct}%`;
+            daughterCountDisplay.textContent = `${dPct}%`;
+        }
+
+        function updateChart() {
+            // Throttle updates so it doesn't kill performance
+            const updateInterval = halfLife / 50;
+
+            if (timeElapsed >= nextChartUpdate) {
+                let pCount = 0;
+                particles.forEach(p => { if (p.isParent) pCount++; });
+                const pPct = (pCount / numParticles) * 100;
+                const dPct = 100 - pPct;
+
+                decayChart.data.labels.push(timeElapsed);
+                decayChart.data.datasets[0].data.push(pPct);
+                decayChart.data.datasets[1].data.push(dPct);
+
+                // Keep X axis moving if we pass suggested max
+                if(timeElapsed > decayChart.options.scales.x.suggestedMax) {
+                    decayChart.options.scales.x.suggestedMax = timeElapsed + halfLife;
+                }
+
+                decayChart.update();
+                nextChartUpdate = timeElapsed + updateInterval;
+            }
+        }
+
+        // --- Challenge Mode Logic ---
+        const generateUnknownBtn = document.getElementById('generateUnknownBtn');
+        const challengeOverlay = document.getElementById('challengeOverlay');
+        const cancelChallengeBtn = document.getElementById('cancelChallengeBtn');
+        const submitGuessBtn = document.getElementById('submitGuessBtn');
+        const guessInput = document.getElementById('guessInput');
+        const challengeFeedback = document.getElementById('challengeFeedback');
+
+        let targetAge = 0;
+
+        function startChallenge() {
+            // Stop current simulation
+            resetSimulation();
+
+            // Generate a random age between 0.5 and 4 half-lives
+            const numHalfLives = 0.5 + (Math.random() * 3.5);
+            targetAge = numHalfLives * halfLife;
+
+            // Calculate parent ratio based on exponential decay: N(t) = N0 * e^(-lambda * t)
+            const parentRatio = Math.exp(-decayConstant * targetAge);
+
+            // Set up rock
+            initParticles(parentRatio);
+            updateDisplays();
+            drawRock();
+
+            // Hide time display to prevent cheating
+            timeDisplay.textContent = "???";
+
+            // Show overlay
+            challengeOverlay.classList.remove('hidden');
+            guessInput.value = '';
+            challengeFeedback.textContent = '';
+
+            // Ensure graph is visible as a tool (we populate it with the theoretical curve so they can use it)
+            drawTheoreticalCurve();
+        }
+
+        function drawTheoreticalCurve() {
+             initChart();
+             // Populate chart with theoretical data so the user can use it as a reference
+             const maxT = halfLife * 5;
+             const steps = 100;
+             const dt = maxT / steps;
+
+             for(let i=0; i<=steps; i++) {
+                 const t = i * dt;
+                 const pPct = Math.exp(-decayConstant * t) * 100;
+                 const dPct = 100 - pPct;
+
+                 decayChart.data.labels.push(t);
+                 decayChart.data.datasets[0].data.push(pPct);
+                 decayChart.data.datasets[1].data.push(dPct);
+             }
+             decayChart.update();
+        }
+
+        function checkGuess() {
+            const guess = parseFloat(guessInput.value);
+            if (isNaN(guess)) {
+                challengeFeedback.textContent = "Please enter a valid number.";
+                challengeFeedback.className = "text-lg font-bold h-8 text-amber-400";
+                return;
+            }
+
+            // Allow a 10% margin of error
+            const margin = targetAge * 0.1;
+
+            if (Math.abs(guess - targetAge) <= margin) {
+                challengeFeedback.textContent = `Correct! Actual age: ~${targetAge.toFixed(2)} ${isotopeSelect.value === 'C14' ? 'Years' : 'Billion Years'}`;
+                challengeFeedback.className = "text-lg font-bold h-8 text-emerald-400";
+            } else {
+                challengeFeedback.textContent = `Incorrect. Try again! (Hint: Look at the Parent % and find it on the graph)`;
+                challengeFeedback.className = "text-lg font-bold h-8 text-red-400";
+            }
+        }
+
+        generateUnknownBtn.addEventListener('click', startChallenge);
+
+        cancelChallengeBtn.addEventListener('click', () => {
+            challengeOverlay.classList.add('hidden');
+            resetSimulation();
+        });
+
+        submitGuessBtn.addEventListener('click', checkGuess);
+
+        // Allow pressing Enter to submit
+        guessInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkGuess();
+        });
+
+
+        // --- Event Listeners ---
+        startBtn.addEventListener('click', () => {
+            isRunning = true;
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            updateSimulation();
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            isRunning = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            cancelAnimationFrame(animationFrameId);
+        });
+
+        resetBtn.addEventListener('click', resetSimulation);
+
+        speedSlider.addEventListener('input', (e) => {
+            speedLabel.textContent = `${e.target.value}x`;
+        });
+
+        isotopeSelect.addEventListener('change', () => {
+            resetSimulation();
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // --- Init ---
+        // Expose functions globally for testing
+        window.RadiometricSimulation = {
+            resetSimulation,
+            updateHalfLife,
+            initParticles,
+            particles
+        };
+
+        // Delay init to ensure styles are loaded
+        setTimeout(() => {
+            resizeCanvas();
+            resetSimulation();
+        }, 100);
+
+    </script>
+</body>
+</html>
