@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DNA and Inheritance Model (HS-LS3-1)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DNA and Inheritance Model (HS-LS3-1)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/InheritanceModel.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for DNA and Inheritance Model (HS-LS3-1). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="DNA and Inheritance Model (HS-LS3-1)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, DNA and Inheritance Model (HS-LS3-1), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for DNA and Inheritance Model (HS-LS3-1). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
         .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
 
@@ -57,141 +65,142 @@
         }
         .anim-slide-down { animation: slideDown 0.6s ease-out; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "DNA and Inheritance Model (HS-LS3-1)",
+    "description": "Interactive science simulation for DNA and Inheritance Model (HS-LS3-1). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/InheritanceModel.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-5xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-indigo-700">DNA and Inheritance Model</h1>
-            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-1: Ask questions to clarify relationships about the role of DNA and chromosomes in coding the instructions for characteristic traits passed from parents to offspring.</p>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <!-- Parent 1: Mother -->
-            <div class="panel bg-pink-50 border-pink-200 flex flex-col items-center">
-                <h2 class="text-xl font-bold text-pink-800 mb-2">Parent 1 (Mother)</h2>
-                <div class="text-xs text-pink-600 mb-4">Click the bands on the chromosomes to change her genes.</div>
-
-                <div class="creature" id="mom-creature" style="background-color: #8b5cf6;">
-                    <div class="creature-eye eye-left"><div class="eye-pupil" id="mom-eye-l" style="background-color: #3b82f6;"></div></div>
-                    <div class="creature-eye eye-right"><div class="eye-pupil" id="mom-eye-r" style="background-color: #3b82f6;"></div></div>
-                </div>
-
-                <div class="mt-6 flex space-x-8">
-                    <div class="text-center">
-                        <div class="text-xs font-bold text-slate-500 mb-1">Chromosome Pair 1</div>
-                        <div class="chromosome-container">
-                            <div class="chromosome">
-                                <div class="gene-band allele-B" data-parent="mom" data-chromo="0" data-locus="fur" onclick="toggleGene(this)"></div>
-                                <div class="gene-band allele-E" data-parent="mom" data-chromo="0" data-locus="eye" onclick="toggleGene(this)"></div>
-                            </div>
-                            <div class="chromosome">
-                                <div class="gene-band allele-b" data-parent="mom" data-chromo="1" data-locus="fur" onclick="toggleGene(this)"></div>
-                                <div class="gene-band allele-e" data-parent="mom" data-chromo="1" data-locus="eye" onclick="toggleGene(this)"></div>
-                            </div>
-                        </div>
-                        <div class="text-xs font-mono font-bold mt-2" id="mom-genotype">Bb Ee</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Parent 2: Father -->
-            <div class="panel bg-blue-50 border-blue-200 flex flex-col items-center">
-                <h2 class="text-xl font-bold text-blue-800 mb-2">Parent 2 (Father)</h2>
-                <div class="text-xs text-blue-600 mb-4">Click the bands on the chromosomes to change his genes.</div>
-
-                <div class="creature" id="dad-creature" style="background-color: #fcd34d;">
-                    <div class="creature-eye eye-left"><div class="eye-pupil" id="dad-eye-l" style="background-color: #ef4444;"></div></div>
-                    <div class="creature-eye eye-right"><div class="eye-pupil" id="dad-eye-r" style="background-color: #ef4444;"></div></div>
-                </div>
-
-                <div class="mt-6 flex space-x-8">
-                    <div class="text-center">
-                        <div class="text-xs font-bold text-slate-500 mb-1">Chromosome Pair 1</div>
-                        <div class="chromosome-container">
-                            <div class="chromosome">
-                                <div class="gene-band allele-b" data-parent="dad" data-chromo="0" data-locus="fur" onclick="toggleGene(this)"></div>
-                                <div class="gene-band allele-e" data-parent="dad" data-chromo="0" data-locus="eye" onclick="toggleGene(this)"></div>
-                            </div>
-                            <div class="chromosome">
-                                <div class="gene-band allele-b" data-parent="dad" data-chromo="1" data-locus="fur" onclick="toggleGene(this)"></div>
-                                <div class="gene-band allele-e" data-parent="dad" data-chromo="1" data-locus="eye" onclick="toggleGene(this)"></div>
-                            </div>
-                        </div>
-                        <div class="text-xs font-mono font-bold mt-2" id="dad-genotype">bb ee</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reproduction Controls -->
-        <div class="flex justify-center">
-            <button id="btn-breed" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105 text-lg">
-                Produce Offspring (Meiosis & Fertilization)
+<div class="max-w-5xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-indigo-700">DNA and Inheritance Model</h1>
+<p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-1: Ask questions to clarify relationships about the role of DNA and chromosomes in coding the instructions for characteristic traits passed from parents to offspring.</p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Parent 1: Mother -->
+<div class="panel bg-pink-50 border-pink-200 flex flex-col items-center">
+<h2 class="text-xl font-bold text-pink-800 mb-2">Parent 1 (Mother)</h2>
+<div class="text-xs text-pink-600 mb-4">Click the bands on the chromosomes to change her genes.</div>
+<div class="creature" id="mom-creature" style="background-color: #8b5cf6;">
+<div class="creature-eye eye-left"><div class="eye-pupil" id="mom-eye-l" style="background-color: #3b82f6;"></div></div>
+<div class="creature-eye eye-right"><div class="eye-pupil" id="mom-eye-r" style="background-color: #3b82f6;"></div></div>
+</div>
+<div class="mt-6 flex space-x-8">
+<div class="text-center">
+<div class="text-xs font-bold text-slate-500 mb-1">Chromosome Pair 1</div>
+<div class="chromosome-container">
+<div class="chromosome">
+<div class="gene-band allele-B" data-chromo="0" data-locus="fur" data-parent="mom" onclick="toggleGene(this)"></div>
+<div class="gene-band allele-E" data-chromo="0" data-locus="eye" data-parent="mom" onclick="toggleGene(this)"></div>
+</div>
+<div class="chromosome">
+<div class="gene-band allele-b" data-chromo="1" data-locus="fur" data-parent="mom" onclick="toggleGene(this)"></div>
+<div class="gene-band allele-e" data-chromo="1" data-locus="eye" data-parent="mom" onclick="toggleGene(this)"></div>
+</div>
+</div>
+<div class="text-xs font-mono font-bold mt-2" id="mom-genotype">Bb Ee</div>
+</div>
+</div>
+</div>
+<!-- Parent 2: Father -->
+<div class="panel bg-blue-50 border-blue-200 flex flex-col items-center">
+<h2 class="text-xl font-bold text-blue-800 mb-2">Parent 2 (Father)</h2>
+<div class="text-xs text-blue-600 mb-4">Click the bands on the chromosomes to change his genes.</div>
+<div class="creature" id="dad-creature" style="background-color: #fcd34d;">
+<div class="creature-eye eye-left"><div class="eye-pupil" id="dad-eye-l" style="background-color: #ef4444;"></div></div>
+<div class="creature-eye eye-right"><div class="eye-pupil" id="dad-eye-r" style="background-color: #ef4444;"></div></div>
+</div>
+<div class="mt-6 flex space-x-8">
+<div class="text-center">
+<div class="text-xs font-bold text-slate-500 mb-1">Chromosome Pair 1</div>
+<div class="chromosome-container">
+<div class="chromosome">
+<div class="gene-band allele-b" data-chromo="0" data-locus="fur" data-parent="dad" onclick="toggleGene(this)"></div>
+<div class="gene-band allele-e" data-chromo="0" data-locus="eye" data-parent="dad" onclick="toggleGene(this)"></div>
+</div>
+<div class="chromosome">
+<div class="gene-band allele-b" data-chromo="1" data-locus="fur" data-parent="dad" onclick="toggleGene(this)"></div>
+<div class="gene-band allele-e" data-chromo="1" data-locus="eye" data-parent="dad" onclick="toggleGene(this)"></div>
+</div>
+</div>
+<div class="text-xs font-mono font-bold mt-2" id="dad-genotype">bb ee</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Reproduction Controls -->
+<div class="flex justify-center">
+<button class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105 text-lg" id="btn-breed">
+                Produce Offspring (Meiosis &amp; Fertilization)
             </button>
-        </div>
-
-        <!-- Offspring Area -->
-        <div class="panel border-t-4 border-t-indigo-500 flex flex-col md:flex-row items-center justify-around hidden" id="offspring-panel">
-
-            <div class="text-center mb-6 md:mb-0">
-                <h2 class="text-2xl font-bold text-indigo-800 mb-2">Offspring</h2>
-                <p class="text-sm text-slate-500 mb-4 max-w-xs">The offspring receives one randomly selected chromosome from each parent.</p>
-
-                <div class="creature" id="offspring-creature" style="background-color: #e2e8f0;">
-                    <div class="creature-eye eye-left"><div class="eye-pupil" id="offspring-eye-l" style="background-color: #cbd5e1;"></div></div>
-                    <div class="creature-eye eye-right"><div class="eye-pupil" id="offspring-eye-r" style="background-color: #cbd5e1;"></div></div>
+</div>
+<!-- Offspring Area -->
+<div class="panel border-t-4 border-t-indigo-500 flex flex-col md:flex-row items-center justify-around hidden" id="offspring-panel">
+<div class="text-center mb-6 md:mb-0">
+<h2 class="text-2xl font-bold text-indigo-800 mb-2">Offspring</h2>
+<p class="text-sm text-slate-500 mb-4 max-w-xs">The offspring receives one randomly selected chromosome from each parent.</p>
+<div class="creature" id="offspring-creature" style="background-color: #e2e8f0;">
+<div class="creature-eye eye-left"><div class="eye-pupil" id="offspring-eye-l" style="background-color: #cbd5e1;"></div></div>
+<div class="creature-eye eye-right"><div class="eye-pupil" id="offspring-eye-r" style="background-color: #cbd5e1;"></div></div>
+</div>
+<div class="text-lg font-bold text-slate-700 mt-4" id="offspring-phenotype">Unknown</div>
+</div>
+<div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+<h3 class="font-bold text-slate-700 text-center mb-4">Inherited Chromosomes</h3>
+<div class="flex space-x-6 justify-center">
+<div class="text-center">
+<div class="text-[10px] font-bold text-pink-600 uppercase mb-1">From Mother</div>
+<div class="chromosome" id="offspring-chromo-mom">
+<div class="offspring-gene-band bg-slate-300" id="offspring-fur-m"></div>
+<div class="offspring-gene-band bg-slate-300" id="offspring-eye-m"></div>
+</div>
+</div>
+<div class="text-center">
+<div class="text-[10px] font-bold text-blue-600 uppercase mb-1">From Father</div>
+<div class="chromosome" id="offspring-chromo-dad">
+<div class="offspring-gene-band bg-slate-300" id="offspring-fur-d"></div>
+<div class="offspring-gene-band bg-slate-300" id="offspring-eye-d"></div>
+</div>
+</div>
+</div>
+<div class="text-center text-sm font-mono font-bold mt-4 text-indigo-700" id="offspring-genotype">Genotype</div>
+</div>
+</div>
+<!-- Educational Context -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
+<h3 class="font-bold text-slate-800 mb-2">Genetic Key:</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<strong>Top Gene Band (Fur Color):</strong><br/>
+<span class="inline-block w-3 h-3 allele-B rounded-sm mr-1"></span> <strong>B</strong> = Purple Fur (Dominant)<br/>
+<span class="inline-block w-3 h-3 allele-b rounded-sm mr-1"></span> <strong>b</strong> = Yellow Fur (Recessive)
                 </div>
-                <div class="text-lg font-bold text-slate-700 mt-4" id="offspring-phenotype">Unknown</div>
-            </div>
-
-            <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
-                <h3 class="font-bold text-slate-700 text-center mb-4">Inherited Chromosomes</h3>
-                <div class="flex space-x-6 justify-center">
-
-                    <div class="text-center">
-                        <div class="text-[10px] font-bold text-pink-600 uppercase mb-1">From Mother</div>
-                        <div class="chromosome" id="offspring-chromo-mom">
-                            <div class="offspring-gene-band bg-slate-300" id="offspring-fur-m"></div>
-                            <div class="offspring-gene-band bg-slate-300" id="offspring-eye-m"></div>
-                        </div>
-                    </div>
-
-                    <div class="text-center">
-                        <div class="text-[10px] font-bold text-blue-600 uppercase mb-1">From Father</div>
-                        <div class="chromosome" id="offspring-chromo-dad">
-                            <div class="offspring-gene-band bg-slate-300" id="offspring-fur-d"></div>
-                            <div class="offspring-gene-band bg-slate-300" id="offspring-eye-d"></div>
-                        </div>
-                    </div>
-
+<div>
+<strong>Bottom Gene Band (Eye Color):</strong><br/>
+<span class="inline-block w-3 h-3 allele-E rounded-sm mr-1"></span> <strong>E</strong> = Blue Eyes (Dominant)<br/>
+<span class="inline-block w-3 h-3 allele-e rounded-sm mr-1"></span> <strong>e</strong> = Red Eyes (Recessive)
                 </div>
-                <div class="text-center text-sm font-mono font-bold mt-4 text-indigo-700" id="offspring-genotype">Genotype</div>
-            </div>
-
-        </div>
-
-        <!-- Educational Context -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 text-sm text-slate-600">
-            <h3 class="font-bold text-slate-800 mb-2">Genetic Key:</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <strong>Top Gene Band (Fur Color):</strong><br>
-                    <span class="inline-block w-3 h-3 allele-B rounded-sm mr-1"></span> <strong>B</strong> = Purple Fur (Dominant)<br>
-                    <span class="inline-block w-3 h-3 allele-b rounded-sm mr-1"></span> <strong>b</strong> = Yellow Fur (Recessive)
-                </div>
-                <div>
-                    <strong>Bottom Gene Band (Eye Color):</strong><br>
-                    <span class="inline-block w-3 h-3 allele-E rounded-sm mr-1"></span> <strong>E</strong> = Blue Eyes (Dominant)<br>
-                    <span class="inline-block w-3 h-3 allele-e rounded-sm mr-1"></span> <strong>e</strong> = Red Eyes (Recessive)
-                </div>
-            </div>
-            <p class="mt-3 text-xs italic text-slate-400">Note: All cells in the organism have the same genetic content (these chromosomes). Genes code for instructions that build proteins, which determine these characteristic traits.</p>
-        </div>
-
-    </div>
-
-    <script>
+</div>
+<p class="mt-3 text-xs italic text-slate-400">Note: All cells in the organism have the same genetic content (these chromosomes). Genes code for instructions that build proteins, which determine these characteristic traits.</p>
+</div>
+</div>
+<script>
         // Genetic Data Structure
         let parents = {
             mom: {

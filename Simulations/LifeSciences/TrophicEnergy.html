@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trophic Energy Pyramid Model (HS-LS2-4)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trophic Energy Pyramid Model (HS-LS2-4)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/TrophicEnergy.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Trophic Energy Pyramid Model (HS-LS2-4). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Trophic Energy Pyramid Model (HS-LS2-4)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Trophic Energy Pyramid Model (HS-LS2-4), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Trophic Energy Pyramid Model (HS-LS2-4). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
 
         .pyramid-container {
@@ -69,93 +77,101 @@
 
         input[type="range"] { accent-color: #22c55e; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Trophic Energy Pyramid Model (HS-LS2-4)",
+    "description": "Interactive science simulation for Trophic Energy Pyramid Model (HS-LS2-4). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/TrophicEnergy.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-green-700">Ecological Energy Pyramid</h1>
-            <p class="text-slate-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS2-4: Use mathematical representations to support claims for the cycling of matter and flow of energy among organisms in an ecosystem.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
-
-            <!-- Controls & Math Input -->
-            <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Mathematical Inputs</h2>
-
-                <div class="space-y-6 flex-grow">
-                    <div>
-                        <label class="flex justify-between font-semibold text-slate-600 mb-2">
-                            <span>Primary Producer Energy</span>
-                            <span id="producer-energy-val" class="text-green-700 font-mono bg-green-50 px-2 rounded">10,000 J</span>
-                        </label>
-                        <input type="range" id="producer-energy" min="1000" max="100000" step="1000" value="10000" class="w-full">
-                        <div class="flex justify-between text-xs text-slate-400 mt-1">
-                            <span>1k J</span>
-                            <span>(Joules)</span>
-                            <span>100k J</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="flex justify-between font-semibold text-slate-600 mb-2">
-                            <span>Ecological Transfer Efficiency</span>
-                            <span id="efficiency-val" class="text-blue-600 font-mono bg-blue-50 px-2 rounded">10%</span>
-                        </label>
-                        <input type="range" id="efficiency" min="1" max="25" step="1" value="10" class="w-full accent-blue-500">
-                        <div class="flex justify-between text-xs text-slate-400 mt-1">
-                            <span>1%</span>
-                            <span>The "10% Rule"</span>
-                            <span>25%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mt-6">
-                    <h3 class="font-bold text-blue-800 text-sm mb-2">Mathematical Model</h3>
-                    <p class="text-xs text-blue-900 mb-2 font-mono">Energy<sub>next</sub> = Energy<sub>prev</sub> &times; (Efficiency / 100)</p>
-                    <p class="text-xs text-blue-900 font-mono">Loss<sub>heat/waste</sub> = Energy<sub>prev</sub> - Energy<sub>next</sub></p>
-                </div>
-            </div>
-
-            <!-- Visualization Pyramid -->
-            <div class="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                <h2 class="text-xl font-bold mb-4 text-center text-slate-700">Energy & Biomass Transfer</h2>
-
-                <div class="pyramid-container" id="pyramid-container">
-                    <!-- Javascript will render the blocks here -->
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Data Table & Conservation Evidence -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Energy Conservation Data Table</h2>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead>
-                        <tr class="bg-slate-50">
-                            <th class="p-3 border-b border-slate-200">Trophic Level</th>
-                            <th class="p-3 border-b border-slate-200 text-right">Energy Available (J)</th>
-                            <th class="p-3 border-b border-slate-200 text-right">Energy Lost to Heat/Waste (J)</th>
-                            <th class="p-3 border-b border-slate-200 text-right text-blue-700">Total Accounted For (J)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="data-table" class="font-mono">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-4 p-4 bg-green-50 border-l-4 border-green-500 rounded text-sm text-slate-700">
-                <p><strong>Evidence for Conservation:</strong> At every link in the food web, energy is conserved. The energy available at any trophic level exactly equals the energy transferred to the next level <em>plus</em> the energy lost to the environment through cellular respiration (heat) and metabolic waste.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-green-700">Ecological Energy Pyramid</h1>
+<p class="text-slate-600 mt-2 max-w-4xl mx-auto">NGSS HS-LS2-4: Use mathematical representations to support claims for the cycling of matter and flow of energy among organisms in an ecosystem.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+<!-- Controls & Math Input -->
+<div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+<h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Mathematical Inputs</h2>
+<div class="space-y-6 flex-grow">
+<div>
+<label class="flex justify-between font-semibold text-slate-600 mb-2">
+<span>Primary Producer Energy</span>
+<span class="text-green-700 font-mono bg-green-50 px-2 rounded" id="producer-energy-val">10,000 J</span>
+</label>
+<input class="w-full" id="producer-energy" max="100000" min="1000" step="1000" type="range" value="10000"/>
+<div class="flex justify-between text-xs text-slate-400 mt-1">
+<span>1k J</span>
+<span>(Joules)</span>
+<span>100k J</span>
+</div>
+</div>
+<div>
+<label class="flex justify-between font-semibold text-slate-600 mb-2">
+<span>Ecological Transfer Efficiency</span>
+<span class="text-blue-600 font-mono bg-blue-50 px-2 rounded" id="efficiency-val">10%</span>
+</label>
+<input class="w-full accent-blue-500" id="efficiency" max="25" min="1" step="1" type="range" value="10"/>
+<div class="flex justify-between text-xs text-slate-400 mt-1">
+<span>1%</span>
+<span>The "10% Rule"</span>
+<span>25%</span>
+</div>
+</div>
+</div>
+<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mt-6">
+<h3 class="font-bold text-blue-800 text-sm mb-2">Mathematical Model</h3>
+<p class="text-xs text-blue-900 mb-2 font-mono">Energy<sub>next</sub> = Energy<sub>prev</sub> × (Efficiency / 100)</p>
+<p class="text-xs text-blue-900 font-mono">Loss<sub>heat/waste</sub> = Energy<sub>prev</sub> - Energy<sub>next</sub></p>
+</div>
+</div>
+<!-- Visualization Pyramid -->
+<div class="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+<h2 class="text-xl font-bold mb-4 text-center text-slate-700">Energy &amp; Biomass Transfer</h2>
+<div class="pyramid-container" id="pyramid-container">
+<!-- Javascript will render the blocks here -->
+</div>
+</div>
+</div>
+<!-- Data Table & Conservation Evidence -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+<h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">Energy Conservation Data Table</h2>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm">
+<thead>
+<tr class="bg-slate-50">
+<th class="p-3 border-b border-slate-200">Trophic Level</th>
+<th class="p-3 border-b border-slate-200 text-right">Energy Available (J)</th>
+<th class="p-3 border-b border-slate-200 text-right">Energy Lost to Heat/Waste (J)</th>
+<th class="p-3 border-b border-slate-200 text-right text-blue-700">Total Accounted For (J)</th>
+</tr>
+</thead>
+<tbody class="font-mono" id="data-table">
+<!-- Populated by JS -->
+</tbody>
+</table>
+</div>
+<div class="mt-4 p-4 bg-green-50 border-l-4 border-green-500 rounded text-sm text-slate-700">
+<p><strong>Evidence for Conservation:</strong> At every link in the food web, energy is conserved. The energy available at any trophic level exactly equals the energy transferred to the next level <em>plus</em> the energy lost to the environment through cellular respiration (heat) and metabolic waste.</p>
+</div>
+</div>
+</div>
+<script>
         // DOM Elements
         const elProducerEnergySlider = document.getElementById('producer-energy');
         const elProducerEnergyVal = document.getElementById('producer-energy-val');

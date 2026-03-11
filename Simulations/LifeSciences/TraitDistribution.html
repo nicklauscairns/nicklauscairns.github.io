@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trait Distribution and Probability Model (HS-LS3-3)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trait Distribution and Probability Model (HS-LS3-3)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/TraitDistribution.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Trait Distribution and Probability Model (HS-LS3-3). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Trait Distribution and Probability Model (HS-LS3-3)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Trait Distribution and Probability Model (HS-LS3-3), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Trait Distribution and Probability Model (HS-LS3-3). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
         .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
         input[type="range"] { accent-color: #10b981; width: 100%; }
@@ -15,107 +23,114 @@
         .stat-val { font-size: 1.5rem; font-weight: bold; font-family: monospace; color: #334155; }
         .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: bold; color: #64748b; margin-top: 4px; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Trait Distribution and Probability Model (HS-LS3-3)",
+    "description": "Interactive science simulation for Trait Distribution and Probability Model (HS-LS3-3). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/TraitDistribution.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-emerald-700">Trait Distribution Model</h1>
-            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-3: Apply concepts of statistics and probability to explain the variation and distribution of expressed traits in a population.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
-
-            <!-- Controls -->
-            <div class="lg:col-span-1 space-y-6 flex flex-col">
-                <div class="panel border-t-4 border-t-emerald-500">
-                    <h2 class="text-xl font-bold mb-4 text-slate-700">Model Variables</h2>
-                    <p class="text-xs text-slate-500 mb-6">Adjust the genetic and environmental factors to see how they influence the expressed height of a plant population (n = 10,000).</p>
-
-                    <div class="space-y-6">
-                        <!-- Genetic Mean -->
-                        <div>
-                            <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
-                                <span>Base Genetic Potential (Mean Height)</span>
-                                <span id="val-genetic" class="text-emerald-600 font-mono">100 cm</span>
-                            </label>
-                            <input type="range" id="slider-genetic" min="50" max="150" value="100" step="1">
-                            <p class="text-[10px] text-slate-400 mt-1">The average height dictated purely by the population's DNA.</p>
-                        </div>
-
-                        <!-- Genetic Variance -->
-                        <div>
-                            <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
-                                <span>Genetic Diversity (Variance)</span>
-                                <span id="val-variance" class="text-emerald-600 font-mono">Moderate</span>
-                            </label>
-                            <input type="range" id="slider-variance" min="5" max="30" value="15" step="1">
-                            <p class="text-[10px] text-slate-400 mt-1">How widely the genetics vary around the mean (Standard Deviation).</p>
-                        </div>
-
-                        <hr class="border-slate-200">
-
-                        <!-- Environmental Factor -->
-                        <div>
-                            <label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
-                                <span>Environmental Factor (Rainfall/Soil)</span>
-                                <span id="val-env" class="text-blue-600 font-mono">Optimal (0)</span>
-                            </label>
-                            <input type="range" id="slider-env" min="-40" max="20" value="0" step="1" class="accent-blue-500">
-                            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-                                <span>Severe Drought</span>
-                                <span>Optimal</span>
-                                <span>Abundant</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stats -->
-                <div class="panel border-t-4 border-t-blue-500 flex-grow">
-                    <h2 class="text-lg font-bold mb-4 text-slate-700">Population Statistics</h2>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="stat-box">
-                            <div class="stat-val" id="stat-mean">100.0 cm</div>
-                            <div class="stat-label">Expressed Mean Height (μ)</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-val" id="stat-sd">15.0 cm</div>
-                            <div class="stat-label">Standard Deviation (σ)</div>
-                        </div>
-                        <div class="stat-box col-span-2">
-                            <div class="stat-val text-emerald-600" id="stat-prob">68.2%</div>
-                            <div class="stat-label">Probability of a plant falling within 1 SD of the mean</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chart Visualization -->
-            <div class="lg:col-span-2 panel flex flex-col">
-                <div class="flex justify-between items-center mb-4 border-b pb-2">
-                    <h2 class="text-xl font-bold text-slate-700">Trait Distribution (Histogram)</h2>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Normal Distribution Curve</span>
-                </div>
-
-                <div class="relative w-full flex-grow min-h-[400px]">
-                    <canvas id="distribution-chart"></canvas>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Context -->
-        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm">
-            <h3 class="font-bold text-blue-800 mb-1">Scientific Context</h3>
-            <p class="text-sm text-blue-900">
+<div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-emerald-700">Trait Distribution Model</h1>
+<p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS3-3: Apply concepts of statistics and probability to explain the variation and distribution of expressed traits in a population.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+<!-- Controls -->
+<div class="lg:col-span-1 space-y-6 flex flex-col">
+<div class="panel border-t-4 border-t-emerald-500">
+<h2 class="text-xl font-bold mb-4 text-slate-700">Model Variables</h2>
+<p class="text-xs text-slate-500 mb-6">Adjust the genetic and environmental factors to see how they influence the expressed height of a plant population (n = 10,000).</p>
+<div class="space-y-6">
+<!-- Genetic Mean -->
+<div>
+<label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+<span>Base Genetic Potential (Mean Height)</span>
+<span class="text-emerald-600 font-mono" id="val-genetic">100 cm</span>
+</label>
+<input id="slider-genetic" max="150" min="50" step="1" type="range" value="100"/>
+<p class="text-[10px] text-slate-400 mt-1">The average height dictated purely by the population's DNA.</p>
+</div>
+<!-- Genetic Variance -->
+<div>
+<label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+<span>Genetic Diversity (Variance)</span>
+<span class="text-emerald-600 font-mono" id="val-variance">Moderate</span>
+</label>
+<input id="slider-variance" max="30" min="5" step="1" type="range" value="15"/>
+<p class="text-[10px] text-slate-400 mt-1">How widely the genetics vary around the mean (Standard Deviation).</p>
+</div>
+<hr class="border-slate-200"/>
+<!-- Environmental Factor -->
+<div>
+<label class="flex justify-between font-semibold text-slate-700 mb-1 text-sm">
+<span>Environmental Factor (Rainfall/Soil)</span>
+<span class="text-blue-600 font-mono" id="val-env">Optimal (0)</span>
+</label>
+<input class="accent-blue-500" id="slider-env" max="20" min="-40" step="1" type="range" value="0"/>
+<div class="flex justify-between text-[10px] text-slate-400 mt-1">
+<span>Severe Drought</span>
+<span>Optimal</span>
+<span>Abundant</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Stats -->
+<div class="panel border-t-4 border-t-blue-500 flex-grow">
+<h2 class="text-lg font-bold mb-4 text-slate-700">Population Statistics</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="stat-box">
+<div class="stat-val" id="stat-mean">100.0 cm</div>
+<div class="stat-label">Expressed Mean Height (μ)</div>
+</div>
+<div class="stat-box">
+<div class="stat-val" id="stat-sd">15.0 cm</div>
+<div class="stat-label">Standard Deviation (σ)</div>
+</div>
+<div class="stat-box col-span-2">
+<div class="stat-val text-emerald-600" id="stat-prob">68.2%</div>
+<div class="stat-label">Probability of a plant falling within 1 SD of the mean</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Chart Visualization -->
+<div class="lg:col-span-2 panel flex flex-col">
+<div class="flex justify-between items-center mb-4 border-b pb-2">
+<h2 class="text-xl font-bold text-slate-700">Trait Distribution (Histogram)</h2>
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Normal Distribution Curve</span>
+</div>
+<div class="relative w-full flex-grow min-h-[400px]">
+<canvas id="distribution-chart"></canvas>
+</div>
+</div>
+</div>
+<!-- Context -->
+<div class="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm">
+<h3 class="font-bold text-blue-800 mb-1">Scientific Context</h3>
+<p class="text-sm text-blue-900">
                 Most complex traits (like height, skin color, or yield) are <strong>polygenic</strong> (controlled by many genes) and follow a normal distribution (bell curve).
                 The <strong>genetic potential</strong> sets the baseline and variance for the population. However, <strong>environmental factors</strong> (like a drought) can shift the entire distribution curve, changing the resulting <em>expressed</em> traits (phenotype) even without altering the underlying DNA.
             </p>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+<script>
         // DOM Elements
         const elSliderGen = document.getElementById('slider-genetic');
         const elValGen = document.getElementById('val-genetic');

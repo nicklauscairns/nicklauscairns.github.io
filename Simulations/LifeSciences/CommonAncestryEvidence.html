@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evidence of Common Ancestry Explorer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evidence of Common Ancestry Explorer</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/CommonAncestryEvidence.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Evidence of Common Ancestry Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Evidence of Common Ancestry Explorer" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Evidence of Common Ancestry Explorer, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Evidence of Common Ancestry Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .match { color: #15803d; font-weight: bold; background-color: #dcfce7; } /* green-700 on green-100 */
         .mismatch { color: #b91c1c; background-color: #fee2e2; } /* red-700 on red-100 */
@@ -21,132 +29,132 @@
             @apply border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Evidence of Common Ancestry Explorer",
+    "description": "Interactive science simulation for Evidence of Common Ancestry Explorer. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/CommonAncestryEvidence.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex flex-col">
-
-    <!-- Header -->
-    <header class="bg-blue-800 text-white p-4 shadow-md">
-        <h1 class="text-2xl font-bold">Evidence of Common Ancestry</h1>
-        <p class="text-sm mt-1">NGSS HS-LS4-1: Communicate scientific information that common ancestry and biological evolution are supported by multiple lines of empirical evidence.</p>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-7xl mx-auto w-full">
-
-        <!-- Sidebar Controls & Communication Area -->
-        <aside class="w-full lg:w-1/3 flex flex-col gap-4 overflow-y-auto">
-
-            <section class="bg-white rounded-lg shadow-md p-4">
-                <h2 class="text-lg font-semibold border-b pb-2 mb-4 text-blue-900">1. Select Species to Compare</h2>
-
-                <div class="flex flex-col gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Species A (Reference)</label>
-                        <select id="species-a-select" class="w-full border-gray-300 rounded shadow-sm p-2 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 border">
-                            <!-- Options populated via JS -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Species B</label>
-                        <select id="species-b-select" class="w-full border-gray-300 rounded shadow-sm p-2 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 border">
-                            <!-- Options populated via JS -->
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col">
-                <h2 class="text-lg font-semibold border-b pb-2 mb-4 text-blue-900">Communication & Analysis</h2>
-                <p class="text-xs text-gray-600 mb-3 leading-relaxed">
-                    <strong>SEP: Communicating Information.</strong> Based on the patterns of similarity you observe in the data (DNA, Amino Acids, Anatomy), construct a paragraph explaining how this empirical evidence supports the theory of common ancestry.
+<!-- Header -->
+<header class="bg-blue-800 text-white p-4 shadow-md">
+<h1 class="text-2xl font-bold">Evidence of Common Ancestry</h1>
+<p class="text-sm mt-1">NGSS HS-LS4-1: Communicate scientific information that common ancestry and biological evolution are supported by multiple lines of empirical evidence.</p>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-7xl mx-auto w-full">
+<!-- Sidebar Controls & Communication Area -->
+<aside class="w-full lg:w-1/3 flex flex-col gap-4 overflow-y-auto">
+<section class="bg-white rounded-lg shadow-md p-4">
+<h2 class="text-lg font-semibold border-b pb-2 mb-4 text-blue-900">1. Select Species to Compare</h2>
+<div class="flex flex-col gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Species A (Reference)</label>
+<select class="w-full border-gray-300 rounded shadow-sm p-2 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 border" id="species-a-select">
+<!-- Options populated via JS -->
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Species B</label>
+<select class="w-full border-gray-300 rounded shadow-sm p-2 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 border" id="species-b-select">
+<!-- Options populated via JS -->
+</select>
+</div>
+</div>
+</section>
+<section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col">
+<h2 class="text-lg font-semibold border-b pb-2 mb-4 text-blue-900">Communication &amp; Analysis</h2>
+<p class="text-xs text-gray-600 mb-3 leading-relaxed">
+<strong>SEP: Communicating Information.</strong> Based on the patterns of similarity you observe in the data (DNA, Amino Acids, Anatomy), construct a paragraph explaining how this empirical evidence supports the theory of common ancestry.
                 </p>
-                <textarea id="analysis-log" class="flex-1 w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="E.g., The high degree of sequence similarity between Human and Chimpanzee Cytochrome C (98%) indicates a recent common ancestor..."></textarea>
-            </section>
-
-        </aside>
-
-        <!-- Evidence Display Area -->
-        <section class="w-full lg:w-2/3 bg-white rounded-lg shadow-md p-0 flex flex-col overflow-hidden">
-
-            <!-- Tabs -->
-            <nav class="flex border-b border-gray-200 bg-gray-50 px-4 pt-4" aria-label="Tabs">
-                <button class="tab-btn active" data-tab="dna">DNA Sequence (CYTB)</button>
-                <button class="tab-btn" data-tab="amino">Amino Acid (Cytochrome C)</button>
-                <button class="tab-btn" data-tab="anatomy">Anatomical Homology</button>
-            </nav>
-
-            <!-- Content Area -->
-            <div class="p-6 overflow-y-auto flex-1 bg-white relative">
-
-                <!-- Summary Stats -->
-                <div id="similarity-stats" class="mb-6 p-4 bg-blue-50 rounded border border-blue-100 hidden">
-                    <h3 class="text-blue-800 font-bold text-lg flex items-center justify-between">
-                        <span>Similarity Score</span>
-                        <span id="score-percent" class="text-2xl">--%</span>
-                    </h3>
-                    <p id="score-desc" class="text-sm text-blue-600 mt-1">Comparing <span id="lbl-sp-a" class="font-semibold"></span> to <span id="lbl-sp-b" class="font-semibold"></span></p>
-                </div>
-
-                <!-- DNA Tab -->
-                <div id="tab-dna" class="tab-content block">
-                    <h3 class="font-semibold text-lg mb-2">Cytochrome b Gene Fragment (DNA)</h3>
-                    <p class="text-sm text-gray-600 mb-4">DNA sequences encode genetic information. Overlapping sequences between species indicate descent from a common ancestor. <br><span class="match text-xs px-1">Green</span> = Match, <span class="mismatch text-xs px-1">Red</span> = Mismatch/Mutation.</p>
-
-                    <div class="space-y-4">
-                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
-                            <h4 id="dna-name-a" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species A</h4>
-                            <div id="dna-seq-a" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
-                        </div>
-                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
-                            <h4 id="dna-name-b" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species B</h4>
-                            <div id="dna-seq-b" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Amino Tab -->
-                <div id="tab-amino" class="tab-content hidden">
-                    <h3 class="font-semibold text-lg mb-2">Cytochrome c Protein Fragment (Amino Acids)</h3>
-                    <p class="text-sm text-gray-600 mb-4">Amino acid sequences form proteins. Because the genetic code is nearly universal, similarities in protein structure provide strong evidence for evolutionary relationships.</p>
-
-                    <div class="space-y-4">
-                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
-                            <h4 id="aa-name-a" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species A</h4>
-                            <div id="aa-seq-a" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
-                        </div>
-                        <div class="p-3 bg-gray-50 border rounded shadow-inner">
-                            <h4 id="aa-name-b" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Species B</h4>
-                            <div id="aa-seq-b" class="seq-box text-sm text-gray-800 break-all leading-relaxed"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Anatomy Tab -->
-                <div id="tab-anatomy" class="tab-content hidden">
-                    <h3 class="font-semibold text-lg mb-2">Homologous Structures (Forelimbs)</h3>
-                    <p class="text-sm text-gray-600 mb-4">Anatomical evidence shows that different species share similar bone structures, even if they have adapted for different functions (e.g., grasping, flying, swimming), indicating a shared mammalian ancestor.</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                        <div class="text-center p-4 border rounded bg-gray-50 h-64 flex flex-col justify-center items-center">
-                            <h4 id="anat-name-a" class="font-bold text-gray-700 mb-2">Species A</h4>
-                            <!-- Placeholder for SVG drawing -->
-                            <div id="anat-svg-a" class="w-full h-40 flex justify-center items-center italic text-gray-400">SVG Rendering</div>
-                        </div>
-                        <div class="text-center p-4 border rounded bg-gray-50 h-64 flex flex-col justify-center items-center">
-                            <h4 id="anat-name-b" class="font-bold text-gray-700 mb-2">Species B</h4>
-                            <!-- Placeholder for SVG drawing -->
-                            <div id="anat-svg-b" class="w-full h-40 flex justify-center items-center italic text-gray-400">SVG Rendering</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Interactive Data and Logic -->
-    <script>
+<textarea class="flex-1 w-full border border-gray-300 rounded p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" id="analysis-log" placeholder="E.g., The high degree of sequence similarity between Human and Chimpanzee Cytochrome C (98%) indicates a recent common ancestor..."></textarea>
+</section>
+</aside>
+<!-- Evidence Display Area -->
+<section class="w-full lg:w-2/3 bg-white rounded-lg shadow-md p-0 flex flex-col overflow-hidden">
+<!-- Tabs -->
+<nav aria-label="Tabs" class="flex border-b border-gray-200 bg-gray-50 px-4 pt-4">
+<button class="tab-btn active" data-tab="dna">DNA Sequence (CYTB)</button>
+<button class="tab-btn" data-tab="amino">Amino Acid (Cytochrome C)</button>
+<button class="tab-btn" data-tab="anatomy">Anatomical Homology</button>
+</nav>
+<!-- Content Area -->
+<div class="p-6 overflow-y-auto flex-1 bg-white relative">
+<!-- Summary Stats -->
+<div class="mb-6 p-4 bg-blue-50 rounded border border-blue-100 hidden" id="similarity-stats">
+<h3 class="text-blue-800 font-bold text-lg flex items-center justify-between">
+<span>Similarity Score</span>
+<span class="text-2xl" id="score-percent">--%</span>
+</h3>
+<p class="text-sm text-blue-600 mt-1" id="score-desc">Comparing <span class="font-semibold" id="lbl-sp-a"></span> to <span class="font-semibold" id="lbl-sp-b"></span></p>
+</div>
+<!-- DNA Tab -->
+<div class="tab-content block" id="tab-dna">
+<h3 class="font-semibold text-lg mb-2">Cytochrome b Gene Fragment (DNA)</h3>
+<p class="text-sm text-gray-600 mb-4">DNA sequences encode genetic information. Overlapping sequences between species indicate descent from a common ancestor. <br/><span class="match text-xs px-1">Green</span> = Match, <span class="mismatch text-xs px-1">Red</span> = Mismatch/Mutation.</p>
+<div class="space-y-4">
+<div class="p-3 bg-gray-50 border rounded shadow-inner">
+<h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" id="dna-name-a">Species A</h4>
+<div class="seq-box text-sm text-gray-800 break-all leading-relaxed" id="dna-seq-a"></div>
+</div>
+<div class="p-3 bg-gray-50 border rounded shadow-inner">
+<h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" id="dna-name-b">Species B</h4>
+<div class="seq-box text-sm text-gray-800 break-all leading-relaxed" id="dna-seq-b"></div>
+</div>
+</div>
+</div>
+<!-- Amino Tab -->
+<div class="tab-content hidden" id="tab-amino">
+<h3 class="font-semibold text-lg mb-2">Cytochrome c Protein Fragment (Amino Acids)</h3>
+<p class="text-sm text-gray-600 mb-4">Amino acid sequences form proteins. Because the genetic code is nearly universal, similarities in protein structure provide strong evidence for evolutionary relationships.</p>
+<div class="space-y-4">
+<div class="p-3 bg-gray-50 border rounded shadow-inner">
+<h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" id="aa-name-a">Species A</h4>
+<div class="seq-box text-sm text-gray-800 break-all leading-relaxed" id="aa-seq-a"></div>
+</div>
+<div class="p-3 bg-gray-50 border rounded shadow-inner">
+<h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" id="aa-name-b">Species B</h4>
+<div class="seq-box text-sm text-gray-800 break-all leading-relaxed" id="aa-seq-b"></div>
+</div>
+</div>
+</div>
+<!-- Anatomy Tab -->
+<div class="tab-content hidden" id="tab-anatomy">
+<h3 class="font-semibold text-lg mb-2">Homologous Structures (Forelimbs)</h3>
+<p class="text-sm text-gray-600 mb-4">Anatomical evidence shows that different species share similar bone structures, even if they have adapted for different functions (e.g., grasping, flying, swimming), indicating a shared mammalian ancestor.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+<div class="text-center p-4 border rounded bg-gray-50 h-64 flex flex-col justify-center items-center">
+<h4 class="font-bold text-gray-700 mb-2" id="anat-name-a">Species A</h4>
+<!-- Placeholder for SVG drawing -->
+<div class="w-full h-40 flex justify-center items-center italic text-gray-400" id="anat-svg-a">SVG Rendering</div>
+</div>
+<div class="text-center p-4 border rounded bg-gray-50 h-64 flex flex-col justify-center items-center">
+<h4 class="font-bold text-gray-700 mb-2" id="anat-name-b">Species B</h4>
+<!-- Placeholder for SVG drawing -->
+<div class="w-full h-40 flex justify-center items-center italic text-gray-400" id="anat-svg-b">SVG Rendering</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Interactive Data and Logic -->
+<script>
         // Data Structure aligned with LS4.A: Evidence of Common Ancestry
         const speciesData = {
             "human": {

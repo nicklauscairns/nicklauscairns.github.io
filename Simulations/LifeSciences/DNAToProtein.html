@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DNA to Protein Structure and Function (HS-LS1-1)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DNA to Protein Structure and Function (HS-LS1-1)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/DNAToProtein.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for DNA to Protein Structure and Function (HS-LS1-1). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="DNA to Protein Structure and Function (HS-LS1-1)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, DNA to Protein Structure and Function (HS-LS1-1), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for DNA to Protein Structure and Function (HS-LS1-1). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .dna-base {
             width: 40px; height: 40px;
@@ -42,126 +50,134 @@
 
         .table-container { max-height: 250px; overflow-y: auto; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "DNA to Protein Structure and Function (HS-LS1-1)",
+    "description": "Interactive science simulation for DNA to Protein Structure and Function (HS-LS1-1). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/DNAToProtein.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-800 p-4 md:p-8">
-    <div class="max-w-6xl mx-auto space-y-6">
-        <header class="text-center">
-            <h1 class="text-3xl font-extrabold text-blue-800">DNA to Protein Structure and Function</h1>
-            <p class="text-gray-600 mt-2">NGSS HS-LS1-1: Construct an explanation based on evidence for how the structure of DNA determines the structure of proteins which carry out the essential functions of life through systems of specialized cells.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Left Column: Genetics -->
-            <div class="space-y-6">
-                <!-- DNA Section -->
-                <div class="bg-white p-5 rounded-lg shadow">
-                    <h2 class="text-xl font-bold mb-3 border-b pb-2">1. DNA Sequence</h2>
-                    <p class="text-sm text-gray-600 mb-4">Click on the DNA bases (top row) to mutate the sequence. Observe how it changes the mRNA and protein.</p>
-
-                    <div class="flex flex-col items-center space-y-2 overflow-x-auto pb-2">
-                        <!-- Coding Strand (Editable) -->
-                        <div class="flex gap-2" id="dna-coding"></div>
-                        <!-- Template Strand (Auto-updates) -->
-                        <div class="flex gap-2" id="dna-template"></div>
-                    </div>
-                </div>
-
-                <!-- mRNA & Protein Section -->
-                <div class="bg-white p-5 rounded-lg shadow">
-                    <h2 class="text-xl font-bold mb-3 border-b pb-2">2. Transcription & Translation</h2>
-
-                    <div class="mb-4">
-                        <h3 class="font-semibold text-gray-700 mb-2">mRNA Sequence (Transcription)</h3>
-                        <div class="flex flex-wrap gap-2" id="mrna-sequence"></div>
-                    </div>
-
-                    <div>
-                        <h3 class="font-semibold text-gray-700 mb-2">Amino Acid Sequence (Translation)</h3>
-                        <div class="flex flex-wrap items-center gap-2" id="protein-sequence"></div>
-                    </div>
-                </div>
-
-                <!-- Cell Type Selection -->
-                <div class="bg-white p-5 rounded-lg shadow">
-                    <h2 class="text-xl font-bold mb-3 border-b pb-2">3. Cellular Environment</h2>
-                    <p class="text-sm text-gray-600 mb-3">Select a specialized cell type to see if the produced protein functions correctly within it.</p>
-                    <div class="flex gap-4">
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="cell-type" value="muscle" class="form-radio h-5 w-5 text-blue-600" checked>
-                            <span class="font-medium">Muscle Cell</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="cell-type" value="rbc" class="form-radio h-5 w-5 text-red-600">
-                            <span class="font-medium">Red Blood Cell</span>
-                        </label>
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="cell-type" value="immune" class="form-radio h-5 w-5 text-purple-600">
-                            <span class="font-medium">Immune Cell</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Structure, Function & Data -->
-            <div class="space-y-6">
-                <!-- Protein Folding Canvas -->
-                <div class="bg-white p-5 rounded-lg shadow flex flex-col items-center">
-                    <h2 class="text-xl font-bold mb-3 w-full border-b pb-2">4. Protein Structure (Folding)</h2>
-                    <p class="text-sm text-gray-600 mb-2 w-full">The amino acid sequence determines the 3D shape of the protein.</p>
-                    <canvas id="structure-canvas" width="400" height="200" class="w-full max-w-md"></canvas>
-                    <div id="structure-info" class="mt-2 font-semibold text-center h-6"></div>
-                </div>
-
-                <!-- Cellular Function Canvas -->
-                <div class="bg-white p-5 rounded-lg shadow flex flex-col items-center">
-                    <h2 class="text-xl font-bold mb-3 w-full border-b pb-2">5. Cellular Function</h2>
-                    <p class="text-sm text-gray-600 mb-2 w-full">Does the protein structure fit its function in the chosen cell?</p>
-                    <canvas id="function-canvas" width="400" height="200" class="w-full max-w-md"></canvas>
-                    <div id="function-info" class="mt-2 font-semibold text-center h-6"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Evidence Log Section -->
-        <div class="bg-white p-5 rounded-lg shadow mt-6">
-            <div class="flex justify-between items-center mb-3 border-b pb-2">
-                <h2 class="text-xl font-bold">Evidence Log</h2>
-                <button id="log-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">Record Current Data</button>
-            </div>
-            <p class="text-sm text-gray-600 mb-3">Record observations to construct your explanation of how DNA determines protein structure and cell function.</p>
-
-            <div class="table-container border rounded">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-gray-100 sticky top-0">
-                        <tr>
-                            <th class="p-2 border-b">DNA (Coding)</th>
-                            <th class="p-2 border-b">Amino Acids</th>
-                            <th class="p-2 border-b">Protein Shape</th>
-                            <th class="p-2 border-b">Cell Type</th>
-                            <th class="p-2 border-b">Function Outcome</th>
-                        </tr>
-                    </thead>
-                    <tbody id="evidence-log-body" class="text-sm">
-                        <!-- Log entries will appear here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Standard Presets -->
-        <div class="bg-white p-5 rounded-lg shadow mt-6">
-             <h2 class="text-xl font-bold mb-3 border-b pb-2">Explore Scenarios</h2>
-             <div class="flex flex-wrap gap-2">
-                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGGTGTACCTG">Muscle Protein (Normal)</button>
-                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGGTTTACCTG">Muscle Protein (Mutated)</button>
-                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCACTGCGAC">Hemoglobin (Normal)</button>
-                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCACAGCGAC">Hemoglobin (Sickle)</button>
-                <button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCGGATTTGC">Antibody (Normal)</button>
-             </div>
-        </div>
-    </div>
-
-    <script>
+<div class="max-w-6xl mx-auto space-y-6">
+<header class="text-center">
+<h1 class="text-3xl font-extrabold text-blue-800">DNA to Protein Structure and Function</h1>
+<p class="text-gray-600 mt-2">NGSS HS-LS1-1: Construct an explanation based on evidence for how the structure of DNA determines the structure of proteins which carry out the essential functions of life through systems of specialized cells.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Left Column: Genetics -->
+<div class="space-y-6">
+<!-- DNA Section -->
+<div class="bg-white p-5 rounded-lg shadow">
+<h2 class="text-xl font-bold mb-3 border-b pb-2">1. DNA Sequence</h2>
+<p class="text-sm text-gray-600 mb-4">Click on the DNA bases (top row) to mutate the sequence. Observe how it changes the mRNA and protein.</p>
+<div class="flex flex-col items-center space-y-2 overflow-x-auto pb-2">
+<!-- Coding Strand (Editable) -->
+<div class="flex gap-2" id="dna-coding"></div>
+<!-- Template Strand (Auto-updates) -->
+<div class="flex gap-2" id="dna-template"></div>
+</div>
+</div>
+<!-- mRNA & Protein Section -->
+<div class="bg-white p-5 rounded-lg shadow">
+<h2 class="text-xl font-bold mb-3 border-b pb-2">2. Transcription &amp; Translation</h2>
+<div class="mb-4">
+<h3 class="font-semibold text-gray-700 mb-2">mRNA Sequence (Transcription)</h3>
+<div class="flex flex-wrap gap-2" id="mrna-sequence"></div>
+</div>
+<div>
+<h3 class="font-semibold text-gray-700 mb-2">Amino Acid Sequence (Translation)</h3>
+<div class="flex flex-wrap items-center gap-2" id="protein-sequence"></div>
+</div>
+</div>
+<!-- Cell Type Selection -->
+<div class="bg-white p-5 rounded-lg shadow">
+<h2 class="text-xl font-bold mb-3 border-b pb-2">3. Cellular Environment</h2>
+<p class="text-sm text-gray-600 mb-3">Select a specialized cell type to see if the produced protein functions correctly within it.</p>
+<div class="flex gap-4">
+<label class="flex items-center space-x-2 cursor-pointer">
+<input checked="" class="form-radio h-5 w-5 text-blue-600" name="cell-type" type="radio" value="muscle"/>
+<span class="font-medium">Muscle Cell</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer">
+<input class="form-radio h-5 w-5 text-red-600" name="cell-type" type="radio" value="rbc"/>
+<span class="font-medium">Red Blood Cell</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer">
+<input class="form-radio h-5 w-5 text-purple-600" name="cell-type" type="radio" value="immune"/>
+<span class="font-medium">Immune Cell</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Right Column: Structure, Function & Data -->
+<div class="space-y-6">
+<!-- Protein Folding Canvas -->
+<div class="bg-white p-5 rounded-lg shadow flex flex-col items-center">
+<h2 class="text-xl font-bold mb-3 w-full border-b pb-2">4. Protein Structure (Folding)</h2>
+<p class="text-sm text-gray-600 mb-2 w-full">The amino acid sequence determines the 3D shape of the protein.</p>
+<canvas class="w-full max-w-md" height="200" id="structure-canvas" width="400"></canvas>
+<div class="mt-2 font-semibold text-center h-6" id="structure-info"></div>
+</div>
+<!-- Cellular Function Canvas -->
+<div class="bg-white p-5 rounded-lg shadow flex flex-col items-center">
+<h2 class="text-xl font-bold mb-3 w-full border-b pb-2">5. Cellular Function</h2>
+<p class="text-sm text-gray-600 mb-2 w-full">Does the protein structure fit its function in the chosen cell?</p>
+<canvas class="w-full max-w-md" height="200" id="function-canvas" width="400"></canvas>
+<div class="mt-2 font-semibold text-center h-6" id="function-info"></div>
+</div>
+</div>
+</div>
+<!-- Evidence Log Section -->
+<div class="bg-white p-5 rounded-lg shadow mt-6">
+<div class="flex justify-between items-center mb-3 border-b pb-2">
+<h2 class="text-xl font-bold">Evidence Log</h2>
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded" id="log-data-btn">Record Current Data</button>
+</div>
+<p class="text-sm text-gray-600 mb-3">Record observations to construct your explanation of how DNA determines protein structure and cell function.</p>
+<div class="table-container border rounded">
+<table class="w-full text-left border-collapse">
+<thead class="bg-gray-100 sticky top-0">
+<tr>
+<th class="p-2 border-b">DNA (Coding)</th>
+<th class="p-2 border-b">Amino Acids</th>
+<th class="p-2 border-b">Protein Shape</th>
+<th class="p-2 border-b">Cell Type</th>
+<th class="p-2 border-b">Function Outcome</th>
+</tr>
+</thead>
+<tbody class="text-sm" id="evidence-log-body">
+<!-- Log entries will appear here -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- Standard Presets -->
+<div class="bg-white p-5 rounded-lg shadow mt-6">
+<h2 class="text-xl font-bold mb-3 border-b pb-2">Explore Scenarios</h2>
+<div class="flex flex-wrap gap-2">
+<button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGGTGTACCTG">Muscle Protein (Normal)</button>
+<button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGGTTTACCTG">Muscle Protein (Mutated)</button>
+<button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCACTGCGAC">Hemoglobin (Normal)</button>
+<button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCACAGCGAC">Hemoglobin (Sickle)</button>
+<button class="preset-btn bg-gray-200 hover:bg-gray-300 py-1 px-3 rounded text-sm" data-seq="ATGCGGATTTGC">Antibody (Normal)</button>
+</div>
+</div>
+</div>
+<script>
         // Data and Logic
         const BASES = ['A', 'T', 'C', 'G'];
         const RNA_BASES = ['A', 'U', 'C', 'G'];

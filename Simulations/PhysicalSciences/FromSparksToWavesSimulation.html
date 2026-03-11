@@ -1,151 +1,165 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>From Sparks to Waves: Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>From Sparks to Waves: Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/FromSparksToWavesSimulation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for From Sparks to Waves: Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="From Sparks to Waves: Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, From Sparks to Waves: Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for From Sparks to Waves: Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         canvas { display: block; width: 100%; height: 100%; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "From Sparks to Waves: Simulation",
+    "description": "Interactive science simulation for From Sparks to Waves: Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/FromSparksToWavesSimulation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-900 text-gray-100 h-screen flex flex-col overflow-hidden">
-
-    <!-- Header -->
-    <header class="bg-blue-900 p-4 shadow-lg flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold text-white">From Sparks to Waves</h1>
-        <p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS4-1</p>
-            <p class="text-blue-200 text-sm">Interactive Lightning & Wave Oscilloscope</p>
-        </div>
-        <div class="flex space-x-4">
-            <button id="btn-prop" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-semibold transition">Propagation Model</button>
-            <button id="btn-osc" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded font-semibold transition">Oscilloscope Model</button>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 relative">
-
-        <!-- View 1: Propagation -->
-        <div id="view-propagation" class="absolute inset-0 flex flex-col p-6 bg-gray-800">
-            <div class="mb-4 flex justify-between items-end">
-                <div>
-                    <h2 class="text-xl font-semibold text-blue-300">Part 1: Propagation of Light & Sound</h2>
-                    <p class="text-sm text-gray-400">Observe the difference in speed between electromagnetic (light) and mechanical (sound) waves.</p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <label class="flex items-center space-x-2 cursor-pointer bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition border border-gray-600 shadow-sm">
-                        <input type="checkbox" id="check-slowmo" class="w-4 h-4 text-blue-600 bg-gray-900 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer">
-                        <span class="text-sm font-semibold text-gray-300">Super Slow-Mo (10<sup>-6</sup>x)</span>
-                    </label>
-                    <button id="btn-strike" class="bg-yellow-500 hover:bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-bold shadow-lg transform transition hover:scale-105">⚡ TRIGGER LIGHTNING</button>
-                </div>
-            </div>
-            <div class="flex-1 bg-black rounded-xl border border-gray-700 relative overflow-hidden flex items-center justify-center">
-                <canvas id="canvas-prop"></canvas>
-                <!-- HUD Overlay -->
-                <div class="absolute top-4 left-4 bg-gray-900/80 p-3 rounded text-sm font-mono text-green-400 border border-gray-700">
-                    <div>Time: <span id="prop-time">0.00</span> s</div>
-                    <div class="text-yellow-400 mt-1">Light Speed: ~300,000,000 m/s</div>
-                    <div class="text-blue-400">Sound Speed: 343 m/s</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- View 2: Oscilloscope -->
-        <div id="view-oscilloscope" class="absolute inset-0 flex flex-col p-6 bg-gray-800 hidden">
-            <div class="mb-4">
-                <h2 class="text-xl font-semibold text-blue-300">Part 2: The Anatomy of a Wave</h2>
-                <p class="text-sm text-gray-400">Compare a transverse light wave with a longitudinal sound wave by adjusting their frequencies.</p>
-            </div>
-
-            <div class="flex flex-1 gap-6">
-                <!-- Controls -->
-                <div class="w-1/3 flex flex-col space-y-4">
-
-                    <!-- Light Controls -->
-                    <div class="bg-gray-900 rounded-xl border border-gray-700 p-5 flex flex-col shadow-lg">
-                        <h3 class="text-yellow-400 font-bold mb-4 border-b border-gray-700 pb-2">Light (Transverse Wave)</h3>
-                        <div>
-                            <label class="block text-gray-400 text-sm font-bold mb-2" for="light-freq-slider">
+<!-- Header -->
+<header class="bg-blue-900 p-4 shadow-lg flex justify-between items-center">
+<div>
+<h1 class="text-2xl font-bold text-white">From Sparks to Waves</h1>
+<p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS4-1</p>
+<p class="text-blue-200 text-sm">Interactive Lightning &amp; Wave Oscilloscope</p>
+</div>
+<div class="flex space-x-4">
+<button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-semibold transition" id="btn-prop">Propagation Model</button>
+<button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded font-semibold transition" id="btn-osc">Oscilloscope Model</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 relative">
+<!-- View 1: Propagation -->
+<div class="absolute inset-0 flex flex-col p-6 bg-gray-800" id="view-propagation">
+<div class="mb-4 flex justify-between items-end">
+<div>
+<h2 class="text-xl font-semibold text-blue-300">Part 1: Propagation of Light &amp; Sound</h2>
+<p class="text-sm text-gray-400">Observe the difference in speed between electromagnetic (light) and mechanical (sound) waves.</p>
+</div>
+<div class="flex items-center space-x-4">
+<label class="flex items-center space-x-2 cursor-pointer bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition border border-gray-600 shadow-sm">
+<input class="w-4 h-4 text-blue-600 bg-gray-900 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer" id="check-slowmo" type="checkbox"/>
+<span class="text-sm font-semibold text-gray-300">Super Slow-Mo (10<sup>-6</sup>x)</span>
+</label>
+<button class="bg-yellow-500 hover:bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-bold shadow-lg transform transition hover:scale-105" id="btn-strike">⚡ TRIGGER LIGHTNING</button>
+</div>
+</div>
+<div class="flex-1 bg-black rounded-xl border border-gray-700 relative overflow-hidden flex items-center justify-center">
+<canvas id="canvas-prop"></canvas>
+<!-- HUD Overlay -->
+<div class="absolute top-4 left-4 bg-gray-900/80 p-3 rounded text-sm font-mono text-green-400 border border-gray-700">
+<div>Time: <span id="prop-time">0.00</span> s</div>
+<div class="text-yellow-400 mt-1">Light Speed: ~300,000,000 m/s</div>
+<div class="text-blue-400">Sound Speed: 343 m/s</div>
+</div>
+</div>
+</div>
+<!-- View 2: Oscilloscope -->
+<div class="absolute inset-0 flex flex-col p-6 bg-gray-800 hidden" id="view-oscilloscope">
+<div class="mb-4">
+<h2 class="text-xl font-semibold text-blue-300">Part 2: The Anatomy of a Wave</h2>
+<p class="text-sm text-gray-400">Compare a transverse light wave with a longitudinal sound wave by adjusting their frequencies.</p>
+</div>
+<div class="flex flex-1 gap-6">
+<!-- Controls -->
+<div class="w-1/3 flex flex-col space-y-4">
+<!-- Light Controls -->
+<div class="bg-gray-900 rounded-xl border border-gray-700 p-5 flex flex-col shadow-lg">
+<h3 class="text-yellow-400 font-bold mb-4 border-b border-gray-700 pb-2">Light (Transverse Wave)</h3>
+<div>
+<label class="block text-gray-400 text-sm font-bold mb-2" for="light-freq-slider">
                                 Frequency (<i>f</i>)
                             </label>
-                            <input type="range" id="light-freq-slider" min="400" max="750" value="500" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                            <div class="text-right text-yellow-400 font-mono mt-2 flex flex-col items-end">
-                                <span class="text-lg"><span id="light-freq-val">500</span> THz</span>
-                                <span class="text-sm text-gray-500"><span id="light-freq-hz-val">5.00 &times; 10<sup>14</sup></span> Hz</span>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-4 mt-4">
-                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
-                                <div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
-                                <div class="text-sm font-mono text-green-400">3 &times; 10<sup>8</sup> m/s</div>
-                            </div>
-                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
-                                <div class="text-xs text-gray-400 mb-1">Wavelength (&lambda;)</div>
-                                <div class="text-xl font-mono text-yellow-400 flex flex-col">
-                                    <span><span id="light-wave-val">600</span> nm</span>
-                                    <span class="text-sm text-gray-500"><span id="light-wave-m-val">6.00 &times; 10<sup>-7</sup></span> m</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sound Controls -->
-                    <div class="bg-gray-900 rounded-xl border border-gray-700 p-5 flex flex-col shadow-lg">
-                        <div class="flex justify-between items-center border-b border-gray-700 pb-2 mb-4">
-                            <h3 class="text-blue-400 font-bold">Sound (Longitudinal Wave)</h3>
-                            <button id="btn-sound-toggle" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1 rounded transition border border-gray-600 shadow-sm">🔈 Tone: OFF</button>
-                        </div>
-
-                        <!-- Frequency Range Selector -->
-                        <div class="mb-3">
-                            <div class="flex gap-2">
-                                <button id="btn-range-low" class="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded border border-blue-500 transition">20-200</button>
-                                <button id="btn-range-mid" class="flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition">200-2k</button>
-                                <button id="btn-range-high" class="flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition">2k-20k</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-gray-400 text-sm font-bold mb-2" for="freq-slider">
+<input class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" id="light-freq-slider" max="750" min="400" type="range" value="500"/>
+<div class="text-right text-yellow-400 font-mono mt-2 flex flex-col items-end">
+<span class="text-lg"><span id="light-freq-val">500</span> THz</span>
+<span class="text-sm text-gray-500"><span id="light-freq-hz-val">5.00 × 10<sup>14</sup></span> Hz</span>
+</div>
+</div>
+<div class="flex gap-4 mt-4">
+<div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+<div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
+<div class="text-sm font-mono text-green-400">3 × 10<sup>8</sup> m/s</div>
+</div>
+<div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+<div class="text-xs text-gray-400 mb-1">Wavelength (λ)</div>
+<div class="text-xl font-mono text-yellow-400 flex flex-col">
+<span><span id="light-wave-val">600</span> nm</span>
+<span class="text-sm text-gray-500"><span id="light-wave-m-val">6.00 × 10<sup>-7</sup></span> m</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sound Controls -->
+<div class="bg-gray-900 rounded-xl border border-gray-700 p-5 flex flex-col shadow-lg">
+<div class="flex justify-between items-center border-b border-gray-700 pb-2 mb-4">
+<h3 class="text-blue-400 font-bold">Sound (Longitudinal Wave)</h3>
+<button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1 rounded transition border border-gray-600 shadow-sm" id="btn-sound-toggle">🔈 Tone: OFF</button>
+</div>
+<!-- Frequency Range Selector -->
+<div class="mb-3">
+<div class="flex gap-2">
+<button class="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded border border-blue-500 transition" id="btn-range-low">20-200</button>
+<button class="flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition" id="btn-range-mid">200-2k</button>
+<button class="flex-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs py-1.5 rounded border border-gray-600 transition" id="btn-range-high">2k-20k</button>
+</div>
+</div>
+<div>
+<label class="block text-gray-400 text-sm font-bold mb-2" for="freq-slider">
                                 Frequency (<i>f</i>) - Hz
                             </label>
-                            <input type="range" id="freq-slider" min="20" max="200" value="85" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                            <div class="text-right text-blue-400 font-mono mt-2 text-lg"><span id="freq-val">85</span> Hz</div>
-                        </div>
-
-                        <div class="flex gap-4 mt-4">
-                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
-                                <div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
-                                <div class="text-sm font-mono text-green-400">343 m/s</div>
-                            </div>
-                            <div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
-                                <div class="text-xs text-gray-400 mb-1">Wavelength (&lambda;)</div>
-                                <div class="text-xl font-mono text-blue-400"><span id="wave-val">4.04</span> m</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Oscilloscope Canvas -->
-                <div class="w-2/3 bg-black rounded-xl border border-gray-700 relative overflow-hidden flex flex-col">
-                    <div class="absolute top-4 left-4 text-green-500 font-mono text-sm z-10 opacity-70">COMPARISON VIEW</div>
-                    <canvas id="canvas-osc" class="flex-1"></canvas>
-                    <div class="h-8 bg-gray-900 border-t border-gray-700 flex items-center justify-between px-4 text-xs font-mono text-gray-500">
-                        <span>Properties</span>
-                        <span>Scales Adjust Dynamically</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <script>
+<input class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" id="freq-slider" max="200" min="20" type="range" value="85"/>
+<div class="text-right text-blue-400 font-mono mt-2 text-lg"><span id="freq-val">85</span> Hz</div>
+</div>
+<div class="flex gap-4 mt-4">
+<div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+<div class="text-xs text-gray-400 mb-1">Speed (<i>v</i>)</div>
+<div class="text-sm font-mono text-green-400">343 m/s</div>
+</div>
+<div class="bg-gray-800 p-3 rounded-lg border border-gray-600 flex-1">
+<div class="text-xs text-gray-400 mb-1">Wavelength (λ)</div>
+<div class="text-xl font-mono text-blue-400"><span id="wave-val">4.04</span> m</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Oscilloscope Canvas -->
+<div class="w-2/3 bg-black rounded-xl border border-gray-700 relative overflow-hidden flex flex-col">
+<div class="absolute top-4 left-4 text-green-500 font-mono text-sm z-10 opacity-70">COMPARISON VIEW</div>
+<canvas class="flex-1" id="canvas-osc"></canvas>
+<div class="h-8 bg-gray-900 border-t border-gray-700 flex items-center justify-between px-4 text-xs font-mono text-gray-500">
+<span>Properties</span>
+<span>Scales Adjust Dynamically</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
         window.onload = function() {
             // --- Audio State ---
             let soundEnabled = false;

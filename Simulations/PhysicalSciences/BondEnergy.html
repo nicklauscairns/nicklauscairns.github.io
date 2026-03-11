@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bond Energy Changes Simulator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bond Energy Changes Simulator</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/BondEnergy.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Bond Energy Changes Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Bond Energy Changes Simulator" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Bond Energy Changes Simulator, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Bond Energy Changes Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Inter', sans-serif; }
         .molecule-container {
             display: flex;
@@ -50,154 +58,160 @@
 
         .energy-bar { transition: height 0.5s ease, background-color 0.5s ease; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Bond Energy Changes Simulator",
+    "description": "Interactive science simulation for Bond Energy Changes Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/BondEnergy.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
-    <div class="max-w-6xl mx-auto space-y-6">
-        <header class="border-b pb-4">
-            <h1 class="text-3xl font-bold text-slate-900">Bond Energy Changes Simulator</h1>
-            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-4: Chemical Reactions and Bond Energy</h2>
-            <p class="mt-2 text-slate-700">Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy. Breaking bonds absorbs energy (+), and forming bonds releases energy (-).</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- Left: Reaction Selection & Data -->
-            <div class="space-y-6">
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-semibold text-lg mb-4">1. Select Reaction</h3>
-                    <div class="space-y-3">
-                        <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
-                            <input type="radio" name="reaction" value="combustion" class="form-radio text-orange-600 mb-1" checked>
-                            <div class="font-bold">Combustion of Methane</div>
-                            <div class="text-sm text-slate-600 font-mono">CH₄ + 2O₂ &rarr; CO₂ + 2H₂O</div>
-                            <div class="text-xs text-orange-600 mt-1">Exothermic (Releases Energy)</div>
-                        </label>
-                        <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
-                            <input type="radio" name="reaction" value="photosynthesis" class="form-radio text-blue-600 mb-1">
-                            <div class="font-bold">Water Splitting (Electrolysis)</div>
-                            <div class="text-sm text-slate-600 font-mono">2H₂O &rarr; 2H₂ + O₂</div>
-                            <div class="text-xs text-blue-600 mt-1">Endothermic (Absorbs Energy)</div>
-                        </label>
-                        <label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
-                            <input type="radio" name="reaction" value="synthesis" class="form-radio text-green-600 mb-1">
-                            <div class="font-bold">Haber Process (Ammonia)</div>
-                            <div class="text-sm text-slate-600 font-mono">N₂ + 3H₂ &rarr; 2NH₃</div>
-                            <div class="text-xs text-green-600 mt-1">Exothermic (Releases Energy)</div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-lg mb-2">Bond Energy Table</h3>
-    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+<div class="max-w-6xl mx-auto space-y-6">
+<header class="border-b pb-4">
+<h1 class="text-3xl font-bold text-slate-900">Bond Energy Changes Simulator</h1>
+<h2 class="text-xl text-slate-600 mt-1">HS-PS1-4: Chemical Reactions and Bond Energy</h2>
+<p class="mt-2 text-slate-700">Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy. Breaking bonds absorbs energy (+), and forming bonds releases energy (-).</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Left: Reaction Selection & Data -->
+<div class="space-y-6">
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+<h3 class="font-semibold text-lg mb-4">1. Select Reaction</h3>
+<div class="space-y-3">
+<label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+<input checked="" class="form-radio text-orange-600 mb-1" name="reaction" type="radio" value="combustion"/>
+<div class="font-bold">Combustion of Methane</div>
+<div class="text-sm text-slate-600 font-mono">CH₄ + 2O₂ → CO₂ + 2H₂O</div>
+<div class="text-xs text-orange-600 mt-1">Exothermic (Releases Energy)</div>
+</label>
+<label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+<input class="form-radio text-blue-600 mb-1" name="reaction" type="radio" value="photosynthesis"/>
+<div class="font-bold">Water Splitting (Electrolysis)</div>
+<div class="text-sm text-slate-600 font-mono">2H₂O → 2H₂ + O₂</div>
+<div class="text-xs text-blue-600 mt-1">Endothermic (Absorbs Energy)</div>
+</label>
+<label class="block cursor-pointer p-3 border rounded hover:bg-slate-50 transition-colors">
+<input class="form-radio text-green-600 mb-1" name="reaction" type="radio" value="synthesis"/>
+<div class="font-bold">Haber Process (Ammonia)</div>
+<div class="text-sm text-slate-600 font-mono">N₂ + 3H₂ → 2NH₃</div>
+<div class="text-xs text-green-600 mt-1">Exothermic (Releases Energy)</div>
+</label>
+</div>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+<div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-lg mb-2">Bond Energy Table</h3>
+<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
         Export CSV
     </button>
-    </div>
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b">
-                                <th class="py-2 text-left px-2">Bond</th>
-                                <th class="py-2 text-right px-2">Energy (kJ/mol)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bondTableBody">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Middle: Molecular Model Animation -->
-            <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 min-h-[400px] flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-semibold text-lg">2. Reaction Progress</h3>
-                        <div class="space-x-2">
-                            <button id="step1Btn" class="px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition">Break Bonds (Absorb Energy)</button>
-                            <button id="step2Btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50" disabled>Form Bonds (Release Energy)</button>
-                            <button id="resetBtn" class="px-4 py-2 border border-slate-300 rounded hover:bg-slate-50 transition">Reset</button>
-                        </div>
-                    </div>
-
-                    <!-- Animation Area -->
-                    <div class="flex-grow flex flex-col justify-center border-2 border-dashed border-slate-200 rounded-lg p-4 bg-slate-50 relative overflow-hidden">
-
-                        <!-- Energy System Background Indicator -->
-                        <div id="systemEnergyBg" class="absolute inset-0 bg-gradient-to-t from-red-100 to-transparent opacity-0 transition-opacity duration-1000 pointer-events-none"></div>
-
-                        <div class="grid grid-cols-2 gap-4 w-full relative z-10">
-                            <div class="text-center">
-                                <h4 class="font-bold text-slate-500 mb-4">Reactants (Initial State)</h4>
-                                <div id="reactantsArea" class="flex flex-wrap justify-center gap-6 min-h-[150px]">
-                                    <!-- Molecules rendered here -->
-                                </div>
-                            </div>
-                            <div class="text-center border-l-2 border-slate-200">
-                                <h4 class="font-bold text-slate-500 mb-4">Products (Final State)</h4>
-                                <div id="productsArea" class="flex flex-wrap justify-center gap-6 min-h-[150px] opacity-30">
-                                    <!-- Molecules rendered here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="mt-8 px-8">
-                            <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
-                                <span>Reactants</span>
-                                <span>Transition State</span>
-                                <span>Products</span>
-                            </div>
-                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden flex">
-                                <div id="progressFill" class="h-full bg-slate-500 w-0 transition-all duration-1000"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom: Energy Diagram -->
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="font-semibold text-lg mb-2">Energy Profile</h3>
-                        <div class="h-[250px] w-full">
-                            <canvas id="energyChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="flex flex-col justify-center">
-                        <h3 class="font-semibold text-lg mb-4">Energy Accounting</h3>
-
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center p-3 bg-red-50 rounded text-red-800">
-                                <div>
-                                    <div class="font-bold">Energy Absorbed</div>
-                                    <div class="text-xs opacity-80">Breaking Reactant Bonds</div>
-                                </div>
-                                <div class="font-mono font-bold text-xl" id="absorbedVal">+0 kJ</div>
-                            </div>
-
-                            <div class="flex justify-between items-center p-3 bg-blue-50 rounded text-blue-800">
-                                <div>
-                                    <div class="font-bold">Energy Released</div>
-                                    <div class="text-xs opacity-80">Forming Product Bonds</div>
-                                </div>
-                                <div class="font-mono font-bold text-xl" id="releasedVal">-0 kJ</div>
-                            </div>
-
-                            <div class="border-t-2 border-slate-300 pt-4 flex justify-between items-center">
-                                <div class="font-bold text-lg">Net Energy Change (&Delta;H)</div>
-                                <div class="font-mono font-bold text-2xl" id="netEnergyVal">0 kJ</div>
-                            </div>
-                        </div>
-
-                        <div id="conclusionText" class="mt-4 text-sm font-medium p-3 rounded bg-slate-100 text-slate-700">
+</div>
+<table class="w-full text-sm border-collapse">
+<thead>
+<tr class="bg-slate-50 border-b">
+<th class="py-2 text-left px-2">Bond</th>
+<th class="py-2 text-right px-2">Energy (kJ/mol)</th>
+</tr>
+</thead>
+<tbody id="bondTableBody">
+<!-- Populated by JS -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- Middle: Molecular Model Animation -->
+<div class="lg:col-span-2 space-y-6">
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 min-h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-semibold text-lg">2. Reaction Progress</h3>
+<div class="space-x-2">
+<button class="px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition" id="step1Btn">Break Bonds (Absorb Energy)</button>
+<button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50" disabled="" id="step2Btn">Form Bonds (Release Energy)</button>
+<button class="px-4 py-2 border border-slate-300 rounded hover:bg-slate-50 transition" id="resetBtn">Reset</button>
+</div>
+</div>
+<!-- Animation Area -->
+<div class="flex-grow flex flex-col justify-center border-2 border-dashed border-slate-200 rounded-lg p-4 bg-slate-50 relative overflow-hidden">
+<!-- Energy System Background Indicator -->
+<div class="absolute inset-0 bg-gradient-to-t from-red-100 to-transparent opacity-0 transition-opacity duration-1000 pointer-events-none" id="systemEnergyBg"></div>
+<div class="grid grid-cols-2 gap-4 w-full relative z-10">
+<div class="text-center">
+<h4 class="font-bold text-slate-500 mb-4">Reactants (Initial State)</h4>
+<div class="flex flex-wrap justify-center gap-6 min-h-[150px]" id="reactantsArea">
+<!-- Molecules rendered here -->
+</div>
+</div>
+<div class="text-center border-l-2 border-slate-200">
+<h4 class="font-bold text-slate-500 mb-4">Products (Final State)</h4>
+<div class="flex flex-wrap justify-center gap-6 min-h-[150px] opacity-30" id="productsArea">
+<!-- Molecules rendered here -->
+</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-8 px-8">
+<div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+<span>Reactants</span>
+<span>Transition State</span>
+<span>Products</span>
+</div>
+<div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden flex">
+<div class="h-full bg-slate-500 w-0 transition-all duration-1000" id="progressFill"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom: Energy Diagram -->
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<h3 class="font-semibold text-lg mb-2">Energy Profile</h3>
+<div class="h-[250px] w-full">
+<canvas id="energyChart"></canvas>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<h3 class="font-semibold text-lg mb-4">Energy Accounting</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center p-3 bg-red-50 rounded text-red-800">
+<div>
+<div class="font-bold">Energy Absorbed</div>
+<div class="text-xs opacity-80">Breaking Reactant Bonds</div>
+</div>
+<div class="font-mono font-bold text-xl" id="absorbedVal">+0 kJ</div>
+</div>
+<div class="flex justify-between items-center p-3 bg-blue-50 rounded text-blue-800">
+<div>
+<div class="font-bold">Energy Released</div>
+<div class="text-xs opacity-80">Forming Product Bonds</div>
+</div>
+<div class="font-mono font-bold text-xl" id="releasedVal">-0 kJ</div>
+</div>
+<div class="border-t-2 border-slate-300 pt-4 flex justify-between items-center">
+<div class="font-bold text-lg">Net Energy Change (ΔH)</div>
+<div class="font-mono font-bold text-2xl" id="netEnergyVal">0 kJ</div>
+</div>
+</div>
+<div class="mt-4 text-sm font-medium p-3 rounded bg-slate-100 text-slate-700" id="conclusionText">
                             Perform the reaction to see the net energy change.
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Data Models
         const bondEnergies = {
             'C-H': 413,

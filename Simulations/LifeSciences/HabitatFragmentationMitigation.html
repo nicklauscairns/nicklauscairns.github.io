@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habitat Fragmentation Mitigation Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Habitat Fragmentation Mitigation Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/HabitatFragmentationMitigation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Habitat Fragmentation Mitigation Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Habitat Fragmentation Mitigation Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Habitat Fragmentation Mitigation Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Habitat Fragmentation Mitigation Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
         .solution-card {
             transition: all 0.2s ease-in-out;
@@ -33,148 +41,147 @@
         #bridge-overlay { position: absolute; left: 40%; right: 40%; top: 40%; bottom: 40%; background: #a3e635; border: 4px solid #4ade80; border-radius: 8px; z-index: 10; display: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
         #tunnel-overlay { position: absolute; left: 45%; right: 45%; top: 45%; bottom: 45%; background: #334155; border: 2px dashed #94a3b8; border-radius: 999px; z-index: 10; display: none; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Habitat Fragmentation Mitigation Simulation",
+    "description": "Interactive science simulation for Habitat Fragmentation Mitigation Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/HabitatFragmentationMitigation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 h-screen flex flex-col overflow-hidden">
-
-    <!-- Header -->
-    <header class="bg-blue-900 text-white p-4 shadow-lg flex justify-between items-center z-20 shrink-0">
-        <div>
-            <h1 class="text-2xl font-bold tracking-wide flex items-center gap-2">
-                <svg class="w-6 h-6 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg> Habitat Fragmentation & Genetics Mitigation
+<!-- Header -->
+<header class="bg-blue-900 text-white p-4 shadow-lg flex justify-between items-center z-20 shrink-0">
+<div>
+<h1 class="text-2xl font-bold tracking-wide flex items-center gap-2">
+<svg class="w-6 h-6 text-emerald-400" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" fill-rule="evenodd"></path></svg> Habitat Fragmentation &amp; Genetics Mitigation
             </h1>
-            <p class="text-xs text-blue-200 mt-1">NGSS HS-LS4-6: Create or revise a simulation to test a solution to mitigate adverse impacts of human activity on biodiversity and genetic variation.</p>
-        </div>
-        <div class="flex gap-4">
-            <button id="btn-run" class="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded shadow font-bold flex items-center gap-2 transition-colors">▶ Run Simulation</button>
-            <button id="btn-reset" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded shadow font-semibold flex items-center gap-2 transition-colors">↺ Reset</button>
-        </div>
-    </header>
-
-    <!-- Main Content Grid -->
-    <main class="flex-1 grid grid-cols-12 gap-4 p-4 min-h-0">
-
-        <!-- Left Column: Scenario & Engineering Solutions -->
-        <section class="col-span-4 flex flex-col gap-4 overflow-y-auto pr-2">
-
-            <div class="bg-white p-5 rounded-xl shadow border border-slate-200">
-                <h2 class="font-bold text-lg text-blue-900 mb-2 border-b pb-2 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> The Problem
+<p class="text-xs text-blue-200 mt-1">NGSS HS-LS4-6: Create or revise a simulation to test a solution to mitigate adverse impacts of human activity on biodiversity and genetic variation.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded shadow font-bold flex items-center gap-2 transition-colors" id="btn-run">▶ Run Simulation</button>
+<button class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded shadow font-semibold flex items-center gap-2 transition-colors" id="btn-reset">↺ Reset</button>
+</div>
+</header>
+<!-- Main Content Grid -->
+<main class="flex-1 grid grid-cols-12 gap-4 p-4 min-h-0">
+<!-- Left Column: Scenario & Engineering Solutions -->
+<section class="col-span-4 flex flex-col gap-4 overflow-y-auto pr-2">
+<div class="bg-white p-5 rounded-xl shadow border border-slate-200">
+<h2 class="font-bold text-lg text-blue-900 mb-2 border-b pb-2 flex items-center gap-2">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> The Problem
                 </h2>
-                <p class="text-sm text-slate-600 mb-3">A major highway has bisected the habitat of an endangered mountain lion population. The population is now split into "West" and "East" subpopulations.</p>
-                <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 text-sm text-amber-800">
-                    <strong>Impact:</strong> Without genetic flow (mating across the highway), inbreeding depression occurs. Genetic diversity drops, increasing mortality rates and leading toward localized extinction.
+<p class="text-sm text-slate-600 mb-3">A major highway has bisected the habitat of an endangered mountain lion population. The population is now split into "West" and "East" subpopulations.</p>
+<div class="bg-amber-50 p-3 rounded-lg border border-amber-200 text-sm text-amber-800">
+<strong>Impact:</strong> Without genetic flow (mating across the highway), inbreeding depression occurs. Genetic diversity drops, increasing mortality rates and leading toward localized extinction.
                 </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl shadow border border-slate-200 flex-1 flex flex-col">
-                <h2 class="font-bold text-lg text-blue-900 mb-2 border-b pb-2 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg> Engineering Solutions
+</div>
+<div class="bg-white p-5 rounded-xl shadow border border-slate-200 flex-1 flex flex-col">
+<h2 class="font-bold text-lg text-blue-900 mb-2 border-b pb-2 flex items-center gap-2">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> Engineering Solutions
                 </h2>
-                <p class="text-xs text-slate-500 mb-4">Select a solution to mitigate the impact. Constraints include the municipal budget ($2.0M max).</p>
-
-                <div class="space-y-3 flex-1">
-
-                    <!-- Option 1 -->
-                    <label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer active">
-                        <div class="flex items-start gap-3">
-                            <input type="radio" name="solution" value="baseline" class="mt-1" checked>
-                            <div class="flex-1">
-                                <div class="font-bold text-slate-800">Do Nothing (Baseline)</div>
-                                <div class="text-xs text-slate-500 mt-1">Leaves the highway as a complete barrier to migration.</div>
-                                <div class="mt-2 flex gap-4 text-xs font-medium">
-                                    <span class="text-emerald-600">Cost: $0</span>
-                                    <span class="text-rose-600">Connectivity: 0%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </label>
-
-                    <!-- Option 2 -->
-                    <label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer">
-                        <div class="flex items-start gap-3">
-                            <input type="radio" name="solution" value="underpass" class="mt-1">
-                            <div class="flex-1">
-                                <div class="font-bold text-slate-800">Drainage Culvert Underpasses</div>
-                                <div class="text-xs text-slate-500 mt-1">Retrofitting drainage pipes to allow small/medium wildlife to cross under. Some large predators refuse to use them due to lack of light.</div>
-                                <div class="mt-2 flex gap-4 text-xs font-medium">
-                                    <span class="text-emerald-600">Cost: $0.5M</span>
-                                    <span class="text-amber-600">Connectivity: 30%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </label>
-
-                    <!-- Option 3 -->
-                    <label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer">
-                        <div class="flex items-start gap-3">
-                            <input type="radio" name="solution" value="overpass" class="mt-1">
-                            <div class="flex-1">
-                                <div class="font-bold text-slate-800">Vegetated Wildlife Overpass</div>
-                                <div class="text-xs text-slate-500 mt-1">A wide, soil-covered bridge planted with native flora. Highly preferred by large predators and herd animals.</div>
-                                <div class="mt-2 flex gap-4 text-xs font-medium">
-                                    <span class="text-rose-600">Cost: $1.8M</span>
-                                    <span class="text-blue-600">Connectivity: 85%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </label>
-
-                </div>
-            </div>
-
-        </section>
-
-        <!-- Right Column: Visuals & Data output -->
-        <section class="col-span-8 flex flex-col gap-4 min-w-0">
-
-            <!-- Ecosystem Visualization -->
-            <div class="bg-white rounded-xl shadow border border-slate-200 h-48 relative flex shrink-0 p-1" id="eco-view">
-                <div class="highway-dash"></div>
-                <div id="bridge-overlay"></div>
-                <div id="tunnel-overlay"></div>
-
-                <!-- Stat Overlays -->
-                <div class="absolute top-2 left-2 bg-white/90 backdrop-blur p-2 rounded shadow text-sm border border-slate-300 w-48 z-20">
-                    <h3 class="font-bold text-slate-700 text-xs uppercase mb-1">West Population</h3>
-                    <div class="flex justify-between"><span>Size:</span> <strong id="val-pop-west" class="text-emerald-700">50</strong></div>
-                    <div class="flex justify-between"><span>Genetics (Hz):</span> <strong id="val-gen-west" class="text-blue-600">0.95</strong></div>
-                </div>
-
-                <div class="absolute top-2 right-2 bg-white/90 backdrop-blur p-2 rounded shadow text-sm border border-slate-300 w-48 z-20">
-                    <h3 class="font-bold text-slate-700 text-xs uppercase mb-1">East Population</h3>
-                    <div class="flex justify-between"><span>Size:</span> <strong id="val-pop-east" class="text-emerald-700">50</strong></div>
-                    <div class="flex justify-between"><span>Genetics (Hz):</span> <strong id="val-gen-east" class="text-blue-600">0.95</strong></div>
-                </div>
-
-                <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-slate-900/80 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg z-20">
-                    YEAR: <span id="val-year" class="text-amber-400 text-base">0</span>
-                </div>
-            </div>
-
-            <!-- Computational Model Charts -->
-            <div class="bg-white p-4 rounded-xl shadow border border-slate-200 flex-1 flex flex-col min-h-0">
-                <h2 class="font-bold text-slate-700 mb-2 border-b pb-2 flex items-center justify-between">
-                    <span>Computational Output: Extinction vs Recovery</span>
-                    <span id="status-indicator" class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-500 font-medium">Ready</span>
-                </h2>
-
-                <div class="flex-1 relative flex gap-4">
-                    <!-- Population Chart -->
-                    <div class="flex-1 relative border border-slate-100 rounded bg-slate-50 p-2">
-                        <canvas id="popChart"></canvas>
-                    </div>
-                    <!-- Genetics Chart -->
-                    <div class="flex-1 relative border border-slate-100 rounded bg-slate-50 p-2">
-                        <canvas id="genChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <script>
+<p class="text-xs text-slate-500 mb-4">Select a solution to mitigate the impact. Constraints include the municipal budget ($2.0M max).</p>
+<div class="space-y-3 flex-1">
+<!-- Option 1 -->
+<label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer active">
+<div class="flex items-start gap-3">
+<input checked="" class="mt-1" name="solution" type="radio" value="baseline"/>
+<div class="flex-1">
+<div class="font-bold text-slate-800">Do Nothing (Baseline)</div>
+<div class="text-xs text-slate-500 mt-1">Leaves the highway as a complete barrier to migration.</div>
+<div class="mt-2 flex gap-4 text-xs font-medium">
+<span class="text-emerald-600">Cost: $0</span>
+<span class="text-rose-600">Connectivity: 0%</span>
+</div>
+</div>
+</div>
+</label>
+<!-- Option 2 -->
+<label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer">
+<div class="flex items-start gap-3">
+<input class="mt-1" name="solution" type="radio" value="underpass"/>
+<div class="flex-1">
+<div class="font-bold text-slate-800">Drainage Culvert Underpasses</div>
+<div class="text-xs text-slate-500 mt-1">Retrofitting drainage pipes to allow small/medium wildlife to cross under. Some large predators refuse to use them due to lack of light.</div>
+<div class="mt-2 flex gap-4 text-xs font-medium">
+<span class="text-emerald-600">Cost: $0.5M</span>
+<span class="text-amber-600">Connectivity: 30%</span>
+</div>
+</div>
+</div>
+</label>
+<!-- Option 3 -->
+<label class="solution-card block bg-slate-50 p-3 rounded-lg border border-slate-200 cursor-pointer">
+<div class="flex items-start gap-3">
+<input class="mt-1" name="solution" type="radio" value="overpass"/>
+<div class="flex-1">
+<div class="font-bold text-slate-800">Vegetated Wildlife Overpass</div>
+<div class="text-xs text-slate-500 mt-1">A wide, soil-covered bridge planted with native flora. Highly preferred by large predators and herd animals.</div>
+<div class="mt-2 flex gap-4 text-xs font-medium">
+<span class="text-rose-600">Cost: $1.8M</span>
+<span class="text-blue-600">Connectivity: 85%</span>
+</div>
+</div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Right Column: Visuals & Data output -->
+<section class="col-span-8 flex flex-col gap-4 min-w-0">
+<!-- Ecosystem Visualization -->
+<div class="bg-white rounded-xl shadow border border-slate-200 h-48 relative flex shrink-0 p-1" id="eco-view">
+<div class="highway-dash"></div>
+<div id="bridge-overlay"></div>
+<div id="tunnel-overlay"></div>
+<!-- Stat Overlays -->
+<div class="absolute top-2 left-2 bg-white/90 backdrop-blur p-2 rounded shadow text-sm border border-slate-300 w-48 z-20">
+<h3 class="font-bold text-slate-700 text-xs uppercase mb-1">West Population</h3>
+<div class="flex justify-between"><span>Size:</span> <strong class="text-emerald-700" id="val-pop-west">50</strong></div>
+<div class="flex justify-between"><span>Genetics (Hz):</span> <strong class="text-blue-600" id="val-gen-west">0.95</strong></div>
+</div>
+<div class="absolute top-2 right-2 bg-white/90 backdrop-blur p-2 rounded shadow text-sm border border-slate-300 w-48 z-20">
+<h3 class="font-bold text-slate-700 text-xs uppercase mb-1">East Population</h3>
+<div class="flex justify-between"><span>Size:</span> <strong class="text-emerald-700" id="val-pop-east">50</strong></div>
+<div class="flex justify-between"><span>Genetics (Hz):</span> <strong class="text-blue-600" id="val-gen-east">0.95</strong></div>
+</div>
+<div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-slate-900/80 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+                    YEAR: <span class="text-amber-400 text-base" id="val-year">0</span>
+</div>
+</div>
+<!-- Computational Model Charts -->
+<div class="bg-white p-4 rounded-xl shadow border border-slate-200 flex-1 flex flex-col min-h-0">
+<h2 class="font-bold text-slate-700 mb-2 border-b pb-2 flex items-center justify-between">
+<span>Computational Output: Extinction vs Recovery</span>
+<span class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-500 font-medium" id="status-indicator">Ready</span>
+</h2>
+<div class="flex-1 relative flex gap-4">
+<!-- Population Chart -->
+<div class="flex-1 relative border border-slate-100 rounded bg-slate-50 p-2">
+<canvas id="popChart"></canvas>
+</div>
+<!-- Genetics Chart -->
+<div class="flex-1 relative border border-slate-100 rounded bg-slate-50 p-2">
+<canvas id="genChart"></canvas>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
         // Setup visual selection of cards
         const radioBtns = document.querySelectorAll('input[name="solution"]');
         const cards = document.querySelectorAll('.solution-card');

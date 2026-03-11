@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greenhouse Effect & Earth's Energy Budget Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Greenhouse Effect &amp; Earth's Energy Budget Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/GreenhouseEffect.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Greenhouse Effect &amp; Earth's Energy Budget Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Greenhouse Effect &amp; Earth's Energy Budget Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Greenhouse Effect &amp; Earth's Energy Budget Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Greenhouse Effect &amp; Earth's Energy Budget Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #macroCanvas, #microCanvas { border: 1px solid #ccc; border-radius: 4px; background-color: #0f172a; }
         .tab-btn { padding: 0.5rem 1rem; cursor: pointer; border-bottom: 2px solid transparent; }
@@ -14,138 +22,145 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Greenhouse Effect & Earth's Energy Budget Simulation",
+    "description": "Interactive science simulation for Greenhouse Effect & Earth's Energy Budget Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/GreenhouseEffect.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 text-gray-800 p-4 min-h-screen">
-    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col h-[95vh]">
-        <header class="mb-4">
-            <h1 class="text-3xl font-bold text-blue-700">Earth's Energy Budget & Greenhouse Effect</h1>
-            <p class="text-sm text-gray-600 mt-1">Investigate how solar intensity, albedo, clouds, and greenhouse gases affect global temperature.</p>
-        </header>
-
-        <div class="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden">
-            <!-- Left Panel: Visual Models -->
-            <div class="w-full lg:w-1/2 flex flex-col gap-4 h-full">
-                <!-- Tabs for Macro/Micro View -->
-                <div class="flex border-b border-gray-200">
-                    <button id="btn-macro" class="tab-btn active">Macroscopic View</button>
-                    <button id="btn-micro" class="tab-btn">Microscopic View (Photons)</button>
-                </div>
-
-                <div class="relative flex-1 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center border border-gray-300">
-                    <!-- Macroscopic Canvas -->
-                    <canvas id="macroCanvas" width="500" height="500" class="absolute top-0 left-0 w-full h-full object-contain"></canvas>
-                    <!-- Microscopic Canvas -->
-                    <canvas id="microCanvas" width="500" height="500" class="absolute top-0 left-0 w-full h-full object-contain hidden"></canvas>
-                </div>
-
-                <!-- Simulation Info / Live Readout -->
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h3 class="font-bold text-blue-800 mb-2">Live System State</h3>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div>Simulated Time: <span id="simTime" class="font-mono font-bold">Year 0.0</span></div>
-                        <div>Global Temp: <span id="globalTemp" class="font-mono font-bold text-red-600">15.0 °C</span></div>
-                        <div>Incoming Solar: <span id="incomingSolar" class="font-mono">340 W/m²</span></div>
-                        <div>Outgoing Energy: <span id="outgoingEnergy" class="font-mono">340 W/m²</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Panel: Controls & Data -->
-            <div class="w-full lg:w-1/2 flex flex-col gap-4 h-full overflow-y-auto pr-2">
-                <!-- Controls Box -->
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-gray-800 text-lg">Simulation Controls</h3>
-                        <div class="flex gap-2">
-                            <button id="btn-play-pause" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">Play</button>
-                            <button id="btn-reset" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">Reset</button>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <!-- Greenhouse Gases -->
-                        <div>
-                            <div class="flex justify-between">
-                                <label for="ghgSlider" class="text-sm font-semibold">Greenhouse Gas Conc. (ppm CO₂ eq)</label>
-                                <span id="ghgValue" class="text-sm font-mono">400</span>
-                            </div>
-                            <input type="range" id="ghgSlider" min="100" max="1000" value="400" class="w-full accent-blue-600">
-                        </div>
-
-                        <!-- Albedo (Ice/Surface reflectivity) -->
-                        <div>
-                            <div class="flex justify-between">
-                                <label for="albedoSlider" class="text-sm font-semibold">Surface Albedo (Reflectivity %)</label>
-                                <span id="albedoValue" class="text-sm font-mono">30%</span>
-                            </div>
-                            <input type="range" id="albedoSlider" min="5" max="80" value="30" class="w-full accent-blue-600">
-                        </div>
-
-                        <!-- Solar Intensity -->
-                        <div>
-                            <div class="flex justify-between">
-                                <label for="solarSlider" class="text-sm font-semibold">Solar Intensity (%)</label>
-                                <span id="solarValue" class="text-sm font-mono">100%</span>
-                            </div>
-                            <input type="range" id="solarSlider" min="80" max="120" value="100" class="w-full accent-blue-600">
-                        </div>
-
-                        <!-- Cloud Cover -->
-                        <div>
-                            <div class="flex justify-between">
-                                <label for="cloudSlider" class="text-sm font-semibold">Cloud Cover (%)</label>
-                                <span id="cloudValue" class="text-sm font-mono">50%</span>
-                            </div>
-                            <input type="range" id="cloudSlider" min="0" max="100" value="50" class="w-full accent-blue-600">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Data Logging Tabs -->
-                <div class="bg-white border border-gray-200 rounded-lg flex-1 flex flex-col min-h-[300px]">
-                    <div class="flex border-b border-gray-200 bg-gray-50 rounded-t-lg">
-                        <button id="btn-chart" class="tab-btn active flex-1">Temperature Graph</button>
-                        <button id="btn-table" class="tab-btn flex-1">Data Table</button>
-                    </div>
-
-                    <div class="p-4 flex-1 flex flex-col relative">
-                        <!-- Chart Content -->
-                        <div id="content-chart" class="tab-content active h-full w-full">
-                            <canvas id="tempChart" class="w-full h-full"></canvas>
-                        </div>
-
-                        <!-- Table Content -->
-                        <div id="content-table" class="tab-content h-full hidden overflow-hidden flex flex-col">
-                            <div class="overflow-y-auto flex-1">
-                                <table class="w-full text-sm text-left text-gray-500">
-                                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
-                                        <tr>
-                                            <th class="px-3 py-2">Year</th>
-                                            <th class="px-3 py-2">GHG (ppm)</th>
-                                            <th class="px-3 py-2">Albedo (%)</th>
-                                            <th class="px-3 py-2">Solar (%)</th>
-                                            <th class="px-3 py-2">Clouds (%)</th>
-                                            <th class="px-3 py-2">Temp (°C)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="dataTableBody">
-                                        <!-- Rows injected by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-3 border-t border-gray-200 bg-gray-50 flex justify-between items-center rounded-b-lg">
-                        <button id="btn-record" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold shadow transition-colors">Record Current State</button>
-                        <button id="btn-export" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded text-sm font-semibold shadow transition-colors">Export CSV</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col h-[95vh]">
+<header class="mb-4">
+<h1 class="text-3xl font-bold text-blue-700">Earth's Energy Budget &amp; Greenhouse Effect</h1>
+<p class="text-sm text-gray-600 mt-1">Investigate how solar intensity, albedo, clouds, and greenhouse gases affect global temperature.</p>
+</header>
+<div class="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden">
+<!-- Left Panel: Visual Models -->
+<div class="w-full lg:w-1/2 flex flex-col gap-4 h-full">
+<!-- Tabs for Macro/Micro View -->
+<div class="flex border-b border-gray-200">
+<button class="tab-btn active" id="btn-macro">Macroscopic View</button>
+<button class="tab-btn" id="btn-micro">Microscopic View (Photons)</button>
+</div>
+<div class="relative flex-1 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center border border-gray-300">
+<!-- Macroscopic Canvas -->
+<canvas class="absolute top-0 left-0 w-full h-full object-contain" height="500" id="macroCanvas" width="500"></canvas>
+<!-- Microscopic Canvas -->
+<canvas class="absolute top-0 left-0 w-full h-full object-contain hidden" height="500" id="microCanvas" width="500"></canvas>
+</div>
+<!-- Simulation Info / Live Readout -->
+<div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+<h3 class="font-bold text-blue-800 mb-2">Live System State</h3>
+<div class="grid grid-cols-2 gap-2 text-sm">
+<div>Simulated Time: <span class="font-mono font-bold" id="simTime">Year 0.0</span></div>
+<div>Global Temp: <span class="font-mono font-bold text-red-600" id="globalTemp">15.0 °C</span></div>
+<div>Incoming Solar: <span class="font-mono" id="incomingSolar">340 W/m²</span></div>
+<div>Outgoing Energy: <span class="font-mono" id="outgoingEnergy">340 W/m²</span></div>
+</div>
+</div>
+</div>
+<!-- Right Panel: Controls & Data -->
+<div class="w-full lg:w-1/2 flex flex-col gap-4 h-full overflow-y-auto pr-2">
+<!-- Controls Box -->
+<div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-gray-800 text-lg">Simulation Controls</h3>
+<div class="flex gap-2">
+<button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-semibold transition-colors" id="btn-play-pause">Play</button>
+<button class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors" id="btn-reset">Reset</button>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Greenhouse Gases -->
+<div>
+<div class="flex justify-between">
+<label class="text-sm font-semibold" for="ghgSlider">Greenhouse Gas Conc. (ppm CO₂ eq)</label>
+<span class="text-sm font-mono" id="ghgValue">400</span>
+</div>
+<input class="w-full accent-blue-600" id="ghgSlider" max="1000" min="100" type="range" value="400"/>
+</div>
+<!-- Albedo (Ice/Surface reflectivity) -->
+<div>
+<div class="flex justify-between">
+<label class="text-sm font-semibold" for="albedoSlider">Surface Albedo (Reflectivity %)</label>
+<span class="text-sm font-mono" id="albedoValue">30%</span>
+</div>
+<input class="w-full accent-blue-600" id="albedoSlider" max="80" min="5" type="range" value="30"/>
+</div>
+<!-- Solar Intensity -->
+<div>
+<div class="flex justify-between">
+<label class="text-sm font-semibold" for="solarSlider">Solar Intensity (%)</label>
+<span class="text-sm font-mono" id="solarValue">100%</span>
+</div>
+<input class="w-full accent-blue-600" id="solarSlider" max="120" min="80" type="range" value="100"/>
+</div>
+<!-- Cloud Cover -->
+<div>
+<div class="flex justify-between">
+<label class="text-sm font-semibold" for="cloudSlider">Cloud Cover (%)</label>
+<span class="text-sm font-mono" id="cloudValue">50%</span>
+</div>
+<input class="w-full accent-blue-600" id="cloudSlider" max="100" min="0" type="range" value="50"/>
+</div>
+</div>
+</div>
+<!-- Data Logging Tabs -->
+<div class="bg-white border border-gray-200 rounded-lg flex-1 flex flex-col min-h-[300px]">
+<div class="flex border-b border-gray-200 bg-gray-50 rounded-t-lg">
+<button class="tab-btn active flex-1" id="btn-chart">Temperature Graph</button>
+<button class="tab-btn flex-1" id="btn-table">Data Table</button>
+</div>
+<div class="p-4 flex-1 flex flex-col relative">
+<!-- Chart Content -->
+<div class="tab-content active h-full w-full" id="content-chart">
+<canvas class="w-full h-full" id="tempChart"></canvas>
+</div>
+<!-- Table Content -->
+<div class="tab-content h-full hidden overflow-hidden flex flex-col" id="content-table">
+<div class="overflow-y-auto flex-1">
+<table class="w-full text-sm text-left text-gray-500">
+<thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+<tr>
+<th class="px-3 py-2">Year</th>
+<th class="px-3 py-2">GHG (ppm)</th>
+<th class="px-3 py-2">Albedo (%)</th>
+<th class="px-3 py-2">Solar (%)</th>
+<th class="px-3 py-2">Clouds (%)</th>
+<th class="px-3 py-2">Temp (°C)</th>
+</tr>
+</thead>
+<tbody id="dataTableBody">
+<!-- Rows injected by JS -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="p-3 border-t border-gray-200 bg-gray-50 flex justify-between items-center rounded-b-lg">
+<button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold shadow transition-colors" id="btn-record">Record Current State</button>
+<button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded text-sm font-semibold shadow transition-colors" id="btn-export">Export CSV</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Tab logic
         function setupTabs(btnIds, contentIds, activeClass) {
             btnIds.forEach((btnId, index) => {

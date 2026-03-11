@@ -1,133 +1,145 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Four Factors of Evolution Model</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Four Factors of Evolution Model</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/FourFactorsEvolution.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Four Factors of Evolution Model. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Four Factors of Evolution Model" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Four Factors of Evolution Model, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Four Factors of Evolution Model. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         /* Custom range styling */
         input[type=range] { @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer; }
         input[type=range]::-webkit-slider-thumb { @apply appearance-none w-4 h-4 rounded-full bg-blue-600 cursor-pointer; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Four Factors of Evolution Model",
+    "description": "Interactive science simulation for Four Factors of Evolution Model. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/FourFactorsEvolution.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex flex-col">
-
-    <!-- Header -->
-    <header class="bg-indigo-700 text-white p-4 shadow-md">
-        <h1 class="text-2xl font-bold">The Four Factors of Evolution</h1>
-        <p class="text-sm mt-1">NGSS HS-LS4-2: Construct an explanation based on evidence that evolution results from four factors: potential to increase, genetic variation, competition for limited resources, and proliferation of fit organisms.</p>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-7xl mx-auto w-full">
-
-        <!-- Simulation & Controls Area -->
-        <section class="w-full lg:w-2/3 flex flex-col gap-4 overflow-hidden">
-
-            <!-- Canvas -->
-            <div class="relative bg-white rounded-lg shadow-md border border-gray-200 flex-1 min-h-[400px] overflow-hidden">
-                <canvas id="simCanvas" class="w-full h-full block cursor-crosshair"></canvas>
-                <!-- Overlay Stats -->
-                <div class="absolute top-2 left-2 bg-white/80 backdrop-blur px-3 py-1 rounded shadow text-sm font-mono">
-                    Pop: <span id="stat-pop" class="font-bold text-indigo-700">0</span> | Year: <span id="stat-year" class="font-bold">0</span>
-                </div>
-                <div class="absolute bottom-2 right-2 flex gap-2">
-                    <button id="btn-start" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors">Start</button>
-                    <button id="btn-pause" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors hidden">Pause</button>
-                    <button id="btn-reset" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors">Reset</button>
-                </div>
-            </div>
-
-            <!-- The Four Factors Controls -->
-            <div class="bg-white rounded-lg shadow-md p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                <div class="border p-3 rounded bg-indigo-50 border-indigo-100">
-                    <h3 class="font-semibold text-indigo-800 mb-1 flex items-center gap-1">
-                        <span class="bg-indigo-200 text-indigo-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">1</span>
+<!-- Header -->
+<header class="bg-indigo-700 text-white p-4 shadow-md">
+<h1 class="text-2xl font-bold">The Four Factors of Evolution</h1>
+<p class="text-sm mt-1">NGSS HS-LS4-2: Construct an explanation based on evidence that evolution results from four factors: potential to increase, genetic variation, competition for limited resources, and proliferation of fit organisms.</p>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-7xl mx-auto w-full">
+<!-- Simulation & Controls Area -->
+<section class="w-full lg:w-2/3 flex flex-col gap-4 overflow-hidden">
+<!-- Canvas -->
+<div class="relative bg-white rounded-lg shadow-md border border-gray-200 flex-1 min-h-[400px] overflow-hidden">
+<canvas class="w-full h-full block cursor-crosshair" id="simCanvas"></canvas>
+<!-- Overlay Stats -->
+<div class="absolute top-2 left-2 bg-white/80 backdrop-blur px-3 py-1 rounded shadow text-sm font-mono">
+                    Pop: <span class="font-bold text-indigo-700" id="stat-pop">0</span> | Year: <span class="font-bold" id="stat-year">0</span>
+</div>
+<div class="absolute bottom-2 right-2 flex gap-2">
+<button class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors" id="btn-start">Start</button>
+<button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors hidden" id="btn-pause">Pause</button>
+<button class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded shadow text-sm font-semibold transition-colors" id="btn-reset">Reset</button>
+</div>
+</div>
+<!-- The Four Factors Controls -->
+<div class="bg-white rounded-lg shadow-md p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="border p-3 rounded bg-indigo-50 border-indigo-100">
+<h3 class="font-semibold text-indigo-800 mb-1 flex items-center gap-1">
+<span class="bg-indigo-200 text-indigo-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">1</span>
                         Potential to Increase
                     </h3>
-                    <p class="text-xs text-gray-600 mb-2">Species can produce more offspring than the environment can support.</p>
-                    <label class="flex items-center text-sm cursor-pointer">
-                        <input type="checkbox" id="chk-reproduction" class="mr-2 h-4 w-4 text-indigo-600 rounded" checked>
+<p class="text-xs text-gray-600 mb-2">Species can produce more offspring than the environment can support.</p>
+<label class="flex items-center text-sm cursor-pointer">
+<input checked="" class="mr-2 h-4 w-4 text-indigo-600 rounded" id="chk-reproduction" type="checkbox"/>
                         Enable Reproduction (Mitosis)
                     </label>
-                </div>
-
-                <div class="border p-3 rounded bg-blue-50 border-blue-100">
-                    <h3 class="font-semibold text-blue-800 mb-1 flex items-center gap-1">
-                        <span class="bg-blue-200 text-blue-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">2</span>
+</div>
+<div class="border p-3 rounded bg-blue-50 border-blue-100">
+<h3 class="font-semibold text-blue-800 mb-1 flex items-center gap-1">
+<span class="bg-blue-200 text-blue-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">2</span>
                         Genetic Variation
                     </h3>
-                    <p class="text-xs text-gray-600 mb-2">Offspring inherit traits (color) with slight mutations.</p>
-                    <label class="flex items-center text-sm cursor-pointer mb-2">
-                        <input type="checkbox" id="chk-mutation" class="mr-2 h-4 w-4 text-blue-600 rounded" checked>
+<p class="text-xs text-gray-600 mb-2">Offspring inherit traits (color) with slight mutations.</p>
+<label class="flex items-center text-sm cursor-pointer mb-2">
+<input checked="" class="mr-2 h-4 w-4 text-blue-600 rounded" id="chk-mutation" type="checkbox"/>
                         Enable Mutation
                     </label>
-                    <div class="flex items-center justify-between text-xs">
-                        <span>Low</span>
-                        <input type="range" id="rng-mutation" min="1" max="50" value="15" class="w-2/3">
-                        <span>High</span>
-                    </div>
-                </div>
-
-                <div class="border p-3 rounded bg-orange-50 border-orange-100">
-                    <h3 class="font-semibold text-orange-800 mb-1 flex items-center gap-1">
-                        <span class="bg-orange-200 text-orange-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">3</span>
+<div class="flex items-center justify-between text-xs">
+<span>Low</span>
+<input class="w-2/3" id="rng-mutation" max="50" min="1" type="range" value="15"/>
+<span>High</span>
+</div>
+</div>
+<div class="border p-3 rounded bg-orange-50 border-orange-100">
+<h3 class="font-semibold text-orange-800 mb-1 flex items-center gap-1">
+<span class="bg-orange-200 text-orange-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">3</span>
                         Competition (Limited Resources)
                     </h3>
-                    <p class="text-xs text-gray-600 mb-2">Organisms compete for a limited supply of food to survive and reproduce.</p>
-                    <div class="flex items-center justify-between text-xs mb-1">
-                        <span>Food Supply Rate:</span>
-                        <span id="lbl-food" class="font-bold">Medium</span>
-                    </div>
-                    <input type="range" id="rng-food" min="1" max="20" value="8">
-                </div>
-
-                <div class="border p-3 rounded bg-emerald-50 border-emerald-100">
-                    <h3 class="font-semibold text-emerald-800 mb-1 flex items-center gap-1">
-                        <span class="bg-emerald-200 text-emerald-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">4</span>
+<p class="text-xs text-gray-600 mb-2">Organisms compete for a limited supply of food to survive and reproduce.</p>
+<div class="flex items-center justify-between text-xs mb-1">
+<span>Food Supply Rate:</span>
+<span class="font-bold" id="lbl-food">Medium</span>
+</div>
+<input id="rng-food" max="20" min="1" type="range" value="8"/>
+</div>
+<div class="border p-3 rounded bg-emerald-50 border-emerald-100">
+<h3 class="font-semibold text-emerald-800 mb-1 flex items-center gap-1">
+<span class="bg-emerald-200 text-emerald-800 w-5 h-5 inline-flex items-center justify-center rounded-full text-xs">4</span>
                         Differential Survival
                     </h3>
-                    <p class="text-xs text-gray-600 mb-2">Organisms with advantageous traits (camouflage) are less likely to be eaten by predators.</p>
-                    <div class="flex items-center justify-between text-xs mb-1">
-                        <span>Environment Color (Selection Pressure):</span>
-                    </div>
-                    <!-- Hue Slider -->
-                    <input type="range" id="rng-env" min="0" max="360" value="120" style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);">
-                    <p class="text-xs text-gray-500 mt-1 italic">Predators automatically eat the most visible organisms.</p>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Sidebar / Chart / Explanation -->
-        <aside class="w-full lg:w-1/3 flex flex-col gap-4 overflow-hidden">
-
-            <section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col min-h-[250px]">
-                <h2 class="text-lg font-semibold border-b pb-1 mb-2">Trait Distribution (Cause & Effect)</h2>
-                <p class="text-xs text-gray-600 mb-2">Observe how the population's average color changes over time as it adapts to the environment.</p>
-                <div class="flex-1 relative w-full h-full min-h-[150px]">
-                    <canvas id="traitChart"></canvas>
-                </div>
-            </section>
-
-            <section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col">
-                <h2 class="text-lg font-semibold border-b pb-1 mb-2">Construct an Explanation</h2>
-                <p class="text-xs text-gray-600 mb-2 leading-relaxed">
-                    <strong>SEP: Constructing Explanations.</strong> Based on your simulation data, construct a paragraph explaining how the interaction of these four factors resulted in the adaptation of the species' color trait over time.
+<p class="text-xs text-gray-600 mb-2">Organisms with advantageous traits (camouflage) are less likely to be eaten by predators.</p>
+<div class="flex items-center justify-between text-xs mb-1">
+<span>Environment Color (Selection Pressure):</span>
+</div>
+<!-- Hue Slider -->
+<input id="rng-env" max="360" min="0" style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);" type="range" value="120"/>
+<p class="text-xs text-gray-500 mt-1 italic">Predators automatically eat the most visible organisms.</p>
+</div>
+</div>
+</section>
+<!-- Sidebar / Chart / Explanation -->
+<aside class="w-full lg:w-1/3 flex flex-col gap-4 overflow-hidden">
+<section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col min-h-[250px]">
+<h2 class="text-lg font-semibold border-b pb-1 mb-2">Trait Distribution (Cause &amp; Effect)</h2>
+<p class="text-xs text-gray-600 mb-2">Observe how the population's average color changes over time as it adapts to the environment.</p>
+<div class="flex-1 relative w-full h-full min-h-[150px]">
+<canvas id="traitChart"></canvas>
+</div>
+</section>
+<section class="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col">
+<h2 class="text-lg font-semibold border-b pb-1 mb-2">Construct an Explanation</h2>
+<p class="text-xs text-gray-600 mb-2 leading-relaxed">
+<strong>SEP: Constructing Explanations.</strong> Based on your simulation data, construct a paragraph explaining how the interaction of these four factors resulted in the adaptation of the species' color trait over time.
                 </p>
-                <textarea id="explanation-log" class="flex-1 w-full border border-gray-300 rounded p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Because resources were limited (Factor 3), organisms had to compete. Genetic variation (Factor 2) created individuals with different colors. Those whose color matched the environment were less likely to be eaten, allowing them to survive and reproduce (Factor 4), passing on their advantageous traits due to their reproductive potential (Factor 1)..."></textarea>
-            </section>
-
-        </aside>
-
-    </main>
-
-    <!-- Simulation Script -->
-    <script>
+<textarea class="flex-1 w-full border border-gray-300 rounded p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500" id="explanation-log" placeholder="Because resources were limited (Factor 3), organisms had to compete. Genetic variation (Factor 2) created individuals with different colors. Those whose color matched the environment were less likely to be eaten, allowing them to survive and reproduce (Factor 4), passing on their advantageous traits due to their reproductive potential (Factor 1)..."></textarea>
+</section>
+</aside>
+</main>
+<!-- Simulation Script -->
+<script>
         // DOM Elements
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');

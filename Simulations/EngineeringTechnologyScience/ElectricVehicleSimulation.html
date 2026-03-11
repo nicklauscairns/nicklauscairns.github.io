@@ -1,164 +1,177 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electric Vehicle Optimization Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Electric Vehicle Optimization Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/ElectricVehicleSimulation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Electric Vehicle Optimization Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Electric Vehicle Optimization Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Electric Vehicle Optimization Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Electric Vehicle Optimization Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         /* Add some basic custom styling if needed */
         input[type=range] {
             width: 100%;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Electric Vehicle Optimization Simulation",
+    "description": "Interactive science simulation for Electric Vehicle Optimization Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/ElectricVehicleSimulation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 p-4 md:p-8 font-sans text-gray-800">
-    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <header class="mb-6 border-b pb-4">
-            <h1 class="text-3xl font-bold text-center text-blue-700">Electric Vehicle Design & Optimization</h1>
-            <p class="text-gray-600 mt-2 text-center">Modify vehicle parameters to optimize efficiency and range. Aligned with NGSS HS-ETS1 Engineering Design standards.</p>
-        </header>
-
-        <main id="simulation-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- Column 1: Controls -->
-            <section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm">
-                <h2 class="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">Design Parameters</h2>
-
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="battery-capacity" class="font-medium text-sm">Battery Capacity (kWh)</label>
-                        <span id="val-battery" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">60</span>
-                    </div>
-                    <input type="range" id="battery-capacity" min="20" max="120" step="5" value="60" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>20</span><span>120</span></div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="drag-coef" class="font-medium text-sm">Drag Coefficient (C<sub>d</sub>)</label>
-                        <span id="val-drag" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">0.28</span>
-                    </div>
-                    <input type="range" id="drag-coef" min="0.15" max="0.5" step="0.01" value="0.28" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.15</span><span>0.5</span></div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="frontal-area" class="font-medium text-sm">Frontal Area (m²)</label>
-                        <span id="val-area" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">2.2</span>
-                    </div>
-                    <input type="range" id="frontal-area" min="1.5" max="3.5" step="0.1" value="2.2" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>1.5</span><span>3.5</span></div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="rolling-res" class="font-medium text-sm">Rolling Resistance (C<sub>rr</sub>)</label>
-                        <span id="val-crr" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">0.012</span>
-                    </div>
-                    <input type="range" id="rolling-res" min="0.005" max="0.025" step="0.001" value="0.012" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.005</span><span>0.025</span></div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="vehicle-mass" class="font-medium text-sm">Base Mass (kg) <i>(without battery)</i></label>
-                        <span id="val-mass" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">1500</span>
-                    </div>
-                    <input type="range" id="vehicle-mass" min="800" max="2500" step="50" value="1500" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>800</span><span>2500</span></div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="speed" class="font-medium text-sm">Cruising Speed (km/h)</label>
-                        <span id="val-speed" class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">100</span>
-                    </div>
-                    <input type="range" id="speed" min="30" max="150" step="5" value="100" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-500 mt-1"><span>30</span><span>150</span></div>
-                </div>
-            </section>
-
-            <!-- Column 2: Performance Outputs -->
-            <section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm flex flex-col justify-between">
-                <div>
-                    <h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">Performance Metrics</h2>
-
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="bg-white p-3 rounded shadow-sm border text-center">
-                            <span class="block text-gray-500 text-sm font-bold mb-1">Range</span>
-                            <span id="out-range" class="text-3xl font-black text-green-600">350</span>
-                            <span class="text-sm text-gray-500">km</span>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm border text-center">
-                            <span class="block text-gray-500 text-sm font-bold mb-1">Efficiency</span>
-                            <span id="out-efficiency" class="text-3xl font-black text-blue-600">170</span>
-                            <span class="text-sm text-gray-500">Wh/km</span>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm border text-center">
-                            <span class="block text-gray-500 text-sm font-bold mb-1">Power Needed</span>
-                            <span id="out-power" class="text-2xl font-black text-purple-600">17.0</span>
-                            <span class="text-sm text-gray-500">kW</span>
-                        </div>
-                        <div class="bg-white p-3 rounded shadow-sm border text-center">
-                            <span class="block text-gray-500 text-sm font-bold mb-1">Total Mass</span>
-                            <span id="out-total-mass" class="text-2xl font-black text-orange-600">1900</span>
-                            <span class="text-sm text-gray-500">kg</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 bg-white p-3 rounded border shadow-sm flex-grow flex flex-col items-center justify-center">
-                    <h3 class="text-sm font-bold text-gray-600 mb-2">Power Loss Breakdown</h3>
-                    <div class="w-full h-48 relative">
-                        <canvas id="powerChart"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Column 3: Data Logging -->
-            <section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm flex flex-col">
-                <h2 class="text-xl font-semibold mb-4 text-purple-800 border-b pb-2">Data Collection</h2>
-
-                <div class="flex gap-2 mb-4">
-                    <button id="btn-record" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200">
+<div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+<header class="mb-6 border-b pb-4">
+<h1 class="text-3xl font-bold text-center text-blue-700">Electric Vehicle Design &amp; Optimization</h1>
+<p class="text-gray-600 mt-2 text-center">Modify vehicle parameters to optimize efficiency and range. Aligned with NGSS HS-ETS1 Engineering Design standards.</p>
+</header>
+<main class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="simulation-container">
+<!-- Column 1: Controls -->
+<section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm">
+<h2 class="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">Design Parameters</h2>
+<div class="mb-4">
+<div class="flex justify-between items-center mb-1">
+<label class="font-medium text-sm" for="battery-capacity">Battery Capacity (kWh)</label>
+<span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded" id="val-battery">60</span>
+</div>
+<input class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" id="battery-capacity" max="120" min="20" step="5" type="range" value="60"/>
+<div class="flex justify-between text-xs text-gray-500 mt-1"><span>20</span><span>120</span></div>
+</div>
+<div class="mb-4">
+<div class="flex justify-between items-center mb-1">
+<label class="font-medium text-sm" for="drag-coef">Drag Coefficient (C<sub>d</sub>)</label>
+<span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded" id="val-drag">0.28</span>
+</div>
+<input class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" id="drag-coef" max="0.5" min="0.15" step="0.01" type="range" value="0.28"/>
+<div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.15</span><span>0.5</span></div>
+</div>
+<div class="mb-4">
+<div class="flex justify-between items-center mb-1">
+<label class="font-medium text-sm" for="frontal-area">Frontal Area (m²)</label>
+<span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded" id="val-area">2.2</span>
+</div>
+<input class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" id="frontal-area" max="3.5" min="1.5" step="0.1" type="range" value="2.2"/>
+<div class="flex justify-between text-xs text-gray-500 mt-1"><span>1.5</span><span>3.5</span></div>
+</div>
+<div class="mb-4">
+<div class="flex justify-between items-center mb-1">
+<label class="font-medium text-sm" for="rolling-res">Rolling Resistance (C<sub>rr</sub>)</label>
+<span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded" id="val-crr">0.012</span>
+</div>
+<input class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" id="rolling-res" max="0.025" min="0.005" step="0.001" type="range" value="0.012"/>
+<div class="flex justify-between text-xs text-gray-500 mt-1"><span>0.005</span><span>0.025</span></div>
+</div>
+<div class="mb-4">
+<div class="flex justify-between items-center mb-1">
+<label class="font-medium text-sm" for="vehicle-mass">Base Mass (kg) <i>(without battery)</i></label>
+<span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded" id="val-mass">1500</span>
+</div>
+<input class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" id="vehicle-mass" max="2500" min="800" step="50" type="range" value="1500"/>
+<div class="flex justify-between text-xs text-gray-500 mt-1"><span>800</span><span>2500</span></div>
+</div>
+<div class="mb-4">
+<div class="flex justify-between items-center mb-1">
+<label class="font-medium text-sm" for="speed">Cruising Speed (km/h)</label>
+<span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded" id="val-speed">100</span>
+</div>
+<input class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" id="speed" max="150" min="30" step="5" type="range" value="100"/>
+<div class="flex justify-between text-xs text-gray-500 mt-1"><span>30</span><span>150</span></div>
+</div>
+</section>
+<!-- Column 2: Performance Outputs -->
+<section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm flex flex-col justify-between">
+<div>
+<h2 class="text-xl font-semibold mb-4 text-green-800 border-b pb-2">Performance Metrics</h2>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="bg-white p-3 rounded shadow-sm border text-center">
+<span class="block text-gray-500 text-sm font-bold mb-1">Range</span>
+<span class="text-3xl font-black text-green-600" id="out-range">350</span>
+<span class="text-sm text-gray-500">km</span>
+</div>
+<div class="bg-white p-3 rounded shadow-sm border text-center">
+<span class="block text-gray-500 text-sm font-bold mb-1">Efficiency</span>
+<span class="text-3xl font-black text-blue-600" id="out-efficiency">170</span>
+<span class="text-sm text-gray-500">Wh/km</span>
+</div>
+<div class="bg-white p-3 rounded shadow-sm border text-center">
+<span class="block text-gray-500 text-sm font-bold mb-1">Power Needed</span>
+<span class="text-2xl font-black text-purple-600" id="out-power">17.0</span>
+<span class="text-sm text-gray-500">kW</span>
+</div>
+<div class="bg-white p-3 rounded shadow-sm border text-center">
+<span class="block text-gray-500 text-sm font-bold mb-1">Total Mass</span>
+<span class="text-2xl font-black text-orange-600" id="out-total-mass">1900</span>
+<span class="text-sm text-gray-500">kg</span>
+</div>
+</div>
+</div>
+<div class="mt-4 bg-white p-3 rounded border shadow-sm flex-grow flex flex-col items-center justify-center">
+<h3 class="text-sm font-bold text-gray-600 mb-2">Power Loss Breakdown</h3>
+<div class="w-full h-48 relative">
+<canvas id="powerChart"></canvas>
+</div>
+</div>
+</section>
+<!-- Column 3: Data Logging -->
+<section class="bg-gray-50 p-4 rounded-md border border-gray-200 lg:col-span-1 shadow-sm flex flex-col">
+<h2 class="text-xl font-semibold mb-4 text-purple-800 border-b pb-2">Data Collection</h2>
+<div class="flex gap-2 mb-4">
+<button class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200" id="btn-record">
                         Record Trial
                     </button>
-                    <button id="btn-export" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200">
+<button class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200" id="btn-export">
                         Export CSV
                     </button>
-                    <button id="btn-clear" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200" title="Clear All Data">
+<button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200" id="btn-clear" title="Clear All Data">
                         Clear
                     </button>
-                </div>
-
-                <div class="flex-grow overflow-hidden flex flex-col bg-white border rounded shadow-sm">
-                    <div class="overflow-x-auto overflow-y-auto flex-grow" style="max-height: 400px;">
-                        <table class="w-full text-xs text-left" id="data-table">
-                            <thead class="text-gray-700 bg-gray-100 sticky top-0">
-                                <tr>
-                                    <th class="px-2 py-2">Tr#</th>
-                                    <th class="px-2 py-2" title="Battery (kWh)">Bat</th>
-                                    <th class="px-2 py-2" title="Drag Coef">Cd</th>
-                                    <th class="px-2 py-2" title="Mass (kg)">Mass</th>
-                                    <th class="px-2 py-2" title="Speed (km/h)">Spd</th>
-                                    <th class="px-2 py-2 font-bold text-green-700" title="Range (km)">Range</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-body" class="divide-y divide-gray-200">
-                                <!-- Data rows go here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <p class="text-xs text-gray-500 mt-2 text-center">Log data across multiple trials to analyze the impact of different design choices.</p>
-            </section>
-        </main>
-    </div>
-
-    <script>
+</div>
+<div class="flex-grow overflow-hidden flex flex-col bg-white border rounded shadow-sm">
+<div class="overflow-x-auto overflow-y-auto flex-grow" style="max-height: 400px;">
+<table class="w-full text-xs text-left" id="data-table">
+<thead class="text-gray-700 bg-gray-100 sticky top-0">
+<tr>
+<th class="px-2 py-2">Tr#</th>
+<th class="px-2 py-2" title="Battery (kWh)">Bat</th>
+<th class="px-2 py-2" title="Drag Coef">Cd</th>
+<th class="px-2 py-2" title="Mass (kg)">Mass</th>
+<th class="px-2 py-2" title="Speed (km/h)">Spd</th>
+<th class="px-2 py-2 font-bold text-green-700" title="Range (km)">Range</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200" id="table-body">
+<!-- Data rows go here -->
+</tbody>
+</table>
+</div>
+</div>
+<p class="text-xs text-gray-500 mt-2 text-center">Log data across multiple trials to analyze the impact of different design choices.</p>
+</section>
+</main>
+</div>
+<script>
         // --- Core Physics Model ---
 
         // Constants

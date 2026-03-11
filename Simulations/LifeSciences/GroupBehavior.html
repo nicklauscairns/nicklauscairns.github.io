@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Behavior and Survival Model (HS-LS2-8)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Group Behavior and Survival Model (HS-LS2-8)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/GroupBehavior.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Group Behavior and Survival Model (HS-LS2-8). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Group Behavior and Survival Model (HS-LS2-8)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Group Behavior and Survival Model (HS-LS2-8), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Group Behavior and Survival Model (HS-LS2-8). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
         .panel { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; padding: 20px; }
 
@@ -19,116 +27,123 @@
         .table-container { max-height: 250px; overflow-y: auto; }
         th { position: sticky; top: 0; background: #f1f5f9; z-index: 10; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Group Behavior and Survival Model (HS-LS2-8)",
+    "description": "Interactive science simulation for Group Behavior and Survival Model (HS-LS2-8). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/GroupBehavior.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-blue-800">Group Behavior & Survival</h1>
-            <p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS2-8: Evaluate the evidence for the role of group behavior on individual and species’ chances to survive and reproduce.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
-
-            <!-- Left: Controls -->
-            <div class="panel lg:col-span-1 flex flex-col space-y-6">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">1. Select Prey Behavior</h2>
-                    <div class="space-y-3">
-                        <button class="behavior-btn active w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold py-3 px-4 rounded text-left flex flex-col" data-behavior="solitary">
-                            <span class="text-base">Solitary (Individual)</span>
-                            <span class="text-[10px] font-normal mt-1">Prey move independently and randomly. No grouping.</span>
-                        </button>
-                        <button class="behavior-btn w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold py-3 px-4 rounded text-left flex flex-col" data-behavior="flocking">
-                            <span class="text-base">Flocking (Group)</span>
-                            <span class="text-[10px] font-normal mt-1">Prey use cohesion, alignment, and separation to move as a unified school/flock.</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">2. Simulation Settings</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="flex justify-between text-xs font-bold text-slate-500 mb-1">Initial Prey</label>
-                            <span class="font-mono text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded w-full block text-center">100 Individuals</span>
+<div class="max-w-6xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-blue-800">Group Behavior &amp; Survival</h1>
+<p class="text-slate-600 mt-2 max-w-4xl mx-auto text-sm">NGSS HS-LS2-8: Evaluate the evidence for the role of group behavior on individual and species’ chances to survive and reproduce.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
+<!-- Left: Controls -->
+<div class="panel lg:col-span-1 flex flex-col space-y-6">
+<div>
+<h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">1. Select Prey Behavior</h2>
+<div class="space-y-3">
+<button class="behavior-btn active w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold py-3 px-4 rounded text-left flex flex-col" data-behavior="solitary">
+<span class="text-base">Solitary (Individual)</span>
+<span class="text-[10px] font-normal mt-1">Prey move independently and randomly. No grouping.</span>
+</button>
+<button class="behavior-btn w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold py-3 px-4 rounded text-left flex flex-col" data-behavior="flocking">
+<span class="text-base">Flocking (Group)</span>
+<span class="text-[10px] font-normal mt-1">Prey use cohesion, alignment, and separation to move as a unified school/flock.</span>
+</button>
+</div>
+</div>
+<div>
+<h2 class="text-lg font-bold text-slate-700 border-b pb-2 mb-4">2. Simulation Settings</h2>
+<div class="space-y-4">
+<div>
+<label class="flex justify-between text-xs font-bold text-slate-500 mb-1">Initial Prey</label>
+<span class="font-mono text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded w-full block text-center">100 Individuals</span>
+</div>
+<div>
+<label class="flex justify-between text-xs font-bold text-slate-500 mb-1">Predators</label>
+<span class="font-mono text-red-600 font-bold bg-red-50 px-2 py-1 rounded w-full block text-center">3 Predators</span>
+</div>
+<div class="bg-amber-50 p-2 rounded text-xs text-amber-800 border border-amber-200">
+<strong>Predator Confusion Effect:</strong> Predators suffer an accuracy penalty when diving into a dense cluster of prey.
                         </div>
-                        <div>
-                            <label class="flex justify-between text-xs font-bold text-slate-500 mb-1">Predators</label>
-                            <span class="font-mono text-red-600 font-bold bg-red-50 px-2 py-1 rounded w-full block text-center">3 Predators</span>
-                        </div>
-                        <div class="bg-amber-50 p-2 rounded text-xs text-amber-800 border border-amber-200">
-                            <strong>Predator Confusion Effect:</strong> Predators suffer an accuracy penalty when diving into a dense cluster of prey.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-auto">
-                    <button id="btn-start" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded shadow transition">
+</div>
+</div>
+<div class="mt-auto">
+<button class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded shadow transition" id="btn-start">
                         Start Hunting Phase
                     </button>
-                    <p class="text-center text-[10px] text-slate-500 mt-2">Hunt lasts for 20 seconds.</p>
-                </div>
-            </div>
-
-            <!-- Middle: Canvas -->
-            <div class="panel lg:col-span-2 p-4 flex flex-col relative">
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="font-bold text-slate-700">Environment View</h2>
-                    <span id="timer-display" class="font-mono font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">Time: 20.0s</span>
-                </div>
-
-                <canvas id="sim-canvas"></canvas>
-
-                <!-- Status Overlay -->
-                <div id="status-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500">
-                    <div class="bg-black/80 text-white px-6 py-4 rounded-xl text-2xl font-bold shadow-2xl backdrop-blur-sm" id="status-text">
+<p class="text-center text-[10px] text-slate-500 mt-2">Hunt lasts for 20 seconds.</p>
+</div>
+</div>
+<!-- Middle: Canvas -->
+<div class="panel lg:col-span-2 p-4 flex flex-col relative">
+<div class="flex justify-between items-center mb-3">
+<h2 class="font-bold text-slate-700">Environment View</h2>
+<span class="font-mono font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded" id="timer-display">Time: 20.0s</span>
+</div>
+<canvas id="sim-canvas"></canvas>
+<!-- Status Overlay -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500" id="status-overlay">
+<div class="bg-black/80 text-white px-6 py-4 rounded-xl text-2xl font-bold shadow-2xl backdrop-blur-sm" id="status-text">
                         Hunt Over
                     </div>
-                </div>
-            </div>
-
-            <!-- Right: Data Collection -->
-            <div class="panel lg:col-span-1 flex flex-col">
-                <div class="flex justify-between items-center mb-4 border-b pb-2">
-                    <h2 class="text-lg font-bold text-slate-700">Evidence Log</h2>
-                    <button id="btn-clear-log" class="text-xs text-slate-400 hover:text-slate-600 underline">Clear Data</button>
-                </div>
-
-                <p class="text-xs text-slate-500 mb-3">Collect empirical evidence across multiple trials to evaluate the claim.</p>
-
-                <div class="table-container border rounded flex-grow">
-                    <table class="w-full text-left text-sm">
-                        <thead>
-                            <tr>
-                                <th class="p-2 border-b">Trial</th>
-                                <th class="p-2 border-b">Behavior</th>
-                                <th class="p-2 border-b text-right">Survivors</th>
-                                <th class="p-2 border-b text-right">Surv %</th>
-                            </tr>
-                        </thead>
-                        <tbody id="data-log">
-                            <!-- JS populated -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 bg-slate-50 p-3 rounded border border-slate-200">
-                    <h3 class="text-xs font-bold text-slate-700 mb-1 uppercase">Averages</h3>
-                    <div class="flex justify-between text-sm">
-                        <span>Solitary:</span>
-                        <span id="avg-solitary" class="font-mono font-bold text-blue-600">--%</span>
-                    </div>
-                    <div class="flex justify-between text-sm mt-1">
-                        <span>Flocking:</span>
-                        <span id="avg-flocking" class="font-mono font-bold text-green-600">--%</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+<!-- Right: Data Collection -->
+<div class="panel lg:col-span-1 flex flex-col">
+<div class="flex justify-between items-center mb-4 border-b pb-2">
+<h2 class="text-lg font-bold text-slate-700">Evidence Log</h2>
+<button class="text-xs text-slate-400 hover:text-slate-600 underline" id="btn-clear-log">Clear Data</button>
+</div>
+<p class="text-xs text-slate-500 mb-3">Collect empirical evidence across multiple trials to evaluate the claim.</p>
+<div class="table-container border rounded flex-grow">
+<table class="w-full text-left text-sm">
+<thead>
+<tr>
+<th class="p-2 border-b">Trial</th>
+<th class="p-2 border-b">Behavior</th>
+<th class="p-2 border-b text-right">Survivors</th>
+<th class="p-2 border-b text-right">Surv %</th>
+</tr>
+</thead>
+<tbody id="data-log">
+<!-- JS populated -->
+</tbody>
+</table>
+</div>
+<div class="mt-4 bg-slate-50 p-3 rounded border border-slate-200">
+<h3 class="text-xs font-bold text-slate-700 mb-1 uppercase">Averages</h3>
+<div class="flex justify-between text-sm">
+<span>Solitary:</span>
+<span class="font-mono font-bold text-blue-600" id="avg-solitary">--%</span>
+</div>
+<div class="flex justify-between text-sm mt-1">
+<span>Flocking:</span>
+<span class="font-mono font-bold text-green-600" id="avg-flocking">--%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Constants
         const NUM_PREY = 100;
         const NUM_PREDATORS = 3;

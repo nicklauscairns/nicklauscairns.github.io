@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital vs. Analog Transmission Advantages</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital vs. Analog Transmission Advantages</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/DigitalTransmissionAdvantage.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Digital vs. Analog Transmission Advantages. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Digital vs. Analog Transmission Advantages" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Digital vs. Analog Transmission Advantages, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Digital vs. Analog Transmission Advantages. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .pixel-grid {
             display: grid;
@@ -19,72 +27,80 @@
             transition: background-color 0.2s;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Digital vs. Analog Transmission Advantages",
+    "description": "Interactive science simulation for Digital vs. Analog Transmission Advantages. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/DigitalTransmissionAdvantage.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-
 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="bg-indigo-600 text-white p-6">
-        <h1 class="text-3xl font-bold">Advantages of Digital Transmission</h1>
-        <p class="mt-2 text-indigo-100">Explore how digitizing information (into discrete arrays or binary values) allows it to be reliably stored, transmitted, and perfectly reconstructed even through a noisy environment (HS-PS4-2).</p>
-    </div>
-
-    <div class="p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-        <!-- Controls -->
-        <div class="lg:col-span-1 bg-gray-50 p-4 rounded-lg border">
-            <h2 class="text-xl font-bold mb-4">Transmission Controls</h2>
-
-            <div class="mb-6">
-                <label class="block font-semibold text-gray-700 mb-2">Distance / Interference (Noise): <span id="noise-val">10</span>%</label>
-                <input type="range" id="noise-slider" min="0" max="100" value="10" class="w-full" oninput="updateNoise(this.value)">
-                <p class="text-xs text-gray-500 mt-1">As a signal travels further, it picks up random background noise.</p>
-            </div>
-
-            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded transition-colors" onclick="transmitSignal()">
+<div class="bg-indigo-600 text-white p-6">
+<h1 class="text-3xl font-bold">Advantages of Digital Transmission</h1>
+<p class="mt-2 text-indigo-100">Explore how digitizing information (into discrete arrays or binary values) allows it to be reliably stored, transmitted, and perfectly reconstructed even through a noisy environment (HS-PS4-2).</p>
+</div>
+<div class="p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+<!-- Controls -->
+<div class="lg:col-span-1 bg-gray-50 p-4 rounded-lg border">
+<h2 class="text-xl font-bold mb-4">Transmission Controls</h2>
+<div class="mb-6">
+<label class="block font-semibold text-gray-700 mb-2">Distance / Interference (Noise): <span id="noise-val">10</span>%</label>
+<input class="w-full" id="noise-slider" max="100" min="0" oninput="updateNoise(this.value)" type="range" value="10"/>
+<p class="text-xs text-gray-500 mt-1">As a signal travels further, it picks up random background noise.</p>
+</div>
+<button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded transition-colors" onclick="transmitSignal()">
                 Transmit Image
             </button>
-
-            <div class="mt-6 p-4 bg-white border border-gray-200 rounded">
-                <h3 class="font-bold text-gray-800 text-sm mb-2">Scientific Principle:</h3>
-                <p class="text-xs text-gray-700 mb-2"><strong>Analog</strong> signals use continuous values. Any noise added permanently alters the exact value.</p>
-                <p class="text-xs text-gray-700"><strong>Digital</strong> signals use discrete values (e.g., 0 or 1). Because there's a large gap between valid states, a receiver can easily round off the noise and perfectly reconstruct the original signal.</p>
-            </div>
-        </div>
-
-        <!-- Displays -->
-        <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-
-            <!-- Original -->
-            <div class="flex flex-col items-center">
-                <h3 class="font-bold text-lg mb-2 text-gray-700">Original Data</h3>
-                <div id="grid-original" class="pixel-grid w-full max-w-[200px] shadow-sm"></div>
-                <p class="text-xs text-gray-500 mt-2">Clean, uncorrupted source.</p>
-            </div>
-
-            <!-- Analog Received -->
-            <div class="flex flex-col items-center">
-                <h3 class="font-bold text-lg mb-2 text-red-700">Analog Transmission</h3>
-                <div id="grid-analog" class="pixel-grid w-full max-w-[200px] shadow-sm"></div>
-                <div class="mt-2 text-left bg-red-50 p-2 rounded border border-red-200 w-full text-xs">
-                    <strong>Result:</strong> <span id="analog-status" class="text-red-700">Degraded</span><br>
-                    <span class="text-red-800">Noise is permanently baked into the continuous color values. The image is blurry and corrupted.</span>
-                </div>
-            </div>
-
-            <!-- Digital Received -->
-            <div class="flex flex-col items-center">
-                <h3 class="font-bold text-lg mb-2 text-green-700">Digital Transmission</h3>
-                <div id="grid-digital" class="pixel-grid w-full max-w-[200px] shadow-sm"></div>
-                <div class="mt-2 text-left bg-green-50 p-2 rounded border border-green-200 w-full text-xs">
-                    <strong>Result:</strong> <span id="digital-status" class="text-green-700">Perfectly Reconstructed</span><br>
-                    <span class="text-green-800">The receiver reads values > 50% as White, and < 50% as Black. The noise is discarded!</span>
-                </div>
-            </div>
-
-        </div>
-    </div>
+<div class="mt-6 p-4 bg-white border border-gray-200 rounded">
+<h3 class="font-bold text-gray-800 text-sm mb-2">Scientific Principle:</h3>
+<p class="text-xs text-gray-700 mb-2"><strong>Analog</strong> signals use continuous values. Any noise added permanently alters the exact value.</p>
+<p class="text-xs text-gray-700"><strong>Digital</strong> signals use discrete values (e.g., 0 or 1). Because there's a large gap between valid states, a receiver can easily round off the noise and perfectly reconstruct the original signal.</p>
 </div>
-
+</div>
+<!-- Displays -->
+<div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+<!-- Original -->
+<div class="flex flex-col items-center">
+<h3 class="font-bold text-lg mb-2 text-gray-700">Original Data</h3>
+<div class="pixel-grid w-full max-w-[200px] shadow-sm" id="grid-original"></div>
+<p class="text-xs text-gray-500 mt-2">Clean, uncorrupted source.</p>
+</div>
+<!-- Analog Received -->
+<div class="flex flex-col items-center">
+<h3 class="font-bold text-lg mb-2 text-red-700">Analog Transmission</h3>
+<div class="pixel-grid w-full max-w-[200px] shadow-sm" id="grid-analog"></div>
+<div class="mt-2 text-left bg-red-50 p-2 rounded border border-red-200 w-full text-xs">
+<strong>Result:</strong> <span class="text-red-700" id="analog-status">Degraded</span><br/>
+<span class="text-red-800">Noise is permanently baked into the continuous color values. The image is blurry and corrupted.</span>
+</div>
+</div>
+<!-- Digital Received -->
+<div class="flex flex-col items-center">
+<h3 class="font-bold text-lg mb-2 text-green-700">Digital Transmission</h3>
+<div class="pixel-grid w-full max-w-[200px] shadow-sm" id="grid-digital"></div>
+<div class="mt-2 text-left bg-green-50 p-2 rounded border border-green-200 w-full text-xs">
+<strong>Result:</strong> <span class="text-green-700" id="digital-status">Perfectly Reconstructed</span><br/>
+<span class="text-green-800">The receiver reads values &gt; 50% as White, and &lt; 50% as Black. The noise is discarded!</span>
+</div>
+</div>
+</div>
+</div>
+</div>
 <script>
     const GRID_SIZE = 16;
     const TOTAL_PIXELS = GRID_SIZE * GRID_SIZE;

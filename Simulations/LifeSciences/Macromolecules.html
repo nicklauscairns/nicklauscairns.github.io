@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Macromolecule Biosynthesis Model (HS-LS1-6)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Macromolecule Biosynthesis Model (HS-LS1-6)</title>
+    <meta content="https://nicklauscairns.com/Simulations/LifeSciences/Macromolecules.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Macromolecule Biosynthesis Model (HS-LS1-6). Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Macromolecule Biosynthesis Model (HS-LS1-6)" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Macromolecule Biosynthesis Model (HS-LS1-6), education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Macromolecule Biosynthesis Model (HS-LS1-6). Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
 
         .atom {
@@ -52,140 +60,143 @@
         }
         .anim-pop { animation: pop 0.3s ease-out; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Macromolecule Biosynthesis Model (HS-LS1-6)",
+    "description": "Interactive science simulation for Macromolecule Biosynthesis Model (HS-LS1-6). Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/LifeSciences/Macromolecules.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="text-slate-800 p-4 md:p-8 min-h-screen flex flex-col">
-    <div class="max-w-5xl mx-auto w-full flex-grow flex flex-col space-y-6">
-        <header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h1 class="text-3xl font-extrabold text-slate-800">Macromolecule Biosynthesis</h1>
-            <p class="text-slate-600 mt-2 max-w-3xl mx-auto">NGSS HS-LS1-6: Construct and revise an explanation based on evidence for how carbon, hydrogen, and oxygen from sugar molecules may combine with other elements to form amino acids and/or other large carbon-based molecules.</p>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
-
-            <!-- Left Side: Source & Inventory -->
-            <div class="space-y-6 flex flex-col">
-
-                <!-- Step 1: Sugar Source -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h2 class="text-xl font-bold text-slate-700">1. Source: Glucose (Sugar)</h2>
-                        <span class="font-mono font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">C<sub>6</sub>H<sub>12</sub>O<sub>6</sub></span>
-                    </div>
-
-                    <p class="text-sm text-slate-600 mb-4">Glucose is produced via photosynthesis. It serves as the primary hydrocarbon backbone for building other molecules.</p>
-
-                    <div class="molecule-container" id="glucose-pool">
-                        <!-- Render 1 Glucose molecule visually -->
-                        <div class="flex items-center gap-1">
-                            <span class="font-bold text-sm mr-2 text-slate-400">Carbon Backbone:</span>
-                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
-                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
-                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
-                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
-                            <div class="atom atom-C">C</div><div class="synth-bond"></div>
-                            <div class="atom atom-C">C</div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 flex justify-center">
-                        <button id="btn-breakdown" class="action-btn bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded shadow">
+<div class="max-w-5xl mx-auto w-full flex-grow flex flex-col space-y-6">
+<header class="text-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h1 class="text-3xl font-extrabold text-slate-800">Macromolecule Biosynthesis</h1>
+<p class="text-slate-600 mt-2 max-w-3xl mx-auto">NGSS HS-LS1-6: Construct and revise an explanation based on evidence for how carbon, hydrogen, and oxygen from sugar molecules may combine with other elements to form amino acids and/or other large carbon-based molecules.</p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+<!-- Left Side: Source & Inventory -->
+<div class="space-y-6 flex flex-col">
+<!-- Step 1: Sugar Source -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+<div class="flex justify-between items-center mb-4 border-b pb-2">
+<h2 class="text-xl font-bold text-slate-700">1. Source: Glucose (Sugar)</h2>
+<span class="font-mono font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">C<sub>6</sub>H<sub>12</sub>O<sub>6</sub></span>
+</div>
+<p class="text-sm text-slate-600 mb-4">Glucose is produced via photosynthesis. It serves as the primary hydrocarbon backbone for building other molecules.</p>
+<div class="molecule-container" id="glucose-pool">
+<!-- Render 1 Glucose molecule visually -->
+<div class="flex items-center gap-1">
+<span class="font-bold text-sm mr-2 text-slate-400">Carbon Backbone:</span>
+<div class="atom atom-C">C</div><div class="synth-bond"></div>
+<div class="atom atom-C">C</div><div class="synth-bond"></div>
+<div class="atom atom-C">C</div><div class="synth-bond"></div>
+<div class="atom atom-C">C</div><div class="synth-bond"></div>
+<div class="atom atom-C">C</div><div class="synth-bond"></div>
+<div class="atom atom-C">C</div>
+</div>
+</div>
+<div class="mt-4 flex justify-center">
+<button class="action-btn bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded shadow" id="btn-breakdown">
                             Break Down Sugar (Metabolism)
                         </button>
-                    </div>
-                </div>
-
-                <!-- Step 2: Available Atoms (Inventory) -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">2. Available Atomic Inventory</h2>
-                    <p class="text-sm text-slate-600 mb-4">These atoms are now available to synthesize new molecules.</p>
-
-                    <div class="grid grid-cols-4 gap-4 mb-6">
-                        <div class="inventory-box">
-                            <div class="atom atom-C">C</div>
-                            <span class="text-xs text-slate-500 mt-1">Carbon</span>
-                            <div class="inventory-count" id="inv-C">0</div>
-                        </div>
-                        <div class="inventory-box">
-                            <div class="atom atom-H">H</div>
-                            <span class="text-xs text-slate-500 mt-1">Hydrogen</span>
-                            <div class="inventory-count" id="inv-H">0</div>
-                        </div>
-                        <div class="inventory-box">
-                            <div class="atom atom-O">O</div>
-                            <span class="text-xs text-slate-500 mt-1">Oxygen</span>
-                            <div class="inventory-count" id="inv-O">0</div>
-                        </div>
-                        <div class="inventory-box bg-blue-50 border-blue-200 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-blue-500 text-white text-[10px] px-1 rounded-bl">Soil/Air</div>
-                            <div class="atom atom-N">N</div>
-                            <span class="text-xs text-slate-500 mt-1">Nitrogen</span>
-                            <div class="flex items-center mt-2">
-                                <button class="bg-slate-200 hover:bg-slate-300 px-2 rounded-l font-bold text-slate-600" onclick="adjustInventory('N', -1)">-</button>
-                                <div class="inventory-count mx-2 mt-0" id="inv-N">0</div>
-                                <button class="bg-slate-200 hover:bg-slate-300 px-2 rounded-r font-bold text-slate-600" onclick="adjustInventory('N', 1)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Side: Synthesis & Results -->
-            <div class="space-y-6 flex flex-col">
-
-                <!-- Step 3: Synthesis Target -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h2 class="text-xl font-bold text-slate-700">3. Synthesize Macromolecule</h2>
-                        <select id="target-molecule" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 font-bold">
-                            <option value="glycine">Amino Acid: Glycine (C₂H₅NO₂)</option>
-                            <option value="alanine">Amino Acid: Alanine (C₃H₇NO₂)</option>
-                            <option value="glycerol">Lipid Backbone: Glycerol (C₃H₈O₃)</option>
-                        </select>
-                    </div>
-
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
-                        <h3 class="font-bold text-slate-700 text-sm mb-2">Required Atoms:</h3>
-                        <div class="flex gap-4 font-mono text-lg" id="requirement-display">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <div class="flex justify-center">
-                        <button id="btn-synthesize" class="action-btn bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded shadow text-lg" disabled>
+</div>
+</div>
+<!-- Step 2: Available Atoms (Inventory) -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
+<h2 class="text-xl font-bold mb-4 border-b pb-2 text-slate-700">2. Available Atomic Inventory</h2>
+<p class="text-sm text-slate-600 mb-4">These atoms are now available to synthesize new molecules.</p>
+<div class="grid grid-cols-4 gap-4 mb-6">
+<div class="inventory-box">
+<div class="atom atom-C">C</div>
+<span class="text-xs text-slate-500 mt-1">Carbon</span>
+<div class="inventory-count" id="inv-C">0</div>
+</div>
+<div class="inventory-box">
+<div class="atom atom-H">H</div>
+<span class="text-xs text-slate-500 mt-1">Hydrogen</span>
+<div class="inventory-count" id="inv-H">0</div>
+</div>
+<div class="inventory-box">
+<div class="atom atom-O">O</div>
+<span class="text-xs text-slate-500 mt-1">Oxygen</span>
+<div class="inventory-count" id="inv-O">0</div>
+</div>
+<div class="inventory-box bg-blue-50 border-blue-200 relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-blue-500 text-white text-[10px] px-1 rounded-bl">Soil/Air</div>
+<div class="atom atom-N">N</div>
+<span class="text-xs text-slate-500 mt-1">Nitrogen</span>
+<div class="flex items-center mt-2">
+<button class="bg-slate-200 hover:bg-slate-300 px-2 rounded-l font-bold text-slate-600" onclick="adjustInventory('N', -1)">-</button>
+<div class="inventory-count mx-2 mt-0" id="inv-N">0</div>
+<button class="bg-slate-200 hover:bg-slate-300 px-2 rounded-r font-bold text-slate-600" onclick="adjustInventory('N', 1)">+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Synthesis & Results -->
+<div class="space-y-6 flex flex-col">
+<!-- Step 3: Synthesis Target -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+<div class="flex justify-between items-center mb-4 border-b pb-2">
+<h2 class="text-xl font-bold text-slate-700">3. Synthesize Macromolecule</h2>
+<select class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 font-bold" id="target-molecule">
+<option value="glycine">Amino Acid: Glycine (C₂H₅NO₂)</option>
+<option value="alanine">Amino Acid: Alanine (C₃H₇NO₂)</option>
+<option value="glycerol">Lipid Backbone: Glycerol (C₃H₈O₃)</option>
+</select>
+</div>
+<div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
+<h3 class="font-bold text-slate-700 text-sm mb-2">Required Atoms:</h3>
+<div class="flex gap-4 font-mono text-lg" id="requirement-display">
+<!-- Populated by JS -->
+</div>
+</div>
+<div class="flex justify-center">
+<button class="action-btn bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded shadow text-lg" disabled="" id="btn-synthesize">
                             Synthesize Molecule
                         </button>
-                    </div>
-                    <div id="synth-error" class="text-red-500 text-sm text-center mt-2 font-semibold h-5"></div>
-                </div>
-
-                <!-- Step 4: Constructed Molecules -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h2 class="text-xl font-bold text-slate-700">4. Synthesized Products</h2>
-                        <button id="btn-reset" class="text-sm text-slate-500 hover:text-slate-700 underline">Reset All</button>
-                    </div>
-
-                    <div id="products-area" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-                        <!-- Synthesized molecules appear here -->
-                        <div class="text-center text-slate-400 italic py-8" id="empty-products">
+</div>
+<div class="text-red-500 text-sm text-center mt-2 font-semibold h-5" id="synth-error"></div>
+</div>
+<!-- Step 4: Constructed Molecules -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex-grow">
+<div class="flex justify-between items-center mb-4 border-b pb-2">
+<h2 class="text-xl font-bold text-slate-700">4. Synthesized Products</h2>
+<button class="text-sm text-slate-500 hover:text-slate-700 underline" id="btn-reset">Reset All</button>
+</div>
+<div class="space-y-4 max-h-[300px] overflow-y-auto pr-2" id="products-area">
+<!-- Synthesized molecules appear here -->
+<div class="text-center text-slate-400 italic py-8" id="empty-products">
                             No molecules synthesized yet.
                         </div>
-                    </div>
-                </div>
-
-                <!-- Evidence/Explanation Box -->
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm">
-                    <h3 class="font-bold text-blue-800 mb-1">Scientific Evidence (HS-LS1-6)</h3>
-                    <p class="text-sm text-blue-900">
+</div>
+</div>
+<!-- Evidence/Explanation Box -->
+<div class="bg-blue-50 p-4 rounded-xl border border-blue-200 shadow-sm">
+<h3 class="font-bold text-blue-800 mb-1">Scientific Evidence (HS-LS1-6)</h3>
+<p class="text-sm text-blue-900">
                         Notice how the <strong>Carbon, Hydrogen, and Oxygen</strong> required to build Amino Acids and Lipids originate entirely from the Sugar (Glucose) molecule. The plant must absorb <strong>Nitrogen</strong> from its environment (soil) to form Amino Acids, the building blocks of proteins.
                     </p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+</div>
+</div>
+<script>
         // State
         let inventory = { C: 0, H: 0, O: 0, N: 0 };
         let products = [];

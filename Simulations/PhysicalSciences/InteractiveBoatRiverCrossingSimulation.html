@@ -1,10 +1,18 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Boat River Crossing Simulation</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Interactive Boat River Crossing Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/InteractiveBoatRiverCrossingSimulation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Interactive Boat River Crossing Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Interactive Boat River Crossing Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Interactive Boat River Crossing Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Interactive Boat River Crossing Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<style>
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
@@ -221,159 +229,163 @@
         tr:hover { background-color: #f1f5f9; }
 
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Interactive Boat River Crossing Simulation",
+    "description": "Interactive science simulation for Interactive Boat River Crossing Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/InteractiveBoatRiverCrossingSimulation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body>
-
 <div class="container">
-    <div class="main-panel">
-        <header>
-            <h1>Interactive Boat River Crossing Simulation</h1>
-        </header>
-
-        <div class="canvas-container">
-            <canvas id="simCanvas" width="800" height="500"></canvas>
-        </div>
-        
-        <div class="data-table-container">
-            <div class="mb-2 text-right">
-    <button onclick="exportTableToCSV('simulation_data.csv')" class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right">
+<div class="main-panel">
+<header>
+<h1>Interactive Boat River Crossing Simulation</h1>
+</header>
+<div class="canvas-container">
+<canvas height="500" id="simCanvas" width="800"></canvas>
+</div>
+<div class="data-table-container">
+<div class="mb-2 text-right">
+<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
         Export CSV
     </button>
-    </div>
-<table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>Boat (m/s)</th>
-                        <th>Angle (°)</th>
-                        <th>River (m/s)</th>
-                        <th>Resultant (m/s)</th>
-                        <th>Time (s)</th>
-                        <th>X Pos (m)</th>
-                        <th>Y Pos (m)</th>
-                        <th>Displacement (m)</th>
-                        <th>Distance (m)</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Data rows go here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="side-panel">
-        <h2>Control Panel</h2>
-
-        <div class="control-group">
-            <label>
-                <span style="color: var(--vec-boat);">Boat Speed (relative to water)</span>
-                <span id="boatSpeedVal">4.0 m/s</span>
-            </label>
-            <input type="range" id="boatSpeedSlider" min="1" max="10" step="0.1" value="4.0">
-        </div>
-
-        <div class="control-group">
-            <label>
-                <span style="color: var(--vec-boat);">Boat Angle (Heading)</span>
-                <span id="boatAngleVal">0°</span>
-            </label>
-            <input type="range" id="boatAngleSlider" min="-90" max="90" step="1" value="0">
-            <small style="color: var(--text-muted); display: block; margin-top: 4px;">0° is straight across. &plusmn;90° points parallel to shore.</small>
-        </div>
-
-        <div class="control-group">
-            <label>
-                <span style="color: var(--vec-river);">River Speed (relative to shore)</span>
-                <span id="riverSpeedVal">2.0 m/s</span>
-            </label>
-            <input type="range" id="riverSpeedSlider" min="0" max="8" step="0.1" value="2.0">
-        </div>
-
-        <div class="button-group">
-            <button id="playBtn">Play / Pause</button>
-            <button id="resetBtn">Reset</button>
-            <button id="resetParamsBtn" style="background-color: #64748b;">Reset Params</button>
-        </div>
-
-        <div style="display: flex; gap: 12px; margin-top: 12px;">
-            <button id="recordBtn" style="background-color: var(--vec-resultant);">Record Data</button>
-            <button id="clearDataBtn" style="background-color: #ef4444;">Clear Data</button>
-        </div>
-
-        <div class="toggles">
-            <label><input type="checkbox" id="showComponents" checked> Show Component Vectors</label>
-            <label><input type="checkbox" id="showResultant" checked> Show Resultant Vector</label>
-            <label><input type="checkbox" id="showPath" checked> Show Boat Path</label>
-        </div>
-
-        <div class="data-display">
-            <div class="data-row">
-                <span>Resultant Speed:</span>
-                <strong id="resSpeedOut" style="color: var(--vec-resultant);">0.0 m/s</strong>
-            </div>
-            <div class="data-row">
-                <span>Resultant Angle:</span>
-                <strong id="resAngleOut" style="color: var(--vec-resultant);">0.0°</strong>
-            </div>
-            <div class="data-row" style="margin-top: 10px; border-top: 1px solid #cbd5e1; padding-top: 10px;">
-                <span>Time Taken:</span>
-                <strong id="timeOut">0.0 s</strong>
-            </div>
-            <div class="data-row">
-                <span>X Position:</span>
-                <strong id="xPosOut">0.0 m</strong>
-            </div>
-            <div class="data-row">
-                <span>Y Position:</span>
-                <strong id="yPosOut">0.0 m</strong>
-            </div>
-            <div class="data-row">
-                <span>Displacement:</span>
-                <strong id="dispOut">0.0 m</strong>
-            </div>
-            <div class="data-row" style="margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-                <span>Total Distance:</span>
-                <strong id="distOut" style="color: #d97706;">0.0 m</strong>
-            </div>
-        </div>
-
-        <div class="legend">
-            <h3>Vector Legend</h3>
-            <div class="legend-item">
-                <div class="color-box" style="background-color: var(--vec-boat);"></div>
-                <span>Boat relative to Water (V<sub>bw</sub>)</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-box" style="background-color: var(--vec-river);"></div>
-                <span>Water relative to Shore (V<sub>ws</sub>)</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-box" style="background-color: var(--vec-resultant);"></div>
-                <span>Boat relative to Shore (Resultant V<sub>bs</sub>)</span>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="instructions">
-        <h2 style="border-bottom: none; margin-bottom: 8px; padding-bottom: 0; color: #92400e; font-size: 1.25rem;">Inquiry Challenges:</h2>
-        <ul style="margin-left: 20px; margin-top: 8px;">
-            <li style="margin-bottom: 8px;"><strong>The Straight Crossing:</strong> If your boat speed is 5.0 m/s and the river speed is 3.0 m/s, what exact angle must you set to land perfectly straight across the river?</li>
-            <li style="margin-bottom: 8px;"><strong>The Time Paradox:</strong> Set your boat angle to 0° and speed to 4.0 m/s. Record data for three different river speeds. Does the speed of the river affect how long it takes to cross? Why or why not?</li>
-            <li style="margin-bottom: 8px;"><strong>Battling the Current:</strong> Try pointing the boat upstream (negative angles). Can you find a combination of boat speed, angle, and river speed where the boat doesn't move relative to the shore at all?</li>
-        </ul>
-    </div>
-
-    <div class="ngss-box">
-        <h2 style="border-bottom: none; margin-bottom: 8px; padding-bottom: 0;">NGSS 3-Dimensional Alignment (Foundational for HS-PS2-1 & HS-PS2-2):</h2>
-        <ul>
-            <li><strong>SEP (Science & Engineering Practices):</strong> <em>Using Mathematics and Computational Thinking</em> — Use mathematical representations to describe and support claims about the velocity and displacement of an object.</li>
-            <li><strong>DCI (Disciplinary Core Ideas):</strong> <em>PS2.A: Forces and Motion</em> — Understanding vectors and frames of reference is a prerequisite for analyzing how forces change macroscopic motion and how momentum is conserved.</li>
-            <li><strong>CCC (Crosscutting Concepts):</strong> <em>Systems and System Models</em> — Defining the boundaries of a system (the boat, the water, the shore) to analyze how independent components interact to produce a resultant effect.</li>
-        </ul>
-    </div>
 </div>
-
+<table id="dataTable">
+<thead>
+<tr>
+<th>Boat (m/s)</th>
+<th>Angle (°)</th>
+<th>River (m/s)</th>
+<th>Resultant (m/s)</th>
+<th>Time (s)</th>
+<th>X Pos (m)</th>
+<th>Y Pos (m)</th>
+<th>Displacement (m)</th>
+<th>Distance (m)</th>
+</tr>
+</thead>
+<tbody id="tableBody">
+<!-- Data rows go here -->
+</tbody>
+</table>
+</div>
+</div>
+<div class="side-panel">
+<h2>Control Panel</h2>
+<div class="control-group">
+<label>
+<span style="color: var(--vec-boat);">Boat Speed (relative to water)</span>
+<span id="boatSpeedVal">4.0 m/s</span>
+</label>
+<input id="boatSpeedSlider" max="10" min="1" step="0.1" type="range" value="4.0"/>
+</div>
+<div class="control-group">
+<label>
+<span style="color: var(--vec-boat);">Boat Angle (Heading)</span>
+<span id="boatAngleVal">0°</span>
+</label>
+<input id="boatAngleSlider" max="90" min="-90" step="1" type="range" value="0"/>
+<small style="color: var(--text-muted); display: block; margin-top: 4px;">0° is straight across. ±90° points parallel to shore.</small>
+</div>
+<div class="control-group">
+<label>
+<span style="color: var(--vec-river);">River Speed (relative to shore)</span>
+<span id="riverSpeedVal">2.0 m/s</span>
+</label>
+<input id="riverSpeedSlider" max="8" min="0" step="0.1" type="range" value="2.0"/>
+</div>
+<div class="button-group">
+<button id="playBtn">Play / Pause</button>
+<button id="resetBtn">Reset</button>
+<button id="resetParamsBtn" style="background-color: #64748b;">Reset Params</button>
+</div>
+<div style="display: flex; gap: 12px; margin-top: 12px;">
+<button id="recordBtn" style="background-color: var(--vec-resultant);">Record Data</button>
+<button id="clearDataBtn" style="background-color: #ef4444;">Clear Data</button>
+</div>
+<div class="toggles">
+<label><input checked="" id="showComponents" type="checkbox"/> Show Component Vectors</label>
+<label><input checked="" id="showResultant" type="checkbox"/> Show Resultant Vector</label>
+<label><input checked="" id="showPath" type="checkbox"/> Show Boat Path</label>
+</div>
+<div class="data-display">
+<div class="data-row">
+<span>Resultant Speed:</span>
+<strong id="resSpeedOut" style="color: var(--vec-resultant);">0.0 m/s</strong>
+</div>
+<div class="data-row">
+<span>Resultant Angle:</span>
+<strong id="resAngleOut" style="color: var(--vec-resultant);">0.0°</strong>
+</div>
+<div class="data-row" style="margin-top: 10px; border-top: 1px solid #cbd5e1; padding-top: 10px;">
+<span>Time Taken:</span>
+<strong id="timeOut">0.0 s</strong>
+</div>
+<div class="data-row">
+<span>X Position:</span>
+<strong id="xPosOut">0.0 m</strong>
+</div>
+<div class="data-row">
+<span>Y Position:</span>
+<strong id="yPosOut">0.0 m</strong>
+</div>
+<div class="data-row">
+<span>Displacement:</span>
+<strong id="dispOut">0.0 m</strong>
+</div>
+<div class="data-row" style="margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+<span>Total Distance:</span>
+<strong id="distOut" style="color: #d97706;">0.0 m</strong>
+</div>
+</div>
+<div class="legend">
+<h3>Vector Legend</h3>
+<div class="legend-item">
+<div class="color-box" style="background-color: var(--vec-boat);"></div>
+<span>Boat relative to Water (V<sub>bw</sub>)</span>
+</div>
+<div class="legend-item">
+<div class="color-box" style="background-color: var(--vec-river);"></div>
+<span>Water relative to Shore (V<sub>ws</sub>)</span>
+</div>
+<div class="legend-item">
+<div class="color-box" style="background-color: var(--vec-resultant);"></div>
+<span>Boat relative to Shore (Resultant V<sub>bs</sub>)</span>
+</div>
+</div>
+</div>
+<div class="instructions">
+<h2 style="border-bottom: none; margin-bottom: 8px; padding-bottom: 0; color: #92400e; font-size: 1.25rem;">Inquiry Challenges:</h2>
+<ul style="margin-left: 20px; margin-top: 8px;">
+<li style="margin-bottom: 8px;"><strong>The Straight Crossing:</strong> If your boat speed is 5.0 m/s and the river speed is 3.0 m/s, what exact angle must you set to land perfectly straight across the river?</li>
+<li style="margin-bottom: 8px;"><strong>The Time Paradox:</strong> Set your boat angle to 0° and speed to 4.0 m/s. Record data for three different river speeds. Does the speed of the river affect how long it takes to cross? Why or why not?</li>
+<li style="margin-bottom: 8px;"><strong>Battling the Current:</strong> Try pointing the boat upstream (negative angles). Can you find a combination of boat speed, angle, and river speed where the boat doesn't move relative to the shore at all?</li>
+</ul>
+</div>
+<div class="ngss-box">
+<h2 style="border-bottom: none; margin-bottom: 8px; padding-bottom: 0;">NGSS 3-Dimensional Alignment (Foundational for HS-PS2-1 &amp; HS-PS2-2):</h2>
+<ul>
+<li><strong>SEP (Science &amp; Engineering Practices):</strong> <em>Using Mathematics and Computational Thinking</em> — Use mathematical representations to describe and support claims about the velocity and displacement of an object.</li>
+<li><strong>DCI (Disciplinary Core Ideas):</strong> <em>PS2.A: Forces and Motion</em> — Understanding vectors and frames of reference is a prerequisite for analyzing how forces change macroscopic motion and how momentum is conserved.</li>
+<li><strong>CCC (Crosscutting Concepts):</strong> <em>Systems and System Models</em> — Defining the boundaries of a system (the boat, the water, the shore) to analyze how independent components interact to produce a resultant effect.</li>
+</ul>
+</div>
+</div>
 <script>
     // --- Simulation State & Physics Variables ---
     const canvas = document.getElementById('simCanvas');

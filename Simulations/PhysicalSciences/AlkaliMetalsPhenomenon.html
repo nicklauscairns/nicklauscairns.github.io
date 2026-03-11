@@ -1,72 +1,90 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alkali Metals Reaction Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Alkali Metals Reaction Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/AlkaliMetalsPhenomenon.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Alkali Metals Reaction Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Alkali Metals Reaction Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Alkali Metals Reaction Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Alkali Metals Reaction Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
         canvas { display: block; }
         .glass-panel { background: rgba(255, 255, 255, 0.9); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Alkali Metals Reaction Simulation",
+    "description": "Interactive science simulation for Alkali Metals Reaction Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/AlkaliMetalsPhenomenon.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="h-screen w-screen flex flex-col p-4 overflow-hidden">
-
-    <header class="text-center mb-4">
-        <h1 class="text-3xl font-bold text-gray-800">Alkali Metals Phenomenon</h1>
-        <p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS1-1</p>
-        <p class="text-gray-600">Observe the reaction patterns and atomic structures of different elements.</p>
-    </header>
-
-    <main class="flex-1 flex flex-col md:flex-row gap-4 max-w-6xl mx-auto w-full">
-
-        <!-- Simulation Canvas Area -->
-        <div class="glass-panel flex-1 flex flex-col relative overflow-hidden border border-gray-200">
-            <div class="bg-gray-800 text-white text-sm font-semibold p-2 rounded-t-xl text-center z-10">
+<header class="text-center mb-4">
+<h1 class="text-3xl font-bold text-gray-800">Alkali Metals Phenomenon</h1>
+<p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS1-1</p>
+<p class="text-gray-600">Observe the reaction patterns and atomic structures of different elements.</p>
+</header>
+<main class="flex-1 flex flex-col md:flex-row gap-4 max-w-6xl mx-auto w-full">
+<!-- Simulation Canvas Area -->
+<div class="glass-panel flex-1 flex flex-col relative overflow-hidden border border-gray-200">
+<div class="bg-gray-800 text-white text-sm font-semibold p-2 rounded-t-xl text-center z-10">
                 Macroscopic View: Reaction Beaker
             </div>
-            <canvas id="reactionCanvas" class="w-full h-full bg-white"></canvas>
-
-            <!-- Controls Overlay -->
-            <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white to-transparent flex justify-center flex-wrap gap-2 z-20">
-                <button onclick="dropMetal('Li')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded shadow transition">Drop Lithium (Li)</button>
-                <button onclick="dropMetal('Na')" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded shadow transition">Drop Sodium (Na)</button>
-                <button onclick="dropMetal('K')" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded shadow transition">Drop Potassium (K)</button>
-                <button onclick="dropMetal('Ca')" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded shadow transition">Drop Calcium (Ca)</button>
-                <button onclick="dropMetal('Al')" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded shadow transition">Drop Aluminum (Al)</button>
-                <button onclick="dropMetal('X')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded shadow transition animate-pulse">Drop Mystery (X)</button>
-            </div>
-        </div>
-
-        <!-- Atomic Model Area -->
-        <div class="glass-panel w-full md:w-1/3 flex flex-col border border-gray-200">
-            <div class="bg-indigo-700 text-white text-sm font-semibold p-2 rounded-t-xl text-center">
+<canvas class="w-full h-full bg-white" id="reactionCanvas"></canvas>
+<!-- Controls Overlay -->
+<div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white to-transparent flex justify-center flex-wrap gap-2 z-20">
+<button class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded shadow transition" onclick="dropMetal('Li')">Drop Lithium (Li)</button>
+<button class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded shadow transition" onclick="dropMetal('Na')">Drop Sodium (Na)</button>
+<button class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded shadow transition" onclick="dropMetal('K')">Drop Potassium (K)</button>
+<button class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded shadow transition" onclick="dropMetal('Ca')">Drop Calcium (Ca)</button>
+<button class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded shadow transition" onclick="dropMetal('Al')">Drop Aluminum (Al)</button>
+<button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded shadow transition animate-pulse" onclick="dropMetal('X')">Drop Mystery (X)</button>
+</div>
+</div>
+<!-- Atomic Model Area -->
+<div class="glass-panel w-full md:w-1/3 flex flex-col border border-gray-200">
+<div class="bg-indigo-700 text-white text-sm font-semibold p-2 rounded-t-xl text-center">
                 Microscopic View: Atomic Structure
             </div>
-            <div class="p-4 flex-1 flex flex-col items-center justify-start">
-                <h2 id="elementName" class="text-2xl font-bold text-gray-800 mb-2">Select a Metal</h2>
-                <div class="text-sm text-gray-600 mb-4 text-center h-16" id="elementDesc">
+<div class="p-4 flex-1 flex flex-col items-center justify-start">
+<h2 class="text-2xl font-bold text-gray-800 mb-2" id="elementName">Select a Metal</h2>
+<div class="text-sm text-gray-600 mb-4 text-center h-16" id="elementDesc">
                     Click a button to the left to see the metal react in water and view its atomic model.
                 </div>
-
-                <canvas id="atomCanvas" width="250" height="250" class="bg-gray-50 rounded-full border border-gray-200 shadow-inner"></canvas>
-
-                <!-- NEW SENSOR PANEL -->
-                <div class="mt-4 w-full bg-black p-3 rounded border-2 border-gray-700 text-green-400 font-mono text-sm shadow-inner">
-                    <div class="font-bold text-white mb-1 border-b border-gray-700 pb-1">🧪 SENSOR READOUT</div>
-                    <div>Peak Temp: <span id="tempReadout">--</span> °C</div>
-                    <div>Reaction Time: <span id="timeReadout">--</span> s</div>
-                </div>
-
-                <div class="mt-4 w-full bg-blue-50 p-3 rounded border border-blue-100 text-sm text-blue-800">
-                    <p><strong>Notice:</strong> Pay attention to the outermost ring (energy level). The red dots represent the valence electrons.</p>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
+<canvas class="bg-gray-50 rounded-full border border-gray-200 shadow-inner" height="250" id="atomCanvas" width="250"></canvas>
+<!-- NEW SENSOR PANEL -->
+<div class="mt-4 w-full bg-black p-3 rounded border-2 border-gray-700 text-green-400 font-mono text-sm shadow-inner">
+<div class="font-bold text-white mb-1 border-b border-gray-700 pb-1">🧪 SENSOR READOUT</div>
+<div>Peak Temp: <span id="tempReadout">--</span> °C</div>
+<div>Reaction Time: <span id="timeReadout">--</span> s</div>
+</div>
+<div class="mt-4 w-full bg-blue-50 p-3 rounded border border-blue-100 text-sm text-blue-800">
+<p><strong>Notice:</strong> Pay attention to the outermost ring (energy level). The red dots represent the valence electrons.</p>
+</div>
+</div>
+</div>
+</main>
 <script>
     // --- Data Models ---
     const elementData = {

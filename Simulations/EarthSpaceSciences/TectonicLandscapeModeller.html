@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tectonic Landscape Modeler</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tectonic Landscape Modeler</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/TectonicLandscapeModeller.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Tectonic Landscape Modeler. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Tectonic Landscape Modeler" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Tectonic Landscape Modeler, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Tectonic Landscape Modeler. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { background-color: #0f172a; color: #f1f5f9; }
         canvas {
             display: block;
@@ -25,97 +33,108 @@
             transform: scale(1.05);
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Tectonic Landscape Modeler",
+    "description": "Interactive science simulation for Tectonic Landscape Modeler. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/TectonicLandscapeModeller.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="text-center mb-6">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Tectonic Landscape Modeler</h1>
-            <p class="text-slate-300 max-w-3xl mx-auto">
+<div class="max-w-6xl mx-auto">
+<header class="text-center mb-6">
+<h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Tectonic Landscape Modeler</h1>
+<p class="text-slate-300 max-w-3xl mx-auto">
                 Model how constructive forces (uplift, volcanism) and destructive forces (weathering, erosion) operate at different spatial and temporal scales to form Earth's continental and ocean-floor features.
             </p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Left Panel: Tools -->
-            <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-lg flex flex-col gap-4">
-                <h2 class="text-xl font-bold text-emerald-300 border-b border-slate-600 pb-2">Geologic Forces</h2>
-
-                <div class="space-y-3">
-                    <h3 class="font-bold text-sm text-amber-400 uppercase tracking-wider">Constructive (Internal)</h3>
-                    <button id="toolUplift" class="tool-btn active w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('uplift')">
-                        <span>Tectonic Uplift <br><span class="text-xs text-slate-400 font-normal">Slow mountain building</span></span>
-                        <span class="text-xl">⛰️</span>
-                    </button>
-                    <button id="toolVolcano" class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('volcano')">
-                        <span>Volcanism <br><span class="text-xs text-slate-400 font-normal">Rapid cone building</span></span>
-                        <span class="text-xl">🌋</span>
-                    </button>
-                </div>
-
-                <div class="space-y-3 mt-2">
-                    <h3 class="font-bold text-sm text-red-400 uppercase tracking-wider">Destructive (Surface)</h3>
-                    <button id="toolWeathering" class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('weathering')">
-                        <span>Weathering & Erosion <br><span class="text-xs text-slate-400 font-normal">Slow valley carving</span></span>
-                        <span class="text-xl">🌧️</span>
-                    </button>
-                    <button id="toolMassWasting" class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" onclick="selectTool('masswasting')">
-                        <span>Mass Wasting <br><span class="text-xs text-slate-400 font-normal">Sudden slope failure</span></span>
-                        <span class="text-xl">🪨</span>
-                    </button>
-                </div>
-
-                <div class="mt-auto pt-4 border-t border-slate-600">
-                    <label class="block text-sm font-medium mb-1">Tool Intensity/Scale:</label>
-                    <input type="range" id="toolIntensity" min="1" max="10" value="5" class="w-full">
-                </div>
-            </div>
-
-            <!-- Center Panel: Simulation -->
-            <div class="lg:col-span-3 bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-lg">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-3">
-                    <div class="text-sm font-mono text-blue-300">
-                        Geologic Time: <span id="timeDisplay" class="text-xl font-bold text-white">0</span> Million Years
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+<!-- Left Panel: Tools -->
+<div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-lg flex flex-col gap-4">
+<h2 class="text-xl font-bold text-emerald-300 border-b border-slate-600 pb-2">Geologic Forces</h2>
+<div class="space-y-3">
+<h3 class="font-bold text-sm text-amber-400 uppercase tracking-wider">Constructive (Internal)</h3>
+<button class="tool-btn active w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" id="toolUplift" onclick="selectTool('uplift')">
+<span>Tectonic Uplift <br/><span class="text-xs text-slate-400 font-normal">Slow mountain building</span></span>
+<span class="text-xl">⛰️</span>
+</button>
+<button class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" id="toolVolcano" onclick="selectTool('volcano')">
+<span>Volcanism <br/><span class="text-xs text-slate-400 font-normal">Rapid cone building</span></span>
+<span class="text-xl">🌋</span>
+</button>
+</div>
+<div class="space-y-3 mt-2">
+<h3 class="font-bold text-sm text-red-400 uppercase tracking-wider">Destructive (Surface)</h3>
+<button class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" id="toolWeathering" onclick="selectTool('weathering')">
+<span>Weathering &amp; Erosion <br/><span class="text-xs text-slate-400 font-normal">Slow valley carving</span></span>
+<span class="text-xl">🌧️</span>
+</button>
+<button class="tool-btn w-full text-left px-4 py-3 rounded bg-slate-700 hover:bg-slate-600 border border-slate-600 shadow-sm flex items-center justify-between" id="toolMassWasting" onclick="selectTool('masswasting')">
+<span>Mass Wasting <br/><span class="text-xs text-slate-400 font-normal">Sudden slope failure</span></span>
+<span class="text-xl">🪨</span>
+</button>
+</div>
+<div class="mt-auto pt-4 border-t border-slate-600">
+<label class="block text-sm font-medium mb-1">Tool Intensity/Scale:</label>
+<input class="w-full" id="toolIntensity" max="10" min="1" type="range" value="5"/>
+</div>
+</div>
+<!-- Center Panel: Simulation -->
+<div class="lg:col-span-3 bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-lg">
+<div class="flex flex-col md:flex-row justify-between items-center mb-3">
+<div class="text-sm font-mono text-blue-300">
+                        Geologic Time: <span class="text-xl font-bold text-white" id="timeDisplay">0</span> Million Years
                     </div>
-                    <div class="space-x-2 mt-2 md:mt-0">
-                        <button id="playBtn" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-1.5 rounded font-bold transition-colors">Play Time</button>
-                        <button id="resetBtn" class="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded font-bold transition-colors">Reset World</button>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <!-- Instruction Overlay -->
-                    <div id="instructionOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 transition-opacity duration-500">
-                        <div class="bg-slate-900/80 px-6 py-3 rounded-full text-white font-bold backdrop-blur-sm border border-slate-700">
+<div class="space-x-2 mt-2 md:mt-0">
+<button class="bg-emerald-600 hover:bg-emerald-500 px-4 py-1.5 rounded font-bold transition-colors" id="playBtn">Play Time</button>
+<button class="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded font-bold transition-colors" id="resetBtn">Reset World</button>
+</div>
+</div>
+<div class="relative">
+<!-- Instruction Overlay -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 transition-opacity duration-500" id="instructionOverlay">
+<div class="bg-slate-900/80 px-6 py-3 rounded-full text-white font-bold backdrop-blur-sm border border-slate-700">
                             Click and drag on the landscape below to apply forces.
                         </div>
-                    </div>
-                    <canvas id="landscapeCanvas" width="800" height="400" class="w-full h-auto"></canvas>
-                </div>
-
-                <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-slate-400 font-bold">
-                    <div>Ocean Floor (Trenches / Seamounts)</div>
-                    <div>Coastal Zone / Sea Level</div>
-                    <div>Continental Crust (Mountains / Valleys)</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-6 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
-            <h2 class="text-xl font-bold text-emerald-300 mb-3">Scientific Principles (HS-ESS2-1)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
-                <div>
-                    <h3 class="font-bold text-white mb-1">Constructive vs. Destructive Forces</h3>
-                    <p class="mb-2">Earth's surface is a constant battleground. <strong>Constructive mechanisms</strong> like tectonic uplift (orogeny) and volcanism build landmasses up, driven by internal heat. <strong>Destructive mechanisms</strong> like weathering, river erosion, and mass wasting tear landmasses down, driven by gravity and the water cycle.</p>
-                </div>
-                <div>
-                    <h3 class="font-bold text-white mb-1">Spatial and Temporal Scales</h3>
-                    <p>These processes operate at vastly different scales. Tectonic uplift might raise a mountain range by a few millimeters a year over millions of years (long temporal scale). A landslide (mass wasting) can alter a mountainside in seconds (short temporal scale). Both shape the final landscape.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+<canvas class="w-full h-auto" height="400" id="landscapeCanvas" width="800"></canvas>
+</div>
+<div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-slate-400 font-bold">
+<div>Ocean Floor (Trenches / Seamounts)</div>
+<div>Coastal Zone / Sea Level</div>
+<div>Continental Crust (Mountains / Valleys)</div>
+</div>
+</div>
+</div>
+<div class="mt-6 bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-lg">
+<h2 class="text-xl font-bold text-emerald-300 mb-3">Scientific Principles (HS-ESS2-1)</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
+<div>
+<h3 class="font-bold text-white mb-1">Constructive vs. Destructive Forces</h3>
+<p class="mb-2">Earth's surface is a constant battleground. <strong>Constructive mechanisms</strong> like tectonic uplift (orogeny) and volcanism build landmasses up, driven by internal heat. <strong>Destructive mechanisms</strong> like weathering, river erosion, and mass wasting tear landmasses down, driven by gravity and the water cycle.</p>
+</div>
+<div>
+<h3 class="font-bold text-white mb-1">Spatial and Temporal Scales</h3>
+<p>These processes operate at vastly different scales. Tectonic uplift might raise a mountain range by a few millimeters a year over millions of years (long temporal scale). A landslide (mass wasting) can alter a mountainside in seconds (short temporal scale). Both shape the final landscape.</p>
+</div>
+</div>
+</div>
+</div>
+<script>
         const canvas = document.getElementById('landscapeCanvas');
         const ctx = canvas.getContext('2d');
         const timeDisplay = document.getElementById('timeDisplay');

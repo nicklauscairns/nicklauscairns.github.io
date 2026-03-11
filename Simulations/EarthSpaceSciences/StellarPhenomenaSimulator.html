@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stellar Life Cycle Simulations</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stellar Life Cycle Simulations</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/StellarPhenomenaSimulator.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Stellar Life Cycle Simulations. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Stellar Life Cycle Simulations" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Stellar Life Cycle Simulations, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Stellar Life Cycle Simulations. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body {
             background-color: #0b0f19; /* Deep space black/blue */
             color: #e5e7eb;
@@ -30,122 +38,125 @@
         .star-glow-yellow { box-shadow: 0 0 50px 15px rgba(253, 224, 71, 0.5); }
         .star-glow-blue { box-shadow: 0 0 60px 20px rgba(96, 165, 250, 0.6); }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Stellar Life Cycle Simulations",
+    "description": "Interactive science simulation for Stellar Life Cycle Simulations. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/StellarPhenomenaSimulator.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
-
-    <header class="text-center mb-6 w-full max-w-5xl">
-        <h1 class="text-3xl font-bold text-blue-400 mb-2">Stellar Phenomena Simulator</h1>
-        <p class="text-gray-400">NGSS HS-ESS1-1 & HS-ESS1-3 Interactive Models</p>
-        
-        <!-- Navigation Tabs -->
-        <div class="flex justify-center space-x-2 mt-6 bg-gray-900 p-1 rounded-lg">
-            <button onclick="switchTab('sim1')" id="tab-sim1" class="tab-btn active px-4 py-2 rounded-md font-semibold text-sm">1. Stellar Nursery</button>
-            <button onclick="switchTab('sim2')" id="tab-sim2" class="tab-btn px-4 py-2 rounded-md font-semibold text-sm text-gray-400 hover:bg-gray-800">2. Core Fusion</button>
-            <button onclick="switchTab('sim3')" id="tab-sim3" class="tab-btn px-4 py-2 rounded-md font-semibold text-sm text-gray-400 hover:bg-gray-800">3. Stellar Fate</button>
-        </div>
-    </header>
-
-    <main class="w-full max-w-5xl bg-gray-900 rounded-xl p-6 border border-gray-800 shadow-2xl relative overflow-hidden">
-        
-        <!-- ================= SIMULATION 1: STELLAR NURSERY ================= -->
-        <div id="sim1" class="simulation-panel flex flex-col md:flex-row gap-8 items-center">
-            <div class="w-full md:w-1/3 space-y-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-white mb-2">Stellar Nursery</h2>
-                    <p class="text-gray-400 text-sm">Adjust the initial mass of the collapsing protostar cloud to see how mass determines the star's properties and lifespan on the main sequence.</p>
-                </div>
-                
-                <div class="bg-gray-800 p-4 rounded-lg">
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Protostar Initial Mass (Solar Masses - M☉)</label>
-                    <input type="range" id="mass-slider" min="0.5" max="15.0" step="0.5" value="1.0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-400 mt-2">
-                        <span>0.5 M☉</span>
-                        <span id="mass-display" class="font-bold text-blue-400 text-base">1.0 M☉</span>
-                        <span>15.0 M☉</span>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 p-4 rounded-lg space-y-2 text-sm">
-                    <p><strong>Color / Temp:</strong> <span id="star-color-text" class="text-yellow-400">Yellow (Moderate)</span></p>
-                    <p><strong>Relative Lifespan:</strong> <span id="star-life-text" class="text-gray-300">Moderate (~10 Billion Years)</span></p>
-                    <p><strong>Primary Fuel:</strong> Hydrogen</p>
-                </div>
-            </div>
-            
-            <div class="w-full md:w-2/3 h-80 flex justify-center items-center bg-black rounded-lg border border-gray-700 relative overflow-hidden">
-                <!-- Star Visual -->
-                <div id="star-visual" class="rounded-full bg-yellow-400 star-glow-yellow transition-all duration-500 ease-in-out" style="width: 100px; height: 100px;"></div>
-                <div class="absolute bottom-2 text-xs text-gray-500">Gravity vs. Fusion Pressure Balanced</div>
-            </div>
-        </div>
-
-        <!-- ================= SIMULATION 2: CORE FUSION ================= -->
-        <div id="sim2" class="simulation-panel hidden flex flex-col md:flex-row gap-8 items-center">
-             <div class="w-full md:w-1/3 space-y-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-white mb-2">Core Fusion Simulator</h2>
-                    <p class="text-gray-400 text-sm">Inside the core of a 1.0 M☉ Yellow Star. Observe how hydrogen nuclei collide to form helium, releasing energy.</p>
-                </div>
-                
-                <div class="bg-gray-800 p-4 rounded-lg space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium">Core Temp:</span>
-                        <span class="text-red-400 font-bold">15,000,000 K</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium">Missing Mass:</span>
-                        <span id="mass-status" class="text-gray-400 font-bold">0%</span>
-                    </div>
-                    <button id="fusion-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition">Collide Protons</button>
-                </div>
-
-                <div id="fusion-explanation" class="bg-blue-900/30 border border-blue-800 p-4 rounded-lg text-sm text-blue-200 opacity-50 transition-opacity">
-                    <p><strong>Result:</strong> 4 Hydrogen Nuclei fuse into 1 Helium Nucleus.</p>
-                    <p class="mt-2 text-yellow-400"><strong>Energy Released:</strong> The Helium nucleus has slightly less mass than the inputs. This "missing mass" is converted directly into a photon of electromagnetic radiation (E = mc²).</p>
-                </div>
-            </div>
-
-            <div class="w-full md:w-2/3">
-                <canvas id="fusion-canvas" width="600" height="320" class="w-full h-auto max-h-80"></canvas>
-            </div>
-        </div>
-
-        <!-- ================= SIMULATION 3: STELLAR FATE ================= -->
-        <div id="sim3" class="simulation-panel hidden flex flex-col md:flex-row gap-8 items-center">
-             <div class="w-full md:w-1/3 space-y-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-white mb-2">Stellar Fate Simulator</h2>
-                    <p class="text-gray-400 text-sm">Select a star and fast-forward millions/billions of years to observe its final evolutionary stage and the elements it creates.</p>
-                </div>
-                
-                <div class="bg-gray-800 p-4 rounded-lg space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Select Star Mass:</label>
-                        <select id="fate-selector" class="w-full bg-gray-700 text-white border border-gray-600 rounded p-2">
-                            <option value="1">1.0 M☉ (Yellow, Sun-like)</option>
-                            <option value="15">15.0 M☉ (Blue-White, Massive)</option>
-                        </select>
-                    </div>
-                    <button id="fate-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition">Fast-Forward Time >></button>
-                </div>
-
-                <div id="fate-readout" class="bg-gray-800 p-4 rounded-lg text-sm text-gray-300 hidden">
-                    <h3 id="fate-title" class="font-bold text-lg mb-1"></h3>
-                    <p id="fate-desc"></p>
-                    <p class="mt-2 text-xs text-blue-400" id="fate-elements"></p>
-                </div>
-            </div>
-
-            <div class="w-full md:w-2/3 relative">
-                <canvas id="fate-canvas" width="600" height="320" class="w-full h-auto max-h-80"></canvas>
-                <!-- Flash Overlay for Supernova -->
-                <div id="supernova-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-300"></div>
-            </div>
-        </div>
-
-    </main>
-
-    <script>
+<header class="text-center mb-6 w-full max-w-5xl">
+<h1 class="text-3xl font-bold text-blue-400 mb-2">Stellar Phenomena Simulator</h1>
+<p class="text-gray-400">NGSS HS-ESS1-1 &amp; HS-ESS1-3 Interactive Models</p>
+<!-- Navigation Tabs -->
+<div class="flex justify-center space-x-2 mt-6 bg-gray-900 p-1 rounded-lg">
+<button class="tab-btn active px-4 py-2 rounded-md font-semibold text-sm" id="tab-sim1" onclick="switchTab('sim1')">1. Stellar Nursery</button>
+<button class="tab-btn px-4 py-2 rounded-md font-semibold text-sm text-gray-400 hover:bg-gray-800" id="tab-sim2" onclick="switchTab('sim2')">2. Core Fusion</button>
+<button class="tab-btn px-4 py-2 rounded-md font-semibold text-sm text-gray-400 hover:bg-gray-800" id="tab-sim3" onclick="switchTab('sim3')">3. Stellar Fate</button>
+</div>
+</header>
+<main class="w-full max-w-5xl bg-gray-900 rounded-xl p-6 border border-gray-800 shadow-2xl relative overflow-hidden">
+<!-- ================= SIMULATION 1: STELLAR NURSERY ================= -->
+<div class="simulation-panel flex flex-col md:flex-row gap-8 items-center" id="sim1">
+<div class="w-full md:w-1/3 space-y-6">
+<div>
+<h2 class="text-2xl font-bold text-white mb-2">Stellar Nursery</h2>
+<p class="text-gray-400 text-sm">Adjust the initial mass of the collapsing protostar cloud to see how mass determines the star's properties and lifespan on the main sequence.</p>
+</div>
+<div class="bg-gray-800 p-4 rounded-lg">
+<label class="block text-sm font-medium text-gray-300 mb-2">Protostar Initial Mass (Solar Masses - M☉)</label>
+<input class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" id="mass-slider" max="15.0" min="0.5" step="0.5" type="range" value="1.0"/>
+<div class="flex justify-between text-xs text-gray-400 mt-2">
+<span>0.5 M☉</span>
+<span class="font-bold text-blue-400 text-base" id="mass-display">1.0 M☉</span>
+<span>15.0 M☉</span>
+</div>
+</div>
+<div class="bg-gray-800 p-4 rounded-lg space-y-2 text-sm">
+<p><strong>Color / Temp:</strong> <span class="text-yellow-400" id="star-color-text">Yellow (Moderate)</span></p>
+<p><strong>Relative Lifespan:</strong> <span class="text-gray-300" id="star-life-text">Moderate (~10 Billion Years)</span></p>
+<p><strong>Primary Fuel:</strong> Hydrogen</p>
+</div>
+</div>
+<div class="w-full md:w-2/3 h-80 flex justify-center items-center bg-black rounded-lg border border-gray-700 relative overflow-hidden">
+<!-- Star Visual -->
+<div class="rounded-full bg-yellow-400 star-glow-yellow transition-all duration-500 ease-in-out" id="star-visual" style="width: 100px; height: 100px;"></div>
+<div class="absolute bottom-2 text-xs text-gray-500">Gravity vs. Fusion Pressure Balanced</div>
+</div>
+</div>
+<!-- ================= SIMULATION 2: CORE FUSION ================= -->
+<div class="simulation-panel hidden flex flex-col md:flex-row gap-8 items-center" id="sim2">
+<div class="w-full md:w-1/3 space-y-6">
+<div>
+<h2 class="text-2xl font-bold text-white mb-2">Core Fusion Simulator</h2>
+<p class="text-gray-400 text-sm">Inside the core of a 1.0 M☉ Yellow Star. Observe how hydrogen nuclei collide to form helium, releasing energy.</p>
+</div>
+<div class="bg-gray-800 p-4 rounded-lg space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-sm font-medium">Core Temp:</span>
+<span class="text-red-400 font-bold">15,000,000 K</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-sm font-medium">Missing Mass:</span>
+<span class="text-gray-400 font-bold" id="mass-status">0%</span>
+</div>
+<button class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition" id="fusion-btn">Collide Protons</button>
+</div>
+<div class="bg-blue-900/30 border border-blue-800 p-4 rounded-lg text-sm text-blue-200 opacity-50 transition-opacity" id="fusion-explanation">
+<p><strong>Result:</strong> 4 Hydrogen Nuclei fuse into 1 Helium Nucleus.</p>
+<p class="mt-2 text-yellow-400"><strong>Energy Released:</strong> The Helium nucleus has slightly less mass than the inputs. This "missing mass" is converted directly into a photon of electromagnetic radiation (E = mc²).</p>
+</div>
+</div>
+<div class="w-full md:w-2/3">
+<canvas class="w-full h-auto max-h-80" height="320" id="fusion-canvas" width="600"></canvas>
+</div>
+</div>
+<!-- ================= SIMULATION 3: STELLAR FATE ================= -->
+<div class="simulation-panel hidden flex flex-col md:flex-row gap-8 items-center" id="sim3">
+<div class="w-full md:w-1/3 space-y-6">
+<div>
+<h2 class="text-2xl font-bold text-white mb-2">Stellar Fate Simulator</h2>
+<p class="text-gray-400 text-sm">Select a star and fast-forward millions/billions of years to observe its final evolutionary stage and the elements it creates.</p>
+</div>
+<div class="bg-gray-800 p-4 rounded-lg space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-300 mb-2">Select Star Mass:</label>
+<select class="w-full bg-gray-700 text-white border border-gray-600 rounded p-2" id="fate-selector">
+<option value="1">1.0 M☉ (Yellow, Sun-like)</option>
+<option value="15">15.0 M☉ (Blue-White, Massive)</option>
+</select>
+</div>
+<button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition" id="fate-btn">Fast-Forward Time &gt;&gt;</button>
+</div>
+<div class="bg-gray-800 p-4 rounded-lg text-sm text-gray-300 hidden" id="fate-readout">
+<h3 class="font-bold text-lg mb-1" id="fate-title"></h3>
+<p id="fate-desc"></p>
+<p class="mt-2 text-xs text-blue-400" id="fate-elements"></p>
+</div>
+</div>
+<div class="w-full md:w-2/3 relative">
+<canvas class="w-full h-auto max-h-80" height="320" id="fate-canvas" width="600"></canvas>
+<!-- Flash Overlay for Supernova -->
+<div class="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-300" id="supernova-flash"></div>
+</div>
+</div>
+</main>
+<script>
         // --- Tab Switching Logic ---
         function switchTab(tabId) {
             document.querySelectorAll('.simulation-panel').forEach(el => el.classList.add('hidden'));
@@ -153,7 +164,7 @@
                 el.classList.remove('active', 'bg-blue-600', 'text-white');
                 el.classList.add('text-gray-400');
             });
-            
+
             document.getElementById(tabId).classList.remove('hidden');
             let activeBtn = document.getElementById('tab-' + tabId);
             activeBtn.classList.add('active', 'bg-blue-600', 'text-white');
@@ -174,13 +185,13 @@
         massSlider.addEventListener('input', (e) => {
             const mass = parseFloat(e.target.value);
             massDisplay.innerText = mass.toFixed(1) + ' M☉';
-            
+
             let size = 50 + (mass * 10); // Base size 50, scales up with mass
             if (size > 250) size = 250;
-            
+
             starVisual.style.width = size + 'px';
             starVisual.style.height = size + 'px';
-            
+
             // Clean classes
             starVisual.classList.remove('bg-red-500', 'star-glow-red', 'bg-yellow-400', 'star-glow-yellow', 'bg-blue-300', 'star-glow-blue');
 
@@ -222,7 +233,7 @@
             document.getElementById('mass-status').classList.remove('text-yellow-400');
             document.getElementById('fusion-explanation').classList.remove('opacity-100');
             document.getElementById('fusion-explanation').classList.add('opacity-50');
-            
+
             // 4 protons (Hydrogen)
             particles = [
                 {x: 100, y: 80, targetX: 300, targetY: 160, color: '#ef4444', label: 'p+'},
@@ -279,7 +290,7 @@
                     fusionCtx.fillStyle = 'white';
                     fusionCtx.fillText(p.l, p.x - 6, p.y + 4);
                 });
-                
+
                 fusionCtx.fillStyle = 'white';
                 fusionCtx.fillText("Helium Nucleus", coreX - 45, coreY + 45);
 
@@ -292,7 +303,7 @@
                 fusionCtx.strokeStyle = '#fde047';
                 fusionCtx.lineWidth = 4;
                 fusionCtx.stroke();
-                
+
                 if (animProgress > 100) {
                      fusionCtx.fillStyle = '#fde047';
                      fusionCtx.fillText("Photon (Radiation)", coreX + 100, coreY - 120);
@@ -309,9 +320,9 @@
                     p.y += (p.targetY - p.y) * 0.05;
                     if (Math.abs(p.x - p.targetX) > 2) allArrived = false;
                 });
-                
+
                 drawFusionFrame();
-                
+
                 if (allArrived) {
                     fusionState = 'fused';
                     animProgress = 0; // reuse for photon
@@ -387,23 +398,23 @@
                 fateCtx.fill();
                 fateCtx.shadowBlur = 40;
                 fateCtx.shadowColor = fateCtx.fillStyle;
-            } 
+            }
             else if (fateState === 'animating' || fateState === 'done') {
                 fateCtx.shadowBlur = 0; // reset
-                
+
                 if (selectedMass === 1) {
                     // 1.0 M: Red Giant -> Planetary Nebula -> White Dwarf
                     let coreSize = 40;
                     let outerSize = 40 + (fateProgress * 2); // Expands
                     let opacity = 1 - (fateProgress / 100); // Fades out
-                    
+
                     if (fateProgress < 100) {
                         // Nebula shell
                         fateCtx.beginPath();
                         fateCtx.arc(cx, cy, outerSize, 0, Math.PI*2);
                         fateCtx.fillStyle = `rgba(239, 68, 68, ${opacity * 0.5})`;
                         fateCtx.fill();
-                        
+
                         // Shrinking core
                         fateCtx.beginPath();
                         fateCtx.arc(cx, cy, Math.max(5, coreSize - (fateProgress*0.35)), 0, Math.PI*2);
@@ -418,7 +429,7 @@
                         fateCtx.shadowBlur = 10;
                         fateCtx.shadowColor = '#ffffff';
                     }
-                } 
+                }
                 else if (selectedMass === 15) {
                     // 15.0 M: Supergiant -> Core Collapse -> Supernova -> Black Hole
                     if (fateProgress < 50) {
@@ -427,7 +438,7 @@
                         fateCtx.arc(cx, cy, 80 + (fateProgress), 0, Math.PI*2);
                         fateCtx.fillStyle = '#ef4444';
                         fateCtx.fill();
-                        
+
                         // Show layers forming (Carbon, Oxygen, Neon... Iron)
                         fateCtx.fillStyle = 'white';
                         fateCtx.font = '12px Arial';
@@ -447,7 +458,7 @@
                         fateCtx.lineWidth = 2;
                         fateCtx.strokeStyle = '#374151';
                         fateCtx.stroke();
-                        
+
                         // Accretion disk/glow
                         fateCtx.beginPath();
                         fateCtx.ellipse(cx, cy, 30, 8, 0, 0, Math.PI*2);
@@ -479,15 +490,15 @@
                 fateState = 'done';
                 document.getElementById('fate-btn').innerText = "Reset Simulator";
                 document.getElementById('fate-btn').disabled = false;
-                
+
                 // Show Readout
                 const readout = document.getElementById('fate-readout');
                 const title = document.getElementById('fate-title');
                 const desc = document.getElementById('fate-desc');
                 const elements = document.getElementById('fate-elements');
-                
+
                 readout.classList.remove('hidden');
-                
+
                 if (selectedMass === 1) {
                     title.innerText = "White Dwarf Remnant";
                     title.className = "font-bold text-lg mb-1 text-white";

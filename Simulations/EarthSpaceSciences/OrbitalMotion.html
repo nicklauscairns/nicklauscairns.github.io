@@ -1,94 +1,114 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orbital Motion & Kepler's Laws</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orbital Motion &amp; Kepler's Laws</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/OrbitalMotion.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Orbital Motion &amp; Kepler's Laws. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Orbital Motion &amp; Kepler's Laws" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Orbital Motion &amp; Kepler's Laws, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Orbital Motion &amp; Kepler's Laws. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .slider-container { margin-bottom: 1rem; }
         .readout { font-weight: 600; font-family: monospace; }
         canvas { background-color: #0f172a; border-radius: 0.5rem; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Orbital Motion & Kepler's Laws",
+    "description": "Interactive science simulation for Orbital Motion & Kepler's Laws. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/OrbitalMotion.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 text-gray-800">
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <header class="mb-6">
-            <h1 class="text-3xl font-bold text-blue-900">Orbital Motion & Kepler's Third Law</h1>
-            <p class="text-gray-600 mt-2">Explore how star mass, initial distance, and velocity affect a planet's orbit. Discover the relationship between orbital period and semi-major axis.</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Left Column: Simulation and Controls -->
-            <div class="bg-white p-4 rounded-lg shadow-md flex flex-col">
-                <div class="relative w-full aspect-square mb-4">
-                    <canvas id="simCanvas" class="w-full h-full shadow-inner"></canvas>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div class="slider-container">
-                        <label for="starMass" class="block text-sm font-medium text-gray-700">Star Mass (Solar Masses): <span id="starMassVal">1.0</span></label>
-                        <input type="range" id="starMass" min="0.1" max="5.0" step="0.1" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    </div>
-                    <div class="slider-container">
-                        <label for="initDistance" class="block text-sm font-medium text-gray-700">Initial Distance (AU): <span id="initDistanceVal">1.0</span></label>
-                        <input type="range" id="initDistance" min="0.2" max="3.0" step="0.1" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    </div>
-                    <div class="slider-container sm:col-span-2">
-                        <label for="velMultiplier" class="block text-sm font-medium text-gray-700">Initial Velocity Multiplier: <span id="velMultiplierVal">1.00</span></label>
-                        <p class="text-xs text-gray-500 mb-1">1.0 = Circular orbit (if distance is unchanged). &gt;1.0 = Elliptical. &ge; &radic;2 = Escape.</p>
-                        <input type="range" id="velMultiplier" min="0.1" max="1.5" step="0.05" value="1.0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 p-3 rounded border border-blue-100 mb-4 grid grid-cols-2 gap-2 text-sm">
-                    <div>Semi-major Axis (a): <span id="readoutA" class="readout text-blue-800">1.00</span> AU</div>
-                    <div>Period (T): <span id="readoutT" class="readout text-blue-800">1.00</span> Years</div>
-                    <div>Eccentricity (e): <span id="readoutE" class="readout text-blue-800">0.00</span></div>
-                    <div>Status: <span id="readoutStatus" class="readout text-blue-800">Stable</span></div>
-                    <div>a&sup3;: <span id="readoutA3" class="readout text-purple-700">1.00</span> AU&sup3;</div>
-                    <div>T&sup2;: <span id="readoutT2" class="readout text-purple-700">1.00</span> Yr&sup2;</div>
-                </div>
-
-                <div class="flex space-x-2">
-                    <button id="btnReset" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition">Reset Orbit</button>
-                    <button id="btnLog" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">Log Data</button>
-                </div>
-            </div>
-
-            <!-- Right Column: Data and Chart -->
-            <div class="bg-white p-4 rounded-lg shadow-md flex flex-col">
-                <h2 class="text-xl font-bold mb-4 text-gray-800">Logged Data</h2>
-
-                <div class="flex-1 min-h-[250px] relative mb-4">
-                    <canvas id="dataChart"></canvas>
-                </div>
-
-                <div class="overflow-y-auto max-h-60 border border-gray-200 rounded">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">Mass (M)</th>
-                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">a (AU)</th>
-                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">T (Yr)</th>
-                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">a&sup3;</th>
-                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">T&sup2;</th>
-                                <th scope="col" class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider">e</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTableBody" class="bg-white divide-y divide-gray-200">
-                            <!-- Data rows will be added here -->
-                        </tbody>
-                    </table>
-                </div>
-                <button id="btnClearData" class="mt-4 w-full bg-red-100 hover:bg-red-200 text-red-700 font-semibold py-2 px-4 rounded transition text-sm">Clear Data</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+<header class="mb-6">
+<h1 class="text-3xl font-bold text-blue-900">Orbital Motion &amp; Kepler's Third Law</h1>
+<p class="text-gray-600 mt-2">Explore how star mass, initial distance, and velocity affect a planet's orbit. Discover the relationship between orbital period and semi-major axis.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Left Column: Simulation and Controls -->
+<div class="bg-white p-4 rounded-lg shadow-md flex flex-col">
+<div class="relative w-full aspect-square mb-4">
+<canvas class="w-full h-full shadow-inner" id="simCanvas"></canvas>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+<div class="slider-container">
+<label class="block text-sm font-medium text-gray-700" for="starMass">Star Mass (Solar Masses): <span id="starMassVal">1.0</span></label>
+<input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="starMass" max="5.0" min="0.1" step="0.1" type="range" value="1.0"/>
+</div>
+<div class="slider-container">
+<label class="block text-sm font-medium text-gray-700" for="initDistance">Initial Distance (AU): <span id="initDistanceVal">1.0</span></label>
+<input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="initDistance" max="3.0" min="0.2" step="0.1" type="range" value="1.0"/>
+</div>
+<div class="slider-container sm:col-span-2">
+<label class="block text-sm font-medium text-gray-700" for="velMultiplier">Initial Velocity Multiplier: <span id="velMultiplierVal">1.00</span></label>
+<p class="text-xs text-gray-500 mb-1">1.0 = Circular orbit (if distance is unchanged). &gt;1.0 = Elliptical. ≥ √2 = Escape.</p>
+<input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="velMultiplier" max="1.5" min="0.1" step="0.05" type="range" value="1.0"/>
+</div>
+</div>
+<div class="bg-blue-50 p-3 rounded border border-blue-100 mb-4 grid grid-cols-2 gap-2 text-sm">
+<div>Semi-major Axis (a): <span class="readout text-blue-800" id="readoutA">1.00</span> AU</div>
+<div>Period (T): <span class="readout text-blue-800" id="readoutT">1.00</span> Years</div>
+<div>Eccentricity (e): <span class="readout text-blue-800" id="readoutE">0.00</span></div>
+<div>Status: <span class="readout text-blue-800" id="readoutStatus">Stable</span></div>
+<div>a³: <span class="readout text-purple-700" id="readoutA3">1.00</span> AU³</div>
+<div>T²: <span class="readout text-purple-700" id="readoutT2">1.00</span> Yr²</div>
+</div>
+<div class="flex space-x-2">
+<button class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition" id="btnReset">Reset Orbit</button>
+<button class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition" id="btnLog">Log Data</button>
+</div>
+</div>
+<!-- Right Column: Data and Chart -->
+<div class="bg-white p-4 rounded-lg shadow-md flex flex-col">
+<h2 class="text-xl font-bold mb-4 text-gray-800">Logged Data</h2>
+<div class="flex-1 min-h-[250px] relative mb-4">
+<canvas id="dataChart"></canvas>
+</div>
+<div class="overflow-y-auto max-h-60 border border-gray-200 rounded">
+<table class="min-w-full divide-y divide-gray-200 text-sm">
+<thead class="bg-gray-50 sticky top-0">
+<tr>
+<th class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider" scope="col">Mass (M)</th>
+<th class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider" scope="col">a (AU)</th>
+<th class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider" scope="col">T (Yr)</th>
+<th class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider" scope="col">a³</th>
+<th class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider" scope="col">T²</th>
+<th class="px-3 py-2 text-left font-medium text-gray-500 uppercase tracking-wider" scope="col">e</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200" id="dataTableBody">
+<!-- Data rows will be added here -->
+</tbody>
+</table>
+</div>
+<button class="mt-4 w-full bg-red-100 hover:bg-red-200 text-red-700 font-semibold py-2 px-4 rounded transition text-sm" id="btnClearData">Clear Data</button>
+</div>
+</div>
+</div>
+<script>
         // Constants
         const G = 4 * Math.PI * Math.PI; // AU, Years, Solar Masses
         const AU_TO_PX = 60; // 1 AU = 60 pixels for rendering

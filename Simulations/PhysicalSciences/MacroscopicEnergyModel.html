@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Macroscopic Energy vs. Microscopic Particles</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Macroscopic Energy vs. Microscopic Particles</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/MacroscopicEnergyModel.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Macroscopic Energy vs. Microscopic Particles. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Macroscopic Energy vs. Microscopic Particles" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Macroscopic Energy vs. Microscopic Particles, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Macroscopic Energy vs. Microscopic Particles. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         canvas { border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 8px; }
         .tab-btn { transition: all 0.2s; }
@@ -13,93 +21,105 @@
         .tab-btn.inactive { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; }
         .hidden { display: none; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Macroscopic Energy vs. Microscopic Particles",
+    "description": "Interactive science simulation for Macroscopic Energy vs. Microscopic Particles. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/MacroscopicEnergyModel.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-
 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="bg-blue-600 text-white p-6">
-        <h1 class="text-3xl font-bold">Macroscopic vs. Microscopic Energy</h1>
-        <p class="mt-2 text-blue-100">Model how macroscopic energy is a combination of particle motion and relative particle positions (HS-PS3-2).</p>
-    </div>
-
-    <div class="flex border-b bg-gray-50 p-4 gap-4">
-        <button id="tab-thermal" class="tab-btn active px-6 py-2 rounded border font-semibold" onclick="switchTab('thermal')">
+<div class="bg-blue-600 text-white p-6">
+<h1 class="text-3xl font-bold">Macroscopic vs. Microscopic Energy</h1>
+<p class="mt-2 text-blue-100">Model how macroscopic energy is a combination of particle motion and relative particle positions (HS-PS3-2).</p>
+</div>
+<div class="flex border-b bg-gray-50 p-4 gap-4">
+<button class="tab-btn active px-6 py-2 rounded border font-semibold" id="tab-thermal" onclick="switchTab('thermal')">
             Thermal Energy (Particle Motion)
         </button>
-        <button id="tab-potential" class="tab-btn inactive px-6 py-2 rounded border font-semibold" onclick="switchTab('potential')">
+<button class="tab-btn inactive px-6 py-2 rounded border font-semibold" id="tab-potential" onclick="switchTab('potential')">
             Potential Energy (Relative Position)
         </button>
-    </div>
-
-    <!-- Thermal Energy Tab -->
-    <div id="content-thermal" class="p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Macroscopic View -->
-            <div class="bg-gray-50 p-4 rounded-lg border">
-                <h2 class="text-xl font-bold text-gray-800 mb-2">Macroscopic Scale: Metal Block</h2>
-                <div class="w-full flex justify-center items-center h-48 bg-white border rounded">
-                    <!-- Metal Block color changes based on temp -->
-                    <div id="macro-block" class="w-48 h-32 rounded shadow-md flex items-center justify-center transition-colors duration-300" style="background-color: rgb(150, 150, 150);">
-                        <span class="text-white font-bold drop-shadow-md text-xl"><span id="macro-temp-text">20</span> &deg;C</span>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="block font-semibold text-gray-700 mb-2">Add/Remove Heat:</label>
-                    <input type="range" id="temp-slider" min="0" max="100" value="20" class="w-full" oninput="updateThermal(this.value)">
-                </div>
-                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                    <p class="text-sm text-blue-900"><strong>Macroscopic View:</strong> We feel thermal energy as temperature. Adding heat makes the object hotter.</p>
-                </div>
-            </div>
-
-            <!-- Microscopic View -->
-            <div class="bg-gray-50 p-4 rounded-lg border">
-                <h2 class="text-xl font-bold text-gray-800 mb-2">Microscopic Scale: Particle Lattice</h2>
-                <canvas id="thermalCanvas" width="500" height="300" class="w-full"></canvas>
-                <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
-                    <p class="text-sm text-green-900"><strong>Microscopic View:</strong> Thermal energy is actually the kinetic energy (motion/vibration) of the particles. Higher temperature = faster particle motion.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Potential Energy Tab -->
-    <div id="content-potential" class="p-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Macroscopic View -->
-            <div class="bg-gray-50 p-4 rounded-lg border">
-                <h2 class="text-xl font-bold text-gray-800 mb-2">Macroscopic Scale: Stretching a Spring</h2>
-                <div class="w-full relative h-48 bg-white border rounded flex flex-col justify-center items-center overflow-hidden">
-                    <div class="absolute left-0 top-0 bottom-0 w-8 bg-gray-400 border-r-4 border-gray-600"></div>
-                    <svg id="macro-spring" width="400" height="60" class="absolute left-8 transition-all duration-300">
-                        <path id="macro-spring-path" d="M 0 30 L 20 10 L 40 50 L 60 10 L 80 50 L 100 10 L 120 50 L 140 10 L 160 50 L 180 30" stroke="black" stroke-width="4" fill="none" />
-                    </svg>
-                    <div id="macro-spring-weight" class="absolute h-16 w-16 bg-blue-500 rounded border-2 border-blue-800 flex items-center justify-center transition-all duration-300" style="left: 188px;">
-                        <span class="text-white font-bold">Mass</span>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="block font-semibold text-gray-700 mb-2">Stretch Spring (Store Energy):</label>
-                    <input type="range" id="stretch-slider" min="0" max="100" value="0" class="w-full" oninput="updatePotential(this.value)">
-                </div>
-                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                    <p class="text-sm text-blue-900"><strong>Macroscopic View:</strong> Stretching a spring stores elastic potential energy in the system.</p>
-                </div>
-            </div>
-
-            <!-- Microscopic View -->
-            <div class="bg-gray-50 p-4 rounded-lg border">
-                <h2 class="text-xl font-bold text-gray-800 mb-2">Microscopic Scale: Molecular Bonds</h2>
-                <canvas id="potentialCanvas" width="500" height="300" class="w-full"></canvas>
-                <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
-                    <p class="text-sm text-green-900"><strong>Microscopic View:</strong> Potential energy is the energy associated with the <strong>relative position</strong> of particles. Stretching pulls atoms apart against attractive electromagnetic forces between them.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
-
+<!-- Thermal Energy Tab -->
+<div class="p-6" id="content-thermal">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Macroscopic View -->
+<div class="bg-gray-50 p-4 rounded-lg border">
+<h2 class="text-xl font-bold text-gray-800 mb-2">Macroscopic Scale: Metal Block</h2>
+<div class="w-full flex justify-center items-center h-48 bg-white border rounded">
+<!-- Metal Block color changes based on temp -->
+<div class="w-48 h-32 rounded shadow-md flex items-center justify-center transition-colors duration-300" id="macro-block" style="background-color: rgb(150, 150, 150);">
+<span class="text-white font-bold drop-shadow-md text-xl"><span id="macro-temp-text">20</span> °C</span>
+</div>
+</div>
+<div class="mt-4">
+<label class="block font-semibold text-gray-700 mb-2">Add/Remove Heat:</label>
+<input class="w-full" id="temp-slider" max="100" min="0" oninput="updateThermal(this.value)" type="range" value="20"/>
+</div>
+<div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+<p class="text-sm text-blue-900"><strong>Macroscopic View:</strong> We feel thermal energy as temperature. Adding heat makes the object hotter.</p>
+</div>
+</div>
+<!-- Microscopic View -->
+<div class="bg-gray-50 p-4 rounded-lg border">
+<h2 class="text-xl font-bold text-gray-800 mb-2">Microscopic Scale: Particle Lattice</h2>
+<canvas class="w-full" height="300" id="thermalCanvas" width="500"></canvas>
+<div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
+<p class="text-sm text-green-900"><strong>Microscopic View:</strong> Thermal energy is actually the kinetic energy (motion/vibration) of the particles. Higher temperature = faster particle motion.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Potential Energy Tab -->
+<div class="p-6 hidden" id="content-potential">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Macroscopic View -->
+<div class="bg-gray-50 p-4 rounded-lg border">
+<h2 class="text-xl font-bold text-gray-800 mb-2">Macroscopic Scale: Stretching a Spring</h2>
+<div class="w-full relative h-48 bg-white border rounded flex flex-col justify-center items-center overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-8 bg-gray-400 border-r-4 border-gray-600"></div>
+<svg class="absolute left-8 transition-all duration-300" height="60" id="macro-spring" width="400">
+<path d="M 0 30 L 20 10 L 40 50 L 60 10 L 80 50 L 100 10 L 120 50 L 140 10 L 160 50 L 180 30" fill="none" id="macro-spring-path" stroke="black" stroke-width="4"></path>
+</svg>
+<div class="absolute h-16 w-16 bg-blue-500 rounded border-2 border-blue-800 flex items-center justify-center transition-all duration-300" id="macro-spring-weight" style="left: 188px;">
+<span class="text-white font-bold">Mass</span>
+</div>
+</div>
+<div class="mt-4">
+<label class="block font-semibold text-gray-700 mb-2">Stretch Spring (Store Energy):</label>
+<input class="w-full" id="stretch-slider" max="100" min="0" oninput="updatePotential(this.value)" type="range" value="0"/>
+</div>
+<div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+<p class="text-sm text-blue-900"><strong>Macroscopic View:</strong> Stretching a spring stores elastic potential energy in the system.</p>
+</div>
+</div>
+<!-- Microscopic View -->
+<div class="bg-gray-50 p-4 rounded-lg border">
+<h2 class="text-xl font-bold text-gray-800 mb-2">Microscopic Scale: Molecular Bonds</h2>
+<canvas class="w-full" height="300" id="potentialCanvas" width="500"></canvas>
+<div class="mt-4 p-3 bg-green-50 border border-green-200 rounded">
+<p class="text-sm text-green-900"><strong>Microscopic View:</strong> Potential energy is the energy associated with the <strong>relative position</strong> of particles. Stretching pulls atoms apart against attractive electromagnetic forces between them.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <script>
     let activeTab = 'thermal';
     let animationId = null;

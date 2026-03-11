@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conservation of Momentum Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Conservation of Momentum Simulation</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/ConservationOfMomentumSimulation.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Conservation of Momentum Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Conservation of Momentum Simulation" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Conservation of Momentum Simulation, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Conservation of Momentum Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         /* Custom styles */
         canvas {
             display: block;
@@ -15,141 +23,152 @@
             border-radius: 0.5rem;
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Conservation of Momentum Simulation",
+    "description": "Interactive science simulation for Conservation of Momentum Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/ConservationOfMomentumSimulation.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans p-6">
-    <div class="max-w-6xl mx-auto">
-        <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">Conservation of Momentum Simulation</h1>
-        <p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS2-2</p>
-        <p class="text-center text-gray-600 mb-6">Explore 1D elastic and inelastic collisions. Adjust masses and velocities to observe the conservation of momentum and changes in kinetic energy.</p>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left Column: Controls -->
-            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 col-span-1">
-                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Simulation Controls</h2>
-
-                <div class="space-y-4">
-                    <!-- Object 1 Controls -->
-                    <div class="bg-blue-50 p-3 rounded border border-blue-200">
-                        <h3 class="font-medium text-blue-800 mb-2">Object 1 (Blue)</h3>
-                        <div class="flex flex-col mb-2">
-                            <label for="mass1" class="text-sm font-medium text-gray-700">Mass (kg): <span id="mass1-val">1.0</span></label>
-                            <input type="range" id="mass1" min="0.1" max="5.0" step="0.1" value="1.0" class="w-full">
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="vel1" class="text-sm font-medium text-gray-700">Initial Velocity (m/s): <span id="vel1-val">2.0</span></label>
-                            <input type="range" id="vel1" min="-5.0" max="5.0" step="0.1" value="2.0" class="w-full">
-                        </div>
-                    </div>
-
-                    <!-- Object 2 Controls -->
-                    <div class="bg-red-50 p-3 rounded border border-red-200">
-                        <h3 class="font-medium text-red-800 mb-2">Object 2 (Red)</h3>
-                        <div class="flex flex-col mb-2">
-                            <label for="mass2" class="text-sm font-medium text-gray-700">Mass (kg): <span id="mass2-val">1.5</span></label>
-                            <input type="range" id="mass2" min="0.1" max="5.0" step="0.1" value="1.5" class="w-full">
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="vel2" class="text-sm font-medium text-gray-700">Initial Velocity (m/s): <span id="vel2-val">-1.0</span></label>
-                            <input type="range" id="vel2" min="-5.0" max="5.0" step="0.1" value="-1.0" class="w-full">
-                        </div>
-                    </div>
-
-                    <!-- Environment Controls -->
-                    <div class="bg-gray-100 p-3 rounded border border-gray-300">
-                        <h3 class="font-medium text-gray-800 mb-2">Collision Settings</h3>
-                        <div class="flex flex-col">
-                            <label for="elasticity" class="text-sm font-medium text-gray-700">Elasticity (e): <span id="elasticity-val">1.0</span></label>
-                            <input type="range" id="elasticity" min="0.0" max="1.0" step="0.1" value="1.0" class="w-full">
-                            <p class="text-xs text-gray-500 mt-1">1.0 = Elastic, 0.0 = Perfectly Inelastic</p>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex space-x-2 pt-2">
-                        <button id="start-btn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">Start</button>
-                        <button id="pause-btn" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition" disabled>Pause</button>
-                        <button id="reset-btn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition">Reset</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Canvas and Live Data -->
-            <div class="lg:col-span-2 flex flex-col space-y-6">
-                <!-- Simulation Canvas -->
-                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 relative">
-                    <canvas id="sim-canvas" width="800" height="250" class="w-full h-auto"></canvas>
-                    <div class="absolute top-6 left-6 right-6 flex justify-between text-sm font-mono pointer-events-none">
-                        <div id="live-data-1" class="text-blue-700 bg-white/80 px-2 py-1 rounded hidden">v: 0.0 m/s<br>p: 0.0 kg·m/s</div>
-                        <div id="live-data-2" class="text-red-700 bg-white/80 px-2 py-1 rounded hidden text-right">v: 0.0 m/s<br>p: 0.0 kg·m/s</div>
-                    </div>
-                </div>
-
-                <!-- Live Physics Readout -->
-                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-                    <h3 class="text-lg font-semibold mb-3">System Metrics</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                        <div class="bg-gray-50 p-2 rounded border">
-                            <div class="text-xs text-gray-500 font-bold uppercase">Total Initial Momentum</div>
-                            <div id="metric-pi" class="text-lg font-mono">0.00</div>
-                            <div class="text-xs text-gray-500">kg·m/s</div>
-                        </div>
-                        <div class="bg-gray-50 p-2 rounded border">
-                            <div class="text-xs text-gray-500 font-bold uppercase">Total Final Momentum</div>
-                            <div id="metric-pf" class="text-lg font-mono">-</div>
-                            <div class="text-xs text-gray-500">kg·m/s</div>
-                        </div>
-                        <div class="bg-gray-50 p-2 rounded border">
-                            <div class="text-xs text-gray-500 font-bold uppercase">Total Initial KE</div>
-                            <div id="metric-kei" class="text-lg font-mono">0.00</div>
-                            <div class="text-xs text-gray-500">J</div>
-                        </div>
-                        <div class="bg-gray-50 p-2 rounded border">
-                            <div class="text-xs text-gray-500 font-bold uppercase">Total Final KE</div>
-                            <div id="metric-kef" class="text-lg font-mono">-</div>
-                            <div class="text-xs text-gray-500">J</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Data Logging Table -->
-        <div class="mt-8 bg-white p-6 rounded-lg shadow-md border border-gray-200">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold">Data Log</h2>
-                <button id="export-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm transition flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+<div class="max-w-6xl mx-auto">
+<h1 class="text-3xl font-bold text-center text-blue-700 mb-2">Conservation of Momentum Simulation</h1>
+<p class="text-sm text-gray-600 italic mb-4">Aligned with NGSS Performance Expectation: HS-PS2-2</p>
+<p class="text-center text-gray-600 mb-6">Explore 1D elastic and inelastic collisions. Adjust masses and velocities to observe the conservation of momentum and changes in kinetic energy.</p>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Left Column: Controls -->
+<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 col-span-1">
+<h2 class="text-xl font-semibold mb-4 border-b pb-2">Simulation Controls</h2>
+<div class="space-y-4">
+<!-- Object 1 Controls -->
+<div class="bg-blue-50 p-3 rounded border border-blue-200">
+<h3 class="font-medium text-blue-800 mb-2">Object 1 (Blue)</h3>
+<div class="flex flex-col mb-2">
+<label class="text-sm font-medium text-gray-700" for="mass1">Mass (kg): <span id="mass1-val">1.0</span></label>
+<input class="w-full" id="mass1" max="5.0" min="0.1" step="0.1" type="range" value="1.0"/>
+</div>
+<div class="flex flex-col">
+<label class="text-sm font-medium text-gray-700" for="vel1">Initial Velocity (m/s): <span id="vel1-val">2.0</span></label>
+<input class="w-full" id="vel1" max="5.0" min="-5.0" step="0.1" type="range" value="2.0"/>
+</div>
+</div>
+<!-- Object 2 Controls -->
+<div class="bg-red-50 p-3 rounded border border-red-200">
+<h3 class="font-medium text-red-800 mb-2">Object 2 (Red)</h3>
+<div class="flex flex-col mb-2">
+<label class="text-sm font-medium text-gray-700" for="mass2">Mass (kg): <span id="mass2-val">1.5</span></label>
+<input class="w-full" id="mass2" max="5.0" min="0.1" step="0.1" type="range" value="1.5"/>
+</div>
+<div class="flex flex-col">
+<label class="text-sm font-medium text-gray-700" for="vel2">Initial Velocity (m/s): <span id="vel2-val">-1.0</span></label>
+<input class="w-full" id="vel2" max="5.0" min="-5.0" step="0.1" type="range" value="-1.0"/>
+</div>
+</div>
+<!-- Environment Controls -->
+<div class="bg-gray-100 p-3 rounded border border-gray-300">
+<h3 class="font-medium text-gray-800 mb-2">Collision Settings</h3>
+<div class="flex flex-col">
+<label class="text-sm font-medium text-gray-700" for="elasticity">Elasticity (e): <span id="elasticity-val">1.0</span></label>
+<input class="w-full" id="elasticity" max="1.0" min="0.0" step="0.1" type="range" value="1.0"/>
+<p class="text-xs text-gray-500 mt-1">1.0 = Elastic, 0.0 = Perfectly Inelastic</p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex space-x-2 pt-2">
+<button class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition" id="start-btn">Start</button>
+<button class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition" disabled="" id="pause-btn">Pause</button>
+<button class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition" id="reset-btn">Reset</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Canvas and Live Data -->
+<div class="lg:col-span-2 flex flex-col space-y-6">
+<!-- Simulation Canvas -->
+<div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 relative">
+<canvas class="w-full h-auto" height="250" id="sim-canvas" width="800"></canvas>
+<div class="absolute top-6 left-6 right-6 flex justify-between text-sm font-mono pointer-events-none">
+<div class="text-blue-700 bg-white/80 px-2 py-1 rounded hidden" id="live-data-1">v: 0.0 m/s<br/>p: 0.0 kg·m/s</div>
+<div class="text-red-700 bg-white/80 px-2 py-1 rounded hidden text-right" id="live-data-2">v: 0.0 m/s<br/>p: 0.0 kg·m/s</div>
+</div>
+</div>
+<!-- Live Physics Readout -->
+<div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+<h3 class="text-lg font-semibold mb-3">System Metrics</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+<div class="bg-gray-50 p-2 rounded border">
+<div class="text-xs text-gray-500 font-bold uppercase">Total Initial Momentum</div>
+<div class="text-lg font-mono" id="metric-pi">0.00</div>
+<div class="text-xs text-gray-500">kg·m/s</div>
+</div>
+<div class="bg-gray-50 p-2 rounded border">
+<div class="text-xs text-gray-500 font-bold uppercase">Total Final Momentum</div>
+<div class="text-lg font-mono" id="metric-pf">-</div>
+<div class="text-xs text-gray-500">kg·m/s</div>
+</div>
+<div class="bg-gray-50 p-2 rounded border">
+<div class="text-xs text-gray-500 font-bold uppercase">Total Initial KE</div>
+<div class="text-lg font-mono" id="metric-kei">0.00</div>
+<div class="text-xs text-gray-500">J</div>
+</div>
+<div class="bg-gray-50 p-2 rounded border">
+<div class="text-xs text-gray-500 font-bold uppercase">Total Final KE</div>
+<div class="text-lg font-mono" id="metric-kef">-</div>
+<div class="text-xs text-gray-500">J</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Logging Table -->
+<div class="mt-8 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-xl font-semibold">Data Log</h2>
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm transition flex items-center" id="export-btn">
+<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                     Export CSV
                 </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-3 py-2 border-b">Trial</th>
-                            <th scope="col" class="px-3 py-2 border-b">m₁ (kg)</th>
-                            <th scope="col" class="px-3 py-2 border-b">m₂ (kg)</th>
-                            <th scope="col" class="px-3 py-2 border-b">v₁ᵢ (m/s)</th>
-                            <th scope="col" class="px-3 py-2 border-b">v₂ᵢ (m/s)</th>
-                            <th scope="col" class="px-3 py-2 border-b">e</th>
-                            <th scope="col" class="px-3 py-2 border-b">v₁f (m/s)</th>
-                            <th scope="col" class="px-3 py-2 border-b">v₂f (m/s)</th>
-                            <th scope="col" class="px-3 py-2 border-b">p_tot_i</th>
-                            <th scope="col" class="px-3 py-2 border-b">p_tot_f</th>
-                            <th scope="col" class="px-3 py-2 border-b">KE_i (J)</th>
-                            <th scope="col" class="px-3 py-2 border-b">KE_f (J)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="log-table-body">
-                        <!-- Data rows will be added here -->
-                    </tbody>
-                </table>
-                <div id="no-data-msg" class="text-center py-4 text-gray-500 italic">No data logged yet. Run a simulation to log data.</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+<div class="overflow-x-auto">
+<table class="min-w-full text-sm text-left text-gray-500">
+<thead class="text-xs text-gray-700 uppercase bg-gray-50">
+<tr>
+<th class="px-3 py-2 border-b" scope="col">Trial</th>
+<th class="px-3 py-2 border-b" scope="col">m₁ (kg)</th>
+<th class="px-3 py-2 border-b" scope="col">m₂ (kg)</th>
+<th class="px-3 py-2 border-b" scope="col">v₁ᵢ (m/s)</th>
+<th class="px-3 py-2 border-b" scope="col">v₂ᵢ (m/s)</th>
+<th class="px-3 py-2 border-b" scope="col">e</th>
+<th class="px-3 py-2 border-b" scope="col">v₁f (m/s)</th>
+<th class="px-3 py-2 border-b" scope="col">v₂f (m/s)</th>
+<th class="px-3 py-2 border-b" scope="col">p_tot_i</th>
+<th class="px-3 py-2 border-b" scope="col">p_tot_f</th>
+<th class="px-3 py-2 border-b" scope="col">KE_i (J)</th>
+<th class="px-3 py-2 border-b" scope="col">KE_f (J)</th>
+</tr>
+</thead>
+<tbody id="log-table-body">
+<!-- Data rows will be added here -->
+</tbody>
+</table>
+<div class="text-center py-4 text-gray-500 italic" id="no-data-msg">No data logged yet. Run a simulation to log data.</div>
+</div>
+</div>
+</div>
+<script>
         // DOM Elements
         const canvas = document.getElementById('sim-canvas');
         const ctx = canvas.getContext('2d');

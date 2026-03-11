@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Climate Impacts & Mitigation Forecast</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global Climate Impacts &amp; Mitigation Forecast</title>
+    <meta content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/GlobalClimateImpacts.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Global Climate Impacts &amp; Mitigation Forecast. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Global Climate Impacts &amp; Mitigation Forecast" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Global Climate Impacts &amp; Mitigation Forecast, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Global Climate Impacts &amp; Mitigation Forecast. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
         body { background-color: #0f172a; color: #f8fafc; }
         .slider-thumb::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -26,104 +34,110 @@
             background-color: rgba(16, 185, 129, 0.1);
         }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Global Climate Impacts & Mitigation Forecast",
+    "description": "Interactive science simulation for Global Climate Impacts & Mitigation Forecast. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/GlobalClimateImpacts.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="p-4 md:p-6">
-    <div class="max-w-7xl mx-auto">
-        <header class="text-center mb-6 border-b border-slate-700 pb-4">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Global Climate Impacts & Mitigation Forecast</h1>
-            <p class="text-slate-300 max-w-4xl mx-auto text-sm">
+<div class="max-w-7xl mx-auto">
+<header class="text-center mb-6 border-b border-slate-700 pb-4">
+<h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2">Global Climate Impacts &amp; Mitigation Forecast</h1>
+<p class="text-slate-300 max-w-4xl mx-auto text-sm">
                 Use a computational model to forecast the impacts of climate change on Earth systems (HS-ESS3-5, HS-ESS3-6) and evaluate technological solutions designed to reduce human impact (HS-ESS3-4).
             </p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-            <!-- Controls Panel -->
-            <div class="lg:col-span-1 flex flex-col gap-4">
-
-                <!-- Baseline Control -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl">
-                    <h2 class="text-lg font-bold text-amber-400 mb-3 border-b border-slate-600 pb-1">Human Activity</h2>
-                    <label class="block text-sm font-bold mb-1">
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+<!-- Controls Panel -->
+<div class="lg:col-span-1 flex flex-col gap-4">
+<!-- Baseline Control -->
+<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl">
+<h2 class="text-lg font-bold text-amber-400 mb-3 border-b border-slate-600 pb-1">Human Activity</h2>
+<label class="block text-sm font-bold mb-1">
                         Global CO₂ Emissions Rate:
                     </label>
-                    <div class="flex justify-between items-center text-xs mb-2">
-                        <span class="text-slate-400">Decreasing</span>
-                        <span id="emissionVal" class="text-white font-mono font-bold bg-slate-900 px-2 py-1 rounded">40 Gt/yr</span>
-                        <span class="text-slate-400">Increasing</span>
-                    </div>
-                    <input type="range" id="emissionSlider" min="0" max="80" step="1" value="40" class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb mb-2">
-                    <p class="text-xs text-slate-400 mt-2">Adjust the baseline trajectory of human emissions before technological mitigation.</p>
-                </div>
-
-                <!-- Technological Solutions -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex-grow">
-                    <h2 class="text-lg font-bold text-emerald-400 mb-3 border-b border-slate-600 pb-1">Technological Solutions</h2>
-                    <p class="text-xs text-slate-300 mb-4">Select solutions to reduce net impacts. Compare your mitigated forecast (solid lines) against the "Business as Usual" baseline (dashed lines).</p>
-
-                    <div class="space-y-3">
-                        <button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="renewable" onclick="toggleSolution('renewable')">
-                            <div class="font-bold text-sm flex justify-between"><span>Rapid Renewable Transition</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
-                            <div class="text-xs text-slate-400 mt-1">Replaces fossil fuels. Reduces gross CO₂ emissions drastically.</div>
-                        </button>
-
-                        <button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="ccs" onclick="toggleSolution('ccs')">
-                            <div class="font-bold text-sm flex justify-between"><span>Carbon Capture (CCS)</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
-                            <div class="text-xs text-slate-400 mt-1">Direct air capture technology. Removes CO₂ already in atmosphere.</div>
-                        </button>
-
-                        <button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="geoeng" onclick="toggleSolution('geoeng')">
-                            <div class="font-bold text-sm flex justify-between"><span>Solar Geoengineering</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
-                            <div class="text-xs text-slate-400 mt-1">Stratospheric aerosols reflect sunlight. Cools temp, but DOES NOT fix ocean acidification.</div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Panel -->
-            <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                <!-- CO2 Chart -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
-                    <h2 class="text-md font-bold text-slate-200 mb-1">Atmospheric CO₂ Concentration</h2>
-                    <p class="text-xs text-slate-400 mb-2">The primary driver of the system. (ppm)</p>
-                    <div class="flex-grow min-h-[220px] relative w-full">
-                        <canvas id="co2Chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Temp Chart -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
-                    <h2 class="text-md font-bold text-slate-200 mb-1">Global Temperature Anomaly</h2>
-                    <p class="text-xs text-slate-400 mb-2">Increase relative to pre-industrial levels. (°C)</p>
-                    <div class="flex-grow min-h-[220px] relative w-full">
-                        <canvas id="tempChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Ocean pH Chart -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
-                    <h2 class="text-md font-bold text-slate-200 mb-1">Ocean Acidification (Hydrosphere)</h2>
-                    <p class="text-xs text-slate-400 mb-2">Surface ocean pH. Lower is more acidic.</p>
-                    <div class="flex-grow min-h-[220px] relative w-full">
-                        <canvas id="phChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Ice Chart -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
-                    <h2 class="text-md font-bold text-slate-200 mb-1">Glacial Ice Volume (Cryosphere)</h2>
-                    <p class="text-xs text-slate-400 mb-2">Percent of current volume remaining.</p>
-                    <div class="flex-grow min-h-[220px] relative w-full">
-                        <canvas id="iceChart"></canvas>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <script>
+<div class="flex justify-between items-center text-xs mb-2">
+<span class="text-slate-400">Decreasing</span>
+<span class="text-white font-mono font-bold bg-slate-900 px-2 py-1 rounded" id="emissionVal">40 Gt/yr</span>
+<span class="text-slate-400">Increasing</span>
+</div>
+<input class="w-full h-2 bg-slate-600 rounded-lg appearance-none slider-thumb mb-2" id="emissionSlider" max="80" min="0" step="1" type="range" value="40"/>
+<p class="text-xs text-slate-400 mt-2">Adjust the baseline trajectory of human emissions before technological mitigation.</p>
+</div>
+<!-- Technological Solutions -->
+<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex-grow">
+<h2 class="text-lg font-bold text-emerald-400 mb-3 border-b border-slate-600 pb-1">Technological Solutions</h2>
+<p class="text-xs text-slate-300 mb-4">Select solutions to reduce net impacts. Compare your mitigated forecast (solid lines) against the "Business as Usual" baseline (dashed lines).</p>
+<div class="space-y-3">
+<button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="renewable" onclick="toggleSolution('renewable')">
+<div class="font-bold text-sm flex justify-between"><span>Rapid Renewable Transition</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
+<div class="text-xs text-slate-400 mt-1">Replaces fossil fuels. Reduces gross CO₂ emissions drastically.</div>
+</button>
+<button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="ccs" onclick="toggleSolution('ccs')">
+<div class="font-bold text-sm flex justify-between"><span>Carbon Capture (CCS)</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
+<div class="text-xs text-slate-400 mt-1">Direct air capture technology. Removes CO₂ already in atmosphere.</div>
+</button>
+<button class="solution-btn w-full text-left bg-slate-700 hover:bg-slate-600 p-3 rounded shadow-sm" data-solution="geoeng" onclick="toggleSolution('geoeng')">
+<div class="font-bold text-sm flex justify-between"><span>Solar Geoengineering</span><span class="text-emerald-400 opacity-0 active-check">✓</span></div>
+<div class="text-xs text-slate-400 mt-1">Stratospheric aerosols reflect sunlight. Cools temp, but DOES NOT fix ocean acidification.</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Charts Panel -->
+<div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- CO2 Chart -->
+<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+<h2 class="text-md font-bold text-slate-200 mb-1">Atmospheric CO₂ Concentration</h2>
+<p class="text-xs text-slate-400 mb-2">The primary driver of the system. (ppm)</p>
+<div class="flex-grow min-h-[220px] relative w-full">
+<canvas id="co2Chart"></canvas>
+</div>
+</div>
+<!-- Temp Chart -->
+<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+<h2 class="text-md font-bold text-slate-200 mb-1">Global Temperature Anomaly</h2>
+<p class="text-xs text-slate-400 mb-2">Increase relative to pre-industrial levels. (°C)</p>
+<div class="flex-grow min-h-[220px] relative w-full">
+<canvas id="tempChart"></canvas>
+</div>
+</div>
+<!-- Ocean pH Chart -->
+<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+<h2 class="text-md font-bold text-slate-200 mb-1">Ocean Acidification (Hydrosphere)</h2>
+<p class="text-xs text-slate-400 mb-2">Surface ocean pH. Lower is more acidic.</p>
+<div class="flex-grow min-h-[220px] relative w-full">
+<canvas id="phChart"></canvas>
+</div>
+</div>
+<!-- Ice Chart -->
+<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl flex flex-col">
+<h2 class="text-md font-bold text-slate-200 mb-1">Glacial Ice Volume (Cryosphere)</h2>
+<p class="text-xs text-slate-400 mb-2">Percent of current volume remaining.</p>
+<div class="flex-grow min-h-[220px] relative w-full">
+<canvas id="iceChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // --- State ---
         let activeSolutions = {
             renewable: false,

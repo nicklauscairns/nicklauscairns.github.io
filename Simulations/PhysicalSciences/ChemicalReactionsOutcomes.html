@@ -1,11 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chemical Reaction Outcomes Predictor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chemical Reaction Outcomes Predictor</title>
+    <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/ChemicalReactionsOutcomes.html" property="og:url"/>
+    <meta content="website" property="og:type"/>
+    <meta content="Interactive science simulation for Chemical Reaction Outcomes Predictor. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
+    <meta content="Chemical Reaction Outcomes Predictor" property="og:title"/>
+    <meta content="Nicklaus Cairns" name="author"/>
+    <meta content="science, simulation, NGSS, Chemical Reaction Outcomes Predictor, education, interactive" name="keywords"/>
+    <meta content="Interactive science simulation for Chemical Reaction Outcomes Predictor. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         body { font-family: 'Inter', sans-serif; }
         .atom-circle {
             width: 80px; height: 80px; border-radius: 50%; display: flex;
@@ -28,84 +36,96 @@
         .draggable { cursor: grab; }
         .draggable:active { cursor: grabbing; }
     </style>
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "Chemical Reaction Outcomes Predictor",
+    "description": "Interactive science simulation for Chemical Reaction Outcomes Predictor. Explore and learn with this engaging, NGSS-aligned high school educational tool.",
+    "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/ChemicalReactionsOutcomes.html",
+    "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+    },
+    "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educational framework",
+        "educationalFramework": "Next Generation Science Standards (NGSS)"
+    },
+    "learningResourceType": "Interactive Simulation"
+}
+    </script>
 </head>
 <body class="bg-gray-50 text-slate-800 p-6 min-h-screen">
-    <div class="max-w-5xl mx-auto space-y-6">
-        <header class="border-b pb-4">
-            <h1 class="text-3xl font-bold text-slate-900">Chemical Reaction Outcomes Predictor</h1>
-            <h2 class="text-xl text-slate-600 mt-1">HS-PS1-2: Predicting Reactions based on Valence Electrons</h2>
-            <p class="mt-2 text-slate-700">Construct explanations for simple chemical reactions by analyzing the outermost electron states of atoms and their trends in the periodic table.</p>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Left: Element Selection -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                <h3 class="font-semibold text-lg mb-4">1. Select Reactants</h3>
-                <p class="text-sm text-slate-600 mb-4">Click to add atoms to the reaction chamber.</p>
-
-                <div class="space-y-4">
-                    <div>
-                        <h4 class="text-sm font-medium text-slate-500 mb-2">Alkali Metals (Group 1)</h4>
-                        <div class="flex gap-2">
-                            <button class="bg-red-500 hover:bg-red-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="Na" data-valence="1" data-color="#ef4444">Na</button>
-                            <button class="bg-red-500 hover:bg-red-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="K" data-valence="1" data-color="#ef4444">K</button>
-                        </div>
+<div class="max-w-5xl mx-auto space-y-6">
+<header class="border-b pb-4">
+<h1 class="text-3xl font-bold text-slate-900">Chemical Reaction Outcomes Predictor</h1>
+<h2 class="text-xl text-slate-600 mt-1">HS-PS1-2: Predicting Reactions based on Valence Electrons</h2>
+<p class="mt-2 text-slate-700">Construct explanations for simple chemical reactions by analyzing the outermost electron states of atoms and their trends in the periodic table.</p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Left: Element Selection -->
+<div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+<h3 class="font-semibold text-lg mb-4">1. Select Reactants</h3>
+<p class="text-sm text-slate-600 mb-4">Click to add atoms to the reaction chamber.</p>
+<div class="space-y-4">
+<div>
+<h4 class="text-sm font-medium text-slate-500 mb-2">Alkali Metals (Group 1)</h4>
+<div class="flex gap-2">
+<button class="bg-red-500 hover:bg-red-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#ef4444" data-element="Na" data-valence="1">Na</button>
+<button class="bg-red-500 hover:bg-red-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#ef4444" data-element="K" data-valence="1">K</button>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-medium text-slate-500 mb-2">Halogens (Group 17)</h4>
+<div class="flex gap-2">
+<button class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#22c55e" data-element="Cl" data-valence="7">Cl</button>
+<button class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#22c55e" data-element="F" data-valence="7">F</button>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-medium text-slate-500 mb-2">Other Nonmetals</h4>
+<div class="flex gap-2">
+<button class="bg-blue-500 hover:bg-blue-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#3b82f6" data-element="O" data-valence="6">O</button>
+<button class="bg-gray-500 hover:bg-gray-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#6b7280" data-element="C" data-valence="4">C</button>
+<button class="bg-purple-500 hover:bg-purple-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#a855f7" data-element="H" data-valence="1">H</button>
+</div>
+</div>
+</div>
+<button class="mt-6 w-full border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded text-sm transition-colors" id="clearBtn">Clear Reactants</button>
+</div>
+<!-- Middle/Right: Reaction Chamber -->
+<div class="md:col-span-2 space-y-6">
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-semibold text-lg">2. Reaction Chamber</h3>
+<button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled="" id="reactBtn">Predict Outcome</button>
+</div>
+<div class="dropzone mb-4 flex-wrap" id="reactantsArea">
+<span class="text-slate-400 text-center" id="emptyStateMsg">Add elements from the left panel.</span>
+</div>
+<div class="text-center text-3xl text-slate-400 mb-4 hidden" id="reactionArrow">
+                        ↓
                     </div>
-                    <div>
-                        <h4 class="text-sm font-medium text-slate-500 mb-2">Halogens (Group 17)</h4>
-                        <div class="flex gap-2">
-                            <button class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="Cl" data-valence="7" data-color="#22c55e">Cl</button>
-                            <button class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="F" data-valence="7" data-color="#22c55e">F</button>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-medium text-slate-500 mb-2">Other Nonmetals</h4>
-                        <div class="flex gap-2">
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="O" data-valence="6" data-color="#3b82f6">O</button>
-                            <button class="bg-gray-500 hover:bg-gray-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="C" data-valence="4" data-color="#6b7280">C</button>
-                            <button class="bg-purple-500 hover:bg-purple-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-element="H" data-valence="1" data-color="#a855f7">H</button>
-                        </div>
-                    </div>
-                </div>
-                <button id="clearBtn" class="mt-6 w-full border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded text-sm transition-colors">Clear Reactants</button>
-            </div>
-
-            <!-- Middle/Right: Reaction Chamber -->
-            <div class="md:col-span-2 space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-lg">2. Reaction Chamber</h3>
-                        <button id="reactBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>Predict Outcome</button>
-                    </div>
-
-                    <div id="reactantsArea" class="dropzone mb-4 flex-wrap">
-                        <span class="text-slate-400 text-center" id="emptyStateMsg">Add elements from the left panel.</span>
-                    </div>
-
-                    <div id="reactionArrow" class="text-center text-3xl text-slate-400 mb-4 hidden">
-                        &#8595;
-                    </div>
-
-                    <div id="productsArea" class="dropzone hidden bg-green-50 border-green-200 flex-wrap">
-                        <!-- Products will appear here -->
-                    </div>
-                </div>
-
-                <!-- Explanation Panel -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 class="font-bold text-blue-900 mb-2 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+<div class="dropzone hidden bg-green-50 border-green-200 flex-wrap" id="productsArea">
+<!-- Products will appear here -->
+</div>
+</div>
+<!-- Explanation Panel -->
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+<h3 class="font-bold text-blue-900 mb-2 flex items-center">
+<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                         Scientific Explanation
                     </h3>
-                    <div id="explanationText" class="text-blue-800 text-sm leading-relaxed">
+<div class="text-blue-800 text-sm leading-relaxed" id="explanationText">
                         Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+</div>
+</div>
+<script>
         const state = {
             reactants: [], // Array of objects: { id, element, valence, color }
             nextId: 1
