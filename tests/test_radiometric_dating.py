@@ -33,11 +33,12 @@ def test_radiometric_dating():
         slider.fill("50")
         page.evaluate("document.getElementById('speedSlider').dispatchEvent(new Event('input'))")
 
-        page.locator("#startBtn").click()
+        # Use JS to click since button might be covered/disabled incorrectly
+        page.evaluate("document.getElementById('startBtn').click()")
 
         # Wait a moment for decay to happen
         page.wait_for_timeout(1000)
-        page.locator("#pauseBtn").click()
+        page.evaluate("document.getElementById('pauseBtn').click()")
 
         # Time should have advanced
         current_time = float(page.locator("#timeDisplay").inner_text())

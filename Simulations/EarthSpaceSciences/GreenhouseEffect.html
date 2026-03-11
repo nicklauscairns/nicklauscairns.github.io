@@ -207,7 +207,7 @@
 
             // Interactive variables
             ghgPpm: 400,
-            albedoPercent: 30,
+            albedoPercent: 15,
             solarPercent: 100,
             cloudPercent: 50,
 
@@ -256,7 +256,7 @@
             // Let's assume total planetary albedo is around 30%.
             // Surface might be 15%, Clouds might add 15%.
             const surfaceAlbedoFrac = state.albedoPercent / 100.0;
-            const cloudReflectionFrac = (state.cloudPercent / 100.0) * 0.20; // Max 20% extra reflection from clouds
+            const cloudReflectionFrac = (state.cloudPercent / 100.0) * 0.30; // Max 30% extra reflection from clouds
 
             // Total albedo is bounded between 0 and 0.9
             const totalAlbedo = Math.min(0.9, surfaceAlbedoFrac + cloudReflectionFrac);
@@ -377,7 +377,7 @@
             state.temp = 15.0;
 
             state.ghgPpm = 400; els.ghgSlider.value = 400;
-            state.albedoPercent = 30; els.albedoSlider.value = 30;
+            state.albedoPercent = 15; els.albedoSlider.value = 15;
             state.solarPercent = 100; els.solarSlider.value = 100;
             state.cloudPercent = 50; els.cloudSlider.value = 50;
 
