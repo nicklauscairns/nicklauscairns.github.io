@@ -17,8 +17,12 @@ def generate_sitemap():
     # Include root index.html
     html_files.append('./index.html')
 
+    # Include NGSS markdown files
+    ngss_files = glob.glob('./NGSS/*.md')
+
     # Sort for consistency
     html_files.sort()
+    ngss_files.sort()
 
     # Create the root element
     urlset = ET.Element('urlset')
@@ -33,6 +37,29 @@ def generate_sitemap():
     for filepath in html_files:
         # Normalize path
         normalized_path = filepath.replace('./', '').replace('\\', '/')
+
+        # Truncate index.html from URL (but keep trailing slash for directories)
+        if normalized_path == 'index.html':
+            normalized_path = ''
+        elif normalized_path.endswith('/index.html'):
+            normalized_path = normalized_path.replace('index.html', '')
+
+        # Create full URL
+        full_url = f"{base_url}{normalized_path}"
+
+        # Create XML elements
+        url_elem = ET.SubElement(urlset, 'url')
+        loc_elem = ET.SubElement(url_elem, 'loc')
+        loc_elem.text = full_url
+
+    # Add NGSS files
+    for filepath in ngss_files:
+        # Normalize path
+        normalized_path = filepath.replace('./', '').replace('\\', '/')
+
+        # Remove the .md extension for the URL
+        if normalized_path.endswith('.md'):
+            normalized_path = normalized_path[:-3]
 
         # Create full URL
         full_url = f"{base_url}{normalized_path}"
