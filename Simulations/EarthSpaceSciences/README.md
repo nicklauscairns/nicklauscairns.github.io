@@ -330,15 +330,96 @@ Develop a quantitative model to describe the cycling of carbon among the hydrosp
 
 - [Global Carbon Cycle Model](GlobalCarbonCycleModel.html) - A quantitative box-model simulation demonstrating the conservation of mass and the flows of carbon between Earth's major reservoirs, highlighting human impacts. [2026-03-12 12:00:00]
 
+<details>
+  <summary><b>Evaluation: Anchoring Phenomenon | 4.5/5 Stars | 2026-03-12 12:00:00</b></summary>
+  <ul>
+    <li>
+      <b>Overview:</b> Extremely relevant anchoring phenomenon for understanding climate change and human impact (Criterion 1). The box-model clearly visualizes the flow of carbon (Criterion 4), but mathematical relationships might need to be explicitly calculated.
+    </li>
+    <li>
+      <b>Dimensional Evaluation & Evidence Statements:</b> Directly supports the DCI (ESS2.D) on carbon cycling and the CCC (Energy and Matter). For HS-ESS2-6, it allows for quantitative modeling of the carbon cycle (1.a, 2.a).
+    </li>
+    <li>
+      <b>AI Action Items for Improvement:</b>
+      <ul>
+        <li><b>Improve SEP (Quantitative Modeling):</b> Make the fluxes (arrows between reservoirs) numerically adjustable and show real-time calculated changes to the total mass in each reservoir, rather than just preset animations.</li>
+        <li><b>Enhance Relevance (Criterion 1):</b> Include specific historical data sets (e.g., pre-industrial vs. modern carbon levels) as preset scenarios students can load.</li>
+      </ul>
+    </li>
+    <li>
+      <b>Implementation Checklist for AI Agent:</b>
+      <ul>
+        <li>[ ] Implement numerical input fields for carbon fluxes (e.g., fossil fuel emissions, photosynthesis rate).</li>
+        <li>[ ] Add "Pre-Industrial" and "Current Day" preset buttons to load historical data parameters.</li>
+      </ul>
+    </li>
+  </ul>
+</details>
+
+
 ### HS-ESS2-7
 Construct an argument based on evidence about the simultaneous coevolution of Earth’s systems and life on Earth.
 
 - [The Great Oxidation Event](GreatOxidationEvent.html) - An interactive timeline model simulating how early photosynthetic life altered Earth's atmosphere, exhausted ocean chemical sinks, and paved the way for complex aerobic life. [2026-03-12 12:00:00]
 
+<details>
+  <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 12:00:00</b></summary>
+  <ul>
+    <li>
+      <b>Overview:</b> Great investigative phenomenon connecting Earth systems to biological evolution (Criterion 4). It is visually engaging and demonstrates coevolution well. It lacks a direct modern analog for students to relate to (Criterion 1).
+    </li>
+    <li>
+      <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the DCI (ESS2.E) on the coevolution of Earth's systems and life, and the CCC (Stability and Change). For HS-ESS2-7, it aids in constructing an argument based on evidence (1.a, 2.a).
+    </li>
+    <li>
+      <b>AI Action Items for Improvement:</b>
+      <ul>
+        <li><b>Enhance SEP (Constructing Arguments):</b> After running the simulation, prompt students with a specific claim (e.g., "Life caused the Great Oxidation Event, not geological changes") and ask them to select evidence from the timeline to support or refute it.</li>
+        <li><b>Improve Model Complexity:</b> Explicitly show the exhaustion of ocean chemical sinks (like Iron precipitating out as Banded Iron Formations) before atmospheric oxygen begins to rise.</li>
+      </ul>
+    </li>
+    <li>
+      <b>Implementation Checklist for AI Agent:</b>
+      <ul>
+        <li>[ ] Add an interactive "Argument Builder" section at the end of the timeline.</li>
+        <li>[ ] Update the simulation logic and visuals to clearly depict the formation of Banded Iron Formations prior to atmospheric oxygenation.</li>
+      </ul>
+    </li>
+  </ul>
+</details>
+
+
 ### HS-ESS3-1
 Construct an explanation based on evidence for how the availability of natural resources, occurrence of natural hazards, and changes in climate have influenced human activity.
 
 - [Human Settlement & Migration Simulator](HumanMigrationSettlementSimulator.html) - An interactive map demonstrating how human populations migrate towards natural resources and are displaced by natural hazards and climate change. [2026-03-12 12:00:00]
+
+<details>
+  <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 12:00:00</b></summary>
+  <ul>
+    <li>
+      <b>Overview:</b> Good investigative phenomenon exploring the push and pull factors of human settlement (Criterion 4). It is culturally relevant as it deals with human populations and resources (Criterion 1).
+    </li>
+    <li>
+      <b>Dimensional Evaluation & Evidence Statements:</b> Supports the DCI (ESS3.A, ESS3.B) on natural resources and natural hazards, and the CCC (Cause and Effect). For HS-ESS3-1, it helps construct explanations based on evidence (1.a, 2.a).
+    </li>
+    <li>
+      <b>AI Action Items for Improvement:</b>
+      <ul>
+        <li><b>Improve SEP (Constructing Explanations):</b> The current map is too abstract. Overlay specific historical scenarios (e.g., the Dust Bowl, or ancient Egyptian settlement along the Nile) so students are explaining specific, real events rather than generic "dots on a map."</li>
+        <li><b>Enhance Relevance (Criterion 1):</b> Add modern scenarios focusing on climate refugees (e.g., sea-level rise displacing coastal populations).</li>
+      </ul>
+    </li>
+    <li>
+      <b>Implementation Checklist for AI Agent:</b>
+      <ul>
+        <li>[ ] Replace generic map scenarios with specific historical case studies (e.g., Nile River Valley, Dust Bowl).</li>
+        <li>[ ] Add a modern "Climate Refugee" scenario featuring sea-level rise and coastal displacement.</li>
+      </ul>
+    </li>
+  </ul>
+</details>
+
 
 ### HS-ESS3-2
 Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.*
@@ -350,6 +431,33 @@ Create a computational simulation to illustrate the relationships among manageme
 
 - [Sustainable Resource Management Simulator](ResourceManagementSimulator.html) - A computational simulation where users must balance human population growth against biodiversity loss and resource depletion. [2026-03-12 12:00:00]
 
+<details>
+  <summary><b>Evaluation: Anchoring Phenomenon | 4.5/5 Stars | 2026-03-12 12:00:00</b></summary>
+  <ul>
+    <li>
+      <b>Overview:</b> Very strong anchoring phenomenon. It is highly relevant to students' lives (sustainability, energy policy) (Criterion 1) and provides a complex system to investigate (Criterion 4).
+    </li>
+    <li>
+      <b>Dimensional Evaluation & Evidence Statements:</b> Directly supports the DCI (ESS3.A, ESS3.C) on natural resources and human impacts, and the CCC (Stability and Change). For HS-ESS3-3, it successfully serves as a computational simulation to illustrate relationships (1.a, 2.a).
+    </li>
+    <li>
+      <b>AI Action Items for Improvement:</b>
+      <ul>
+        <li><b>Improve Computational Model (SEP):</b> Ensure the underlying mathematical model explicitly calculates a "Sustainability Index" that incorporates resource depletion rates, population growth, and biodiversity metrics, displaying this formula transparently to the user.</li>
+        <li><b>Enhance Relevance (Criterion 1):</b> Allow students to choose different starting biomes (e.g., arid desert vs. temperate forest), as resource management strategies differ drastically based on local context.</li>
+      </ul>
+    </li>
+    <li>
+      <b>Implementation Checklist for AI Agent:</b>
+      <ul>
+        <li>[ ] Implement and explicitly display a "Sustainability Index" formula and real-time score.</li>
+        <li>[ ] Add a "Select Biome" starting screen that alters base resources and population growth rates.</li>
+      </ul>
+    </li>
+  </ul>
+</details>
+
+
 ### HS-ESS3-4
 Evaluate or refine a technological solution that reduces impacts of human activities on natural systems.*
 
@@ -359,6 +467,33 @@ Evaluate or refine a technological solution that reduces impacts of human activi
 Analyze geoscience data and the results from global climate models to make an evidence-based forecast of the current rate of global or regional climate change and associated future impacts to Earth systems.
 
 - [Global Climate Impacts & Mitigation Forecast](GlobalClimateImpacts.html) - A computational dashboard forecasting the future rate of climate change and its specific impacts on glacial ice and ocean pH. [2026-03-12 12:00:00]
+
+<details>
+  <summary><b>Evaluation: Anchoring Phenomenon | 5.0/5 Stars | 2026-03-12 12:00:00</b></summary>
+  <ul>
+    <li>
+      <b>Overview:</b> Excellent anchoring phenomenon. It allows for direct forecasting and data analysis on the most pressing global issue (Criterion 1). It integrates multiple Earth systems effectively (Criterion 4).
+    </li>
+    <li>
+      <b>Dimensional Evaluation & Evidence Statements:</b> Fully supports the DCI (ESS3.D) on global climate change and the CCC (Stability and Change). For HS-ESS3-5, it allows students to analyze data and make evidence-based forecasts (1.a, 2.a).
+    </li>
+    <li>
+      <b>AI Action Items for Improvement:</b>
+      <ul>
+        <li><b>Enhance SEP (Analyzing Data):</b> Incorporate real-world historical data sets (e.g., Keeling Curve for CO2, or actual global temperature anomalies from NOAA) as a baseline comparison against the simulation's future projections.</li>
+        <li><b>Improve Interactivity:</b> Allow students to plot their own projected trendlines before running the simulation to see how well their hypothesis matches the computational forecast.</li>
+      </ul>
+    </li>
+    <li>
+      <b>Implementation Checklist for AI Agent:</b>
+      <ul>
+        <li>[ ] Integrate historical baseline data (NOAA/Keeling Curve) into the forecasting graphs.</li>
+        <li>[ ] Implement a "Draw Prediction" tool allowing users to sketch a trendline on the graph prior to running the forecast model.</li>
+      </ul>
+    </li>
+  </ul>
+</details>
+
 
 ### HS-ESS3-6
 Use a computational representation to illustrate the relationships among Earth systems and how those relationships are being modified due to human activity.
