@@ -7,13 +7,10 @@ Use the periodic table as a model to predict the relative properties of elements
 
 - [Alkali Metals Phenomenon](AlkaliMetalsPhenomenon.html) - Observe the reaction patterns and atomic structures of different elements.
   <details>
-    <summary><b>Evaluate Phenomenon & AI Action Items (Click to expand)</b></summary>
+    <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 17:47:30</b></summary>
     <ul>
       <li>
-        <b>Phenomenon Type:</b> Investigative phenomenon. Visually engaging, but addresses a specific chemistry sub-component (patterns of outermost electrons and reactivity) rather than a broad, complex real-world problem.
-      </li>
-      <li>
-        <b>Rating: 3.5 out of 5 stars</b> as an NGSS style phenomenon. It effectively challenges assumptions by letting students test different metals and links the macroscopic reaction to the microscopic atomic structure (Criterion 4: Investigable Through Practices). However, it lacks deep Cultural and Personal Relevance (Criterion 1) out-of-the-box.
+        <b>Overview:</b> Visually engaging, but addresses a specific chemistry sub-component (patterns of outermost electrons and reactivity) rather than a broad, complex real-world problem. It effectively challenges assumptions by letting students test different metals and links the macroscopic reaction to the microscopic atomic structure (Criterion 4: Investigable Through Practices). However, it lacks deep Cultural and Personal Relevance (Criterion 1) out-of-the-box.
       </li>
       <li>
         <b>Dimensional Evaluation & Evidence Statements:</b> The simulation partially enables the target dimensions. It strongly supports the DCI (PS1.A) and CCC (Patterns) by showing causal relationships between valence electrons and reactivity across groups. However, it weakly supports the full SEP (Developing and Using Models); students act as observers rather than developers. Regarding Observable Features, it demonstrates 1.a.i-iii (identifying model components), 2.a.i (arrangement reflects patterns), and parts of 3.b.iii (reactivity trends). It currently fails to support predicting bond formation (3.b.i) or stable ions (3.b.ii).
