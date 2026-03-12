@@ -6,13 +6,37 @@
 Use the periodic table as a model to predict the relative properties of elements based on the patterns of electrons in the outermost energy level of atoms.
 
 - [Alkali Metals Phenomenon](AlkaliMetalsPhenomenon.html) - Observe the reaction patterns and atomic structures of different elements.
-  * This simulation is more appropriate as an investigative phenomenon. While visually engaging and clear, it addresses a specific sub-component of chemistry (patterns of outermost electrons and reactivity) rather than a broad, complex real-world problem that could anchor an entire unit.
-
-    **Rating: 3.5 out of 5 stars** as an NGSS style phenomenon. It effectively challenges assumptions by letting students test different metals (including a "Mystery Metal") and clearly links the macroscopic reaction to the microscopic atomic structure (Criterion 4: Investigable Through Practices). However, it lacks deep Cultural and Personal Relevance (Criterion 1) out-of-the-box, as dropping pure alkali metals in water isn't a common student experience, even if it is a classic chemistry demonstration.
-
-    **Dimensional Evaluation & Evidence Statements:** The simulation partially enables the target dimensions. It strongly supports the DCI (PS1.A) by explicitly showing the repeating patterns of outer electron states and their relation to macroscopic properties (reactivity/temperature). It enables the CCC (Patterns) by allowing students to compare elements down the group (Li, Na, K) and across rows (Ca, Al) to see causal relationships between valence electrons and reactivity. However, it weakly supports the full SEP (Developing and Using Models); while it provides a model, students act more as observers triggering an animation rather than "synthesizing and developing" a model to predict relationships themselves. Regarding Observable Features, the simulation can directly demonstrate 1.a.i-iii (identifying components of the model like elements, nucleus, and valence electrons), 2.a.i (arrangement reflects patterns of outermost electrons), and parts of 3.b.iii (trend in reactivity based on attractions). It does not currently support predicting bond formation (3.b.i) or stable ions (3.b.ii).
-
-    **Recommendations for Improvement:** To improve its effectiveness as a phenomenon, the simulation should allow students to manipulate variables rather than just clicking buttons (e.g., let them build the atom by adding protons/electrons and see how that changes the simulated reactivity). Additionally, connecting the "Mystery Metal" to a real-world consequence (e.g., a lithium-ion battery fire or historical alkali metal disposal) would vastly improve its personal relevance and utility as an anchoring phenomenon.
+  <details>
+    <summary><b>Evaluate Phenomenon & AI Action Items (Click to expand)</b></summary>
+    <ul>
+      <li>
+        <b>Phenomenon Type:</b> Investigative phenomenon. Visually engaging, but addresses a specific chemistry sub-component (patterns of outermost electrons and reactivity) rather than a broad, complex real-world problem.
+      </li>
+      <li>
+        <b>Rating: 3.5 out of 5 stars</b> as an NGSS style phenomenon. It effectively challenges assumptions by letting students test different metals and links the macroscopic reaction to the microscopic atomic structure (Criterion 4: Investigable Through Practices). However, it lacks deep Cultural and Personal Relevance (Criterion 1) out-of-the-box.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> The simulation partially enables the target dimensions. It strongly supports the DCI (PS1.A) and CCC (Patterns) by showing causal relationships between valence electrons and reactivity across groups. However, it weakly supports the full SEP (Developing and Using Models); students act as observers rather than developers. Regarding Observable Features, it demonstrates 1.a.i-iii (identifying model components), 2.a.i (arrangement reflects patterns), and parts of 3.b.iii (reactivity trends). It currently fails to support predicting bond formation (3.b.i) or stable ions (3.b.ii).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Improve SEP (Developing Models):</b> Instead of static buttons for 'Drop Li' or 'Drop Na', add a <code>&lt;input type='range'&gt;</code> slider or <code>+</code>/<code>-</code> buttons to let students construct the atom dynamically by adding protons and electrons. Bind this to <code>elementData</code> so the simulation calculates reactivity based on the user-built valence shell.</li>
+          <li><b>Fulfill Observable Feature 3.b.ii (Stable Ions):</b> Add a UI button labeled "Form Ion". When clicked, trigger an animation to remove the valence electron(s) from <code>aCanvas</code> and update the UI to display the resulting stable ion charge (e.g., <code>Na+</code>).</li>
+          <li><b>Improve Phenomenon Relevance (Criterion 1):</b> Update the <code>elementDesc</code> strings for the 'Mystery Metal (X)' to explicitly frame it as a 'Lithium-Ion Battery Fire hazard'. This anchors the chemical principles in a relevant real-world context for high school students.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Refactor the UI controls to allow dynamic atom building (protons/electrons) instead of static preset metal buttons.</li>
+          <li>[ ] Bind the dynamic atom state to the reaction engine to calculate <code>reactDuration</code> and <code>speed</code> based on valence electrons.</li>
+          <li>[ ] Implement an "Ionize" function and animation in the <code>aCanvas</code> to visualize the loss of valence electrons and display the net charge.</li>
+          <li>[ ] Rewrite the "Mystery Metal" narrative text to describe a thermal runaway event in a modern battery to increase cultural/personal relevance.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-2
 Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.
