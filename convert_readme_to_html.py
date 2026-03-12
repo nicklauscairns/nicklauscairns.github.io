@@ -56,7 +56,8 @@ for md_file in readmes:
     html_content = result.stdout
 
     # Replace internal links ending with README.md to index.html
-    html_content = html_content.replace('README.md"', 'index.html"')
+    html_content = html_content.replace('README.md"', '"')
+    html_content = html_content.replace('.md"', '"')
 
     # Create final HTML file
     final_html = html_template.format(content=html_content)

@@ -46,7 +46,7 @@
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/WaterPropertiesEarthProcesses.html</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/index.html</loc>
+    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/CityWaterInfrastructureSimulation.html</loc>
@@ -61,7 +61,7 @@
     <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/WindTurbineSimulation.html</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/index.html</loc>
+    <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/AerobicAnaerobic.html</loc>
@@ -133,7 +133,7 @@
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/TrophicEnergy.html</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/LifeSciences/index.html</loc>
+    <loc>https://nicklauscairns.com/Simulations/LifeSciences/</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/AlkaliMetalsPhenomenon.html</loc>
@@ -211,12 +211,27 @@
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/WaveParticleDuality.html</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/index.html</loc>
+    <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/index.html</loc>
+    <loc>https://nicklauscairns.com/Simulations/</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/index.html</loc>
+    <loc>https://nicklauscairns.com/</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolEarthSpaceSciencesPerformanceExpectations</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolEngineeringTechnologySciencePerformanceExpectations</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolLifeSciencesPerformanceExpectations</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolPhysicalSciencesEvidenceStatements</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolPhysicalSciencesPerformanceExpectations</loc>
   </url>
 </urlset>
