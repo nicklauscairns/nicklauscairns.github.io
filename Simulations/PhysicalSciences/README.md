@@ -39,114 +39,717 @@ Use the periodic table as a model to predict the relative properties of elements
 Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.
 
 - [Chemical Reaction Outcomes Predictor](ChemicalReactionsOutcomes.html) - An interactive sandbox to predict outcomes and explore the octet rule by combining atoms with varying valence electrons. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 3.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Functions as a basic drill-and-practice sandbox for valence electrons and the octet rule rather than a compelling phenomenon. It addresses the DCI but lacks Cultural and Personal Relevance (Criterion 1) and does not present a puzzling real-world scenario to solve.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Partially supports the target dimensions. It addresses DCI PS1.B and CCC Patterns by showing how valence electrons dictate bonding patterns. It supports SEP Constructing Explanations weakly as it provides the explanation rather than having students construct it. It covers Observable Features 1.a.ii-iii and 2.a.i-iii. It fails to support 4.a (revising an explanation given new context/evidence).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Improve SEP (Constructing Explanations):</b> Hide the pre-written 'Scientific Explanation' box by default. Replace it with a text area where students must type their own explanation of *why* the reaction occurred based on valence electrons. Add a 'Check Explanation' button that uses a simple keyword check (e.g., 'valence', 'octet', 'transfer', 'share') before revealing the correct explanation.</li>
+          <li><b>Fulfill Observable Feature 4.a (Revising Explanations):</b> Add a 'New Context/Challenge' mode. After successfully predicting a simple reaction (like NaCl), present a slightly more complex, related reaction (like MgCl2, requiring adding Mg to the elements list) and ask the user to revise their previous explanation to account for the new ratio.</li>
+          <li><b>Enhance Relevance (Criterion 1):</b> Add a real-world context toggle. For example, instead of just 'Na + Cl -> NaCl', label it 'Forming Table Salt from Toxic Gas and Reactive Metal'.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a user input `<textarea>` for students to construct their own explanations before viewing the provided one.</li>
+          <li>[ ] Implement a 'Check Explanation' keyword validation function.</li>
+          <li>[ ] Add 'Mg' (Magnesium, Group 2, valence 2) to the element selection and include a reaction for `MgCl2` to allow testing of multi-atom balancing.</li>
+          <li>[ ] Update the UI to include a 'Challenge Mode' that prompts users to revise explanations for more complex molecules.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-3
 Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
 
 - [Intermolecular Forces Investigation](IntermolecularForces.html) - Observe boiling points and surface tension to infer the strength of London Dispersion, Dipole-Dipole, and Hydrogen Bonding forces. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Effectively models the macroscopic (bulk properties) to microscopic (particle interactions) connection. It meets Criterion 4 (Investigable) by allowing users to change heat and observe boiling points and surface tension. It is a solid model but could use stronger framing around a specific real-world mystery (e.g., why water droplets stay round on a leaf).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS1.A (bulk properties determined by electrical forces), CCC Patterns, and SEP Planning and Carrying Out Investigations (though the 'planning' part is mostly pre-built). It covers Observable Features 1.a (relationship between properties and forces), 2.b.i-iv (thermal energy vs attraction), and 4.a (collecting data). It lacks support for 3.a/3.b (students actually *planning* the investigation setup).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Improve SEP (Planning Investigations):</b> To address Observable Feature 3.a/3.b, add an initial 'Planning Phase' UI screen before the simulation starts. Require the user to select *which* properties they want to measure (e.g., select checkboxes for 'Boiling Point' and 'Surface Tension') and hypothesize the expected relationship before the main simulation interface unlocks.</li>
+          <li><b>Enhance Data Collection (Observable Feature 4.a):</b> Currently, the data table is pre-filled. Make the table cells for 'Boiling Point' empty initially. Require the user to click a 'Record Data Point' button when they visually observe boiling to fill in the table, rather than having it auto-populate.</li>
+          <li><b>Improve Realism:</b> Add a visual indicator of the electrical force (e.g., faint dashed lines representing hydrogen bonds that break as temperature increases) to explicitly show the microscopic mechanism described in 2.b.ii.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement an initial 'Planning Screen' overlay requiring hypothesis selection before simulation access.</li>
+          <li>[ ] Modify the data table to start empty and add a 'Record Data' button that captures the current temperature and state.</li>
+          <li>[ ] Add visual dashed-line 'bonds' between particles in the `animateParticles` function that visually break when kinetic energy (temperature) exceeds the IMF strength threshold.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-4
 Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy.
 
 - [Bond Energy Changes Simulator](BondEnergy.html) - An animated model illustrating how breaking bonds absorbs energy and forming bonds releases energy, and how the net change determines if a reaction is endothermic or exothermic. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An excellent, highly interactive model that visualizes a complex abstract concept (bond energy). It clearly meets Criterion 4 by allowing students to step through the reaction and track energy changes. It provides a strong visualization of endo/exothermic processes.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Very strongly supports the target dimensions. It addresses DCI PS1.A and PS1.B (energy changes in reactions), CCC Energy and Matter, and SEP Developing and Using Models. It covers almost all Observable Features, including 1.a.i-vi (components of the model, bonds broken/formed), 2.a.i-iv (relationships of energy transfer), and 3.a.i-vi (connections, showing net energy change).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Developing Models):</b> While it's a great model to *use*, the student doesn't *develop* it much (Observable Feature 1.a). Add a feature where students must manually drag and drop the correct bond energies from a reference table onto the bonds being broken/formed before the energy calculation proceeds.</li>
+          <li><b>Clarify Energy Transfer (Observable Feature 1.a.v / 2.a.ii):</b> The background color change is good, but adding explicit visual 'energy particles' (like small glowing sparks) moving from the system (molecules) to the surroundings (background) during bond formation, and vice-versa during breaking, would make the transfer to/from molecular collisions more explicit.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement a drag-and-drop or input field system requiring users to identify the specific bond energy value for each bond before the 'Break Bonds' or 'Form Bonds' animations play.</li>
+          <li>[ ] Add a particle animation layer to visualize energy transfer: sparks moving inward when breaking bonds, and outward when forming bonds.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-5
 Apply scientific principles and evidence to provide an explanation about the effects of changing the temperature or concentration of the reacting particles on the rate at which a reaction occurs.
 
 - [Reaction Rates Simulation](ReactionRatesSimulation.html) - Explore how changing temperature (kinetic energy) and concentration affects collision frequency, reaction rates, and activation energy barriers using an interactive particle model. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A highly effective, dynamic simulation for exploring collision theory. It is very engaging and clearly shows the effects of temperature and concentration on reaction rates, satisfying Criterion 4 (Investigable).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS1.B (rates depend on collisions and kinetic energy), CCC Patterns, and SEP Constructing Explanations. It covers Observable Features 1.a (kinetic energy and collisions), 2.a.i-ii (evidence of patterns from concentration/temp), and 3.a.i-v (reasoning integrating evidence and principles).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Constructing Explanations):</b> Similar to HS-PS1-2, the 'Constructing Explanations' box currently just provides the answer. Replace it with a guided prompt system: "Based on the graph, how did doubling concentration affect the rate? Why (based on the particle view)?" requiring user input.</li>
+          <li><b>Add Catalyst Variable:</b> To fully explore activation energy (which is currently a slider), frame the lowering of activation energy explicitly as adding a catalyst, which is a key concept in reaction rates. Add a 'Add Catalyst' button that visually introduces a new component and lowers the EA slider automatically.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Convert the 'Constructing Explanations' panel into an interactive questionnaire that checks user understanding of the collected data.</li>
+          <li>[ ] Add a 'Catalyst' toggle/button that dynamically lowers the Activation Energy and visually alters the simulation (e.g., adding a solid surface or specific catalyst particles).</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-6
 Refine the design of a chemical system by specifying a change in conditions that would produce increased amounts of products at equilibrium.
 
 - [Le Chatelier's Principle Simulator](LeChatelier.html) - Interactively stress an equilibrium system (Haber Process) by changing concentration, volume, and temperature to see how the system shifts. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A very strong interactive simulation of chemical equilibrium (Haber Process). It effectively models the dynamic nature of equilibrium and how the system responds to stress, meeting Criterion 4 (Investigable). It lacks a strong real-world anchor (Criterion 1) out of the box, though the Haber process is historically significant.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS1.B (chemical equilibrium and conditions), CCC Stability and Change, and SEP Constructing Explanations/Designing Solutions. It covers Observable Features 1.a (identifying properties like concentration, temperature, pressure) and 2.a-b (predicting shifts). However, it currently acts more as a demonstration than a 'design' challenge (SEP component).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Designing Solutions):</b> To address the engineering aspect of HS-PS1-6 (Refining the design of a chemical system), add a 'Design Challenge' mode. Provide a target yield (e.g., 'Maximize NH3 production') and give the user a 'budget' or limited number of moves (slider changes) to achieve the highest possible concentration of NH3.</li>
+          <li><b>Improve Relevance (Criterion 1):</b> Add a brief narrative introduction about the Haber Process and its role in producing fertilizer to feed the world's population, anchoring the abstract chemistry in a vital real-world context.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a 'Challenge Mode' toggle that tracks the maximum NH3 concentration achieved and gamifies the process of finding the optimal conditions.</li>
+          <li>[ ] Update the introduction text to explicitly connect the Haber Process to global food production and historical context.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-7
 Use mathematical representations to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
 
 - [Conservation of Mass Simulator](ConservationOfMass.html) - Balance chemical equations and observe how total mass and atom counts remain perfectly conserved across the reaction. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A clean, straightforward tool for practicing stoichiometry and visualizing the conservation of mass. It uses a helpful visual metaphor (the balance scale) to make the math concrete. However, it is fundamentally a math drill rather than an exploration of a phenomenon.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the target dimensions well for what it is. It addresses DCI PS1.B (atoms are conserved), CCC Energy and Matter, and SEP Using Mathematics and Computational Thinking. It hits Observable Features 1.a.i-iv (quantities of reactants/products, balanced equations, claims of mass conservation) and 2.a/2.b (mathematical modeling). It lacks the deeper analysis components (3.a/3.b) where students describe *how* the representation supports the claim.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Using Mathematics - Analysis):</b> To fulfill Observable Features 3.a and 3.b, add an 'Analysis Step' that appears after balancing the equation. Prompt the user with a multiple-choice or short-answer question asking them to explicitly state how the visual/mathematical model they just built proves that mass is conserved.</li>
+          <li><b>Improve Scale Visuals:</b> The scale tilt is currently based on a simple mass ratio and snaps quickly. Make the physics of the scale more realistic (damping, oscillation) to make the 'balancing' process feel more tangible.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add an 'Analysis Prompt' UI that appears upon successful balancing, requiring the user to articulate the connection between atom count and mass conservation.</li>
+          <li>[ ] Enhance the CSS/JS animation of the `scaleBeam` to include a damped oscillation effect when weights (molecules) are added or removed.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-8
 Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during the processes of fission, fusion, and radioactive decay.
 
 - [Nuclear Processes Simulator](NuclearProcesses.html) - Visualize the changes in protons and neutrons, and the massive energy released, during Alpha Decay, Nuclear Fission, and Nuclear Fusion. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A solid visualization of nuclear processes that are otherwise impossible to see. It clearly distinguishes between fission, fusion, and decay, and highlights the energy released. It meets Criterion 4 (Investigable via models).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS1.C (nuclear processes and energy), CCC Energy and Matter, and SEP Developing and Using Models. It covers Observable Features 1.a (components like protons, neutrons, energy scale), 2.a/b (distinct models, conservation of nucleons), and 3.a-d (connections to specific processes). It is missing Beta and Gamma decay models (required by 2.a/3.d/3.e).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Complete Observable Features 2.a, 3.d, 3.e:</b> The standard explicitly requires models for alpha, beta, and gamma decay. Currently, only Alpha is present. You must add 'Beta Decay' (Carbon-14 to Nitrogen-14 + electron) and 'Gamma Decay' (Technetium-99m to Technetium-99 + gamma ray) to the 'Select Process' menu.</li>
+          <li><b>Improve Energy Scale Visualization (1.a.iv):</b> The text states 'Extremely High' vs 'Low-Moderate', but a visual bar chart comparing the MeV output of these processes to a standard chemical reaction (like burning a carbon atom) would much better satisfy the requirement to model the *scale* of energy changes.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add 'Beta Decay' and 'Gamma Decay' options to the `processes` data structure, complete with distinct animations (e.g., a neutron turning into a proton and ejecting an electron for Beta).</li>
+          <li>[ ] Add a comparative visual energy bar chart (logarithmic scale) below the simulation to contrast nuclear energy output with chemical energy output.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS2-1
 Analyze data to support the claim that Newton's second law of motion describes the mathematical relationship among the net force on a macroscopic object, its mass, and its acceleration.
 
 - [Interactive Boat River Crossing Simulation](InteractiveBoatRiverCrossingSimulation.html) - A physics simulation exploring relative velocity and vector addition as a boat crosses a flowing river. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An excellent, highly interactive physics sandbox. It perfectly models vector addition and relative velocity, allowing deep exploration of kinematics. It strongly meets Criterion 4.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports foundational kinematics (vectors, velocity) but is only tangentially related to the core of HS-PS2-1 (Newton's Second Law: F=ma). It does not explicitly model Force, Mass, or Acceleration, but rather constant velocity vectors. As such, it fails to meet the specific Observable Features of HS-PS2-1 (Organizing data representing net force/mass/acceleration, identifying relationships of F=ma). It is better suited as a prerequisite for HS-PS2-1 or aligned with a different standard.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Realignment or Modification:</b> Since this simulation models constant velocity (vectors) and not F=ma, it should either be moved/re-labeled as foundational math/kinematics prep, OR it needs to be modified to include acceleration. For example, add a 'Boat Engine Thrust (Force)' slider and a 'Boat Mass' slider, and show how the boat *accelerates* to its top speed based on F=ma before crossing.</li>
+          <li><b>Address F=ma:</b> If keeping for HS-PS2-1, you must add Force and Mass variables that dictate the acceleration of the boat.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Either re-evaluate the pedagogical placement of this simulation, or update the UI and physics engine to include 'Engine Force' (N), 'Boat Mass' (kg), and calculate real-time acceleration ($a = F/m$) rather than just setting a constant $v_{boat}$.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 - [Projectile Motion Simulation](ProjectileMotionSimulation.html) - An interactive physics simulation to study the kinematics of projectile motion by adjusting launch variables. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A classic, robust projectile motion simulator. It provides excellent live telemetry and allows for detailed analysis of 2D kinematics. Like the Boat simulation, it is a great physics tool.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Similar to the Boat simulation, this models 2D kinematics (constant velocity in X, constant acceleration 'g' in Y). While gravity 'g' is an acceleration caused by Force (Weight), the simulation does not explicitly let students manipulate Mass and Net Force to discover F=ma. It assumes 'g' is a given constant. Therefore, it partially misses the core 'Analyze data to support F=ma' intent of HS-PS2-1, though it perfectly models the *result* of constant acceleration.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Explicitly Connect to F=ma (Observable Features 1.a, 2.a):</b> To better align with HS-PS2-1, change the 'Gravity (g)' slider to a 'Planet Mass / Net Gravitational Force' selection, or add an explicit 'Projectile Mass' slider. Show the calculation $a = F_{net}/m = W/m = g$. Show that changing the mass does *not* change the trajectory because the force of gravity scales with mass (addressing the common misconception).</li>
+          <li><b>Data Analysis (Observable Feature 3.a):</b> Add a graph plotting Velocity vs. Time ($v_y$ vs $t$) so students can explicitly see that the slope (acceleration) is constant and equal to $F_{net}/m$.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a 'Projectile Mass (kg)' slider. Update the UI to explicitly show the gravitational force ($F_g = mg$) and the resulting acceleration ($a = F_g/m = g$), demonstrating that mass cancels out for kinematics.</li>
+          <li>[ ] Add a real-time Velocity vs. Time graph to the sidebar to allow direct analysis of constant acceleration.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS2-2
 Use mathematical representations to support the claim that the total momentum of a system of objects is conserved when there is no net force on the system.
 
 - [Conservation of Momentum Simulation](ConservationOfMomentumSimulation.html) - Explore 1D elastic and inelastic collisions. Adjust masses, velocities, and elasticity to observe the conservation of momentum and changes in kinetic energy. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A highly effective 1D kinematics physics sandbox. It allows for testing elastic and inelastic collisions and clearly visualizes the mathematical conservation of momentum, fulfilling Criterion 4 (Investigable). Like the other physics sandboxes, it lacks a strong real-world anchor (Criterion 1).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS2.A (Momentum is defined for a particular frame of reference; it is the mass times the velocity), CCC Systems and System Models, and SEP Using Mathematics and Computational Thinking. It covers Observable Features 1.a (defining the system), 2.a (mathematical modeling of conservation), and 3.a/b (analysis of momentum before/after collision).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Relevance (Criterion 1):</b> The simulation uses generic 'Object 1' and 'Object 2'. Add a toggle to switch the visual theme to real-world scenarios, such as 'Bumper Cars' or 'Train Cars coupling', to provide a concrete context for the math.</li>
+          <li><b>Visualizing the Mathematical Representation (Observable Feature 2.a/3.a):</b> While the numbers are there, adding explicit momentum vector arrows (length proportional to $p = mv$) attached to each cart that visually combine (vector addition) before and after the collision would strongly reinforce the mathematical representation component of the standard.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a 'Theme' toggle (e.g., Generic, Train Cars) that updates the cart CSS and labels to provide real-world context.</li>
+          <li>[ ] Draw dynamic momentum vector arrows (using canvas `ctx`) attached to each cart, scaled to their current momentum ($p = mv$), to visually represent the mathematical quantities being conserved.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS2-3
 Apply scientific and engineering ideas to design, evaluate, and refine a device that minimizes the force on a macroscopic object during a collision.
 
 - [Collision Force Minimizer](EggDropCrashCushion.html) - An interactive physics sandbox where users engineer the thickness and material stiffness of a crash cushion to minimize impact forces and protect a fragile payload during a drop. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 5.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An outstanding simulation perfectly aligned with the engineering standard. It integrates physics (F=ma, impulse-momentum theorem) directly into a design challenge (Criteria 1 and 4). The visual representation of the egg surviving or breaking based on the force profile is excellent.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Very strongly supports the target dimensions. It completely addresses DCI PS2.A (momentum changes and force), ETS1.A/B/C (engineering design), CCC Cause and Effect, and SEP Constructing Explanations and Designing Solutions. It covers Observable Features 1.a.i-ii (FΔt = mΔv design principle), 2.a (criteria/constraints like thickness), 3.a-b (testing and evaluating), and 4.a (refining based on data).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Constraint Evaluation (Observable Feature 2.a/3.a):</b> Currently, the thickness constraint is just a warning text. Make the constraint explicit: add a 'Budget' or 'Maximum Allowed Thickness' limit. If the user selects a thickness over the limit, the 'Drop' button should disable, forcing them to consider the engineering trade-offs (e.g., needing a stiffer, more expensive material if thickness is constrained).</li>
+          <li><b>Explicitly Show Impulse (FΔt = mΔv):</b> The graph shows the Force vs. Time curve, which is great. Add a small text readout that calculates the Area under the curve (the Impulse) and shows that it equals the change in momentum (mΔv), proving the core physics principle of the standard.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement a 'Max Allowed Thickness' constraint (e.g., 0.3m). Disable the `dropBtn` if the `cushionThickness` slider exceeds this value, adding real engineering constraints.</li>
+          <li>[ ] Calculate the discrete integral (area under the curve) of the `chartForce` over time to display the total Impulse (N·s), and explicitly display that it equals the calculated $\Delta p$ ($m \cdot \Delta v$).</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS2-4
 Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.
 
 - [Gravity and Electrostatics Simulator](GravityAndElectrostaticsSimulator.html) - An interactive simulation to compare gravitational and electrostatic forces, manipulate mass/charge/distance, and explore the inverse-square law through data logging and graphing. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A very strong simulation that clearly juxtaposes Newton's Law of Gravitation and Coulomb's Law. It allows for data collection to uncover the inverse-square pattern, strongly meeting Criterion 4.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS2.B (Newton's and Coulomb's laws), CCC Patterns, and SEP Using Mathematics and Computational Thinking. It covers Observable Features 1.a-c (identifying the formulas and components), 2.a (predicting forces), and 3.a-c (analyzing that both follow the inverse-square pattern, but electrostatics can be attractive/repulsive).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Observable Feature 3.d (Energy Change):</b> The standard explicitly requires describing the change in *energy* of the objects depending on distance. The simulation currently only shows Force. Add an 'Energy View' toggle that calculates and graphs the Potential Energy ($U_g = -G m_1 m_2 / r$ and $U_e = k q_1 q_2 / r$) alongside the force, showing how energy changes as distance changes.</li>
+          <li><b>Improve Comparative Graphing:</b> The current scatter plot maps Force vs Distance, but gravity and electrostatic forces are on vastly different scales (requiring arbitrary multipliers like 10^11 to view together). Instead of scaling them arbitrarily on the same Y-axis, use dual Y-axes (left for Gravity, right for Electrostatics) or separate charts to prevent confusion about the relative magnitudes.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add mathematical calculations and UI readouts for Gravitational Potential Energy ($U_g$) and Electrostatic Potential Energy ($U_e$).</li>
+          <li>[ ] Update the `dataChart` configuration in Chart.js to use two distinct Y-axes (`y` and `y1`) so that $F_g$ and $F_e$ can be graphed accurately without applying arbitrary multiplication scaling factors in the data array.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS2-5
 Plan and conduct an investigation to provide evidence that an electric current can produce a magnetic field and that a changing magnetic field can produce an electric current.
 
 - [Electromagnetism & Induction Sandbox](ElectromagnetismInduction.html) - Plan investigations using interactive electromagnets to see how current produces magnetic fields, and use a moving magnet near a coil to see how changing magnetic flux induces a current. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A good sandbox that models Oersted's discovery (electromagnetism) and Faraday's Law (induction). It meets Criterion 4 by allowing users to change variables (voltage, loops, magnet motion) and observe the resulting fields and currents.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the target dimensions. It addresses DCI PS2.B/PS3.A (fields and currents), CCC Cause and Effect, and SEP Planning and Carrying Out Investigations. It covers Observable Features 1.a (identifying the phenomenon) and 3.a.i-iv (using circuits, means to measure current and magnetic fields). It weakly supports 2.a (developing a plan to show causality vs correlation) because the 'planning' is fully open-ended without a guiding framework.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Planning Investigations - Observable Feature 2.a):</b> Add an interactive 'Investigation Planner' modal that appears before the sandbox unlocks. Ask the user to state their hypothesis (e.g., 'If I move the magnet faster, the induced current will [increase/decrease]') and define what data they will collect to prove causality (e.g., 'I will record peak current at slow vs fast speeds').</li>
+          <li><b>Improve Visual Fields:</b> Currently, the simulation relies on a single compass needle to show the B-field. To better represent the 'field permeating space', use the `fieldCanvas1` and `fieldCanvas2` to draw faint magnetic field lines (or a grid of tiny compasses) that dynamically update their density/direction based on the current or magnet position.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement an 'Investigation Planner' UI overlay that requires users to select variables to test (independent/dependent) before using the simulation.</li>
+          <li>[ ] Add a drawing function to the `canvas` elements (`fieldCanvas1`/`2`) that renders an array of small vector lines (representing the magnetic field $B$) that update orientation based on the dipole equations calculated in `updateCompass()`.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS2-6
 Communicate scientific and technical information about why the molecular-level structure is important in the functioning of designed materials.
 
 - [Molecular Structures & Designed Materials](MolecularStructuresMaterials.html) - Explore how the molecular-level structure of metals (conductivity), polymers (flexibility), and pharmaceuticals (specificity) determines their macro-scale functioning. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Acts as an interactive textbook rather than a true investigable phenomenon. It shows the structure-function relationship (Criterion 4) but doesn't allow the user to *design* or test variations effectively. It leans heavily on 'show and tell'.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Partially supports the target dimensions. It addresses DCI PS2.B (intermolecular forces/structure) and CCC Structure and Function. However, it poorly supports the SEP (Obtaining, Evaluating, and Communicating Information) because it provides the information directly rather than requiring the student to gather/communicate it. It covers Observable Features 1.a and 2.a (describing structure/function), but misses the active communication aspect.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Communicating Information):</b> Convert the 'Structure & Function' text boxes from static paragraphs into interactive 'Report Builders'. Require the student to select the correct structural phrases from dropdowns to build the explanation of why the material works before the simulation unlocks.</li>
+          <li><b>Improve Interactivity:</b> In the Polymers tab, let the user change the *type* of bonding (e.g., add cross-linking) to see how it affects flexibility, rather than just pulling a static model. In the Pharma tab, allow the user to design the drug shape on a small grid to try and match the receptor.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Replace static 'Structure & Function' paragraphs with a 'fill-in-the-blank' or 'drag-and-drop' sentence builder that requires user interaction to communicate the concept.</li>
+          <li>[ ] Add a 'Cross-link' toggle to the Polymers tab that adds covalent bonds between chains, reducing the maximum stretch distance and demonstrating how modifying structure changes function.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS3-1
 Create a computational model to calculate the change in the energy of one component in a system when the change in energy of the other component(s) and energy flows in and out of the system are known.
 
 - [Energy Change Computational Model](EnergyChangeModel.html) - An interactive mathematical and computational model for a 3-component system, balancing kinetic, potential, and thermal energy changes with total energy flow. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 3.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A pure math/algebra visualizer. It is not a phenomenon (Criterion 1 & 4 are weak) because there is no physical system being modeled, just abstract energy buckets. It acts as a calculator for the conservation of energy equation.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the specific wording of the SEP (Create a computational model to calculate change in energy) and DCI PS3.A/B (Conservation of Energy), but it misses the intent of modeling a *phenomenon*. It covers Observable Features 1.a (identifying components), 2.a/b (using the model to calculate changes), and 3.a (predicting). It fails to support 3.b (describing limitations of the computational model).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Provide a Physical Context (Criterion 1):</b> The sliders are currently abstract (Component 1, 2, etc). Anchor the model to a real physical scenario, like a Rollercoaster or a Pendulum. Rename 'Component 1' to 'Cart Kinetic Energy' and 'Component 2' to 'Cart Potential Energy', and show a small graphic of the cart updating its height/speed based on the energy values.</li>
+          <li><b>Address Limitations (Observable Feature 3.b):</b> Add a section that explicitly asks the user to identify limitations of the model (e.g., 'Does this model account for air resistance or sound energy?').</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Re-theme the UI to represent a specific physical system (e.g., a Rollercoaster). Add a small CSS/Canvas visual of the system that updates state (height, speed blur) based on the energy slider values.</li>
+          <li>[ ] Add a UI element detailing 'Model Assumptions & Limitations', noting that real systems lose energy to sound, deformation, and unmeasured thermal radiation not captured by the simple 3-variable equation.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS3-2
 Develop and use models to illustrate that energy at the macroscopic scale can be accounted for as a combination of energy associated with the motions of particles (objects) and energy associated with the relative position of particles (objects).
 
 - [Macroscopic vs. Microscopic Energy Model](MacroscopicEnergyModel.html) - An interactive dual-view model illustrating how macroscopic temperature and elastic potential energy are derived from microscopic particle motion and relative particle positions. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An excellent dual-scale model that clearly links what we see (macroscopic) with what is happening at the atomic level (microscopic). It beautifully visualizes the abstract concept of potential energy as relative position.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS3.A (Energy definitions at macro/micro scales), CCC Energy and Matter, and SEP Developing and Using Models. It covers all Observable Features: 1.a (identifying macro/micro components), 2.a (relationships, thermal vs potential), and 3.b (illustrating macro energy as a combination of micro motions and positions).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Show Conservation (Observable Feature 3.a):</b> The standard requires showing that energy is conserved as it transfers between forms. Currently, the tabs are isolated. Add a third tab (e.g., 'Phase Change' or 'Chemical Reaction') that shows potential energy (bonds breaking) converting directly into kinetic energy (thermal motion) to explicitly show conservation.</li>
+          <li><b>Enhance the Potential Energy Visual:</b> The spring model is good, but adding a graph of the Lennard-Jones potential (Energy vs. Distance curve) next to the atoms would deeply reinforce how relative position dictates stored energy.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a simple Lennard-Jones potential energy curve (Line chart) to the Potential Energy tab that dynamically plots a point representing the current average distance between the simulated atoms.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS3-3
 Design, build, and refine a device that works within given constraints to convert one form of energy into another form of energy.
 
 - [Stage Lighting Simulator](StageLightingSimulator.html) - Investigate the energy transfer and circuit topography of two stage lighting tracks. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A very good electrical engineering sandbox. It effectively contrasts series and parallel circuits (though it masks them as 'Mystery Topography') and allows users to explore power draw and circuit limits.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the target dimensions well. It addresses DCI PS3.A (manifestations of energy), ETS1.A (constraints/risk), CCC Energy and Matter, and SEP Constructing Explanations/Designing Solutions. It covers Observable Features 2.a (constraints like the 20A breaker limit) and 3.a-b (testing/evaluating performance). However, it is light on the 'Design' aspect (1.a), as the user only adds/removes bulbs rather than designing the circuit topography themselves.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Designing Solutions - Observable Feature 1.a):</b> Remove the 'Mystery Topography' constraint. Give the user a blank grid and allow them to explicitly place wires and bulbs in series or parallel to design their own stage lighting rig that maximizes brightness while staying under the 20A limit.</li>
+          <li><b>Explicit Energy Conversion (Observable Feature 1.b.ii-iii):</b> The standard focuses on converting one form of energy to another. Make it explicit that electrical energy is being converted to light and *heat*. Add an 'Efficiency' readout (e.g., '10% Light, 90% Heat loss to environment').</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Refactor the UI to allow users to explicitly choose to wire bulbs in 'Series' or 'Parallel' on a single track, rather than hardcoding Track A as series and Track B as parallel.</li>
+          <li>[ ] Add a data readout showing the conversion breakdown of Total Power (W) into 'Useful Light Energy' and 'Wasted Thermal Energy', highlighting energy losses to the environment.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS3-4
 Plan and conduct an investigation to provide evidence that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
 
 - [Thermal Equilibrium Sandbox](ThermalEquilibriumSandbox.html) - An interactive closed-system sandbox to investigate how components of different materials, masses, and initial temperatures transfer heat until reaching a uniform energy distribution (thermal equilibrium). [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A clean, effective sandbox for exploring the second law of thermodynamics. It clearly visualizes thermal energy transfer and equilibrium, fulfilling Criterion 4 (Investigable).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS3.B (conservation/transfer of energy), CCC Systems and System Models (closed system), and SEP Planning and Carrying Out Investigations. It covers Observable Features 1.a (identifying the phenomenon), 2.a (identifying data like mass/temp), and 4.a (collecting data via the graph). It lacks the 'Planning' and 'Refining' phases (3.a, 5.a).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Planning & Refining - Observable Features 3.a/5.a):</b> Add an 'Investigation Log' sidebar. Before starting, the user must input their hypothesis (e.g., 'If mass A > mass B, the final temp will be closer to initial temp A'). After the run, provide a text box asking them to evaluate if the closed system assumption holds perfectly in reality (addressing 5.c - apparent loss of energy).</li>
+          <li><b>Visualizing Energy Transfer:</b> The color change and graph are good, but adding animated 'heat particles' or arrows flowing from the hot substance to the cold substance would make the microscopic mechanism more apparent.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add an 'Investigation Log' UI requiring a hypothesis before the `startSimulation` function can be triggered.</li>
+          <li>[ ] Implement a visual particle/arrow animation overlay in the `container-box` that shows directional flow from the hotter `vis` element to the colder one during the `simulationStep` loop.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS3-5
 Develop and use a model of two objects interacting through electric or magnetic fields to illustrate the forces between objects and the changes in energy of the objects due to the interaction.
 
 - [Electric & Magnetic Field Energy Simulator](ElectricMagneticFieldEnergy.html) - Interactively drag charged or magnetic objects to observe how distance impacts force magnitude and stored field potential energy. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A strong visual model of invisible fields. It effectively demonstrates how relative position relates to stored potential energy, meeting Criterion 4.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the target dimensions well. It addresses DCI PS3.C (energy in fields), CCC Cause and Effect, and SEP Developing and Using Models. It covers Observable Features 1.a.i-iv (components, forces, fields), 2.a (relationships between position and energy), and 3.a-c (using the model to show energy increase/decrease).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Improve Vector Representation (Observable Feature 1.a.iii):</b> The current force vectors scale linearly and cap out quickly. The standard emphasizes 'magnitude and direction'. Ensure the vector length accurately reflects the inverse-square law mathematically (even if visually capped for the screen), and provide a numerical readout of the Force vector magnitude alongside the Energy bar.</li>
+          <li><b>Clarify Field Lines (Observable Feature 1.a.iv):</b> The field lines are currently static/hardcoded arcs. Make them dynamic, rendering actual vector fields (like iron filings) that shift and warp as the objects are dragged, truly showing the 'field as a quantity that has a magnitude and direction at all points in space'.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a numerical readout for the calculated `forceMag` (N) next to the Energy Bar.</li>
+          <li>[ ] Refactor `drawFields()` to render a dynamic vector field (grid of tiny arrows) in the background whose opacity/direction updates based on the sum of the two field sources.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS4-1
 Use mathematical representations to support a claim regarding relationships among the frequency, wavelength, and speed of waves traveling in various media.
 
 - [From Sparks to Waves](FromSparksToWavesSimulation.html) - An interactive lightning and wave oscilloscope simulation exploring propagation and oscilloscope models. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An excellent, multi-part simulation. The lightning strike is a fantastic real-world anchor (Criterion 1) to show the difference in propagation speeds, and the oscilloscope effectively models the math (Criterion 4).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS4.A (wave properties, v=fλ), CCC Cause and Effect, and SEP Using Mathematics and Computational Thinking. It covers Observable Features 1.a (values for f, λ, v), 2.a-c (mathematical modeling of v=fλ), and 3.a (assessing claims).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Mathematical Modeling (Observable Feature 2.a/3.a):</b> The oscilloscope part shows the values, but doesn't require the student to *use* the mathematical representation. Add a 'Calculation Challenge' where the speed (v) is hidden for a new mysterious medium, and the user must calculate it using the provided f and λ before unlocking the next step.</li>
+          <li><b>Medium Change (Observable Feature 2.b/2.c):</b> The simulation currently only uses air/vacuum. Add a dropdown to change the medium (e.g., 'Water', 'Glass') which dynamically alters the speed (v) and forces the wavelength (λ) to adjust while frequency (f) remains constant.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a 'Medium' dropdown (Air, Water, Glass) to the Oscilloscope view. When changed, update the internal `vSound` or `vLight` constant, and recalculate/redraw the resulting `lambda` while keeping `f` constant.</li>
+          <li>[ ] Add a 'Calculation Challenge' modal that blanks out the Wavelength value and requires the user to input the correct calculation ($v/f$) to proceed.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS4-2
 Evaluate questions about the advantages of using a digital transmission and storage of information.
 
 - [Digital vs. Analog Transmission Advantages](DigitalTransmissionAdvantage.html) - An interactive simulation demonstrating how digital thresholding allows a noisy signal to be perfectly reconstructed, while analog continuous signals permanently degrade. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A clear, interactive demonstration of digital thresholding vs analog degradation. It visualizes the concept well but acts more as a direct demonstration than a platform for evaluating questions.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Partially supports the target dimensions. It addresses DCI PS4.A (digitized information) and CCC Stability and Change. However, it completely misses the SEP (Asking Questions and Defining Problems). The simulation *shows* the advantage, but it doesn't have the student *evaluate questions* about the advantages/disadvantages as required by the standard.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill SEP (Asking Questions - Observable Features 1.a, 2.a):</b> The core of this standard is evaluating questions. Add an 'Evaluation Panel'. Present several claims/questions (e.g., 'Claim: Digital signals are immune to all interference. Evaluate this claim.'). The user must run the simulation at 100% noise to see the digital signal *fail* (exceed the threshold), thereby empirically testing and refuting the absolute claim.</li>
+          <li><b>Expand Disadvantages (Observable Feature 1.b.i):</b> The simulation only shows the *advantage* of digital. Add a scenario highlighting a disadvantage, such as data size/compression artifacts or easy unauthorized copying.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Create an 'Evaluation Panel' UI that presents testable claims. Add logic to track if the user has empirically tested the claim (e.g., setting noise to 100% to force digital errors) before allowing them to submit an evaluation.</li>
+          <li>[ ] Ensure the `transmitSignal()` logic accurately fails for digital reconstruction when the `noiseLevel` creates fluctuations large enough to cross the binary threshold, demonstrating that digital is not perfectly immune to *extreme* noise.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS4-3
 Evaluate the claims, evidence, and reasoning behind the idea that electromagnetic radiation can be described either by a wave model or a particle model, and that for some situations one model is more useful than the other.
 
 - [Wave-Particle Duality](WaveParticleDuality.html) - Evaluate two interactive models: the double-slit experiment (wave interference) and the photoelectric effect (particle threshold energy). [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A very clear presentation of the two core experiments (double slit and photoelectric) required to understand wave-particle duality. However, it functions more as an interactive diagram than an active evaluation tool for the student.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the target dimensions well. It addresses DCI PS4.B (electromagnetic radiation models) and CCC Systems and System Models. It covers Observable Features 1.a-d (identifying claims/evidence) and provides the phenomena for 2.a-c. However, the SEP is 'Evaluate the claims, evidence, and reasoning'. The simulation gives the student the final argument in a text box rather than asking them to evaluate the evidence themselves.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Evaluating Claims - Observable Feature 2.c):</b> Hide the 'Argument for Waves/Particles' text boxes initially. Require the user to interact with the model (e.g., change the slit width, or change the light color) and then answer a multiple-choice question: 'Does this behavior better fit a continuous wave or discrete particles?' before revealing the scientific consensus.</li>
+          <li><b>Improve Photoelectric Visualization:</b> Ensure the animation clearly shows that increasing the *intensity* (number of photons) of Red light still ejects 0 electrons, while even a few Blue photons eject electrons immediately. Add an 'Intensity/Brightness' slider to prove this crucial point.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Hide the explicit 'Argument' text boxes behind a user-prompt (e.g., a quiz question evaluating the visual evidence).</li>
+          <li>[ ] Add an 'Intensity' slider to the Photoelectric effect tab. Modify the photon spawn logic so that high-intensity Red light spawns many photons, but none trigger electron ejection, proving the particle threshold theory.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS4-4
 Evaluate the validity and reliability of claims in published materials of the effects that different frequencies of electromagnetic radiation have when absorbed by matter.
 
 - [EM Radiation Effects on Matter](EMRadiationEffects.html) - Evaluate the claims that low-frequency radiation causes safe thermal heating, while high-frequency radiation acts as ionizing radiation that damages cellular DNA. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A good visual model showing the difference between thermal heating and ionizing radiation. However, it completely misses the core SEP of the standard, which is about evaluating claims in *published materials*.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Partially supports the target dimensions. It perfectly addresses DCI PS4.B (thermal vs ionizing radiation) and CCC Cause and Effect. It covers Observable Feature 2.a/2.c (reasoning about data and scale extrapolations). It completely fails to address Observable Features 1.a and 2.b, which require obtaining information from published materials and evaluating their validity/reliability.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Address the Core SEP (Observable Features 1.a / 2.b):</b> The standard requires evaluating claims in *published materials* (e.g., 'Do cell phones cause cancer?' vs 'Does UV light cause skin cancer?'). Add a UI panel that presents two mock 'News Articles' or 'Social Media Posts' making claims about radiation. The student must use the simulation to test the claim and rate the article's reliability.</li>
+          <li><b>Connect to Macro Scale (Observable Feature 2.c):</b> Add a small visual or text explaining how the microscopic DNA damage shown in the simulation extrapolates to the macroscopic scale (e.g., mutations leading to cancer or cell death).</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Create a 'Media Claims' UI overlay presenting mock articles (e.g., '5G Wi-Fi Melts Your Brain!'). Require the user to test the specific frequency (Microwaves) in the simulation to evaluate the claim's scientific validity.</li>
+          <li>[ ] Expand the 'Target Tissue Status' to include a macro-level effect summary, showing how accumulated `dnaDamage` translates to organ/organism health.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS4-5
 Communicate technical information about how some technological devices use the principles of wave behavior and wave interactions with matter to transmit and capture information and energy.
 
 - [Wave Technology: Information & Energy](WaveInformationTechnology.html) - An interactive exploration of how Solar Cells capture energy from light waves, and how Fiber Optics use total internal reflection to transmit digital data. [2026-03-12 12:00:00]
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> A clean, effective interactive diagram showing how two key technologies work. It meets Criterion 4 but lacks a strong personal/cultural anchor (Criterion 1) beyond generic explanations.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the target dimensions well. It addresses DCI PS3.D, PS4.A, PS4.B, PS4.C (solar cells, digitization, photoelectric effect, info tech) and CCC Cause and Effect. It covers Observable Features 2.a (identifying wave behavior/photoelectric effect) and 2.c (cause and effect). However, the SEP is 'Communicate technical information... in multiple formats'. The simulation communicates *to* the student, but doesn't have the student communicate *out*.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Communicating Information - Observable Feature 1.a):</b> Add an interactive 'Technical Report' section. After using the sliders, the student must drag-and-drop key technical terms (e.g., 'Photoelectric Effect', 'Total Internal Reflection', 'Photons') into a summary paragraph to 'communicate' how the device works.</li>
+          <li><b>Address Real-World Dependence (Observable Feature 2.b):</b> Expand the 'How it works' boxes to explicitly state how modern civilization depends on these devices (e.g., 'Without fiber optics, the global internet as we know it would not exist.').</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement a 'Knowledge Check / Report Builder' modal where users must construct an accurate technical sentence using a drag-and-drop word bank before the simulation is considered 'complete'.</li>
+          <li>[ ] Update the text panels to include explicit statements regarding societal dependence on these technologies (e.g., global communications, renewable grid).</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
