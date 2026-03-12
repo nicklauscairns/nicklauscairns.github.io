@@ -1,15 +1,7 @@
 import os
 import subprocess
 
-readmes = [
-    "README.md",
-    "Simulations/README.md",
-    "Simulations/EarthSpaceSciences/README.md",
-    "Simulations/EngineeringTechnologyScience/README.md",
-    "Simulations/LifeSciences/README.md",
-    "Simulations/PhysicalSciences/README.md",
-    "Simulations/Logic/README.md",
-]
+readmes = ['README.md', 'Simulations/README.md', 'Simulations/EarthSpaceSciences/README.md', 'Simulations/EngineeringTechnologyScience/README.md', 'Simulations/LifeSciences/README.md', 'Simulations/PhysicalSciences/README.md', 'Simulations/Logic/README.md']
 
 html_template = """<!DOCTYPE html>
 <html lang="en">
@@ -48,13 +40,17 @@ for md_file in readmes:
 
     html_file = md_file.replace("README.md", "index.html")
 
-    # Run marked to convert markdown to HTML
-    result = subprocess.run(['marked', md_file], capture_output=True, text=True)
+    # Run marked to convert markdown to HTML directly to file
+    tmp_out = "/tmp/marked_out.html"
+    with open(tmp_out, 'w') as tmp:
+        result = subprocess.run(['marked', md_file], stdout=tmp, stderr=subprocess.PIPE, text=True)
+
     if result.returncode != 0:
         print(f"Error converting {md_file}:\n{result.stderr}")
         continue
 
-    html_content = result.stdout
+    with open(tmp_out, 'r') as f:
+        html_content = f.read()
 
     # Replace internal links ending with README.md to index.html
     html_content = html_content.replace('README.md"', '"')
