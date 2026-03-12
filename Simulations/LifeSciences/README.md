@@ -27,7 +27,7 @@ Construct an explanation based on evidence for how the structure of DNA determin
       <b>Implementation Checklist for AI Agent:</b>
       <ul>
         <li>[ ] Add 2-3 new disease-related DNA sequence presets with narrative context.</li>
-        <li>[ ] Add a `<textarea>` element below the Evidence Log table for students to write their explanation.</li>
+        <li>[ ] Add a `&lt;textarea&gt;` element below the Evidence Log table for students to write their explanation.</li>
       </ul>
     </li>
   </ul>
