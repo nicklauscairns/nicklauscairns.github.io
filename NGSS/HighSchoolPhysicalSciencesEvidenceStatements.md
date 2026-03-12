@@ -1,12 +1,5 @@
 # NGSS High School Physical Sciences Evidence Statements
 
-<style>
-ol ul {
-    list-style-type: none;
-}
-</style>
-
-
 ## HS-PS1-1
 Students who demonstrate understanding can:
 ### Use the periodic table as a model to predict the relative properties of elements based on the patterns of electrons in the outermost energy level of atoms.
