@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Towers of Hanoi - Interactive logic puzzle simulation">
+    <meta name="keywords" content="Logic, Puzzle, Towers of Hanoi, Recursion, Game">
+    <meta name="author" content="Nicklaus Cairns">
+    <title>Towers of Hanoi</title>
+
+    <!-- Open Graph tags for social sharing -->
+    <meta property="og:title" content="Towers of Hanoi">
+    <meta property="og:description" content="Solve the classic Towers of Hanoi logic puzzle by moving all disks to the final peg.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Towers of Hanoi",
+      "description": "An interactive logic puzzle simulation of the classic Towers of Hanoi.",
+      "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .peg {
+            width: 20px;
+            height: 200px;
+            background-color: #8B4513; /* SaddleBrown */
+            border-radius: 10px 10px 0 0;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .peg-base {
+            width: 100%;
+            height: 20px;
+            background-color: #8B4513; /* SaddleBrown */
+            border-radius: 5px;
+            margin-top: -10px;
+        }
+
+        .disk {
+            height: 30px;
+            border-radius: 15px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: bottom 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+            border: 2px solid rgba(0,0,0,0.2);
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            line-height: 26px;
+            user-select: none;
+        }
+
+        .disk:hover {
+            filter: brightness(1.2);
+        }
+
+        .peg-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .peg-container:hover .peg-base {
+            filter: brightness(1.2);
+        }
+
+        .selected {
+            box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.8);
+            transform: translateX(-50%) translateY(-20px) !important;
+            z-index: 10;
+        }
+
+        .disk-color-1 { background-color: #ef4444; width: 40px; }
+        .disk-color-2 { background-color: #f97316; width: 60px; }
+        .disk-color-3 { background-color: #eab308; width: 80px; }
+        .disk-color-4 { background-color: #22c55e; width: 100px; }
+        .disk-color-5 { background-color: #3b82f6; width: 120px; }
+        .disk-color-6 { background-color: #8b5cf6; width: 140px; }
+        .disk-color-7 { background-color: #d946ef; width: 160px; }
+        .disk-color-8 { background-color: #64748b; width: 180px; }
+
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 min-h-screen flex flex-col items-center py-8">
+    <div class="max-w-4xl w-full bg-white rounded-xl shadow-lg p-6">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-4">Towers of Hanoi</h1>
+
+        <div class="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-200">
+            <h2 class="text-lg font-semibold text-blue-800 mb-2">Instructions</h2>
+            <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>Move all disks from the leftmost peg to the rightmost peg.</li>
+                <li>Only one disk can be moved at a time.</li>
+                <li>Each move consists of taking the upper disk from one of the stacks and placing it on top of another stack.</li>
+                <li>No disk may be placed on top of a smaller disk.</li>
+            </ul>
+        </div>
+
+        <div class="flex justify-between items-center mb-6 px-4">
+            <div class="flex items-center space-x-2">
+                <label for="disk-count" class="font-medium">Number of Disks:</label>
+                <input type="range" id="disk-count" min="3" max="8" value="3" class="w-32" oninput="updateDiskCountLabel()">
+                <span id="disk-count-display" class="font-bold w-4">3</span>
+            </div>
+            <button id="reset-btn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition" onclick="resetGame()">Reset Game</button>
+            <div class="text-lg font-semibold">Moves: <span id="move-count">0</span></div>
+        </div>
+
+        <div class="flex justify-between w-full h-80 bg-gray-50 rounded-lg p-4 border border-gray-200" id="game-board">
+            <div class="peg-container" id="peg-0" onclick="handlePegClick(0)">
+                <div class="peg" id="peg-bar-0"></div>
+                <div class="peg-base"></div>
+            </div>
+            <div class="peg-container" id="peg-1" onclick="handlePegClick(1)">
+                <div class="peg" id="peg-bar-1"></div>
+                <div class="peg-base"></div>
+            </div>
+            <div class="peg-container" id="peg-2" onclick="handlePegClick(2)">
+                <div class="peg" id="peg-bar-2"></div>
+                <div class="peg-base"></div>
+            </div>
+        </div>
+
+        <div id="win-message" class="hidden mt-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg text-center">
+            <h2 class="text-2xl font-bold mb-2">Congratulations!</h2>
+            <p>You solved the puzzle in <span id="final-moves" class="font-bold"></span> moves.</p>
+            <p id="optimal-message" class="text-sm mt-1"></p>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let numDisks = 3;
+        let pegs = [[], [], []]; // Array of arrays representing the disks on each peg
+        let moves = 0;
+        let selectedDiskIndex = null;
+        let selectedPegIndex = null;
+        let isWon = false;
+
+        // Initialize the game
+        function initGame() {
+            numDisks = parseInt(document.getElementById('disk-count').value);
+            pegs = [[], [], []];
+            moves = 0;
+            selectedDiskIndex = null;
+            selectedPegIndex = null;
+            isWon = false;
+
+            document.getElementById('move-count').innerText = moves;
+            document.getElementById('win-message').classList.add('hidden');
+
+            // Populate first peg
+            for (let i = numDisks; i > 0; i--) {
+                pegs[0].push(i);
+            }
+
+            renderBoard();
+        }
+
+        // Expose to window for tests
+        window.initGame = initGame;
+
+        function updateDiskCountLabel() {
+            document.getElementById('disk-count-display').innerText = document.getElementById('disk-count').value;
+            // Only reset if value actually changed to prevent annoying resets while dragging
+            if(parseInt(document.getElementById('disk-count').value) !== numDisks) {
+                 initGame();
+            }
+        }
+
+        // Expose to window for tests
+        window.updateDiskCountLabel = updateDiskCountLabel;
+
+        function resetGame() {
+            initGame();
+        }
+
+        function renderBoard() {
+            // Clear all disks from DOM
+            document.querySelectorAll('.disk').forEach(el => el.remove());
+
+            // Render disks based on state
+            for (let p = 0; p < 3; p++) {
+                const pegContainer = document.getElementById(`peg-bar-${p}`);
+                const diskStack = pegs[p];
+
+                for (let i = 0; i < diskStack.length; i++) {
+                    const diskSize = diskStack[i];
+                    const diskEl = document.createElement('div');
+                    diskEl.className = `disk disk-color-${diskSize}`;
+                    diskEl.innerText = diskSize;
+                    diskEl.id = `disk-${diskSize}`;
+
+                    // Calculate vertical position based on index in stack
+                    // Base peg height is 200px. Disk height is 30px.
+                    // We start from bottom 0.
+                    const bottomPos = i * 30;
+                    diskEl.style.bottom = `${bottomPos}px`;
+
+                    if (selectedPegIndex === p && i === diskStack.length - 1) {
+                        diskEl.classList.add('selected');
+                    }
+
+                    pegContainer.appendChild(diskEl);
+                }
+            }
+        }
+
+        function handlePegClick(clickedPegIndex) {
+            if (isWon) return;
+
+            const clickedPegStack = pegs[clickedPegIndex];
+
+            // If a peg is already selected
+            if (selectedPegIndex !== null) {
+                // Clicking the same peg deselects it
+                if (selectedPegIndex === clickedPegIndex) {
+                    selectedPegIndex = null;
+                    renderBoard();
+                    return;
+                }
+
+                // Try to move disk
+                const sourceStack = pegs[selectedPegIndex];
+                const diskToMove = sourceStack[sourceStack.length - 1];
+
+                // Check if move is valid
+                const canMove = clickedPegStack.length === 0 || clickedPegStack[clickedPegStack.length - 1] > diskToMove;
+
+                if (canMove) {
+                    // Execute move
+                    sourceStack.pop();
+                    clickedPegStack.push(diskToMove);
+                    moves++;
+                    document.getElementById('move-count').innerText = moves;
+
+                    // Reset selection
+                    selectedPegIndex = null;
+                    renderBoard();
+                    checkWin();
+                } else {
+                    // Invalid move visual feedback (shake effect could be added here)
+                    const pegContainer = document.getElementById(`peg-${clickedPegIndex}`);
+                    pegContainer.classList.add('bg-red-100');
+                    setTimeout(() => pegContainer.classList.remove('bg-red-100'), 200);
+                    // Selection remains on the original peg
+                }
+            } else {
+                // Select top disk of clicked peg if it has disks
+                if (clickedPegStack.length > 0) {
+                    selectedPegIndex = clickedPegIndex;
+                    renderBoard();
+                }
+            }
+        }
+
+        // Expose to window for tests
+        window.handlePegClick = handlePegClick;
+
+        function checkWin() {
+            // Check if all disks are on peg 2 (the third peg)
+            if (pegs[2].length === numDisks) {
+                isWon = true;
+                document.getElementById('win-message').classList.remove('hidden');
+                document.getElementById('final-moves').innerText = moves;
+
+                const optimalMoves = Math.pow(2, numDisks) - 1;
+                const optimalMessageEl = document.getElementById('optimal-message');
+
+                if (moves === optimalMoves) {
+                    optimalMessageEl.innerText = `Perfect! You solved it in the minimum possible number of moves (${optimalMoves}).`;
+                    optimalMessageEl.className = "text-sm mt-1 text-green-800 font-bold";
+                } else {
+                    optimalMessageEl.innerText = `Minimum possible moves: ${optimalMoves}. Can you do it faster?`;
+                    optimalMessageEl.className = "text-sm mt-1 text-gray-600";
+                }
+            }
+        }
+
+        // Initial setup
+        initGame();
+    </script>
+</body>
+</html>
