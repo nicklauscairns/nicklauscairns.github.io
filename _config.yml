@@ -1,5 +1,1 @@
-# GitHub Pages configuration
-title: Nicklaus Cairns - NGSS Resources
-description: Interactive science simulations aligned to NGSS High School Standards.
-# Disable a specific theme to ensure it falls back perfectly to our custom layout
-theme: null
+theme: jekyll-theme-primer
