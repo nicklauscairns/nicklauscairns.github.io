@@ -33,7 +33,6 @@ Develop a model based on evidence to illustrate the life span of the sun and the
     </ul>
   </details>
 
-
 ### HS-ESS1-2
 Construct an explanation of the Big Bang theory based on astronomical evidence of light spectra, motion of distant galaxies, and composition of matter in the universe.
 
@@ -63,7 +62,6 @@ Construct an explanation of the Big Bang theory based on astronomical evidence o
       </li>
     </ul>
   </details>
-
 
 ### HS-ESS1-3
 Communicate scientific ideas about the way stars, over their life cycle, produce elements.
@@ -129,7 +127,6 @@ Use mathematical or computational representations to predict the motion of orbit
     </ul>
   </details>
 
-
 ### HS-ESS1-5
 Evaluate evidence of the past and current movements of continental and oceanic crust and the theory of plate tectonics to explain the ages of crustal rocks.
 
@@ -160,7 +157,6 @@ Evaluate evidence of the past and current movements of continental and oceanic c
       </li>
     </ul>
   </details>
-
 
 ### HS-ESS1-6
 Apply scientific reasoning and evidence from ancient Earth materials, meteorites, and other planetary surfaces to construct an account of Earth’s formation and early history.
@@ -198,7 +194,6 @@ Develop a model to illustrate how Earth’s internal and surface processes opera
     </ul>
   </details>
 
-
 ### HS-ESS2-2
 Analyze geoscience data to make the claim that one change to Earth's surface can create feedbacks that cause changes to other Earth systems.
 
@@ -228,7 +223,6 @@ Analyze geoscience data to make the claim that one change to Earth's surface can
       </li>
     </ul>
   </details>
-
 
 ### HS-ESS2-3
 Develop a model based on evidence of Earth’s interior to describe the cycling of matter by thermal convection.
@@ -261,7 +255,6 @@ Develop a model based on evidence of Earth’s interior to describe the cycling 
     </ul>
   </details>
 
-
 ### HS-ESS2-4
 Use a model to describe how variations in the flow of energy into and out of Earth’s systems result in changes in climate.
 
@@ -291,7 +284,6 @@ Use a model to describe how variations in the flow of energy into and out of Ear
       </li>
     </ul>
   </details>
-
 
 ### HS-ESS2-5
 Plan and conduct an investigation of the properties of water and its effects on Earth materials and surface processes.
@@ -324,7 +316,6 @@ Plan and conduct an investigation of the properties of water and its effects on 
     </ul>
   </details>
 
-
 ### HS-ESS2-6
 Develop a quantitative model to describe the cycling of carbon among the hydrosphere, atmosphere, geosphere, and biosphere.
 
@@ -355,7 +346,6 @@ Develop a quantitative model to describe the cycling of carbon among the hydrosp
       </li>
     </ul>
   </details>
-
 
 ### HS-ESS2-7
 Construct an argument based on evidence about the simultaneous coevolution of Earth’s systems and life on Earth.
@@ -388,7 +378,6 @@ Construct an argument based on evidence about the simultaneous coevolution of Ea
     </ul>
   </details>
 
-
 ### HS-ESS3-1
 Construct an explanation based on evidence for how the availability of natural resources, occurrence of natural hazards, and changes in climate have influenced human activity.
 
@@ -419,7 +408,6 @@ Construct an explanation based on evidence for how the availability of natural r
       </li>
     </ul>
   </details>
-
 
 ### HS-ESS3-2
 Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.*
@@ -457,7 +445,6 @@ Create a computational simulation to illustrate the relationships among manageme
     </ul>
   </details>
 
-
 ### HS-ESS3-4
 Evaluate or refine a technological solution that reduces impacts of human activities on natural systems.*
 
@@ -493,7 +480,6 @@ Analyze geoscience data and the results from global climate models to make an ev
       </li>
     </ul>
   </details>
-
 
 ### HS-ESS3-6
 Use a computational representation to illustrate the relationships among Earth systems and how those relationships are being modified due to human activity.
