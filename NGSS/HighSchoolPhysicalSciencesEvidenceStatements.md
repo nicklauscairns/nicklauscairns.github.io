@@ -1,5 +1,12 @@
 # NGSS High School Physical Sciences Evidence Statements
 
+<style>
+ol ul {
+    list-style-type: none;
+}
+</style>
+
+
 ## HS-PS1-1
 Students who demonstrate understanding can:
 ### Use the periodic table as a model to predict the relative properties of elements based on the patterns of electrons in the outermost energy level of atoms.
@@ -27,27 +34,27 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 #### Observable features of the student performance by the end of the course:
 1. Components of the model
 
-   <br>&nbsp;&nbsp;&nbsp;a. From the given model, students identify and describe* the components of the model that are relevant for their predictions, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Elements and their arrangement in the periodic table;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. A positively-charged nucleus composed of both protons and neutrons, surrounded by negatively-charged electrons;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. Electrons in the outermost energy level of atoms (i.e., valence electrons); and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. The number of protons in each element.
+   * a. From the given model, students identify and describe* the components of the model that are relevant for their predictions, including:
+      * i. Elements and their arrangement in the periodic table;
+      * ii. A positively-charged nucleus composed of both protons and neutrons, surrounded by negatively-charged electrons;
+      * iii. Electrons in the outermost energy level of atoms (i.e., valence electrons); and
+      * iv. The number of protons in each element.
 
 2. Relationships
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and describe* the following relationships between components in the given model, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The arrangement of the main groups of the periodic table reflects the patterns of outermost electrons.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Elements in the periodic table are arranged by the numbers of protons in atoms.
+   * a. Students identify and describe* the following relationships between components in the given model, including:
+      * i. The arrangement of the main groups of the periodic table reflects the patterns of outermost electrons.
+      * ii. Elements in the periodic table are arranged by the numbers of protons in atoms.
 
 3. Connections
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the periodic table to predict the patterns of behavior of the elements based on the attraction and repulsion between electrically charged particles and the patterns of outermost electrons that determine the typical reactivity of an atom.
+   * a. Students use the periodic table to predict the patterns of behavior of the elements based on the attraction and repulsion between electrically charged particles and the patterns of outermost electrons that determine the typical reactivity of an atom.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students predict the following patterns of properties:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The number and types of bonds formed (i.e. ionic, covalent, metallic) by an element and between elements;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The number and charges in stable ions that form from atoms in a group of the periodic table;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. The trend in reactivity and electronegativity of atoms down a group, and across a row in the periodic table, based on attractions of outermost (valence) electrons to the nucleus; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. The relative sizes of atoms both across a row and down a group in the periodic table.
+   * b. Students predict the following patterns of properties:
+      * i. The number and types of bonds formed (i.e. ionic, covalent, metallic) by an element and between elements;
+      * ii. The number and charges in stable ions that form from atoms in a group of the periodic table;
+      * iii. The trend in reactivity and electronegativity of atoms down a group, and across a row in the periodic table, based on attractions of outermost (valence) electrons to the nucleus; and
+      * iv. The relative sizes of atoms both across a row and down a group in the periodic table.
 
 ## HS-PS1-2
 Students who demonstrate understanding can:
@@ -78,30 +85,30 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 #### Observable features of the student performance by the end of the course:
 1. Articulating the explanation of phenomena
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students construct an explanation of the outcome of the given reaction, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The idea that the total number of atoms of each element in the reactant and products is the same;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The numbers and types of bonds (i.e., ionic, covalent) that each atom forms, as determined by the outermost (valence) electron states and the electronegativity;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. The outermost (valence) electron state of the atoms that make up both the reactants and the products of the reaction is based on their position in the periodic table; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. A discussion of how the patterns of attraction allow the prediction of the type of reaction that occurs (e.g., formation of ionic compounds, combustion of hydrocarbons).
+   * a. Students construct an explanation of the outcome of the given reaction, including:
+      * i. The idea that the total number of atoms of each element in the reactant and products is the same;
+      * ii. The numbers and types of bonds (i.e., ionic, covalent) that each atom forms, as determined by the outermost (valence) electron states and the electronegativity;
+      * iii. The outermost (valence) electron state of the atoms that make up both the reactants and the products of the reaction is based on their position in the periodic table; and
+      * iv. A discussion of how the patterns of attraction allow the prediction of the type of reaction that occurs (e.g., formation of ionic compounds, combustion of hydrocarbons).
 
 2. Evidence
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and describe* the evidence to construct the explanation, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Identification of the products and reactants, including their chemical formulas and the arrangement of their outermost (valence) electrons;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Identification that the number and types of atoms are the same both before and after a reaction;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. Identification of the numbers and types of bonds (i.e., ionic, covalent) in both the reactants and the products;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. The patterns of reactivity (e.g., the high reactivity of alkali metals) at the macroscopic level as determined by using the periodic table; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. The outermost (valence) electron configuration and the relative electronegativity of the atoms that make up both the reactants and the products of the reaction based on their position in the periodic table.
+   * a. Students identify and describe* the evidence to construct the explanation, including:
+      * i. Identification of the products and reactants, including their chemical formulas and the arrangement of their outermost (valence) electrons;
+      * ii. Identification that the number and types of atoms are the same both before and after a reaction;
+      * iii. Identification of the numbers and types of bonds (i.e., ionic, covalent) in both the reactants and the products;
+      * iv. The patterns of reactivity (e.g., the high reactivity of alkali metals) at the macroscopic level as determined by using the periodic table; and
+      * v. The outermost (valence) electron configuration and the relative electronegativity of the atoms that make up both the reactants and the products of the reaction based on their position in the periodic table.
 
 3. Reasoning
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* their reasoning that connects the evidence, along with the assumption that theories and laws that describe their natural world operate today as they did in the past and will continue to do so in the future, to construct an explanation for how the patterns of outermost electrons and the electronegativity of elements can be used to predict the number and types of bonds each element forms.
+   * a. Students describe* their reasoning that connects the evidence, along with the assumption that theories and laws that describe their natural world operate today as they did in the past and will continue to do so in the future, to construct an explanation for how the patterns of outermost electrons and the electronegativity of elements can be used to predict the number and types of bonds each element forms.
 
-   <br>&nbsp;&nbsp;&nbsp;b. In the explanation, students describe* the causal relationship between the observable macroscopic patterns of reactivity of elements in the periodic table and the patterns of outermost electrons for each atom and its relative electronegativity.
+   * b. In the explanation, students describe* the causal relationship between the observable macroscopic patterns of reactivity of elements in the periodic table and the patterns of outermost electrons for each atom and its relative electronegativity.
 
 4. Revising the explanation
 
-   <br>&nbsp;&nbsp;&nbsp;a. Given new evidence or context, students construct a revised or expanded explanation about the outcome of a chemical reaction and justify the revision.
+   * a. Given new evidence or context, students construct a revised or expanded explanation about the outcome of a chemical reaction and justify the revision.
 
 ## HS-PS1-3
 Students who demonstrate understanding can:
@@ -129,37 +136,37 @@ Planning and carrying out investigations in 9-12 builds on K-8 experiences and p
 #### Observable features of the student performance by the end of the course:
 1. Identifying the phenomenon to be investigated
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* the phenomenon under investigation, which includes the following idea: the relationship between the measurable properties (e.g., melting point, boiling point, vapor pressure, surface tension) of a substance and the strength of the electrical forces between the particles of the substance.
+   * a. Students describe* the phenomenon under investigation, which includes the following idea: the relationship between the measurable properties (e.g., melting point, boiling point, vapor pressure, surface tension) of a substance and the strength of the electrical forces between the particles of the substance.
 
 2. Identifying the evidence to answer this question
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop an investigation plan and describe* the data that will be collected and the evidence to be derived from the data, including bulk properties of a substance (e.g., melting point and boiling point, volatility, surface tension) that would allow inferences to be made about the strength of electrical forces between particles.
+   * a. Students develop an investigation plan and describe* the data that will be collected and the evidence to be derived from the data, including bulk properties of a substance (e.g., melting point and boiling point, volatility, surface tension) that would allow inferences to be made about the strength of electrical forces between particles.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students describe* why the data about bulk properties would provide information about strength of the electrical forces between the particles of the chosen substances, including the following descriptions*:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The spacing of the particles of the chosen substances can change as a result of the experimental procedure even if the identity of the particles does not change (e.g., when water is boiled the molecules are still present but further apart).
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Thermal (kinetic) energy has an effect on the ability of the electrical attraction between particles to keep the particles close together. Thus, as more energy is added to the system, the forces of attraction between the particles can no longer keep the particles close together.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. The patterns of interactions between particles at the molecular scale are reflected in the patterns of behavior at the macroscopic scale.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. Together, patterns observed at multiple scales can provide evidence of the causal relationships between the strength of the electrical forces between particles and the structure of substances at the bulk scale.
+   * b. Students describe* why the data about bulk properties would provide information about strength of the electrical forces between the particles of the chosen substances, including the following descriptions*:
+      * i. The spacing of the particles of the chosen substances can change as a result of the experimental procedure even if the identity of the particles does not change (e.g., when water is boiled the molecules are still present but further apart).
+      * ii. Thermal (kinetic) energy has an effect on the ability of the electrical attraction between particles to keep the particles close together. Thus, as more energy is added to the system, the forces of attraction between the particles can no longer keep the particles close together.
+      * iii. The patterns of interactions between particles at the molecular scale are reflected in the patterns of behavior at the macroscopic scale.
+      * iv. Together, patterns observed at multiple scales can provide evidence of the causal relationships between the strength of the electrical forces between particles and the structure of substances at the bulk scale.
 
 3. Planning for the investigation
 
-   <br>&nbsp;&nbsp;&nbsp;a. In the investigation plan, students include:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. A rationale for the choice of substances to compare and a description* of the composition of those substances at the atomic molecular scale.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. A description* of how the data will be collected, the number of trials, and the experimental set up and equipment required.
+   * a. In the investigation plan, students include:
+      * i. A rationale for the choice of substances to compare and a description* of the composition of those substances at the atomic molecular scale.
+      * ii. A description* of how the data will be collected, the number of trials, and the experimental set up and equipment required.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students describe* how the data will be collected, the number of trials, the experimental set up, and the equipment required.
+   * b. Students describe* how the data will be collected, the number of trials, the experimental set up, and the equipment required.
 
 4. Collecting the data
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students collect and record data — quantitative and/or qualitative — on the bulk properties of substances.
+   * a. Students collect and record data — quantitative and/or qualitative — on the bulk properties of substances.
 
 5. Refining the design
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students evaluate their investigation, including evaluation of:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Assessing the accuracy and precision of the data collected, as well as the limitations of the investigation; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.     The ability of the data to provide the evidence required.
+   * a. Students evaluate their investigation, including evaluation of:
+      * i. Assessing the accuracy and precision of the data collected, as well as the limitations of the investigation; and
+      * ii.     The ability of the data to provide the evidence required.
 
-   <br>&nbsp;&nbsp;&nbsp;b. If necessary, students refine the plan to produce more accurate, precise, and useful data.
+   * b. If necessary, students refine the plan to produce more accurate, precise, and useful data.
 
 ## HS-PS1-4
 Students who demonstrate understanding can:
@@ -190,33 +197,33 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 #### Observable features of the student performance by the end of the course:
 1. Components of the model
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use evidence to develop a model in which they identify and describe* the relevant components, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The chemical reaction, the system, and the surroundings under study;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The bonds that are broken during the course of the reaction;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. The bonds that are formed during the course of the reaction;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. The energy transfer between the systems and their components or the system and surroundings;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. The transformation of potential energy from the chemical system interactions to kinetic energy in the surroundings (or vice versa) by molecular collisions; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vi. The relative potential energies of the reactants and the products.
+   * a. Students use evidence to develop a model in which they identify and describe* the relevant components, including:
+      * i. The chemical reaction, the system, and the surroundings under study;
+      * ii. The bonds that are broken during the course of the reaction;
+      * iii. The bonds that are formed during the course of the reaction;
+      * iv. The energy transfer between the systems and their components or the system and surroundings;
+      * v. The transformation of potential energy from the chemical system interactions to kinetic energy in the surroundings (or vice versa) by molecular collisions; and
+      * vi. The relative potential energies of the reactants and the products.
 
 2. Relationships
 
-   <br>&nbsp;&nbsp;&nbsp;a. In the model, students include and describe* the relationships between components, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The net change of energy within the system is the result of bonds that are broken and formed during the reaction (Note: This does not include calculating the total bond energy changes.);
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The energy transfer between system and surroundings by molecular collisions;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. The total energy change of the chemical reaction system is matched by an equal but opposite change of energy in the surroundings (Note: This does not include calculating the total bond energy changes.); and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. The release or absorption of energy depends on whether the relative potential energies of the reactants and products decrease or increase.
+   * a. In the model, students include and describe* the relationships between components, including:
+      * i. The net change of energy within the system is the result of bonds that are broken and formed during the reaction (Note: This does not include calculating the total bond energy changes.);
+      * ii. The energy transfer between system and surroundings by molecular collisions;
+      * iii. The total energy change of the chemical reaction system is matched by an equal but opposite change of energy in the surroundings (Note: This does not include calculating the total bond energy changes.); and
+      * iv. The release or absorption of energy depends on whether the relative potential energies of the reactants and products decrease or increase.
 
 3. Connections
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the developed model to illustrate:
+   * a. Students use the developed model to illustrate:
 
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The energy change within the system is accounted for by the change in the bond energies of the reactants and products. (Note: This does not include calculating the total bond energy changes.)
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.  Breaking bonds requires an input of energy from the system or surroundings, and forming bonds releases energy to the system and the surroundings.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii.  The energy transfer between systems and surroundings is the difference in energy between the bond energies of the reactants and the products.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv.   The overall energy of the system and surroundings is unchanged (conserved) during the reaction.
+      * i. The energy change within the system is accounted for by the change in the bond energies of the reactants and products. (Note: This does not include calculating the total bond energy changes.)
+      * ii.  Breaking bonds requires an input of energy from the system or surroundings, and forming bonds releases energy to the system and the surroundings.
+      * iii.  The energy transfer between systems and surroundings is the difference in energy between the bond energies of the reactants and the products.
+      * iv.   The overall energy of the system and surroundings is unchanged (conserved) during the reaction.
 
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. Energy transfer occurs during molecular collisions.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vi.   The relative total potential energies of the reactants and products can be accounted for by the changes in bond energy.
+      * v. Energy transfer occurs during molecular collisions.
+      * vi.   The relative total potential energies of the reactants and products can be accounted for by the changes in bond energy.
 
 ## HS-PS1-5
 Students who demonstrate understanding can:
@@ -244,22 +251,22 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 #### Observable features of the student performance by the end of the course:
 1. Articulating the explanation of phenomena
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students construct an explanation that includes the idea that as the kinetic energy of colliding particles increases and the number of collisions increases, the reaction rate increases.
+   * a. Students construct an explanation that includes the idea that as the kinetic energy of colliding particles increases and the number of collisions increases, the reaction rate increases.
 
 2. Evidence
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and describe* evidence to construct the explanation, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Evidence (e.g., from a table of data) of a pattern that increases in concentration (e.g., a change in one concentration while the other concentration is held constant) increase the reaction rate, and vice versa; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Evidence of a pattern that increases in temperature usually increase the reaction rate, and vice versa.
+   * a. Students identify and describe* evidence to construct the explanation, including:
+      * i. Evidence (e.g., from a table of data) of a pattern that increases in concentration (e.g., a change in one concentration while the other concentration is held constant) increase the reaction rate, and vice versa; and
+      * ii. Evidence of a pattern that increases in temperature usually increase the reaction rate, and vice versa.
 
 3. Reasoning
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use and describe* the following chain of reasoning that integrates evidence, facts, and scientific principles to construct the explanation:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Molecules that collide can break bonds and form new bonds, producing new molecules.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The probability of bonds breaking in the collision depends on the kinetic energy of the collision being sufficient to break the bond, since bond breaking requires energy.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. Since temperature is a measure of average kinetic energy, a higher temperature means that molecular collisions will, on average, be more likely to break bonds and form new bonds.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. At a fixed concentration, molecules that are moving faster also collide more frequently, so molecules with higher kinetic energy are likely to collide more often.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. A high concentration means that there are more molecules in a given volume and thus more particle collisions per unit of time at the same temperature.
+   * a. Students use and describe* the following chain of reasoning that integrates evidence, facts, and scientific principles to construct the explanation:
+      * i. Molecules that collide can break bonds and form new bonds, producing new molecules.
+      * ii. The probability of bonds breaking in the collision depends on the kinetic energy of the collision being sufficient to break the bond, since bond breaking requires energy.
+      * iii. Since temperature is a measure of average kinetic energy, a higher temperature means that molecular collisions will, on average, be more likely to break bonds and form new bonds.
+      * iv. At a fixed concentration, molecules that are moving faster also collide more frequently, so molecules with higher kinetic energy are likely to collide more often.
+      * v. A high concentration means that there are more molecules in a given volume and thus more particle collisions per unit of time at the same temperature.
 
 ## HS-PS1-6
 Students who demonstrate understanding can:
@@ -290,22 +297,22 @@ Constructing explanations and designing solutions in 9–12 builds on K– 8 exp
 #### Observable features of the student performance by the end of the course:
 1. Using scientific knowledge to generate the design solution
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and describe* potential changes in a component of the given chemical reaction system that will increase the amounts of particular species at equilibrium. Students use evidence to describe* the relative quantities of a product before and after changes to a given chemical reaction system (e.g., concentration increases, decreases, or stays the same), and will explicitly use Le Chatelier’s principle, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. How, at a molecular level, a stress involving a change to one component of an equilibrium system affects other components;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. That changing the concentration of one of the components of the equilibrium system will change the rate of the reaction (forward or backward) in which it is a reactant, until the forward and backward rates are again equal; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. A description* of a system at equilibrium that includes the idea that both the forward and backward reactions are occurring at the same rate, resulting in a system that appears stable at the macroscopic level.
+   * a. Students identify and describe* potential changes in a component of the given chemical reaction system that will increase the amounts of particular species at equilibrium. Students use evidence to describe* the relative quantities of a product before and after changes to a given chemical reaction system (e.g., concentration increases, decreases, or stays the same), and will explicitly use Le Chatelier’s principle, including:
+      * i. How, at a molecular level, a stress involving a change to one component of an equilibrium system affects other components;
+      * ii. That changing the concentration of one of the components of the equilibrium system will change the rate of the reaction (forward or backward) in which it is a reactant, until the forward and backward rates are again equal; and
+      * iii. A description* of a system at equilibrium that includes the idea that both the forward and backward reactions are occurring at the same rate, resulting in a system that appears stable at the macroscopic level.
 
 2. Describing criteria and constraints, including quantification when appropriate
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* the prioritized criteria and constraints, and quantify each when appropriate. Examples of constraints to be considered are cost, energy required to produce a product, hazardous nature and chemical properties of reactants and products, and availability of resources.
+   * a. Students describe* the prioritized criteria and constraints, and quantify each when appropriate. Examples of constraints to be considered are cost, energy required to produce a product, hazardous nature and chemical properties of reactants and products, and availability of resources.
 
 3. Evaluating potential solutions
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students systematically evaluate the proposed refinements to the design of the given chemical system. The potential refinements are evaluated by comparing the redesign to the list of criteria (i.e., increased product) and constraints (e.g., energy required, availability of resources).
+   * a. Students systematically evaluate the proposed refinements to the design of the given chemical system. The potential refinements are evaluated by comparing the redesign to the list of criteria (i.e., increased product) and constraints (e.g., energy required, availability of resources).
 
 4. Refining and/or optimizing the design solution
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students refine the given designed system by making tradeoffs that would optimize the designed system to increase the amount of product, and describe* the reasoning behind design decisions.
+   * a. Students refine the given designed system by making tradeoffs that would optimize the designed system to increase the amount of product, and describe* the reasoning behind design decisions.
 
 ## HS-PS1-7
 Students who demonstrate understanding can:
@@ -335,29 +342,29 @@ Simple computational simulations are created and used based on mathematical mode
 #### Observable features of the student performance by the end of the course:
 1. Representation
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and describe* the relevant components in the mathematical representations:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Quantities of reactants and products of a chemical reaction in terms of atoms, moles, and mass;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Molar mass of all components of the reaction;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. Use of balanced chemical equation(s); and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. Identification of the claim that atoms, and therefore mass, are conserved during a chemical reaction.
+   * a. Students identify and describe* the relevant components in the mathematical representations:
+      * i. Quantities of reactants and products of a chemical reaction in terms of atoms, moles, and mass;
+      * ii. Molar mass of all components of the reaction;
+      * iii. Use of balanced chemical equation(s); and
+      * iv. Identification of the claim that atoms, and therefore mass, are conserved during a chemical reaction.
 
-   <br>&nbsp;&nbsp;&nbsp;b. The mathematical representations may include numerical calculations, graphs, or other pictorial depictions of quantitative information.
+   * b. The mathematical representations may include numerical calculations, graphs, or other pictorial depictions of quantitative information.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students identify the claim to be supported: that atoms, and therefore mass, are conserved during a chemical reaction.
+   * c. Students identify the claim to be supported: that atoms, and therefore mass, are conserved during a chemical reaction.
 
 2. Mathematical modeling
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the mole to convert between the atomic and macroscopic scale in the analysis.
+   * a. Students use the mole to convert between the atomic and macroscopic scale in the analysis.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Given a chemical reaction, students use the mathematical representations to
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Predict the relative number of atoms in the reactants versus the products at the atomic molecular scale; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Calculate the mass of any component of a reaction, given any other component.
+   * b. Given a chemical reaction, students use the mathematical representations to
+      * i. Predict the relative number of atoms in the reactants versus the products at the atomic molecular scale; and
+      * ii. Calculate the mass of any component of a reaction, given any other component.
 
 3. Analysis
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* how the mathematical representations (e.g., stoichiometric calculations to show that the number of atoms or number of moles is unchanged after a chemical reaction where a specific mass of reactant is converted to product) support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
+   * a. Students describe* how the mathematical representations (e.g., stoichiometric calculations to show that the number of atoms or number of moles is unchanged after a chemical reaction where a specific mass of reactant is converted to product) support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students describe* how the mass of a substance can be used to determine the number of atoms, molecules, or ions using moles and mole relationships (e.g., macroscopic to atomic molecular scale conversion using the number of moles and Avogadro’s number).
+   * b. Students describe* how the mass of a substance can be used to determine the number of atoms, molecules, or ions using moles and mole relationships (e.g., macroscopic to atomic molecular scale conversion using the number of moles and Avogadro’s number).
 
 ## HS-PS1-8
 Students who demonstrate understanding can:
@@ -385,31 +392,31 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 #### Observable features of the student performance by the end of the course:
 1. Components of the model
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop models in which they identify and describe* the relevant components of the models, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Identification of an element by the number of protons;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The number of protons and neutrons in the nucleus before and after the decay;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. The identity of the emitted particles (i.e., alpha, beta — both electrons and positrons, and gamma); and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. The scale of energy changes associated with nuclear processes, relative to the scale of energy changes associated with chemical processes.
+   * a. Students develop models in which they identify and describe* the relevant components of the models, including:
+      * i. Identification of an element by the number of protons;
+      * ii. The number of protons and neutrons in the nucleus before and after the decay;
+      * iii. The identity of the emitted particles (i.e., alpha, beta — both electrons and positrons, and gamma); and
+      * iv. The scale of energy changes associated with nuclear processes, relative to the scale of energy changes associated with chemical processes.
 
 2. Relationships
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop five distinct models to illustrate the relationships between components underlying the nuclear processes of 1) fission, 2) fusion and 3) three distinct types of radioactive decay.
+   * a. Students develop five distinct models to illustrate the relationships between components underlying the nuclear processes of 1) fission, 2) fusion and 3) three distinct types of radioactive decay.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students include the following features, based on evidence, in all five models:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The total number of neutrons plus protons is the same both before and after the nuclear process, although the total number of protons and the total number of neutrons may be different before and after.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The scale of energy changes in a nuclear process is much larger (hundreds of thousands or even millions of times larger) than the scale of energy changes in a chemical process.
+   * b. Students include the following features, based on evidence, in all five models:
+      * i. The total number of neutrons plus protons is the same both before and after the nuclear process, although the total number of protons and the total number of neutrons may be different before and after.
+      * ii. The scale of energy changes in a nuclear process is much larger (hundreds of thousands or even millions of times larger) than the scale of energy changes in a chemical process.
 
 3. Connections
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop a fusion model that illustrates a process in which two nuclei merge to form a single, larger nucleus with a larger number of protons than were in either of the two original nuclei.
+   * a. Students develop a fusion model that illustrates a process in which two nuclei merge to form a single, larger nucleus with a larger number of protons than were in either of the two original nuclei.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students develop a fission model that illustrates a process in which a nucleus splits into two or more fragments that each have a smaller number of protons than were in the original nucleus.
+   * b. Students develop a fission model that illustrates a process in which a nucleus splits into two or more fragments that each have a smaller number of protons than were in the original nucleus.
 
-   <br>&nbsp;&nbsp;&nbsp;c. In both the fission and fusion models, students illustrate that these processes may release energy and may require initial energy for the reaction to take place.
+   * c. In both the fission and fusion models, students illustrate that these processes may release energy and may require initial energy for the reaction to take place.
 
-   <br>&nbsp;&nbsp;&nbsp;d. Students develop radioactive decay models that illustrate the differences in type of energy (e.g., kinetic energy, electromagnetic radiation) and type of particle (e.g., alpha particle, beta particle) released during alpha, beta, and gamma radioactive decay, and any change from one element to another that can occur due to the process.
+   * d. Students develop radioactive decay models that illustrate the differences in type of energy (e.g., kinetic energy, electromagnetic radiation) and type of particle (e.g., alpha particle, beta particle) released during alpha, beta, and gamma radioactive decay, and any change from one element to another that can occur due to the process.
 
-   <br>&nbsp;&nbsp;&nbsp;e. Students develop radioactive decay models that describe* that alpha particle emission is a type of fission reaction, and that beta and gamma emission are not.
+   * e. Students develop radioactive decay models that describe* that alpha particle emission is a type of fission reaction, and that beta and gamma emission are not.
 
 ## HS-PS2-1
 Students who demonstrate understanding can:
@@ -442,21 +449,21 @@ Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
 #### Observable features of the student performance by the end of the course:
 1. Organizing data
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students organize data that represent the net force on a macroscopic object, its mass (which is held constant), and its acceleration (e.g., via tables, graphs, charts, vector drawings).
+   * a. Students organize data that represent the net force on a macroscopic object, its mass (which is held constant), and its acceleration (e.g., via tables, graphs, charts, vector drawings).
 
 2. Identifying relationships
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use tools, technologies, and/or models to analyze the data and identify relationships within the datasets, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. A more massive object experiencing the same net force as a less massive object has a smaller acceleration, and a larger net force on a given object produces a correspondingly larger acceleration; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The result of gravitation is a constant acceleration on macroscopic objects as evidenced by the fact that the ratio of net force to mass remains constant.
+   * a. Students use tools, technologies, and/or models to analyze the data and identify relationships within the datasets, including:
+      * i. A more massive object experiencing the same net force as a less massive object has a smaller acceleration, and a larger net force on a given object produces a correspondingly larger acceleration; and
+      * ii. The result of gravitation is a constant acceleration on macroscopic objects as evidenced by the fact that the ratio of net force to mass remains constant.
 
 3. Interpreting data
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the analyzed data as evidence to describe* that the relationship between the observed quantities is accurately modeled across the range of data by the formula a = F net/m (e.g., double force yields double acceleration, etc.).
+   * a. Students use the analyzed data as evidence to describe* that the relationship between the observed quantities is accurately modeled across the range of data by the formula a = F net/m (e.g., double force yields double acceleration, etc.).
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students use the data as empirical evidence to distinguish between causal and correlational relationships linking force, mass, and acceleration.
+   * b. Students use the data as empirical evidence to distinguish between causal and correlational relationships linking force, mass, and acceleration.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students express the relationship Fnet=ma in terms of causality, namely that a net force on an object causes the object to accelerate.
+   * c. Students express the relationship Fnet=ma in terms of causality, namely that a net force on an object causes the object to accelerate.
 
 ## HS-PS2-2
 Students who demonstrate understanding can:
@@ -485,25 +492,25 @@ Mathematical and computational thinking at the 9–12 level builds on K–8 and 
 #### Observable features of the student performance by the end of the course:
 1. Representation
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students clearly define the system of the two interacting objects that is represented mathematically, including boundaries and initial conditions.
+   * a. Students clearly define the system of the two interacting objects that is represented mathematically, including boundaries and initial conditions.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students identify and describe* the momentum of each object in the system as the product of its mass and its velocity, p = mv (p and v are restricted to one-dimensional vectors), using the mathematical representations.
+   * b. Students identify and describe* the momentum of each object in the system as the product of its mass and its velocity, p = mv (p and v are restricted to one-dimensional vectors), using the mathematical representations.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students identify the claim, indicating that the total momentum of a system of two interacting objects is constant if there is no net force on the system.
+   * c. Students identify the claim, indicating that the total momentum of a system of two interacting objects is constant if there is no net force on the system.
 
 2. Mathematical modeling
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the mathematical representations to model and describe* the physical interaction of the two objects in terms of the change in the momentum of each object as a result of the interaction.
+   * a. Students use the mathematical representations to model and describe* the physical interaction of the two objects in terms of the change in the momentum of each object as a result of the interaction.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students use the mathematical representations to model and describe* the total momentum of the system by calculating the vector sum of momenta of the two objects in the system.
+   * b. Students use the mathematical representations to model and describe* the total momentum of the system by calculating the vector sum of momenta of the two objects in the system.
 
 3. Analysis
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the analysis of the motion of the objects before the interaction to identify a system with essentially no net force on it.
+   * a. Students use the analysis of the motion of the objects before the interaction to identify a system with essentially no net force on it.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Based on the analysis of the total momentum of the system, students support the claim that the momentum of the system is the same before and after the interaction between the objects in the system, so that momentum of the system is constant.
+   * b. Based on the analysis of the total momentum of the system, students support the claim that the momentum of the system is the same before and after the interaction between the objects in the system, so that momentum of the system is constant.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students identify that the analysis of the momentum of each object in the system indicates that any change in momentum of one object is balanced by a change in the momentum of the other object, so that the total momentum is constant.
+   * c. Students identify that the analysis of the momentum of each object in the system indicates that any change in momentum of one object is balanced by a change in the momentum of the other object, so that the total momentum is constant.
 
 ## HS-PS2-3
 Students who demonstrate understanding can:
@@ -537,25 +544,25 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 #### Observable features of the student performance by the end of the course:
 1. Using scientific knowledge to generate the design solution
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students design a device that minimizes the force on a macroscopic object during a collision. In the design, students:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Incorporate the concept that for a given change in momentum, force in the direction of the change in momentum is decreased by increasing the time interval of the collision (FΔt = mΔv); and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Explicitly make use of the principle above so that the device has the desired effect of reducing the net force applied to the object by extending the time the force is applied to the object during the collision.
+   * a. Students design a device that minimizes the force on a macroscopic object during a collision. In the design, students:
+      * i. Incorporate the concept that for a given change in momentum, force in the direction of the change in momentum is decreased by increasing the time interval of the collision (FΔt = mΔv); and
+      * ii. Explicitly make use of the principle above so that the device has the desired effect of reducing the net force applied to the object by extending the time the force is applied to the object during the collision.
 
-   <br>&nbsp;&nbsp;&nbsp;b. In the design plan, students describe* the scientific rationale for their choice of materials and for the structure of the device.
+   * b. In the design plan, students describe* the scientific rationale for their choice of materials and for the structure of the device.
 
 2. Describing criteria and constraints, including quantification when appropriate
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* and quantify (when appropriate) the criteria and constraints, along with the tradeoffs implicit in these design solutions. Examples of constraints to be considered are cost, mass, the maximum force applied to the object, and requirements set by society for widely used collision-mitigation devices (e.g., seatbelts, football helmets).
+   * a. Students describe* and quantify (when appropriate) the criteria and constraints, along with the tradeoffs implicit in these design solutions. Examples of constraints to be considered are cost, mass, the maximum force applied to the object, and requirements set by society for widely used collision-mitigation devices (e.g., seatbelts, football helmets).
 
 3. Evaluating potential solutions
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students systematically evaluate the proposed device design or design solution, including describing* the rationales for the design and comparing the design to the list of criteria and constraints.
+   * a. Students systematically evaluate the proposed device design or design solution, including describing* the rationales for the design and comparing the design to the list of criteria and constraints.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students test and evaluate the device based on its ability to minimize the force on the test object during a collision. Students identify any unanticipated effects or design performance issues that the device exhibits.
+   * b. Students test and evaluate the device based on its ability to minimize the force on the test object during a collision. Students identify any unanticipated effects or design performance issues that the device exhibits.
 
 4. Refining and/or optimizing the design solution
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the test results to improve the device performance by extending the impact time, reducing the device mass, and/or considering cost-benefit analysis.
+   * a. Students use the test results to improve the device performance by extending the impact time, reducing the device mass, and/or considering cost-benefit analysis.
 
 ## HS-PS2-4
 Students who demonstrate understanding can:
@@ -589,25 +596,25 @@ Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
 #### Observable features of the student performance by the end of the course:
 1. Representation
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students clearly define the system of the interacting objects that is mathematically represented.
+   * a. Students clearly define the system of the interacting objects that is mathematically represented.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Using the given mathematical representations, students identify and describe* the gravitational attraction between two objects as the product of their masses divided by the separation distance squared (Fg = −G m1 m2 / d^2), where a negative force is understood to be attractive.
+   * b. Using the given mathematical representations, students identify and describe* the gravitational attraction between two objects as the product of their masses divided by the separation distance squared (Fg = −G m1 m2 / d^2), where a negative force is understood to be attractive.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Using the given mathematical representations, students identify and describe* the electrostatic force between two objects as the product of their individual charges divided by the separation distance squared (Fe = k q1 q2 / d^2), where a negative force is understood to be attractive.
+   * c. Using the given mathematical representations, students identify and describe* the electrostatic force between two objects as the product of their individual charges divided by the separation distance squared (Fe = k q1 q2 / d^2), where a negative force is understood to be attractive.
 
 2. Mathematical modeling
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students correctly use the given mathematical formulas to predict the gravitational force between objects or predict the electrostatic force between charged objects.
+   * a. Students correctly use the given mathematical formulas to predict the gravitational force between objects or predict the electrostatic force between charged objects.
 
 3. Analysis
 
-   <br>&nbsp;&nbsp;&nbsp;a. Based on the given mathematical models, students describe* that the ratio between gravitational and electric forces between objects with a given charge and mass is a pattern that is independent of distance.
+   * a. Based on the given mathematical models, students describe* that the ratio between gravitational and electric forces between objects with a given charge and mass is a pattern that is independent of distance.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students describe* that the mathematical representation of the gravitational field (Fg = −G m1 m2 / d^2) only predicts an attractive force because mass is always positive.
+   * b. Students describe* that the mathematical representation of the gravitational field (Fg = −G m1 m2 / d^2) only predicts an attractive force because mass is always positive.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students describe* that the mathematical representation of the electric field (Fe = k q1 q2 / d^2) predicts both attraction and repulsion because electric charge can be either positive or negative.
+   * c. Students describe* that the mathematical representation of the electric field (Fe = k q1 q2 / d^2) predicts both attraction and repulsion because electric charge can be either positive or negative.
 
-   <br>&nbsp;&nbsp;&nbsp;d. Students use the given formulas for the forces as evidence to describe* that the change in the energy of objects interacting through electric or gravitational forces depends on the distance between the objects.
+   * d. Students use the given formulas for the forces as evidence to describe* that the change in the energy of objects interacting through electric or gravitational forces depends on the distance between the objects.
 
 ## HS-PS2-5
 Students who demonstrate understanding can:
@@ -638,34 +645,34 @@ Planning and carrying out investigations to answer questions or test solutions t
 #### Observable features of the student performance by the end of the course:
 1. Identifying the phenomenon to be investigated
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* the phenomenon under investigation, which includes the following idea: that an electric current produces a magnetic field and that a changing magnetic field produces an electric current.
+   * a. Students describe* the phenomenon under investigation, which includes the following idea: that an electric current produces a magnetic field and that a changing magnetic field produces an electric current.
 
 2. Identifying the evidence to answer this question
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop an investigation plan and describe* the data that will be collected and the evidence to be derived from the data about 1) an observable effect of a magnetic field that is uniquely related to the presence of an electric current in the circuit, and 2) an electric current in the circuit that is uniquely related to the presence of a changing magnetic field near the circuit. Students describe* why these effects seen must be causal and not correlational, citing specific cause-effect relationships.
+   * a. Students develop an investigation plan and describe* the data that will be collected and the evidence to be derived from the data about 1) an observable effect of a magnetic field that is uniquely related to the presence of an electric current in the circuit, and 2) an electric current in the circuit that is uniquely related to the presence of a changing magnetic field near the circuit. Students describe* why these effects seen must be causal and not correlational, citing specific cause-effect relationships.
 
 3. Planning for the investigation
 
-   <br>&nbsp;&nbsp;&nbsp;a. In the investigation plan, students include:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The use of an electric circuit through which electric current can flow, a source of electrical energy that can be placed in the circuit, the shape and orientation of the wire, and the types and positions of detectors;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. A means to indicate or measure when electric current is flowing through the circuit;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. A means to indicate or measure the presence of a local magnetic field near the circuit; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. A design of a system to change the magnetic field in a nearby circuit and a means to indicate or measure when the magnetic field is changing.
+   * a. In the investigation plan, students include:
+      * i. The use of an electric circuit through which electric current can flow, a source of electrical energy that can be placed in the circuit, the shape and orientation of the wire, and the types and positions of detectors;
+      * ii. A means to indicate or measure when electric current is flowing through the circuit;
+      * iii. A means to indicate or measure the presence of a local magnetic field near the circuit; and
+      * iv. A design of a system to change the magnetic field in a nearby circuit and a means to indicate or measure when the magnetic field is changing.
 
-   <br>&nbsp;&nbsp;&nbsp;b. In the plan, students state whether the investigation will be conducted individually or collaboratively.
+   * b. In the plan, students state whether the investigation will be conducted individually or collaboratively.
 
 4. Collecting the data
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students measure and record electric currents and magnetic fields.
+   * a. Students measure and record electric currents and magnetic fields.
 
 5. Refining the design
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students evaluate their investigation, including an evaluation of:
+   * a. Students evaluate their investigation, including an evaluation of:
 
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The accuracy and precision of the data collected, as well as limitations of the investigation; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.   The ability of the data to provide the evidence required.
+      * i. The accuracy and precision of the data collected, as well as limitations of the investigation; and
+      * ii.   The ability of the data to provide the evidence required.
 
-   <br>&nbsp;&nbsp;&nbsp;b. If necessary, students refine the investigation plan to produce more accurate, precise, and useful data such that the measurements or indicators of the presence of an electric current in the circuit and a magnetic field near the circuit can provide the required evidence.
+   * b. If necessary, students refine the investigation plan to produce more accurate, precise, and useful data such that the measurements or indicators of the presence of an electric current in the circuit and a magnetic field near the circuit can provide the required evidence.
 
 ## HS-PS2-6
 Students who demonstrate understanding can:
@@ -693,26 +700,26 @@ Obtaining, evaluating, and communicating information in 9–12 builds on K–8 a
 #### Observable features of the student performance by the end of the course:
 1. Communication style and format
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use at least two different formats (including oral, graphical, textual and mathematical) to communicate scientific and technical information, including fully describing* the structure, properties, and design of the chosen material(s). Students cite the origin of the information as appropriate.
+   * a. Students use at least two different formats (including oral, graphical, textual and mathematical) to communicate scientific and technical information, including fully describing* the structure, properties, and design of the chosen material(s). Students cite the origin of the information as appropriate.
 
 2. Connecting the DCIs and the CCCs
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and communicate the evidence for why molecular level structure is important in the functioning of designed materials, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. How the structure and properties of matter and the types of interactions of matter at the atomic scale determine the function of the chosen designed material(s); and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.    How the material’s properties make it suitable for use in its designed function.
+   * a. Students identify and communicate the evidence for why molecular level structure is important in the functioning of designed materials, including:
+      * i. How the structure and properties of matter and the types of interactions of matter at the atomic scale determine the function of the chosen designed material(s); and
+      * ii.    How the material’s properties make it suitable for use in its designed function.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students explicitly identify the molecular structure of the chosen designed material(s) (using a representation appropriate to the specific type of communication — e.g., geometric shapes for drugs and receptors, ball and stick models for long-chained molecules).
+   * b. Students explicitly identify the molecular structure of the chosen designed material(s) (using a representation appropriate to the specific type of communication — e.g., geometric shapes for drugs and receptors, ball and stick models for long-chained molecules).
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students describe* the intended function of the chosen designed material(s).
+   * c. Students describe* the intended function of the chosen designed material(s).
 
-   <br>&nbsp;&nbsp;&nbsp;d. Students describe* the relationship between the material’s function and its macroscopic properties (e.g., material strength, conductivity, reactivity, state of matter, durability) and each of the following:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Molecular level structure of the material;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.    Intermolecular forces and polarity of molecules; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii.    The ability of electrons to move relatively freely in metals.
+   * d. Students describe* the relationship between the material’s function and its macroscopic properties (e.g., material strength, conductivity, reactivity, state of matter, durability) and each of the following:
+      * i. Molecular level structure of the material;
+      * ii.    Intermolecular forces and polarity of molecules; and
+      * iii.    The ability of electrons to move relatively freely in metals.
 
-   <br>&nbsp;&nbsp;&nbsp;e. Students describe* the effects that attractive and repulsive electrical forces between molecules have on the arrangement (structure) of the chosen designed material(s) of molecules (e.g., solids, liquids, gases, network solid, polymers).
+   * e. Students describe* the effects that attractive and repulsive electrical forces between molecules have on the arrangement (structure) of the chosen designed material(s) of molecules (e.g., solids, liquids, gases, network solid, polymers).
 
-   <br>&nbsp;&nbsp;&nbsp;f. Students describe* that, for all materials, electrostatic forces on the atomic and molecular scale results in contact forces (e.g., friction, normal forces, stickiness) on the macroscopic scale.
+   * f. Students describe* that, for all materials, electrostatic forces on the atomic and molecular scale results in contact forces (e.g., friction, normal forces, stickiness) on the macroscopic scale.
 
 ## HS-PS3-1
 Students who demonstrate understanding can:
@@ -747,23 +754,23 @@ Mathematical and computational thinking at the 9–12 level builds on K–8 and 
 #### Observable features of the student performance by the end of the course:
 1. Representation
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and describe* the components to be computationally modeled, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The boundaries of the system and that the reference level for potential energy = 0 (the potential energy of the initial or final state does not have to be zero);
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The initial energies of the system’s components (e.g., energy in fields, thermal energy, kinetic energy, energy stored in springs — all expressed as a total amount of Joules in each component), including a quantification in an algebraic description to calculate the total initial energy of the system;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii.   The energy flows in or out of the system, including a quantification in an algebraic description with flow into the system defined as positive; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv.    The final energies of the system components, including a quantification in an algebraic description to calculate the total final energy of the system.
+   * a. Students identify and describe* the components to be computationally modeled, including:
+      * i. The boundaries of the system and that the reference level for potential energy = 0 (the potential energy of the initial or final state does not have to be zero);
+      * ii. The initial energies of the system’s components (e.g., energy in fields, thermal energy, kinetic energy, energy stored in springs — all expressed as a total amount of Joules in each component), including a quantification in an algebraic description to calculate the total initial energy of the system;
+      * iii.   The energy flows in or out of the system, including a quantification in an algebraic description with flow into the system defined as positive; and
+      * iv.    The final energies of the system components, including a quantification in an algebraic description to calculate the total final energy of the system.
 
 2. Computational Modeling
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the algebraic descriptions of the initial and final energy state of the system, along with the energy flows to create a computational model (e.g., simple computer program, spreadsheet, simulation software package application) that is based on the principle of the conservation of energy.
+   * a. Students use the algebraic descriptions of the initial and final energy state of the system, along with the energy flows to create a computational model (e.g., simple computer program, spreadsheet, simulation software package application) that is based on the principle of the conservation of energy.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students use the computational model to calculate changes in the energy of one component of the system when changes in the energy of the other components and the energy flows are known.
+   * b. Students use the computational model to calculate changes in the energy of one component of the system when changes in the energy of the other components and the energy flows are known.
 
 3. Analysis
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the computational model to predict the maximum possible change in the energy of one component of the system for a given set of energy flows.
+   * a. Students use the computational model to predict the maximum possible change in the energy of one component of the system for a given set of energy flows.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students identify and describe* the limitations of the computational model, based on the assumptions that were made in creating the algebraic descriptions of energy changes and flows in the system.
+   * b. Students identify and describe* the limitations of the computational model, based on the assumptions that were made in creating the algebraic descriptions of energy changes and flows in the system.
 
 ## HS-PS3-2
 Students who demonstrate understanding can:
@@ -793,26 +800,26 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 #### Observable features of the student performance by the end of the course:
 1. Components of the model
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop models in which they identify and describe* the relevant components, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. All the components of the system and the surroundings, as well as energy flows between the system and the surroundings;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Clearly depicting both a macroscopic and a molecular/atomic-level representation of the system; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. Depicting the forms in which energy is manifested at two different scales: a)     Macroscopic , such as motion, sound, light, thermal energy, potential energy or energy in fields; and b)     Molecular/atomic, such as motions (kinetic energy) of particles (e.g., nuclei and electrons), the relative positions of particles in fields (potential energy), and energy in fields.
+   * a. Students develop models in which they identify and describe* the relevant components, including:
+      * i. All the components of the system and the surroundings, as well as energy flows between the system and the surroundings;
+      * ii. Clearly depicting both a macroscopic and a molecular/atomic-level representation of the system; and
+      * iii. Depicting the forms in which energy is manifested at two different scales: a)     Macroscopic , such as motion, sound, light, thermal energy, potential energy or energy in fields; and b)     Molecular/atomic, such as motions (kinetic energy) of particles (e.g., nuclei and electrons), the relative positions of particles in fields (potential energy), and energy in fields.
 
 2. Relationships
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* the relationships between components in their models, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Changes in the relative position of objects in gravitational, magnetic or electrostatic fields can affect the energy of the fields (e.g., charged objects moving away from each other change the field energy).
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.  Thermal energy includes both the kinetic and potential energy of particle vibrations in solids or molecules and the kinetic energy of freely moving particles (e.g., inert gas atoms, molecules) in liquids and gases.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii.  The total energy of the system and surroundings is conserved at a macroscopic and molecular/atomic level.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv.   Chemical energy can be considered in terms of systems of nuclei and electrons in electrostatic fields (bonds).
+   * a. Students describe* the relationships between components in their models, including:
+      * i. Changes in the relative position of objects in gravitational, magnetic or electrostatic fields can affect the energy of the fields (e.g., charged objects moving away from each other change the field energy).
+      * ii.  Thermal energy includes both the kinetic and potential energy of particle vibrations in solids or molecules and the kinetic energy of freely moving particles (e.g., inert gas atoms, molecules) in liquids and gases.
+      * iii.  The total energy of the system and surroundings is conserved at a macroscopic and molecular/atomic level.
+      * iv.   Chemical energy can be considered in terms of systems of nuclei and electrons in electrostatic fields (bonds).
 
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. As one form of energy increases, others must decrease by the same amount as energy is transferred among and between objects and fields.
+      * v. As one form of energy increases, others must decrease by the same amount as energy is transferred among and between objects and fields.
 
 3. Connections
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use their models to show that in closed systems the energy is conserved on both the macroscopic and molecular/atomic scales so that as one form of energy changes, the total system energy remains constant, as evidenced by the other forms of energy changing by the same amount or changes only by the amount of energy that is transferred into or out of the system.
+   * a. Students use their models to show that in closed systems the energy is conserved on both the macroscopic and molecular/atomic scales so that as one form of energy changes, the total system energy remains constant, as evidenced by the other forms of energy changing by the same amount or changes only by the amount of energy that is transferred into or out of the system.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students use their models to illustrate that energy at the macroscopic scale can be accounted for as a combination of energy associated with the motions of particles/objects and energy associated with the relative positions of particles/objects on both the macroscopic and microscopic scales.
+   * b. Students use their models to illustrate that energy at the macroscopic scale can be accounted for as a combination of energy associated with the motions of particles/objects and energy associated with the relative positions of particles/objects on both the macroscopic and microscopic scales.
 
 ## HS-PS3-3
 Students who demonstrate understanding can:
@@ -847,28 +854,28 @@ Constructing explanations and designing solutions in 9–12 builds on K–8 expe
 #### Observable features of the student performance by the end of the course:
 1. Using scientific knowledge to generate the design solution
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students design a device that converts one form of energy into another form of energy.
+   * a. Students design a device that converts one form of energy into another form of energy.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students develop a plan for the device in which they:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Identify what scientific principles provide the basis for the energy conversion design;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Identify the forms of energy that will be converted from one form to another in the designed system;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. Identify losses of energy by the design system to the surrounding environment;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. Describe* the scientific rationale for choices of materials and structure of the device, including how student-generated evidence influenced the design; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. Describe* that this device is an example of how the application of scientific knowledge and engineering design can increase benefits for modern civilization while decreasing costs and risk.
+   * b. Students develop a plan for the device in which they:
+      * i. Identify what scientific principles provide the basis for the energy conversion design;
+      * ii. Identify the forms of energy that will be converted from one form to another in the designed system;
+      * iii. Identify losses of energy by the design system to the surrounding environment;
+      * iv. Describe* the scientific rationale for choices of materials and structure of the device, including how student-generated evidence influenced the design; and
+      * v. Describe* that this device is an example of how the application of scientific knowledge and engineering design can increase benefits for modern civilization while decreasing costs and risk.
 
 2. Describing criteria and constraints, including quantification when appropriate
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* and quantify (when appropriate) prioritized criteria and constraints for the design of the device, along with the tradeoffs implicit in these design solutions. Examples of constraints to be considered are cost and efficiency of energy conversion.
+   * a. Students describe* and quantify (when appropriate) prioritized criteria and constraints for the design of the device, along with the tradeoffs implicit in these design solutions. Examples of constraints to be considered are cost and efficiency of energy conversion.
 
 3. Evaluating potential solutions
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students build and test the device according to the plan.
+   * a. Students build and test the device according to the plan.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students systematically and quantitatively evaluate the performance of the device against the criteria and constraints.
+   * b. Students systematically and quantitatively evaluate the performance of the device against the criteria and constraints.
 
 4. Refining and/or optimizing the design solution
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the results of the tests to improve the device performance by increasing the efficiency of energy conversion, keeping in mind the criteria and constraints, and noting any modifications in tradeoffs.
+   * a. Students use the results of the tests to improve the device performance by increasing the efficiency of energy conversion, keeping in mind the criteria and constraints, and noting any modifications in tradeoffs.
 
 ## HS-PS3-4
 Students who demonstrate understanding can:
@@ -900,34 +907,34 @@ Planning and carrying out investigations to answer questions or test solutions t
 #### Observable features of the student performance by the end of the course:
 1. Identifying the phenomenon to be investigated
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students describe* the purpose of the investigation, which includes the following idea, that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
+   * a. Students describe* the purpose of the investigation, which includes the following idea, that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
 
 2. Identifying the evidence to answer this question
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop an investigation plan and describe* the data that will be collected and the evidence to be derived from the data, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The measurement of the reduction of temperature of the hot object and the increase in temperature of the cold object to show that the thermal energy lost by the hot object is equal to the thermal energy gained by the cold object and that the distribution of thermal energy is more uniform after the interaction of the hot and cold components; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The heat capacity of the components in the system (obtained from scientific literature).
+   * a. Students develop an investigation plan and describe* the data that will be collected and the evidence to be derived from the data, including:
+      * i. The measurement of the reduction of temperature of the hot object and the increase in temperature of the cold object to show that the thermal energy lost by the hot object is equal to the thermal energy gained by the cold object and that the distribution of thermal energy is more uniform after the interaction of the hot and cold components; and
+      * ii. The heat capacity of the components in the system (obtained from scientific literature).
 
 3. Planning for the investigation
 
-   <br>&nbsp;&nbsp;&nbsp;a. In the investigation plan, students describe*:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. How a nearly closed system will be constructed, including the boundaries and initial conditions of the system;
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The data that will be collected, including masses of components and initial and final temperatures; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii.   The experimental procedure, including how the data will be collected, the number of trials, the experimental set up, and equipment required.
+   * a. In the investigation plan, students describe*:
+      * i. How a nearly closed system will be constructed, including the boundaries and initial conditions of the system;
+      * ii. The data that will be collected, including masses of components and initial and final temperatures; and
+      * iii.   The experimental procedure, including how the data will be collected, the number of trials, the experimental set up, and equipment required.
 
 4. Collecting the data
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students collect and record data that can be used to calculate the change in thermal energy of each of the two components of the system.
+   * a. Students collect and record data that can be used to calculate the change in thermal energy of each of the two components of the system.
 
 5. Refining the design
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students evaluate their investigation, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The accuracy and precision of the data collected, as well as the limitations of the investigation; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The ability of the data to provide the evidence required.
+   * a. Students evaluate their investigation, including:
+      * i. The accuracy and precision of the data collected, as well as the limitations of the investigation; and
+      * ii. The ability of the data to provide the evidence required.
 
-   <br>&nbsp;&nbsp;&nbsp;b. If necessary, students refine the plan to produce more accurate, precise, and useful data that address the experimental question.
+   * b. If necessary, students refine the plan to produce more accurate, precise, and useful data that address the experimental question.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students identify potential causes of the apparent loss of energy from a closed system (which should be zero in an ideal system) and adjust the design of the experiment accordingly.
+   * c. Students identify potential causes of the apparent loss of energy from a closed system (which should be zero in an ideal system) and adjust the design of the experiment accordingly.
 
 ## HS-PS3-5
 Students who demonstrate understanding can:
@@ -955,23 +962,23 @@ Modeling in 9–12 builds on K–8 and progresses to using, synthesizing, and de
 #### Observable features of the student performance by the end of the course:
 1. Components of the model
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students develop a model in which they identify and describe* the relevant components to illustrate the forces and changes in energy involved when two objects interact, including:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. The two objects in the system, including their initial positions and velocities (limited to one dimension).
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The nature of the interaction (electric or magnetic) between the two objects.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. The relative magnitude and the direction of the net force on each of the objects.
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. Representation of a field as a quantity that has a magnitude and direction at all points in space and which contains energy.
+   * a. Students develop a model in which they identify and describe* the relevant components to illustrate the forces and changes in energy involved when two objects interact, including:
+      * i. The two objects in the system, including their initial positions and velocities (limited to one dimension).
+      * ii. The nature of the interaction (electric or magnetic) between the two objects.
+      * iii. The relative magnitude and the direction of the net force on each of the objects.
+      * iv. Representation of a field as a quantity that has a magnitude and direction at all points in space and which contains energy.
 
 2. Relationships
 
-   <br>&nbsp;&nbsp;&nbsp;a. In the model, students describe* the relationships between components, including the change in the energy of the objects, given the initial and final positions and velocities of the objects.
+   * a. In the model, students describe* the relationships between components, including the change in the energy of the objects, given the initial and final positions and velocities of the objects.
 
 3. Connections
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use the model to determine whether the energy stored in the field increased, decreased, or remained the same when the objects interacted.
+   * a. Students use the model to determine whether the energy stored in the field increased, decreased, or remained the same when the objects interacted.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students use the model to support the claim that the change in the energy stored in the field (which is qualitatively determined to be either positive, negative, or zero) is consistent with the change in energy of the objects.
+   * b. Students use the model to support the claim that the change in the energy stored in the field (which is qualitatively determined to be either positive, negative, or zero) is consistent with the change in energy of the objects.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Using the model, students describe* the cause and effect relationships on a qualitative level between forces produced by electric or magnetic fields and the change of energy of the objects in the system.
+   * c. Using the model, students describe* the cause and effect relationships on a qualitative level between forces produced by electric or magnetic fields and the change of energy of the objects in the system.
 
 ## HS-PS4-1
 Students who demonstrate understanding can:
@@ -999,24 +1006,24 @@ Mathematical and computational thinking at the 9-12 level builds on K-8 and prog
 #### Observable features of the student performance by the end of the course:
 1. Representation
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify and describe* the relevant components in the mathematical representations:
+   * a. Students identify and describe* the relevant components in the mathematical representations:
 
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Mathematical values for frequency, wavelength, and speed of waves traveling in various specified media; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.   The relationships between frequency, wavelength, and speed of waves traveling in various specified media.
+      * i. Mathematical values for frequency, wavelength, and speed of waves traveling in various specified media; and
+      * ii.   The relationships between frequency, wavelength, and speed of waves traveling in various specified media.
 
 2. Mathematical modeling
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students show that the product of the frequency and the wavelength of a particular type of wave in a given medium is constant, and identify this relationship as the wave speed according to the mathematical relationship 𝑣 = 𝑓𝜆.
+   * a. Students show that the product of the frequency and the wavelength of a particular type of wave in a given medium is constant, and identify this relationship as the wave speed according to the mathematical relationship 𝑣 = 𝑓𝜆.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students use the data to show that the wave speed for a particular type of wave changes as the medium through which the wave travels changes.
+   * b. Students use the data to show that the wave speed for a particular type of wave changes as the medium through which the wave travels changes.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students predict the relative change in the wavelength of a wave when it moves from one medium to another (thus different wave speeds using the mathematical relationship 𝑣 = 𝑓𝜆). Students express the relative change in terms of cause (different media) and effect (different wavelengths but same frequency).
+   * c. Students predict the relative change in the wavelength of a wave when it moves from one medium to another (thus different wave speeds using the mathematical relationship 𝑣 = 𝑓𝜆). Students express the relative change in terms of cause (different media) and effect (different wavelengths but same frequency).
 
 3. Analysis
 
-   <br>&nbsp;&nbsp;&nbsp;a. Using the mathematical relationship 𝑣 = 𝑓𝜆, students assess claims about any of the three quantities when the other two quantities are known for waves travelling in various specified media.
+   * a. Using the mathematical relationship 𝑣 = 𝑓𝜆, students assess claims about any of the three quantities when the other two quantities are known for waves travelling in various specified media.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students use the mathematical relationships to distinguish between cause and correlation with respect to the supported claims.
+   * b. Students use the mathematical relationships to distinguish between cause and correlation with respect to the supported claims.
 
 ## HS-PS4-2
 Students who demonstrate understanding can:
@@ -1044,16 +1051,16 @@ Asking questions and defining problems in grades 9–12 builds from grades K–8
 #### Observable features of the student performance by the end of the course:
 1. Addressing phenomena or scientific theories
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students evaluate the given questions in terms of whether or not answers to the questions would:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Provide examples of features associated with digital transmission and storage of information (e.g., can be stored reliably without degradation over time, transferred easily, and copied and shared rapidly; can be easily deleted; can be stolen easily by making a copy; can be broadly accessed); and
+   * a. Students evaluate the given questions in terms of whether or not answers to the questions would:
+      * i. Provide examples of features associated with digital transmission and storage of information (e.g., can be stored reliably without degradation over time, transferred easily, and copied and shared rapidly; can be easily deleted; can be stolen easily by making a copy; can be broadly accessed); and
 
-   <br>&nbsp;&nbsp;&nbsp;b. In their evaluation of the given questions, students:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Describe* the stability and importance of the systems that employ digital information as they relate to the advantages and disadvantages of digital transmission and storage of information; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. Discuss the relevance of the answers to the question to real-life examples (e.g., emailing your homework to a teacher, copying music, using the internet for research, social media).
+   * b. In their evaluation of the given questions, students:
+      * i. Describe* the stability and importance of the systems that employ digital information as they relate to the advantages and disadvantages of digital transmission and storage of information; and
+      * ii. Discuss the relevance of the answers to the question to real-life examples (e.g., emailing your homework to a teacher, copying music, using the internet for research, social media).
 
 2. Evaluating empirical testability
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students evaluate the given questions in terms of whether or not answers to the questions would provide means to empirically determine whether given features are advantages or disadvantages.
+   * a. Students evaluate the given questions in terms of whether or not answers to the questions would provide means to empirically determine whether given features are advantages or disadvantages.
 
 ## HS-PS4-3
 Students who demonstrate understanding can:
@@ -1088,23 +1095,23 @@ Science Models, Laws, Mechanisms, and Theories Explain Natural Phenomena
 #### Observable features of the student performance by the end of the course:
 1. Identifying the given explanation and associated claims, evidence, and reasoning
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students identify the given explanation that is to be supported by the claims, evidence, and reasoning to be evaluated, and that includes the following idea: Electromagnetic radiation can be described either by a wave model or a particle model, and for some situations one model is more useful than the other.
+   * a. Students identify the given explanation that is to be supported by the claims, evidence, and reasoning to be evaluated, and that includes the following idea: Electromagnetic radiation can be described either by a wave model or a particle model, and for some situations one model is more useful than the other.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students identify the given claims to be evaluated.
+   * b. Students identify the given claims to be evaluated.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students identify the given evidence to be evaluated, including the following phenomena:
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. Interference behavior by electromagnetic radiation; and
-   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. The photoelectric effect.
+   * c. Students identify the given evidence to be evaluated, including the following phenomena:
+      * i. Interference behavior by electromagnetic radiation; and
+      * ii. The photoelectric effect.
 
-   <br>&nbsp;&nbsp;&nbsp;d. Students identify the given reasoning to be evaluated.
+   * d. Students identify the given reasoning to be evaluated.
 
 2. Evaluating given evidence and reasoning
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students evaluate the given evidence for interference behavior of electromagnetic radiation to determine how it supports the argument that electromagnetic radiation can be described by a wave model.
+   * a. Students evaluate the given evidence for interference behavior of electromagnetic radiation to determine how it supports the argument that electromagnetic radiation can be described by a wave model.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students evaluate the phenomenon of the photoelectric effect to determine how it supports the argument that electromagnetic radiation can be described by a particle model.
+   * b. Students evaluate the phenomenon of the photoelectric effect to determine how it supports the argument that electromagnetic radiation can be described by a particle model.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students evaluate the given claims and reasoning for modeling electromagnetic radiation as both a wave and particle, considering the transfer of energy and information within and between systems, and why for some aspects the wave model is more useful and for other aspects the particle model is more useful to describe the transfer of energy and information.
+   * c. Students evaluate the given claims and reasoning for modeling electromagnetic radiation as both a wave and particle, considering the transfer of energy and information within and between systems, and why for some aspects the wave model is more useful and for other aspects the particle model is more useful to describe the transfer of energy and information.
 
 ## HS-PS4-4
 Students who demonstrate understanding can:
@@ -1132,15 +1139,15 @@ Obtaining, evaluating, and communicating information in 9–12 builds on K–8 a
 #### Observable features of the student performance by the end of the course:
 1. Obtaining information
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students obtain at least two claims proposed in published material (using at least two sources per claim) regarding the effect of electromagnetic radiation that is absorbed by matter. One of these claims deals with the effect of electromagnetic radiation on living tissue.
+   * a. Students obtain at least two claims proposed in published material (using at least two sources per claim) regarding the effect of electromagnetic radiation that is absorbed by matter. One of these claims deals with the effect of electromagnetic radiation on living tissue.
 
 2. Evaluating information
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use reasoning about the data presented, including the energies of the photons involved (i.e., relative wavelengths) and the probability of ionization, to analyze the validity and reliability of each claim.
+   * a. Students use reasoning about the data presented, including the energies of the photons involved (i.e., relative wavelengths) and the probability of ionization, to analyze the validity and reliability of each claim.
 
-   <br>&nbsp;&nbsp;&nbsp;b. Students determine the validity and reliability of the sources of the claims.
+   * b. Students determine the validity and reliability of the sources of the claims.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students describe* the cause and effect reasoning in each claim, including the extrapolations to larger scales from cause and effect relationships of mechanisms at small scales (e.g., extrapolating from the effect of a particular wavelength of radiation on a single cell to the effect of that wavelength on the entire organism).
+   * c. Students describe* the cause and effect reasoning in each claim, including the extrapolations to larger scales from cause and effect relationships of mechanisms at small scales (e.g., extrapolating from the effect of a particular wavelength of radiation on a single cell to the effect of that wavelength on the entire organism).
 
 ## HS-PS4-5
 Students who demonstrate understanding can:
@@ -1179,12 +1186,12 @@ Obtaining, evaluating, and communicating information in 9–12 builds on K–8 a
 #### Observable features of the student performance by the end of the course:
 1. Communication style and format
 
-   <br>&nbsp;&nbsp;&nbsp;a. Students use at least two different formats (e.g., oral, graphical, textual, and mathematical) to communicate technical information and ideas, including fully describing* at least two devices and the physical principles upon which the devices depend. One of the devices must depend on the photoelectric effect for its operation. Students cite the origin of the information as appropriate.
+   * a. Students use at least two different formats (e.g., oral, graphical, textual, and mathematical) to communicate technical information and ideas, including fully describing* at least two devices and the physical principles upon which the devices depend. One of the devices must depend on the photoelectric effect for its operation. Students cite the origin of the information as appropriate.
 
 2. Connecting the DCIs and the CCCs
 
-   <br>&nbsp;&nbsp;&nbsp;a. When describing* how each device operates, students identify the wave behavior utilized by the device or the absorption of photons and production of electrons for devices that rely on the photoelectric effect, and qualitatively describe* how the basic physics principles were utilized in the design through research and development to produce this functionality (e.g., absorbing electromagnetic energy and converting it to thermal energy to heat an object; using the photoelectric effect to produce an electric current).
+   * a. When describing* how each device operates, students identify the wave behavior utilized by the device or the absorption of photons and production of electrons for devices that rely on the photoelectric effect, and qualitatively describe* how the basic physics principles were utilized in the design through research and development to produce this functionality (e.g., absorbing electromagnetic energy and converting it to thermal energy to heat an object; using the photoelectric effect to produce an electric current).
 
-   <br>&nbsp;&nbsp;&nbsp;b. For each device, students discuss the real-world problem it solves or need it addresses, and how civilization now depends on the device.
+   * b. For each device, students discuss the real-world problem it solves or need it addresses, and how civilization now depends on the device.
 
-   <br>&nbsp;&nbsp;&nbsp;c. Students identify and communicate the cause and effect relationships that are used to produce the functionality of the device.
+   * c. Students identify and communicate the cause and effect relationships that are used to produce the functionality of the device.
