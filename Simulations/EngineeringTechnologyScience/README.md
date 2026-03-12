@@ -28,7 +28,7 @@ Analyze a major global challenge to specify qualitative and quantitative criteri
         <ul>
           <li>[ ] Add a "Research Data" modal with summaries/links to real-world water scarcity reports.</li>
           <li>[ ] Add logic to disable the "Approve Constraints" button until the user has opened the Research Data modal.</li>
-          <li>[ ] Add a text `<textarea>` in the "Define City Constraints" section for students to write a short rationale for their numbers.</li>
+          <li>[ ] Add a text `&lt;textarea&gt;` in the "Define City Constraints" section for students to write a short rationale for their numbers.</li>
         </ul>
       </li>
     </ul>
