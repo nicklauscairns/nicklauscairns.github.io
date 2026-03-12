@@ -17,6 +17,13 @@ This repository contains various interactive science simulations aligned to NGSS
 - [Life Sciences](NGSS/HighSchoolLifeSciencesPerformanceExpectations.md)
 - [Physical Sciences](NGSS/HighSchoolPhysicalSciencesPerformanceExpectations.md)
 
+## NGSS Evidence Statements
+
+- [Earth and Space Sciences](NGSS/HighSchoolEarthSpaceSciencesEvidenceStatements.md)
+- [Engineering, Technology, and Applications of Science](NGSS/HighSchoolEngineeringTechnologyScienceEvidenceStatements.md)
+- [Life Sciences](NGSS/HighSchoolLifeSciencesEvidenceStatements.md)
+- [Physical Sciences](NGSS/HighSchoolPhysicalSciencesEvidenceStatements.md)
+
 ## NGSS Resources
 
 - [Using Phenomena in NGSS-Designed Lessons and Units](NGSS/PhenomenaNGSS.md)
