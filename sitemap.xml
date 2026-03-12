@@ -232,10 +232,19 @@
     <loc>https://nicklauscairns.com/</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolEarthSpaceSciencesEvidenceStatements</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/NGSS/HighSchoolEarthSpaceSciencesPerformanceExpectations</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolEngineeringTechnologyScienceEvidenceStatements</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/NGSS/HighSchoolEngineeringTechnologySciencePerformanceExpectations</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/HighSchoolLifeSciencesEvidenceStatements</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/NGSS/HighSchoolLifeSciencesPerformanceExpectations</loc>
@@ -245,5 +254,11 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/NGSS/HighSchoolPhysicalSciencesPerformanceExpectations</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/PhenomenaNGSS</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/TaskScreenerA</loc>
   </url>
 </urlset>
