@@ -6,6 +6,7 @@
 Use the periodic table as a model to predict the relative properties of elements based on the patterns of electrons in the outermost energy level of atoms.
 
 - [Alkali Metals Phenomenon](AlkaliMetalsPhenomenon.html) - Observe the reaction patterns and atomic structures of different elements. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 17:47:30</b></summary>
     <ul>
@@ -39,6 +40,7 @@ Use the periodic table as a model to predict the relative properties of elements
 Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.
 
 - [Chemical Reaction Outcomes Predictor](ChemicalReactionsOutcomes.html) - An interactive sandbox to predict outcomes and explore the octet rule by combining atoms with varying valence electrons. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -72,6 +74,7 @@ Construct and revise an explanation for the outcome of a simple chemical reactio
 Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
 
 - [Intermolecular Forces Investigation](IntermolecularForces.html) - Observe boiling points and surface tension to infer the strength of London Dispersion, Dipole-Dipole, and Hydrogen Bonding forces. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -104,6 +107,7 @@ Plan and conduct an investigation to gather evidence to compare the structure of
 Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy.
 
 - [Bond Energy Changes Simulator](BondEnergy.html) - An animated model illustrating how breaking bonds absorbs energy and forming bonds releases energy, and how the net change determines if a reaction is endothermic or exothermic. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -134,6 +138,7 @@ Develop a model to illustrate that the release or absorption of energy from a ch
 Apply scientific principles and evidence to provide an explanation about the effects of changing the temperature or concentration of the reacting particles on the rate at which a reaction occurs.
 
 - [Reaction Rates Simulation](ReactionRatesSimulation.html) - Explore how changing temperature (kinetic energy) and concentration affects collision frequency, reaction rates, and activation energy barriers using an interactive particle model. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -164,6 +169,7 @@ Apply scientific principles and evidence to provide an explanation about the eff
 Refine the design of a chemical system by specifying a change in conditions that would produce increased amounts of products at equilibrium.
 
 - [Le Chatelier's Principle Simulator](LeChatelier.html) - Interactively stress an equilibrium system (Haber Process) by changing concentration, volume, and temperature to see how the system shifts. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -194,6 +200,7 @@ Refine the design of a chemical system by specifying a change in conditions that
 Use mathematical representations to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
 
 - [Conservation of Mass Simulator](ConservationOfMass.html) - Balance chemical equations and observe how total mass and atom counts remain perfectly conserved across the reaction. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -224,6 +231,7 @@ Use mathematical representations to support the claim that atoms, and therefore 
 Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during the processes of fission, fusion, and radioactive decay.
 
 - [Nuclear Processes Simulator](NuclearProcesses.html) - Visualize the changes in protons and neutrons, and the massive energy released, during Alpha Decay, Nuclear Fission, and Nuclear Fusion. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -254,6 +262,7 @@ Develop models to illustrate the changes in the composition of the nucleus of th
 Analyze data to support the claim that Newton's second law of motion describes the mathematical relationship among the net force on a macroscopic object, its mass, and its acceleration.
 
 - [Interactive Boat River Crossing Simulation](InteractiveBoatRiverCrossingSimulation.html) - A physics simulation exploring relative velocity and vector addition as a boat crosses a flowing river. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -278,7 +287,9 @@ Analyze data to support the claim that Newton's second law of motion describes t
       </li>
     </ul>
   </details>
+
 - [Projectile Motion Simulation](ProjectileMotionSimulation.html) - An interactive physics simulation to study the kinematics of projectile motion by adjusting launch variables. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -309,6 +320,7 @@ Analyze data to support the claim that Newton's second law of motion describes t
 Use mathematical representations to support the claim that the total momentum of a system of objects is conserved when there is no net force on the system.
 
 - [Conservation of Momentum Simulation](ConservationOfMomentumSimulation.html) - Explore 1D elastic and inelastic collisions. Adjust masses, velocities, and elasticity to observe the conservation of momentum and changes in kinetic energy. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -339,6 +351,7 @@ Use mathematical representations to support the claim that the total momentum of
 Apply scientific and engineering ideas to design, evaluate, and refine a device that minimizes the force on a macroscopic object during a collision.
 
 - [Collision Force Minimizer](EggDropCrashCushion.html) - An interactive physics sandbox where users engineer the thickness and material stiffness of a crash cushion to minimize impact forces and protect a fragile payload during a drop. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 5.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -369,6 +382,7 @@ Apply scientific and engineering ideas to design, evaluate, and refine a device 
 Use mathematical representations of Newton's Law of Gravitation and Coulomb's Law to describe and predict the gravitational and electrostatic forces between objects.
 
 - [Gravity and Electrostatics Simulator](GravityAndElectrostaticsSimulator.html) - An interactive simulation to compare gravitational and electrostatic forces, manipulate mass/charge/distance, and explore the inverse-square law through data logging and graphing. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -399,6 +413,7 @@ Use mathematical representations of Newton's Law of Gravitation and Coulomb's La
 Plan and conduct an investigation to provide evidence that an electric current can produce a magnetic field and that a changing magnetic field can produce an electric current.
 
 - [Electromagnetism & Induction Sandbox](ElectromagnetismInduction.html) - Plan investigations using interactive electromagnets to see how current produces magnetic fields, and use a moving magnet near a coil to see how changing magnetic flux induces a current. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -429,6 +444,7 @@ Plan and conduct an investigation to provide evidence that an electric current c
 Communicate scientific and technical information about why the molecular-level structure is important in the functioning of designed materials.
 
 - [Molecular Structures & Designed Materials](MolecularStructuresMaterials.html) - Explore how the molecular-level structure of metals (conductivity), polymers (flexibility), and pharmaceuticals (specificity) determines their macro-scale functioning. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -459,6 +475,7 @@ Communicate scientific and technical information about why the molecular-level s
 Create a computational model to calculate the change in the energy of one component in a system when the change in energy of the other component(s) and energy flows in and out of the system are known.
 
 - [Energy Change Computational Model](EnergyChangeModel.html) - An interactive mathematical and computational model for a 3-component system, balancing kinetic, potential, and thermal energy changes with total energy flow. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -489,6 +506,7 @@ Create a computational model to calculate the change in the energy of one compon
 Develop and use models to illustrate that energy at the macroscopic scale can be accounted for as a combination of energy associated with the motions of particles (objects) and energy associated with the relative position of particles (objects).
 
 - [Macroscopic vs. Microscopic Energy Model](MacroscopicEnergyModel.html) - An interactive dual-view model illustrating how macroscopic temperature and elastic potential energy are derived from microscopic particle motion and relative particle positions. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -518,6 +536,7 @@ Develop and use models to illustrate that energy at the macroscopic scale can be
 Design, build, and refine a device that works within given constraints to convert one form of energy into another form of energy.
 
 - [Stage Lighting Simulator](StageLightingSimulator.html) - Investigate the energy transfer and circuit topography of two stage lighting tracks. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -548,6 +567,7 @@ Design, build, and refine a device that works within given constraints to conver
 Plan and conduct an investigation to provide evidence that the transfer of thermal energy when two components of different temperature are combined within a closed system results in a more uniform energy distribution among the components in the system (second law of thermodynamics).
 
 - [Thermal Equilibrium Sandbox](ThermalEquilibriumSandbox.html) - An interactive closed-system sandbox to investigate how components of different materials, masses, and initial temperatures transfer heat until reaching a uniform energy distribution (thermal equilibrium). [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -578,6 +598,7 @@ Plan and conduct an investigation to provide evidence that the transfer of therm
 Develop and use a model of two objects interacting through electric or magnetic fields to illustrate the forces between objects and the changes in energy of the objects due to the interaction.
 
 - [Electric & Magnetic Field Energy Simulator](ElectricMagneticFieldEnergy.html) - Interactively drag charged or magnetic objects to observe how distance impacts force magnitude and stored field potential energy. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -608,6 +629,7 @@ Develop and use a model of two objects interacting through electric or magnetic 
 Use mathematical representations to support a claim regarding relationships among the frequency, wavelength, and speed of waves traveling in various media.
 
 - [From Sparks to Waves](FromSparksToWavesSimulation.html) - An interactive lightning and wave oscilloscope simulation exploring propagation and oscilloscope models. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -638,6 +660,7 @@ Use mathematical representations to support a claim regarding relationships amon
 Evaluate questions about the advantages of using a digital transmission and storage of information.
 
 - [Digital vs. Analog Transmission Advantages](DigitalTransmissionAdvantage.html) - An interactive simulation demonstrating how digital thresholding allows a noisy signal to be perfectly reconstructed, while analog continuous signals permanently degrade. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -668,6 +691,7 @@ Evaluate questions about the advantages of using a digital transmission and stor
 Evaluate the claims, evidence, and reasoning behind the idea that electromagnetic radiation can be described either by a wave model or a particle model, and that for some situations one model is more useful than the other.
 
 - [Wave-Particle Duality](WaveParticleDuality.html) - Evaluate two interactive models: the double-slit experiment (wave interference) and the photoelectric effect (particle threshold energy). [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -698,6 +722,7 @@ Evaluate the claims, evidence, and reasoning behind the idea that electromagneti
 Evaluate the validity and reliability of claims in published materials of the effects that different frequencies of electromagnetic radiation have when absorbed by matter.
 
 - [EM Radiation Effects on Matter](EMRadiationEffects.html) - Evaluate the claims that low-frequency radiation causes safe thermal heating, while high-frequency radiation acts as ionizing radiation that damages cellular DNA. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
@@ -728,6 +753,7 @@ Evaluate the validity and reliability of claims in published materials of the ef
 Communicate technical information about how some technological devices use the principles of wave behavior and wave interactions with matter to transmit and capture information and energy.
 
 - [Wave Technology: Information & Energy](WaveInformationTechnology.html) - An interactive exploration of how Solar Cells capture energy from light waves, and how Fiber Optics use total internal reflection to transmit digital data. [2026-03-12 12:00:00]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
