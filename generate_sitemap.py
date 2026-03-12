@@ -14,6 +14,10 @@ def generate_sitemap():
     # Find all HTML files in Simulations directory
     html_files = glob.glob('./Simulations/**/*.html', recursive=True)
 
+    # Find all HTML files in NGSS directory
+    ngss_html_files = glob.glob('./NGSS/**/*.html', recursive=True)
+    html_files.extend(ngss_html_files)
+
     # Include root index.html
     html_files.append('./index.html')
 
