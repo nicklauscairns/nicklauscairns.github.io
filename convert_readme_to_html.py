@@ -8,10 +8,6 @@ readmes = [
     "Simulations/EngineeringTechnologyScience/README.md",
     "Simulations/LifeSciences/README.md",
     "Simulations/PhysicalSciences/README.md",
-    "NGSS/HighSchoolEarthSpaceSciencesPerformanceExpectations.md",
-    "NGSS/HighSchoolEngineeringTechnologySciencePerformanceExpectations.md",
-    "NGSS/HighSchoolLifeSciencesPerformanceExpectations.md",
-    "NGSS/HighSchoolPhysicalSciencesPerformanceExpectations.md",
 ]
 
 html_template = """<!DOCTYPE html>
@@ -49,10 +45,7 @@ for md_file in readmes:
         print(f"Skipping {md_file}, not found.")
         continue
 
-    if md_file.endswith("README.md"):
-        html_file = md_file.replace("README.md", "index.html")
-    else:
-        html_file = md_file.replace(".md", ".html")
+    html_file = md_file.replace("README.md", "index.html")
 
     # Run marked to convert markdown to HTML
     result = subprocess.run(['marked', md_file], capture_output=True, text=True)
@@ -64,9 +57,6 @@ for md_file in readmes:
 
     # Replace internal links ending with README.md to index.html
     html_content = html_content.replace('README.md"', 'index.html"')
-
-    # Replace internal links ending with .md to .html for NGSS files
-    html_content = html_content.replace('.md"', '.html"')
 
     # Create final HTML file
     final_html = html_template.format(content=html_content)
