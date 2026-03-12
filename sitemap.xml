@@ -46,6 +46,9 @@
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/WaterPropertiesEarthProcesses.html</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/index.html</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/CityWaterInfrastructureSimulation.html</loc>
   </url>
   <url>
@@ -56,6 +59,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/WindTurbineSimulation.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/index.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/AerobicAnaerobic.html</loc>
@@ -125,6 +131,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/TrophicEnergy.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/LifeSciences/index.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/AlkaliMetalsPhenomenon.html</loc>
@@ -200,5 +209,14 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/WaveParticleDuality.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/index.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/index.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/index.html</loc>
   </url>
 </urlset>
