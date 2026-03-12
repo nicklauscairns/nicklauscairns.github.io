@@ -8,6 +8,7 @@ readmes = [
     "Simulations/EngineeringTechnologyScience/README.md",
     "Simulations/LifeSciences/README.md",
     "Simulations/PhysicalSciences/README.md",
+    "Simulations/Logic/README.md",
 ]
 
 html_template = """<!DOCTYPE html>

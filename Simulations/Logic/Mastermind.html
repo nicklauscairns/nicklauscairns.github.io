@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mastermind - Interactive logic and deduction game simulation">
+    <meta name="keywords" content="Logic, Deduction, Mastermind, Codebreaker, Game">
+    <meta name="author" content="Nicklaus Cairns">
+    <title>Mastermind Codebreaker</title>
+
+    <!-- Open Graph tags for social sharing -->
+    <meta property="og:title" content="Mastermind Codebreaker">
+    <meta property="og:description" content="Use logic and deduction to break the hidden color code in this interactive Mastermind simulation.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Mastermind Codebreaker",
+      "description": "An interactive logic simulation of the classic Mastermind codebreaking game.",
+      "author": {
+        "@type": "Person",
+        "name": "Nicklaus Cairns"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .peg-hole {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .feedback-hole {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #9ca3af;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+            display: inline-block;
+        }
+
+        .peg-color-red { background-color: #ef4444; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2); }
+        .peg-color-blue { background-color: #3b82f6; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2); }
+        .peg-color-green { background-color: #22c55e; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2); }
+        .peg-color-yellow { background-color: #eab308; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2); }
+        .peg-color-purple { background-color: #a855f7; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2); }
+        .peg-color-orange { background-color: #f97316; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2); }
+
+        .feedback-black { background-color: #111827; box-shadow: none; }
+        .feedback-white { background-color: #f9fafb; box-shadow: none; border: 1px solid #d1d5db; }
+
+        .color-selector {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .color-selector:hover {
+            transform: scale(1.1);
+        }
+
+        .selected-color {
+            border: 3px solid #1f2937;
+            transform: scale(1.1);
+        }
+
+        .active-row {
+            border: 2px solid #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        #hidden-code-container .peg-hole {
+            cursor: default;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 min-h-screen flex flex-col items-center py-8">
+    <div class="max-w-2xl w-full bg-white rounded-xl shadow-lg p-6">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-4">Mastermind Codebreaker</h1>
+
+        <div class="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-200">
+            <h2 class="text-lg font-semibold text-blue-800 mb-2">Instructions</h2>
+            <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>Guess the hidden sequence of 4 colors.</li>
+                <li>Select a color from the palette, then click empty holes in the active row to place it.</li>
+                <li>Once a row is full, click "Check" to get feedback.</li>
+                <li><strong>Black peg:</strong> Correct color in the correct position.</li>
+                <li><strong>White peg:</strong> Correct color in the wrong position.</li>
+                <li>Duplicates are allowed in the hidden code.</li>
+            </ul>
+        </div>
+
+        <div class="flex justify-between items-center mb-6 px-4">
+            <div id="status-message" class="text-lg font-bold">Attempts: <span id="attempt-count">0</span>/10</div>
+            <button id="reset-btn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition" onclick="resetGame()">New Game</button>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 justify-center">
+
+            <!-- Game Board -->
+            <div class="bg-gray-200 p-4 rounded-lg shadow-inner flex flex-col items-center border-2 border-gray-300 w-full md:w-auto">
+
+                <!-- Hidden Code Area -->
+                <div class="bg-gray-800 p-3 rounded mb-4 flex space-x-2" id="hidden-code-container">
+                    <div class="peg-hole" id="secret-0"></div>
+                    <div class="peg-hole" id="secret-1"></div>
+                    <div class="peg-hole" id="secret-2"></div>
+                    <div class="peg-hole" id="secret-3"></div>
+                </div>
+
+                <!-- Guess Rows -->
+                <div id="board-rows" class="flex flex-col-reverse gap-2 w-full">
+                    <!-- Rows generated by JS -->
+                </div>
+            </div>
+
+            <!-- Controls Sidebar -->
+            <div class="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-200 h-max">
+                <h3 class="font-bold mb-4">Color Palette</h3>
+                <div class="grid grid-cols-2 gap-3 mb-6" id="palette">
+                    <div class="color-selector peg-color-red selected-color" data-color="red" onclick="selectColor('red')"></div>
+                    <div class="color-selector peg-color-blue" data-color="blue" onclick="selectColor('blue')"></div>
+                    <div class="color-selector peg-color-green" data-color="green" onclick="selectColor('green')"></div>
+                    <div class="color-selector peg-color-yellow" data-color="yellow" onclick="selectColor('yellow')"></div>
+                    <div class="color-selector peg-color-purple" data-color="purple" onclick="selectColor('purple')"></div>
+                    <div class="color-selector peg-color-orange" data-color="orange" onclick="selectColor('orange')"></div>
+                </div>
+
+                <button id="check-btn" class="w-full px-4 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkGuess()" disabled>
+                    Check Guess
+                </button>
+            </div>
+        </div>
+
+        <div id="end-message" class="hidden mt-6 p-4 rounded-lg text-center font-bold text-xl">
+        </div>
+
+    </div>
+
+    <script>
+        const COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+        const MAX_ATTEMPTS = 10;
+        const CODE_LENGTH = 4;
+
+        let secretCode = [];
+        let currentAttempt = 0;
+        let selectedColor = 'red';
+        let currentGuess = [null, null, null, null];
+        let gameOver = false;
+
+        function initGame() {
+            // Generate secret code
+            secretCode = [];
+            for (let i = 0; i < CODE_LENGTH; i++) {
+                secretCode.push(COLORS[Math.floor(Math.random() * COLORS.length)]);
+            }
+
+            // For testing purposes, output secret code to console
+            // console.log("Secret Code:", secretCode);
+
+            currentAttempt = 0;
+            currentGuess = [null, null, null, null];
+            gameOver = false;
+            selectedColor = 'red';
+
+            document.getElementById('attempt-count').innerText = currentAttempt;
+            document.getElementById('end-message').className = "hidden mt-6 p-4 rounded-lg text-center font-bold text-xl";
+
+            // Hide secret code
+            for(let i=0; i<4; i++) {
+                const secretPeg = document.getElementById(`secret-${i}`);
+                secretPeg.className = "peg-hole flex items-center justify-center text-white font-bold";
+                secretPeg.innerText = "?";
+            }
+
+            renderPalette();
+            renderBoard();
+            updateCheckButton();
+        }
+
+        // Allow overriding random for tests
+        window.setSecretCode = function(code) {
+            secretCode = code;
+        };
+        window.initGame = initGame;
+
+        function renderPalette() {
+            document.querySelectorAll('.color-selector').forEach(el => {
+                if (el.dataset.color === selectedColor) {
+                    el.classList.add('selected-color');
+                } else {
+                    el.classList.remove('selected-color');
+                }
+            });
+        }
+
+        function selectColor(color) {
+            selectedColor = color;
+            renderPalette();
+        }
+        window.selectColor = selectColor;
+
+        function renderBoard() {
+            const boardContainer = document.getElementById('board-rows');
+            boardContainer.innerHTML = '';
+
+            for (let row = 0; row < MAX_ATTEMPTS; row++) {
+                const rowEl = document.createElement('div');
+                rowEl.className = `flex items-center space-x-4 p-2 rounded ${row === currentAttempt && !gameOver ? 'active-row' : ''}`;
+                rowEl.id = `row-${row}`;
+
+                // Guess Holes
+                const guessContainer = document.createElement('div');
+                guessContainer.className = "flex space-x-2";
+
+                for (let col = 0; col < CODE_LENGTH; col++) {
+                    const holeEl = document.createElement('div');
+                    holeEl.className = "peg-hole";
+                    holeEl.id = `hole-${row}-${col}`;
+
+                    if (row === currentAttempt && !gameOver) {
+                        if (currentGuess[col]) {
+                            holeEl.classList.add(`peg-color-${currentGuess[col]}`);
+                        }
+                        holeEl.onclick = () => placePeg(col);
+                    } else if (row < currentAttempt) {
+                        // We would need to store historical guesses to re-render perfectly
+                        // but since we append to DOM and only update active row visually,
+                        // we can skip history logic for now and just build the empty structure
+                        // unless it's history, in which case we rebuild from stored state.
+                        // For simplicity, we only build DOM once and update classes directly in placePeg/checkGuess
+                    }
+
+                    guessContainer.appendChild(holeEl);
+                }
+
+                // Feedback Area (2x2 grid)
+                const feedbackContainer = document.createElement('div');
+                feedbackContainer.className = "grid grid-cols-2 gap-1 w-6 h-6 items-center justify-items-center";
+                feedbackContainer.id = `feedback-${row}`;
+
+                for(let i=0; i<4; i++) {
+                    const fbHole = document.createElement('div');
+                    fbHole.className = "feedback-hole";
+                    feedbackContainer.appendChild(fbHole);
+                }
+
+                rowEl.appendChild(guessContainer);
+                rowEl.appendChild(feedbackContainer);
+                boardContainer.appendChild(rowEl);
+            }
+        }
+
+        // Optimized partial render for performance
+        function placePeg(colIndex) {
+            if (gameOver) return;
+
+            currentGuess[colIndex] = selectedColor;
+
+            const holeEl = document.getElementById(`hole-${currentAttempt}-${colIndex}`);
+            // Remove existing color classes
+            COLORS.forEach(c => holeEl.classList.remove(`peg-color-${c}`));
+            holeEl.classList.add(`peg-color-${selectedColor}`);
+
+            updateCheckButton();
+        }
+        window.placePeg = placePeg;
+
+        function updateCheckButton() {
+            const btn = document.getElementById('check-btn');
+            btn.disabled = currentGuess.includes(null) || gameOver;
+        }
+
+        function checkGuess() {
+            if (currentGuess.includes(null) || gameOver) return;
+
+            // Calculate feedback
+            let blacks = 0;
+            let whites = 0;
+
+            let secretCopy = [...secretCode];
+            let guessCopy = [...currentGuess];
+
+            // 1. Check for exact matches (Black pegs)
+            for (let i = 0; i < CODE_LENGTH; i++) {
+                if (guessCopy[i] === secretCopy[i]) {
+                    blacks++;
+                    guessCopy[i] = null;
+                    secretCopy[i] = null;
+                }
+            }
+
+            // 2. Check for color matches in wrong position (White pegs)
+            for (let i = 0; i < CODE_LENGTH; i++) {
+                if (guessCopy[i] !== null) {
+                    const matchIndex = secretCopy.indexOf(guessCopy[i]);
+                    if (matchIndex !== -1) {
+                        whites++;
+                        secretCopy[matchIndex] = null;
+                    }
+                }
+            }
+
+            // Render feedback
+            const feedbackContainer = document.getElementById(`feedback-${currentAttempt}`);
+            const feedbackHoles = feedbackContainer.children;
+
+            let fbIndex = 0;
+            for(let i=0; i<blacks; i++) {
+                feedbackHoles[fbIndex++].classList.add('feedback-black');
+            }
+            for(let i=0; i<whites; i++) {
+                feedbackHoles[fbIndex++].classList.add('feedback-white');
+            }
+
+            // End attempt
+            currentAttempt++;
+            document.getElementById('attempt-count').innerText = currentAttempt;
+
+            // Check Win/Loss
+            if (blacks === CODE_LENGTH) {
+                endGame(true);
+            } else if (currentAttempt >= MAX_ATTEMPTS) {
+                endGame(false);
+            } else {
+                // Setup next row
+                currentGuess = [null, null, null, null];
+
+                // Update row styling
+                document.getElementById(`row-${currentAttempt-1}`).classList.remove('active-row');
+                document.getElementById(`row-${currentAttempt}`).classList.add('active-row');
+
+                // Add click handlers to new active row
+                for (let col = 0; col < CODE_LENGTH; col++) {
+                    document.getElementById(`hole-${currentAttempt}-${col}`).onclick = () => placePeg(col);
+                    // Remove click handlers from old row
+                    document.getElementById(`hole-${currentAttempt-1}-${col}`).onclick = null;
+                }
+
+                updateCheckButton();
+            }
+        }
+        window.checkGuess = checkGuess;
+
+        function endGame(isWin) {
+            gameOver = true;
+            updateCheckButton();
+
+            // Remove active row highlight
+            if (currentAttempt < MAX_ATTEMPTS && !isWin) {
+                document.getElementById(`row-${currentAttempt}`).classList.remove('active-row');
+            } else if (isWin) {
+                document.getElementById(`row-${currentAttempt-1}`).classList.remove('active-row');
+            }
+
+            // Reveal secret code
+            for(let i=0; i<4; i++) {
+                const secretPeg = document.getElementById(`secret-${i}`);
+                secretPeg.innerText = "";
+                secretPeg.classList.add(`peg-color-${secretCode[i]}`);
+            }
+
+            const endMsgEl = document.getElementById('end-message');
+            endMsgEl.classList.remove('hidden');
+
+            if (isWin) {
+                endMsgEl.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-400');
+                endMsgEl.innerText = `Code Broken in ${currentAttempt} attempts!`;
+            } else {
+                endMsgEl.classList.add('bg-red-100', 'text-red-800', 'border', 'border-red-400');
+                endMsgEl.innerText = "Game Over. You failed to break the code.";
+            }
+        }
+
+        function resetGame() {
+            initGame();
+        }
+
+        // Run once
+        initGame();
+    </script>
+</body>
+</html>
