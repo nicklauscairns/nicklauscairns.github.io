@@ -14,6 +14,9 @@ def generate_sitemap():
     # Find all HTML files in Simulations directory
     html_files = glob.glob('./Simulations/**/*.html', recursive=True)
 
+    # Include root index.html
+    html_files.append('./index.html')
+
     # Sort for consistency
     html_files.sort()
 
