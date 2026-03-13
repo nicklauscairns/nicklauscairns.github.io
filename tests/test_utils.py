@@ -1,6 +1,7 @@
 from pathlib import Path
+from playwright.async_api import Browser, Page
 
-async def setup_page(browser, relative_path):
+async def setup_page(browser: Browser, relative_path: str) -> Page:
     """
     Creates a new page, intercepts the tailwindcss CDN to avoid timeouts,
     and navigates to the given local HTML file.
