@@ -381,16 +381,16 @@ Construct an argument based on evidence about the simultaneous coevolution of Ea
 ### HS-ESS3-1
 Construct an explanation based on evidence for how the availability of natural resources, occurrence of natural hazards, and changes in climate have influenced human activity.
 
-- [Human Settlement & Migration Simulator](HumanMigrationSettlementSimulator.html) - An interactive map demonstrating how human populations migrate towards natural resources and are displaced by natural hazards and climate change. [2026-03-12 12:00:00]
+- [Human Settlement & Migration Simulator](HumanMigrationSettlementSimulator.html) - An interactive map demonstrating how human populations migrate towards natural resources and are displaced by natural hazards and climate change. Features specific historical case studies (Nile River Valley, The Dust Bowl) and a modern Climate Refugee scenario. [2026-03-13 12:06:05]
 
   <details>
-    <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 12:00:00</b></summary>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 12:06:05</b></summary>
     <ul>
       <li>
-        <b>Overview:</b> Good investigative phenomenon exploring the push and pull factors of human settlement (Criterion 4). It is culturally relevant as it deals with human populations and resources (Criterion 1).
+        <b>Overview:</b> Excellent investigative phenomenon exploring the push and pull factors of human settlement (Criterion 4). It is highly culturally relevant as it explores specific historical events like the settlement of the Nile and the Dust Bowl, as well as modern climate refugee scenarios (Criterion 1).
       </li>
       <li>
-        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the DCI (ESS3.A, ESS3.B) on natural resources and natural hazards, and the CCC (Cause and Effect). For HS-ESS3-1, it helps construct explanations based on evidence (1.a, 2.a).
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the DCI (ESS3.A, ESS3.B) on natural resources and natural hazards, and the CCC (Cause and Effect). For HS-ESS3-1, the specific scenarios greatly help in constructing explanations based on evidence (1.a, 2.a).
       </li>
       <li>
         <b>AI Action Items for Improvement:</b>
@@ -402,8 +402,8 @@ Construct an explanation based on evidence for how the availability of natural r
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[ ] Replace generic map scenarios with specific historical case studies (e.g., Nile River Valley, Dust Bowl).</li>
-          <li>[ ] Add a modern "Climate Refugee" scenario featuring sea-level rise and coastal displacement.</li>
+          <li>[x] Replace generic map scenarios with specific historical case studies (e.g., Nile River Valley, Dust Bowl).</li>
+          <li>[x] Add a modern "Climate Refugee" scenario featuring sea-level rise and coastal displacement.</li>
         </ul>
       </li>
     </ul>

@@ -74,6 +74,21 @@
 <!-- Controls -->
 <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-xl flex flex-col gap-4">
 <div>
+<h2 class="text-lg font-bold text-amber-400 mb-2 border-b border-slate-600 pb-1">Simulation Scenarios</h2>
+<div class="space-y-2 mb-4">
+<button class="action-btn w-full bg-slate-700 hover:bg-slate-600 border border-slate-600 py-2 rounded text-sm text-left px-3 flex justify-between items-center" onclick="loadScenario('nile')">
+<span>🏞️ Nile River Valley</span>
+<span class="text-xs text-slate-400">Historical</span>
+</button>
+<button class="action-btn w-full bg-slate-700 hover:bg-slate-600 border border-slate-600 py-2 rounded text-sm text-left px-3 flex justify-between items-center" onclick="loadScenario('dustbowl')">
+<span>🌾 The Dust Bowl</span>
+<span class="text-xs text-slate-400">Historical</span>
+</button>
+<button class="action-btn w-full bg-slate-700 hover:bg-slate-600 border border-slate-600 py-2 rounded text-sm text-left px-3 flex justify-between items-center" onclick="loadScenario('refugee')">
+<span>🌊 Climate Refugees</span>
+<span class="text-xs text-slate-400">Modern</span>
+</button>
+</div>
 <h2 class="text-lg font-bold text-amber-400 mb-2 border-b border-slate-600 pb-1">Simulation State</h2>
 <div class="flex justify-between items-center mb-1 text-sm">
 <span class="text-slate-300">Total Population:</span>
@@ -89,7 +104,7 @@
 </div>
 </div>
 <div>
-<h2 class="text-lg font-bold text-red-400 mb-2 border-b border-slate-600 pb-1">Geologic Hazards</h2>
+<h2 class="text-lg font-bold text-red-400 mb-2 border-b border-slate-600 pb-1">Hazards</h2>
 <div class="space-y-2">
 <button class="action-btn w-full bg-slate-700 hover:bg-red-900/50 border border-slate-600 py-2 rounded text-sm text-left px-3 flex justify-between items-center" onclick="triggerHazard('volcano')">
 <span>🌋 Volcanic Eruption</span>
@@ -188,7 +203,8 @@
             year: 0,
             seaLevelOffset: 0, // increases with climate change
             activeHazard: null,
-            hazardTimer: 0
+            hazardTimer: 0,
+            currentScenario: 'default' // 'nile', 'dustbowl', 'refugee', 'default'
         };
 
         // Expose to window for testing
@@ -213,32 +229,67 @@
             }, 2000);
         }
 
+        window.loadScenario = function(type) {
+            state.isRunning = false;
+            state.year = 0;
+            state.seaLevelOffset = 0;
+            state.activeHazard = null;
+            state.hazardTimer = 0;
+            state.currentScenario = type;
+
+            toggleBtn.textContent = 'Start Sim';
+            toggleBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded font-bold text-sm transition-colors';
+
+            let msg = '';
+            if (type === 'nile') {
+                msg = 'Loaded: Nile River Valley Scenario. Notice the sparse desert with rich floodplains.';
+            } else if (type === 'dustbowl') {
+                msg = 'Loaded: The Dust Bowl Scenario. Vast fertile plains, highly susceptible to drought.';
+            } else if (type === 'refugee') {
+                msg = 'Loaded: Climate Refugee Scenario. High population density along the vulnerable coastline.';
+            }
+
+            generateMap();
+            spawnInitialPopulation(type);
+            logPanel.innerHTML = `> Map initialized.<br>> <span class="text-amber-400 font-bold">${msg}</span><br>> Awaiting human settlement...<br>`;
+            draw();
+        };
+
         // --- Map Generation ---
         function generateMap() {
             resourceMap = new Array(cols * rows).fill(0);
             elevationMap = new Array(cols * rows).fill(0);
             baseElevationMap = new Array(cols * rows).fill(0);
 
-            // Simple procedual generation
             for (let y = 0; y < rows; y++) {
                 for (let x = 0; x < cols; x++) {
                     const idx = y * cols + x;
+                    let elev = 50; // default base land
+                    let distToRiver = 100; // default far from river
 
-                    // 1. Coastline on the right (x > 60) -> elevation drops
-                    let elev = 50; // base land
-                    if (x > 65) elev = 0; // ocean
-                    else if (x > 60) elev = (65 - x) * 10; // beach
-
-                    // 2. Mountains on the left (x < 20, varying y)
-                    let distToPeak = Math.sqrt(Math.pow(x - 10, 2) + Math.pow(y - 22, 2));
-                    if (distToPeak < 15) {
-                        elev += (15 - distToPeak) * 5;
+                    if (state.currentScenario === 'nile') {
+                        // Nile: A winding central river, deep desert everywhere else
+                        let riverX = 40 + Math.sin(y/5) * 5;
+                        distToRiver = Math.abs(x - riverX);
+                        elev = 40; // Flat desert
+                    } else if (state.currentScenario === 'dustbowl') {
+                        // Dust Bowl: Great plains, no major mountains or oceans, maybe small streams
+                        elev = 60; // High plains
+                        distToRiver = Math.random() < 0.05 ? 1 : 100; // Small random streams
+                    } else if (state.currentScenario === 'refugee') {
+                        // Refugee: Massive low-lying coastline on the right
+                        if (x > 50) elev = 0; // ocean
+                        else if (x > 30) elev = (50 - x) * 2; // VERY low-lying beach/coastal plain
+                        else elev = 50 + (30 - x); // Rising hills inland
+                    } else {
+                        // Default Procedural Map
+                        if (x > 65) elev = 0; // ocean
+                        else if (x > 60) elev = (65 - x) * 10; // beach
+                        let distToPeak = Math.sqrt(Math.pow(x - 10, 2) + Math.pow(y - 22, 2));
+                        if (distToPeak < 15) elev += (15 - distToPeak) * 5;
+                        let riverY = 22 + Math.sin(x/5) * 5;
+                        distToRiver = Math.abs(y - riverY);
                     }
-
-                    // 3. River winding from mountains to ocean
-                    // Roughly y = 22 + sin(x/5)*5
-                    let riverY = 22 + Math.sin(x/5) * 5;
-                    let distToRiver = Math.abs(y - riverY);
 
                     baseElevationMap[idx] = elev;
                     elevationMap[idx] = elev;
@@ -253,21 +304,28 @@
             const idx = y * cols + x;
             let res = 0.1; // Base subsistence
 
-            // If underwater, 0 resources for humans
             if (elev <= state.seaLevelOffset) {
                 resourceMap[idx] = 0;
                 return;
             }
 
-            // Fresh water & fertile soil near river
-            if (distToRiver < 2) res += 0.8; // The river itself
-            else if (distToRiver < 6) res += 0.5; // Floodplain
-
-            // Minerals in mountains
-            if (elev > 80) res += 0.4;
-
-            // Coastal fishing
-            if (elev > state.seaLevelOffset && elev <= state.seaLevelOffset + 10) res += 0.3;
+            if (state.currentScenario === 'nile') {
+                if (distToRiver < 3) res = 0.9; // Extremely fertile floodplains
+                else res = 0.05; // Barren desert
+            } else if (state.currentScenario === 'dustbowl') {
+                res = 0.6; // High fertility initially everywhere
+                if (state.activeHazard === 'drought') res = 0.05; // Drops to near zero during drought
+            } else if (state.currentScenario === 'refugee') {
+                // Highly attractive coastal regions
+                if (elev > state.seaLevelOffset && elev <= state.seaLevelOffset + 15) res = 0.8;
+                else res = 0.3; // Less attractive inland
+            } else {
+                // Default
+                if (distToRiver < 2) res += 0.8;
+                else if (distToRiver < 6) res += 0.5;
+                if (elev > 80) res += 0.4;
+                if (elev > state.seaLevelOffset && elev <= state.seaLevelOffset + 10) res += 0.3;
+            }
 
             resourceMap[idx] = Math.min(1.0, res);
         }
@@ -276,8 +334,15 @@
             for (let y = 0; y < rows; y++) {
                 for (let x = 0; x < cols; x++) {
                     const idx = y * cols + x;
-                    let riverY = 22 + Math.sin(x/5) * 5;
-                    let distToRiver = Math.abs(y - riverY);
+
+                    let distToRiver = 100;
+                    if (state.currentScenario === 'nile') {
+                        let riverX = 40 + Math.sin(y/5) * 5;
+                        distToRiver = Math.abs(x - riverX);
+                    } else if (state.currentScenario === 'default') {
+                        let riverY = 22 + Math.sin(x/5) * 5;
+                        distToRiver = Math.abs(y - riverY);
+                    }
 
                     // Adjust elevation based on sea level
                     elevationMap[idx] = baseElevationMap[idx] - state.seaLevelOffset;
@@ -288,13 +353,23 @@
         }
 
         // --- Agent Logic ---
-        function spawnInitialPopulation() {
+        function spawnInitialPopulation(type) {
             agents = [];
-            // Spawn 50 agents randomly, they will migrate to resources
-            for (let i = 0; i < 50; i++) {
+            let popCount = 50;
+            if (type === 'refugee') popCount = 120; // Start with high population
+
+            for (let i = 0; i < popCount; i++) {
+                let startX = Math.random() * cols;
+                let startY = Math.random() * rows;
+
+                // For refugee, spawn heavily on coast
+                if (type === 'refugee' && Math.random() < 0.8) {
+                    startX = 30 + Math.random() * 20; // Coastal strip x=30 to 50
+                }
+
                 agents.push({
-                    x: Math.random() * cols,
-                    y: Math.random() * rows,
+                    x: startX,
+                    y: startY,
                     vx: 0, vy: 0,
                     health: 100
                 });
@@ -431,7 +506,7 @@
             }
 
             state.activeHazard = type;
-            state.hazardTimer = 3.0; // active for 3 simulation years
+            state.hazardTimer = 5.0; // active for 5 simulation years to allow migration
 
             if (type === 'volcano') {
                 logMsg(`Volcanic eruption! Mountain settlements destroyed.`, true);
@@ -439,9 +514,12 @@
             } else if (type === 'drought') {
                 logMsg(`Severe global drought. Water resources depleted.`, true);
                 showAlert("SEVERE DROUGHT", "bg-amber-600/90");
-                // Temporarily reduce all resources
+                // Resources recomputed in loop for dustbowl or manually reduced here
+                recomputeAllResources();
                 for(let i=0; i<resourceMap.length; i++) {
-                    if (elevationMap[i] > 0) resourceMap[i] *= 0.2;
+                    if (state.currentScenario !== 'dustbowl' && elevationMap[i] > 0) {
+                        resourceMap[i] *= 0.2;
+                    }
                 }
             } else if (type === 'flood') {
                 logMsg(`Massive river flooding! Floodplain settlements destroyed.`, true);
@@ -461,19 +539,10 @@
         });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
-            state.isRunning = false;
-            state.year = 0;
-            state.seaLevelOffset = 0;
-            state.activeHazard = null;
-            state.hazardTimer = 0;
-
-            toggleBtn.textContent = 'Start Sim';
-            toggleBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded font-bold text-sm transition-colors';
-
-            generateMap();
-            spawnInitialPopulation();
-            logPanel.innerHTML = '> Map initialized.<br>> Awaiting human settlement...<br>';
-            draw();
+            // Re-load the current scenario to completely reset state
+            if (window.loadScenario) {
+                window.loadScenario(state.currentScenario);
+            }
         });
 
         // --- Render ---
@@ -492,18 +561,35 @@
                     if (elev <= 0) {
                         color = '#3b82f6'; // Ocean water
                     } else {
-                        // Land colors based on resources and elevation
-                        if (elev > 80) {
-                            color = '#64748b'; // Mountain slate
-                            if (state.activeHazard === 'volcano') color = '#b91c1c'; // Red lava
-                        } else if (res > 0.6) {
-                            color = '#3b82f6'; // River water
-                            if (state.activeHazard === 'flood') color = '#1d4ed8'; // deep flood
-                        } else if (res > 0.3) {
-                            color = '#22c55e'; // Green plains
-                            if (state.activeHazard === 'drought') color = '#ca8a04'; // yellow dried
+                        if (state.currentScenario === 'nile') {
+                            if (res > 0.6) {
+                                color = '#3b82f6'; // River
+                                if (state.activeHazard === 'flood') color = '#1d4ed8';
+                            }
+                            else if (res > 0.1) color = '#22c55e'; // floodplain
+                            else color = '#fef08a'; // desert sand
+                        } else if (state.currentScenario === 'dustbowl') {
+                            if (state.activeHazard === 'drought') color = '#92400e'; // dark brown parched earth
+                            else if (res > 0.3) color = '#22c55e'; // green plains
+                            else color = '#fef08a';
+                        } else if (state.currentScenario === 'refugee') {
+                            if (elev < 50 && elev > 0) color = '#4ade80'; // Low fertile coastal plain
+                            else if (elev >= 50) color = '#64748b'; // Inhospitable rocky inland
+                            else color = '#22c55e';
                         } else {
-                            color = '#fef08a'; // Sandy/arid
+                            // Default Land colors
+                            if (elev > 80) {
+                                color = '#64748b'; // Mountain slate
+                                if (state.activeHazard === 'volcano') color = '#b91c1c'; // Red lava
+                            } else if (res > 0.6) {
+                                color = '#3b82f6'; // River water
+                                if (state.activeHazard === 'flood') color = '#1d4ed8'; // deep flood
+                            } else if (res > 0.3) {
+                                color = '#22c55e'; // Green plains
+                                if (state.activeHazard === 'drought') color = '#ca8a04'; // yellow dried
+                            } else {
+                                color = '#fef08a'; // Sandy/arid
+                            }
                         }
                     }
 
@@ -555,9 +641,7 @@
         }
 
         // Boot
-        generateMap();
-        spawnInitialPopulation();
-        draw();
+        window.loadScenario('default');
         requestAnimationFrame(loop);
 
     </script>
