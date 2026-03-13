@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cratering & Surface Age Explorer</title>
+    <meta name="description" content="Explore the formation of Earth and the Moon by simulating meteor impacts and geological processes over 4.6 billion years.">
+    <meta name="keywords" content="NGSS, HS-ESS1-6, Earth Science, Formation, Craters, Radiometric Dating, Geology, Simulation">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Cratering & Surface Age Explorer">
+    <meta property="og:description" content="Simulate 4.6 billion years of meteor impacts and geological processes on Earth and the Moon.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Cratering & Surface Age Explorer",
+      "description": "Interactive simulation exploring Earth's formation, cratering, and the effect of geological processes on surface age.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "Next Generation Science Standards",
+        "targetName": "HS-ESS1-6",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ess1-6-earths-place-universe"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .canvas-container {
+            position: relative;
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+            aspect-ratio: 1 / 1;
+            width: 100%;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #475569;
+            border-radius: 2px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #3b82f6;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #3b82f6;
+        }
+        .toggle-checkbox {
+            right: 0;
+            z-index: 1;
+            border-color: #94a3b8;
+            transition: all 0.3s;
+        }
+        .toggle-label {
+            background-color: #94a3b8;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <header class="w-full max-w-6xl mb-6 flex flex-col md:flex-row justify-between items-center glass-panel p-6 rounded-xl">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Cratering & Surface Age Explorer</h1>
+            <p class="text-slate-300 max-w-2xl text-sm leading-relaxed">
+                Investigate why Earth has so few visible impact craters compared to the Moon, despite forming at the same time 4.6 billion years ago.
+                Use the timeline to simulate the Late Heavy Bombardment, and experiment with Earth's geological processes to see how they erase evidence and "reset" the radiometric age of surface rocks.
+            </p>
+        </div>
+        <div class="mt-4 md:mt-0 bg-slate-800 p-3 rounded-lg border border-slate-700 text-center shadow-inner">
+            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">Current Time</span>
+            <span id="timeDisplay" class="text-2xl font-mono text-blue-400 font-bold">4.6</span>
+            <span class="text-xs text-slate-400 block mt-1">Billion Years Ago</span>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+
+        <!-- Controls Sidebar -->
+        <aside class="lg:col-span-3 glass-panel rounded-xl p-6 flex flex-col gap-6">
+
+            <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-200 uppercase tracking-wide">Time Progression</label>
+                <div class="flex items-center gap-3">
+                    <button id="playBtn" class="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-lg transition-colors flex-shrink-0" aria-label="Play/Pause">
+                        <svg id="playIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg id="pauseIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                    <input type="range" id="timeSlider" min="0" max="4600" value="0" class="w-full">
+                </div>
+                <div class="flex justify-between text-xs text-slate-400 mt-1 font-mono">
+                    <span>4.6 BYA</span>
+                    <span>Present</span>
+                </div>
+                <button id="resetBtn" class="w-full mt-2 bg-slate-700 hover:bg-slate-600 text-sm py-1.5 rounded transition-colors text-slate-200">Reset Simulation</button>
+            </div>
+
+            <div class="h-px w-full bg-slate-700"></div>
+
+            <div>
+                <h3 class="text-sm font-semibold text-slate-200 uppercase tracking-wide mb-4">Earth's Active Processes</h3>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">Toggle these processes to observe how they destroy ancient rock records and remove evidence of past cratering on Earth.</p>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label for="toggleErosion" class="text-sm text-slate-300 cursor-pointer flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-400"></span> Weathering & Erosion
+                        </label>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="toggleErosion" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" checked/>
+                            <label for="toggleErosion" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label for="toggleTectonics" class="text-sm text-slate-300 cursor-pointer flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-orange-500"></span> Plate Tectonics
+                        </label>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="toggleTectonics" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" checked/>
+                            <label for="toggleTectonics" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label for="toggleVolcanism" class="text-sm text-slate-300 cursor-pointer flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span> Volcanism
+                        </label>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="toggleVolcanism" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" checked/>
+                            <label for="toggleVolcanism" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="h-px w-full bg-slate-700"></div>
+
+            <div class="bg-indigo-900/30 border border-indigo-500/30 rounded-lg p-4">
+                <h4 class="text-xs font-bold text-indigo-300 mb-2 uppercase">Evidence & Reasoning</h4>
+                <p class="text-xs text-indigo-100/70 leading-relaxed mb-2">
+                    Radiometric dating of lunar rocks and meteorites reveals they formed 4.6 billion years ago.
+                </p>
+                <p class="text-xs text-indigo-100/70 leading-relaxed">
+                    If Earth formed at the same time, why are most of its surface rocks much younger? Observe the "Oldest Surface Rock" data to find out.
+                </p>
+            </div>
+
+        </aside>
+
+        <!-- Visualization Area -->
+        <div class="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Earth Container -->
+            <div class="flex flex-col gap-3">
+                <div class="flex justify-between items-end px-2">
+                    <h2 class="text-xl font-bold text-blue-300 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Earth (Active Body)
+                    </h2>
+                </div>
+                <div class="canvas-container relative" id="earthContainer">
+                    <canvas id="earthCanvas"></canvas>
+                    <!-- Overlay for intense early bombardment -->
+                    <div id="earthOverlay" class="absolute inset-0 bg-red-900/40 pointer-events-none transition-opacity duration-1000"></div>
+                </div>
+
+                <div class="glass-panel rounded-lg p-4 grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase">Visible Craters</div>
+                        <div class="text-2xl font-mono text-white" id="earthCraterCount">0</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase">Oldest Surface Rock</div>
+                        <div class="text-2xl font-mono text-blue-400"><span id="earthRockAge">4.60</span> <span class="text-sm">BYA</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moon Container -->
+            <div class="flex flex-col gap-3">
+                <div class="flex justify-between items-end px-2">
+                    <h2 class="text-xl font-bold text-gray-300 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        Moon (Inactive Body)
+                    </h2>
+                </div>
+                <div class="canvas-container relative" id="moonContainer">
+                    <canvas id="moonCanvas"></canvas>
+                    <div id="moonOverlay" class="absolute inset-0 bg-red-900/40 pointer-events-none transition-opacity duration-1000"></div>
+                </div>
+
+                <div class="glass-panel rounded-lg p-4 grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase">Visible Craters</div>
+                        <div class="text-2xl font-mono text-white" id="moonCraterCount">0</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase">Oldest Surface Rock</div>
+                        <div class="text-2xl font-mono text-gray-300"><span id="moonRockAge">4.60</span> <span class="text-sm">BYA</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const timeSlider = document.getElementById('timeSlider');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const toggleErosion = document.getElementById('toggleErosion');
+        const toggleTectonics = document.getElementById('toggleTectonics');
+        const toggleVolcanism = document.getElementById('toggleVolcanism');
+
+        const earthCanvas = document.getElementById('earthCanvas');
+        const moonCanvas = document.getElementById('moonCanvas');
+        const earthCtx = earthCanvas.getContext('2d');
+        const moonCtx = moonCanvas.getContext('2d');
+
+        const earthCraterCountEl = document.getElementById('earthCraterCount');
+        const moonCraterCountEl = document.getElementById('moonCraterCount');
+        const earthRockAgeEl = document.getElementById('earthRockAge');
+        const moonRockAgeEl = document.getElementById('moonRockAge');
+
+        const earthOverlay = document.getElementById('earthOverlay');
+        const moonOverlay = document.getElementById('moonOverlay');
+
+        // State Variables
+        const TOTAL_TIME_MY = 4600; // 4.6 Billion Years represented as 4600 Million Years
+
+        let simState = {
+            currentTime: 0, // 0 = 4600 MYA, 4600 = Present (0 MYA)
+            isPlaying: false,
+            earthCraters: [],
+            moonCraters: [],
+            earthSurfaceAge: TOTAL_TIME_MY, // Represents radiometric age of oldest rock in MY
+            moonSurfaceAge: TOTAL_TIME_MY,
+            geologicalEvents: [], // Tracking visual events like lava flows
+            activeCratersEarth: 0,
+            activeCratersMoon: 0
+        };
+
+        let animationFrameId = null;
+        let lastTimestamp = 0;
+
+        const DESTRUCTION_RATE_EROSION = 0.0005;
+        const DESTRUCTION_RATE_TECTONICS = 0.0008;
+        const DESTRUCTION_RATE_VOLCANISM = 0.0007;
+        const SIM_DURATION_SECONDS = 15;
+
+
+        // Make state accessible for Playwright testing
+        window.simState = simState;
+
+        // Resize handling
+        function resizeCanvas() {
+            const containers = document.querySelectorAll('.canvas-container');
+            containers.forEach(container => {
+                const canvas = container.querySelector('canvas');
+                // Use a fixed internal resolution for consistent drawing, scale with CSS
+                canvas.width = 600;
+                canvas.height = 600;
+            });
+            drawSurfaces();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Simulation Logic
+        class Crater {
+            constructor(x, y, radius, timeCreated, bodyType) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.timeCreated = timeCreated;
+                this.bodyType = bodyType; // 'earth' or 'moon'
+
+                // Opacity/Visibility decreases on Earth due to processes
+                this.opacity = 1.0;
+                // Visual variation
+                this.roughness = Math.random() * 0.3 + 0.7;
+                this.angle = Math.random() * Math.PI * 2;
+            }
+        }
+
+        class GeologicalEvent {
+            constructor(type, x, y, radius, timeCreated) {
+                this.type = type; // 'lava', 'tectonic', 'erosion'
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.timeCreated = timeCreated;
+                this.opacity = 1.0;
+            }
+        }
+
+        // Bombardment rate calculation (exponential decay over time)
+        // High rate early in history (Late Heavy Bombardment), very low later
+        function getImpactProbability(timeStep) {
+            // timeStep goes from 0 to 4600
+            // Higher probability at 0, drops off sharply by 1000 (3.6 BYA)
+            const decayRate = 0.003;
+            const baseProb = 0.8;
+            return baseProb * Math.exp(-decayRate * timeStep);
+        }
+
+        // Update simulation step
+        function updateSimulationStep(deltaTimeMY) {
+            const oldTime = simState.currentTime;
+            simState.currentTime = Math.min(TOTAL_TIME_MY, simState.currentTime + deltaTimeMY);
+            const dt = simState.currentTime - oldTime;
+
+            if (dt <= 0) return;
+
+            const currentProb = getImpactProbability(simState.currentTime);
+
+            // 1. Generate new impacts
+            // Using time-based steps so slider drag and play button behave similarly
+            const maxStepsPerFrame = 500;
+            const steps = Math.min(Math.ceil(dt), maxStepsPerFrame);
+            for(let i=0; i<steps; i++) {
+                const stepTime = oldTime + i;
+                const prob = getImpactProbability(stepTime);
+
+                function createImpact(prob, stepTime, bodyType, craterArray) {
+                    if (Math.random() < prob) {
+                        const r = 5 + Math.random() * 25 + (Math.random() < 0.1 ? 40 : 0);
+                        craterArray.push(new Crater(
+                            Math.random() * 600, Math.random() * 600, r, stepTime, bodyType
+                        ));
+                    }
+                }
+                createImpact(prob, stepTime, 'earth', simState.earthCraters);
+                createImpact(prob, stepTime, 'moon', simState.moonCraters);
+            }
+
+            // 2. Apply Earth Geological Processes (erasing craters)
+            const isErosion = toggleErosion.checked;
+            const isTectonics = toggleTectonics.checked;
+            const isVolcanism = toggleVolcanism.checked;
+
+            // Calculate base erosion rate based on toggles
+            let destructionRate = 0;
+            if (isErosion) destructionRate += DESTRUCTION_RATE_EROSION * dt;
+            if (isTectonics) destructionRate += DESTRUCTION_RATE_TECTONICS * dt;
+            if (isVolcanism) destructionRate += DESTRUCTION_RATE_VOLCANISM * dt;
+
+            // Apply destruction to Earth craters
+            for (let i = simState.earthCraters.length - 1; i >= 0; i--) {
+                let crater = simState.earthCraters[i];
+
+                // Smaller craters erase faster
+                let sizeFactor = 20 / Math.max(crater.radius, 5);
+
+                crater.opacity -= destructionRate * sizeFactor;
+
+                // Random tectonic/volcanic sudden destruction
+                if ((isTectonics || isVolcanism) && Math.random() < (0.0001 * dt)) {
+                    // Lava flow or subduction event
+                    crater.opacity -= 0.5;
+                    simState.geologicalEvents.push(new GeologicalEvent(
+                        isVolcanism && Math.random() > 0.5 ? 'lava' : 'tectonic',
+                        crater.x, crater.y, crater.radius * 2, simState.currentTime
+                    ));
+                }
+
+                if (crater.opacity <= 0.05) {
+                    simState.earthCraters.splice(i, 1); // Remove destroyed crater
+                }
+            }
+            simState.activeCratersEarth = simState.earthCraters.length;
+            simState.activeCratersMoon = simState.moonCraters.length; // Moon craters never fade
+
+            // 3. Update Surface Ages
+            // Moon surface age is basically completely old
+            simState.moonSurfaceAge = TOTAL_TIME_MY;
+
+            // Earth surface age "resets" if there is heavy geological activity
+            if (isTectonics || isVolcanism || isErosion) {
+                // The older the rock, the more likely it's been recycled.
+                // We simulate the "oldest rock found"
+                // It drops continuously, but occasionally pieces survive.
+                // For educational simplicity, we make the oldest rock age decrease over time if processes are active.
+
+                // Determine 'reset' rate
+                const resetFactor = (isTectonics ? 0.6 : 0) + (isVolcanism ? 0.3 : 0) + (isErosion ? 0.1 : 0);
+
+                // The theoretical age if processes are running continuously
+                // By Present day, oldest widespread rocks are ~3.8 BYA, some zircons 4.4 BYA
+                // We'll calculate a displayed radiometric age that decays towards roughly 4.0 - current time
+
+                // Reduce the "oldest rock" age slowly.
+                // Actual formula for sim:
+                                simState.earthSurfaceAge -= dt * resetFactor * 0.17;
+                // Floor the oldest rock age to roughly 3.8 BYA (3800 MY) to match geologic reality
+                if(simState.earthSurfaceAge < 3800) {
+                     simState.earthSurfaceAge = 3800;
+                }
+                // Ensure it doesn't go below theoretical max age for current time
+                if(simState.earthSurfaceAge < (TOTAL_TIME_MY - simState.currentTime)) {
+                     simState.earthSurfaceAge = TOTAL_TIME_MY - simState.currentTime;
+                }
+            }
+
+            // Cleanup old visual events
+            for (let i = simState.geologicalEvents.length - 1; i >= 0; i--) {
+                simState.geologicalEvents[i].opacity -= 0.05;
+                if (simState.geologicalEvents[i].opacity <= 0) {
+                    simState.geologicalEvents.splice(i, 1);
+                }
+            }
+
+            // Visual effects
+            updateOverlays();
+            updateUI();
+            drawSurfaces();
+        }
+
+        function updateOverlays() {
+            // Intense early bombardment visual cue
+            const prob = getImpactProbability(simState.currentTime);
+            const opacity = Math.min(0.6, prob * 0.8);
+            earthOverlay.style.opacity = opacity;
+            moonOverlay.style.opacity = opacity;
+        }
+
+        // Expose update function for Playwright to manually step logic without waiting for RAF
+        window.updateSimulation = function(targetTime) {
+            if (targetTime < simState.currentTime) {
+                // If moving backwards, hard reset and recalculate to target
+                resetSim();
+                updateSimulationStep(targetTime);
+            } else {
+                updateSimulationStep(targetTime - simState.currentTime);
+            }
+        };
+
+        // Main animation loop
+        function animate(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const deltaMs = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+
+            if (simState.isPlaying && simState.currentTime < TOTAL_TIME_MY) {
+                // Calculate how much sim time passed based on real time
+                const deltaSimTime = (deltaMs / 1000) * (TOTAL_TIME_MY / SIM_DURATION_SECONDS); // 15 seconds real time to finish 4.6BY
+
+                updateSimulationStep(deltaSimTime);
+
+                // Update slider visually
+                timeSlider.value = simState.currentTime;
+
+                if (simState.currentTime >= TOTAL_TIME_MY) {
+                    pauseSim();
+                    simState.currentTime = TOTAL_TIME_MY;
+                    updateUI();
+                    drawSurfaces();
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // Drawing routines
+        function drawCrater(ctx, c, baseColor, isEarth) {
+            if (c.opacity <= 0.05) return;
+
+            ctx.save();
+            ctx.globalAlpha = c.opacity;
+            ctx.translate(c.x, c.y);
+            ctx.rotate(c.angle);
+
+            // Base shadow/depression
+            ctx.beginPath();
+            ctx.arc(0, 0, c.radius, 0, Math.PI * 2);
+            ctx.fillStyle = isEarth ? '#1e3a5f' : '#2d3748'; // Darker inside
+            ctx.fill();
+
+            // Highlight rim (light from top left)
+            ctx.beginPath();
+            ctx.arc(1, -1, c.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = isEarth ? `rgba(96, 165, 250, ${c.opacity})` : `rgba(203, 213, 225, ${c.opacity})`;
+            ctx.lineWidth = c.radius * 0.1 + 1;
+            ctx.stroke();
+
+            // Shadow rim
+            ctx.beginPath();
+            ctx.arc(-1, 1, c.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(0, 0, 0, ${c.opacity * 0.6})`;
+            ctx.lineWidth = c.radius * 0.15 + 1;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawGeologicalEvents(ctx) {
+            simState.geologicalEvents.forEach(ev => {
+                ctx.save();
+                ctx.globalAlpha = ev.opacity;
+                ctx.translate(ev.x, ev.y);
+
+                if (ev.type === 'lava') {
+                    ctx.beginPath();
+                    // Draw amorphous blob
+                    ctx.moveTo(0, -ev.radius);
+                    ctx.bezierCurveTo(ev.radius, -ev.radius, ev.radius, ev.radius, 0, ev.radius);
+                    ctx.bezierCurveTo(-ev.radius, ev.radius, -ev.radius, -ev.radius, 0, -ev.radius);
+                    ctx.fillStyle = '#ef4444'; // Red lava
+                    ctx.fill();
+
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#ef4444';
+                    ctx.fillStyle = '#f97316'; // Orange center
+                    ctx.beginPath();
+                    ctx.arc(0, 0, ev.radius * 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (ev.type === 'tectonic') {
+                    ctx.beginPath();
+                    ctx.moveTo(-ev.radius, -ev.radius*0.2);
+                    ctx.lineTo(ev.radius, ev.radius*0.2);
+                    ctx.strokeStyle = '#020617';
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            });
+        }
+
+        function drawSurfaces() {
+            if(!earthCanvas || !earthCtx || !moonCanvas || !moonCtx) return;
+
+            const w = earthCanvas.width;
+            const h = earthCanvas.height;
+
+            // Clear and draw bases
+            // Earth: Oceans and Landmasses (abstract)
+            earthCtx.fillStyle = '#0f172a';
+            earthCtx.fillRect(0, 0, w, h);
+
+            // Draw a basic earth gradient/surface
+            let gradE = earthCtx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+            gradE.addColorStop(0, '#1e40af'); // deep water
+            gradE.addColorStop(1, '#0c4a6e');
+            earthCtx.fillStyle = gradE;
+            earthCtx.fillRect(0, 0, w, h);
+
+            // Draw abstract landmasses that subtly change if processes are active
+            // (Simplified for performance, static base)
+            earthCtx.fillStyle = '#065f46';
+            earthCtx.beginPath();
+            earthCtx.ellipse(w*0.3, h*0.4, w*0.2, h*0.3, Math.PI/4, 0, Math.PI*2);
+            earthCtx.fill();
+            earthCtx.beginPath();
+            earthCtx.ellipse(w*0.7, h*0.7, w*0.25, h*0.15, -Math.PI/6, 0, Math.PI*2);
+            earthCtx.fill();
+
+            // Moon: Grey uniform surface
+            moonCtx.fillStyle = '#475569';
+            moonCtx.fillRect(0, 0, w, h);
+            let gradM = moonCtx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+            gradM.addColorStop(0, 'rgba(255,255,255,0.1)');
+            gradM.addColorStop(1, 'rgba(0,0,0,0.5)');
+            moonCtx.fillStyle = gradM;
+            moonCtx.fillRect(0, 0, w, h);
+
+            // Draw Craters
+            simState.earthCraters.forEach(c => drawCrater(earthCtx, c, '#334155', true));
+            simState.moonCraters.forEach(c => drawCrater(moonCtx, c, '#64748b', false));
+
+            // Draw Active Events (Earth only)
+            drawGeologicalEvents(earthCtx);
+        }
+
+        // UI Updates
+        function formatAge(my) {
+            // Convert MY (0 to 4600) to BYA (4.6 to 0.0)
+            const bya = my / 1000;
+            return bya.toFixed(2);
+        }
+
+        function updateUI() {
+            // Time display
+            const currentBYA = (TOTAL_TIME_MY - simState.currentTime) / 1000;
+            timeDisplay.textContent = currentBYA.toFixed(2);
+
+            // Stats
+            earthCraterCountEl.textContent = simState.activeCratersEarth;
+            moonCraterCountEl.textContent = simState.activeCratersMoon;
+
+            earthRockAgeEl.textContent = formatAge(simState.earthSurfaceAge);
+            moonRockAgeEl.textContent = formatAge(simState.moonSurfaceAge);
+        }
+
+        function resetSim() {
+            simState.currentTime = 0;
+            simState.earthCraters = [];
+            simState.moonCraters = [];
+            simState.earthSurfaceAge = TOTAL_TIME_MY;
+            simState.moonSurfaceAge = TOTAL_TIME_MY;
+            simState.geologicalEvents = [];
+            simState.activeCratersEarth = 0;
+            simState.activeCratersMoon = 0;
+            timeSlider.value = 0;
+            lastTimestamp = 0;
+            updateUI();
+            drawSurfaces();
+            updateOverlays();
+            pauseSim();
+        }
+
+        function togglePlay() {
+            if (simState.isPlaying) {
+                pauseSim();
+            } else {
+                if(simState.currentTime >= TOTAL_TIME_MY) {
+                    resetSim();
+                }
+                playSim();
+            }
+        }
+
+        function playSim() {
+            simState.isPlaying = true;
+            playIcon.classList.add('hidden');
+            pauseIcon.classList.remove('hidden');
+            lastTimestamp = performance.now();
+        }
+
+        function pauseSim() {
+            simState.isPlaying = false;
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+        }
+
+        // Event Listeners
+        playBtn.addEventListener('click', togglePlay);
+        resetBtn.addEventListener('click', resetSim);
+
+        timeSlider.addEventListener('input', (e) => {
+            const target = parseFloat(e.target.value);
+            window.updateSimulation(target); // Use the exposed function for direct state update
+        });
+
+        // Initialize
+        resizeCanvas();
+        resetSim();
+        animationFrameId = requestAnimationFrame(animate);
+
+    </script>
+</body>
+</html>
