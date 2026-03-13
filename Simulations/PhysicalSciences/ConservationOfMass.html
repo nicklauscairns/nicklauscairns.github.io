@@ -159,17 +159,6 @@
 <button class="px-6 py-2 border border-slate-300 rounded font-medium hover:bg-slate-50 transition" id="resetBtn">Reset</button>
 </div>
 <div class="mt-4 text-center font-bold text-lg hidden" id="feedbackMsg"></div>
-                    <div id="analysisPrompt" class="hidden mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
-                        <h4 class="font-bold text-indigo-900 mb-2">Analysis: Conservation of Mass</h4>
-                        <p class="text-sm text-indigo-800 mb-2">How does the mathematical model you just built prove that mass is conserved during this reaction?</p>
-                        <select id="analysisSelect" class="w-full border border-indigo-300 rounded p-2 text-sm text-slate-800 mb-2">
-                            <option value="">-- Select the best explanation --</option>
-                            <option value="wrong1">Because the molecules on the left weigh more than the molecules on the right.</option>
-                            <option value="correct">Because the total number and type of atoms are exactly the same on both sides, and each atom has a specific mass.</option>
-                            <option value="wrong2">Because chemical reactions always create new mass from energy.</option>
-                        </select>
-                        <div id="analysisFeedback" class="text-sm font-bold h-4 text-center"></div>
-                    </div>
 </div>
 </div>
 <!-- Visualization: Balance Scale -->
@@ -364,34 +353,6 @@
             return div;
         }
 
-
-        window.currentTilt = 0;
-        window.targetTilt = 0;
-        window.tiltVelocity = 0;
-        window.scaleAnimFrame = null;
-        window.animateScale = function() {
-            const springK = 0.1;
-            const dampingC = 0.85;
-            const force = (window.targetTilt - window.currentTilt) * springK;
-            window.tiltVelocity += force;
-            window.tiltVelocity *= dampingC;
-            window.currentTilt += window.tiltVelocity;
-
-            scaleBeam.style.transform = `rotate(${window.currentTilt}deg)`;
-            leftPanContainer.style.transform = `rotate(${-window.currentTilt}deg)`;
-            rightPanContainer.style.transform = `rotate(${-window.currentTilt}deg)`;
-
-            if (Math.abs(window.tiltVelocity) > 0.01 || Math.abs(window.targetTilt - window.currentTilt) > 0.01) {
-                window.scaleAnimFrame = requestAnimationFrame(window.animateScale);
-            } else {
-                window.currentTilt = window.targetTilt;
-                scaleBeam.style.transform = `rotate(${window.currentTilt}deg)`;
-                leftPanContainer.style.transform = `rotate(${-window.currentTilt}deg)`;
-                rightPanContainer.style.transform = `rotate(${-window.currentTilt}deg)`;
-                window.scaleAnimFrame = null;
-            }
-        };
-
         function updateSimulation() {
             const rx = reactions[currentRxKey];
 
@@ -453,24 +414,21 @@
 
             // Update Scale Tilt
             // Base max tilt on ratio of mass, max tilt 25 degrees
-            // Damped oscillation variables (declared outside in global scope earlier, but we can do it here by relying on globals)
-            let newTargetTilt = 0;
+            let tilt = 0;
             if (leftMass > rightMass) {
                 const ratio = Math.min(leftMass / (rightMass || 1), 3);
-                newTargetTilt = -15 * (ratio - 1);
+                tilt = -15 * (ratio - 1);
             } else if (rightMass > leftMass) {
                 const ratio = Math.min(rightMass / (leftMass || 1), 3);
-                newTargetTilt = 15 * (ratio - 1);
+                tilt = 15 * (ratio - 1);
             }
 
-            newTargetTilt = Math.max(-25, Math.min(newTargetTilt, 25)); // clamp
+            tilt = Math.max(-25, Math.min(tilt, 25)); // clamp
 
-            if (window.targetTilt !== newTargetTilt) {
-                window.targetTilt = newTargetTilt;
-                if (!window.scaleAnimFrame) {
-                    window.animateScale();
-                }
-            }
+            scaleBeam.style.transform = `rotate(${tilt}deg)`;
+            // keep pans level by rotating opposite to beam
+            leftPanContainer.style.transform = `rotate(${-tilt}deg)`;
+            rightPanContainer.style.transform = `rotate(${-tilt}deg)`;
         }
 
         // Listeners
@@ -495,9 +453,8 @@
             feedbackMsg.classList.remove('hidden', 'text-green-600', 'text-red-600');
 
             if (isCorrect) {
-                feedbackMsg.textContent = "Equation is Balanced!";
+                feedbackMsg.textContent = "Equation is Balanced! Mass is conserved.";
                 feedbackMsg.classList.add('text-green-600');
-                document.getElementById('analysisPrompt').classList.remove('hidden');
 
                 // Pulse the scale beam
                 scaleBeam.classList.add('scale-105');
@@ -505,28 +462,6 @@
             } else {
                 feedbackMsg.textContent = "Not Balanced yet. Check the Atom Inventory.";
                 feedbackMsg.classList.add('text-red-600');
-            }
-        });
-
-
-        resetBtn.addEventListener('click', () => {
-            if(document.getElementById('analysisPrompt')) {
-                document.getElementById('analysisPrompt').classList.add('hidden');
-                document.getElementById('analysisSelect').value = '';
-                document.getElementById('analysisFeedback').textContent = '';
-            }
-        });
-
-        document.getElementById('analysisSelect')?.addEventListener('change', (e) => {
-            const fb = document.getElementById('analysisFeedback');
-            if(e.target.value === 'correct') {
-                fb.textContent = "Correct! Atoms are not created or destroyed, only rearranged.";
-                fb.className = "text-sm font-bold h-4 text-center text-green-600";
-            } else if (e.target.value !== '') {
-                fb.textContent = "Incorrect. Think about the relationship between atoms and mass.";
-                fb.className = "text-sm font-bold h-4 text-center text-red-600";
-            } else {
-                fb.textContent = "";
             }
         });
 

@@ -5,7 +5,7 @@
 ### HS-PS1-1
 Use the periodic table as a model to predict the relative properties of elements based on the patterns of electrons in the outermost energy level of atoms.
 
-- [Alkali Metals Phenomenon](AlkaliMetalsPhenomenon.html) - Observe the reaction patterns and atomic structures of different elements. [2026-03-13 01:47:21]
+- [Alkali Metals Phenomenon](AlkaliMetalsPhenomenon.html) - Observe the reaction patterns and atomic structures of different elements. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 17:47:30</b></summary>
@@ -27,10 +27,10 @@ Use the periodic table as a model to predict the relative properties of elements
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Refactor the UI controls to allow dynamic atom building (protons/electrons) instead of static preset metal buttons.</li>
-          <li>[x] Bind the dynamic atom state to the reaction engine to calculate <code>reactDuration</code> and <code>speed</code> based on valence electrons.</li>
-          <li>[x] Implement an "Ionize" function and animation in the <code>aCanvas</code> to visualize the loss of valence electrons and display the net charge.</li>
-          <li>[x] Rewrite the "Mystery Metal" narrative text to describe a thermal runaway event in a modern battery to increase cultural/personal relevance.</li>
+          <li>[ ] Refactor the UI controls to allow dynamic atom building (protons/electrons) instead of static preset metal buttons.</li>
+          <li>[ ] Bind the dynamic atom state to the reaction engine to calculate <code>reactDuration</code> and <code>speed</code> based on valence electrons.</li>
+          <li>[ ] Implement an "Ionize" function and animation in the <code>aCanvas</code> to visualize the loss of valence electrons and display the net charge.</li>
+          <li>[ ] Rewrite the "Mystery Metal" narrative text to describe a thermal runaway event in a modern battery to increase cultural/personal relevance.</li>
         </ul>
       </li>
     </ul>
@@ -39,7 +39,7 @@ Use the periodic table as a model to predict the relative properties of elements
 ### HS-PS1-2
 Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.
 
-- [Chemical Reaction Outcomes Predictor](ChemicalReactionsOutcomes.html) - An interactive sandbox to predict outcomes and explore the octet rule by combining atoms with varying valence electrons. [2026-03-13 01:47:21]
+- [Chemical Reaction Outcomes Predictor](ChemicalReactionsOutcomes.html) - An interactive sandbox to predict outcomes and explore the octet rule by combining atoms with varying valence electrons. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.0/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -61,10 +61,10 @@ Construct and revise an explanation for the outcome of a simple chemical reactio
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Add a user input `&lt;textarea&gt;` for students to construct their own explanations before viewing the provided one.</li>
-          <li>[x] Implement a 'Check Explanation' keyword validation function.</li>
-          <li>[x] Add 'Mg' (Magnesium, Group 2, valence 2) to the element selection and include a reaction for `MgCl2` to allow testing of multi-atom balancing.</li>
-          <li>[x] Update the UI to include a 'Challenge Mode' that prompts users to revise explanations for more complex molecules.</li>
+          <li>[ ] Add a user input `&lt;textarea&gt;` for students to construct their own explanations before viewing the provided one.</li>
+          <li>[ ] Implement a 'Check Explanation' keyword validation function.</li>
+          <li>[ ] Add 'Mg' (Magnesium, Group 2, valence 2) to the element selection and include a reaction for `MgCl2` to allow testing of multi-atom balancing.</li>
+          <li>[ ] Update the UI to include a 'Challenge Mode' that prompts users to revise explanations for more complex molecules.</li>
         </ul>
       </li>
     </ul>
@@ -73,7 +73,7 @@ Construct and revise an explanation for the outcome of a simple chemical reactio
 ### HS-PS1-3
 Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
 
-- [Intermolecular Forces Investigation](IntermolecularForces.html) - Observe boiling points and surface tension to infer the strength of London Dispersion, Dipole-Dipole, and Hydrogen Bonding forces. [2026-03-13 01:47:21]
+- [Intermolecular Forces Investigation](IntermolecularForces.html) - Observe boiling points and surface tension to infer the strength of London Dispersion, Dipole-Dipole, and Hydrogen Bonding forces. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -95,9 +95,9 @@ Plan and conduct an investigation to gather evidence to compare the structure of
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Implement an initial 'Planning Screen' overlay requiring hypothesis selection before simulation access.</li>
-          <li>[x] Modify the data table to start empty and add a 'Record Data' button that captures the current temperature and state.</li>
-          <li>[x] Add visual dashed-line 'bonds' between particles in the `animateParticles` function that visually break when kinetic energy (temperature) exceeds the IMF strength threshold.</li>
+          <li>[ ] Implement an initial 'Planning Screen' overlay requiring hypothesis selection before simulation access.</li>
+          <li>[ ] Modify the data table to start empty and add a 'Record Data' button that captures the current temperature and state.</li>
+          <li>[ ] Add visual dashed-line 'bonds' between particles in the `animateParticles` function that visually break when kinetic energy (temperature) exceeds the IMF strength threshold.</li>
         </ul>
       </li>
     </ul>
@@ -127,8 +127,8 @@ Develop a model to illustrate that the release or absorption of energy from a ch
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Implement a drag-and-drop or input field system requiring users to identify the specific bond energy value for each bond before the 'Break Bonds' or 'Form Bonds' animations play.</li>
-          <li>[x] Add a particle animation layer to visualize energy transfer: sparks moving inward when breaking bonds, and outward when forming bonds.</li>
+          <li>[ ] Implement a drag-and-drop or input field system requiring users to identify the specific bond energy value for each bond before the 'Break Bonds' or 'Form Bonds' animations play.</li>
+          <li>[ ] Add a particle animation layer to visualize energy transfer: sparks moving inward when breaking bonds, and outward when forming bonds.</li>
         </ul>
       </li>
     </ul>
@@ -137,7 +137,7 @@ Develop a model to illustrate that the release or absorption of energy from a ch
 ### HS-PS1-5
 Apply scientific principles and evidence to provide an explanation about the effects of changing the temperature or concentration of the reacting particles on the rate at which a reaction occurs.
 
-- [Reaction Rates Simulation](ReactionRatesSimulation.html) - Explore how changing temperature (kinetic energy) and concentration affects collision frequency, reaction rates, and activation energy barriers using an interactive particle model. [2026-03-13 01:47:21]
+- [Reaction Rates Simulation](ReactionRatesSimulation.html) - Explore how changing temperature (kinetic energy) and concentration affects collision frequency, reaction rates, and activation energy barriers using an interactive particle model. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -158,8 +158,8 @@ Apply scientific principles and evidence to provide an explanation about the eff
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Convert the 'Constructing Explanations' panel into an interactive questionnaire that checks user understanding of the collected data.</li>
-          <li>[x] Add a 'Catalyst' toggle/button that dynamically lowers the Activation Energy and visually alters the simulation (e.g., adding a solid surface or specific catalyst particles).</li>
+          <li>[ ] Convert the 'Constructing Explanations' panel into an interactive questionnaire that checks user understanding of the collected data.</li>
+          <li>[ ] Add a 'Catalyst' toggle/button that dynamically lowers the Activation Energy and visually alters the simulation (e.g., adding a solid surface or specific catalyst particles).</li>
         </ul>
       </li>
     </ul>
@@ -168,7 +168,7 @@ Apply scientific principles and evidence to provide an explanation about the eff
 ### HS-PS1-6
 Refine the design of a chemical system by specifying a change in conditions that would produce increased amounts of products at equilibrium.
 
-- [Le Chatelier's Principle Simulator](LeChatelier.html) - Interactively stress an equilibrium system (Haber Process) by changing concentration, volume, and temperature to see how the system shifts. [2026-03-13 01:47:21]
+- [Le Chatelier's Principle Simulator](LeChatelier.html) - Interactively stress an equilibrium system (Haber Process) by changing concentration, volume, and temperature to see how the system shifts. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -189,8 +189,8 @@ Refine the design of a chemical system by specifying a change in conditions that
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Add a 'Challenge Mode' toggle that tracks the maximum NH3 concentration achieved and gamifies the process of finding the optimal conditions.</li>
-          <li>[x] Update the introduction text to explicitly connect the Haber Process to global food production and historical context.</li>
+          <li>[ ] Add a 'Challenge Mode' toggle that tracks the maximum NH3 concentration achieved and gamifies the process of finding the optimal conditions.</li>
+          <li>[ ] Update the introduction text to explicitly connect the Haber Process to global food production and historical context.</li>
         </ul>
       </li>
     </ul>
@@ -199,7 +199,7 @@ Refine the design of a chemical system by specifying a change in conditions that
 ### HS-PS1-7
 Use mathematical representations to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
 
-- [Conservation of Mass Simulator](ConservationOfMass.html) - Balance chemical equations and observe how total mass and atom counts remain perfectly conserved across the reaction. [2026-03-13 02:58:52]
+- [Conservation of Mass Simulator](ConservationOfMass.html) - Balance chemical equations and observe how total mass and atom counts remain perfectly conserved across the reaction. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -220,8 +220,8 @@ Use mathematical representations to support the claim that atoms, and therefore 
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Add an 'Analysis Prompt' UI that appears upon successful balancing, requiring the user to articulate the connection between atom count and mass conservation.</li>
-          <li>[x] Enhance the CSS/JS animation of the `scaleBeam` to include a damped oscillation effect when weights (molecules) are added or removed.</li>
+          <li>[ ] Add an 'Analysis Prompt' UI that appears upon successful balancing, requiring the user to articulate the connection between atom count and mass conservation.</li>
+          <li>[ ] Enhance the CSS/JS animation of the `scaleBeam` to include a damped oscillation effect when weights (molecules) are added or removed.</li>
         </ul>
       </li>
     </ul>
@@ -230,7 +230,7 @@ Use mathematical representations to support the claim that atoms, and therefore 
 ### HS-PS1-8
 Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during the processes of fission, fusion, and radioactive decay.
 
-- [Nuclear Processes Simulator](NuclearProcesses.html) - Visualize the changes in protons and neutrons, and the massive energy released, during Alpha Decay, Nuclear Fission, and Nuclear Fusion. [2026-03-13 02:58:52]
+- [Nuclear Processes Simulator](NuclearProcesses.html) - Visualize the changes in protons and neutrons, and the massive energy released, during Alpha Decay, Nuclear Fission, and Nuclear Fusion. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -251,8 +251,8 @@ Develop models to illustrate the changes in the composition of the nucleus of th
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Add 'Beta Decay' and 'Gamma Decay' options to the `processes` data structure, complete with distinct animations (e.g., a neutron turning into a proton and ejecting an electron for Beta).</li>
-          <li>[x] Add a comparative visual energy bar chart (logarithmic scale) below the simulation to contrast nuclear energy output with chemical energy output.</li>
+          <li>[ ] Add 'Beta Decay' and 'Gamma Decay' options to the `processes` data structure, complete with distinct animations (e.g., a neutron turning into a proton and ejecting an electron for Beta).</li>
+          <li>[ ] Add a comparative visual energy bar chart (logarithmic scale) below the simulation to contrast nuclear energy output with chemical energy output.</li>
         </ul>
       </li>
     </ul>
@@ -261,7 +261,7 @@ Develop models to illustrate the changes in the composition of the nucleus of th
 ### HS-PS2-1
 Analyze data to support the claim that Newton's second law of motion describes the mathematical relationship among the net force on a macroscopic object, its mass, and its acceleration.
 
-- [Interactive Boat River Crossing Simulation](InteractiveBoatRiverCrossingSimulation.html) - A physics simulation exploring relative velocity and vector addition as a boat crosses a flowing river. [2026-03-13 02:58:52]
+- [Interactive Boat River Crossing Simulation](InteractiveBoatRiverCrossingSimulation.html) - A physics simulation exploring relative velocity and vector addition as a boat crosses a flowing river. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -282,13 +282,13 @@ Analyze data to support the claim that Newton's second law of motion describes t
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Either re-evaluate the pedagogical placement of this simulation, or update the UI and physics engine to include 'Engine Force' (N), 'Boat Mass' (kg), and calculate real-time acceleration ($a = F/m$) rather than just setting a constant $v_{boat}$.</li>
+          <li>[ ] Either re-evaluate the pedagogical placement of this simulation, or update the UI and physics engine to include 'Engine Force' (N), 'Boat Mass' (kg), and calculate real-time acceleration ($a = F/m$) rather than just setting a constant $v_{boat}$.</li>
         </ul>
       </li>
     </ul>
   </details>
 
-- [Projectile Motion Simulation](ProjectileMotionSimulation.html) - An interactive physics simulation to study the kinematics of projectile motion by adjusting launch variables. [2026-03-13 02:58:52]
+- [Projectile Motion Simulation](ProjectileMotionSimulation.html) - An interactive physics simulation to study the kinematics of projectile motion by adjusting launch variables. [2026-03-12 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -309,8 +309,8 @@ Analyze data to support the claim that Newton's second law of motion describes t
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Add a 'Projectile Mass (kg)' slider. Update the UI to explicitly show the gravitational force ($F_g = mg$) and the resulting acceleration ($a = F_g/m = g$), demonstrating that mass cancels out for kinematics.</li>
-          <li>[x] Add a real-time Velocity vs. Time graph to the sidebar to allow direct analysis of constant acceleration.</li>
+          <li>[ ] Add a 'Projectile Mass (kg)' slider. Update the UI to explicitly show the gravitational force ($F_g = mg$) and the resulting acceleration ($a = F_g/m = g$), demonstrating that mass cancels out for kinematics.</li>
+          <li>[ ] Add a real-time Velocity vs. Time graph to the sidebar to allow direct analysis of constant acceleration.</li>
         </ul>
       </li>
     </ul>
