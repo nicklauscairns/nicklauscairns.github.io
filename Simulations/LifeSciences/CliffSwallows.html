@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Evolving Wings of Nebraska's Cliff Swallows - Natural Selection</title>
+    <meta name="description" content="An interactive simulation of cliff swallows adapting to highway environments. Shorter wings provide maneuverability to avoid cars, illustrating natural selection and adaptation. Aligned to NGSS HS-LS4-4.">
+    <meta name="keywords" content="NGSS, HS-LS4-4, Natural Selection, Evolution, Adaptation, Cliff Swallows, Wings, Simulation, Interactive">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="The Evolving Wings of Nebraska's Cliff Swallows">
+    <meta property="og:description" content="Explore how highway traffic acts as a selective pressure, driving the evolution of shorter wings in cliff swallows.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "The Evolving Wings of Nebraska's Cliff Swallows",
+      "description": "An interactive simulation of cliff swallows adapting to highway environments. Shorter wings provide maneuverability to avoid cars, illustrating natural selection and adaptation.",
+      "learningResourceType": "Simulation",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-LS4-4",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ls4-4-biological-evolution-unity-and-diversity"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-blue-50 text-slate-800 font-sans p-4 md:p-8 flex flex-col items-center min-h-screen">
+
+    <main class="max-w-6xl w-full bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
+
+        <!-- Header -->
+        <header class="bg-blue-800 text-white p-6 border-b-4 border-blue-600">
+            <h1 class="text-3xl font-bold mb-2">Evolving Wings of Nebraska's Cliff Swallows</h1>
+            <h2 class="text-xl font-medium text-blue-200">HS-LS4-4: Natural Selection & Adaptation</h2>
+            <p class="mt-4 text-sm md:text-base text-blue-50 max-w-4xl leading-relaxed">
+                For thousands of years, cliff swallows nested on cliff faces, where longer wings were advantageous for energy-efficient gliding. However, as humans built highways and bridges, many swallows adapted to nesting under these structures. In this simulation, investigate how the introduction of high-speed traffic alters the selective pressures on wing span, favoring maneuverability (shorter wings) over gliding efficiency (longer wings).
+            </p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row">
+
+            <!-- Controls & Stats Panel -->
+            <section class="lg:w-1/3 p-6 bg-slate-100 border-r border-slate-200 flex flex-col gap-6 overflow-y-auto" style="max-height: 800px;">
+
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-lg mb-4 text-slate-700 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        Environment Controls
+                    </h3>
+
+                    <div class="mb-5">
+                        <label for="trafficSlider" class="block text-sm font-semibold text-slate-700 mb-1">
+                            Highway Traffic Density: <span id="trafficValue" class="text-blue-700 font-bold">0 cars/hr</span>
+                        </label>
+                        <input type="range" id="trafficSlider" min="0" max="100" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        <p class="text-xs text-slate-500 mt-1 leading-tight">Controls the frequency of cars. Higher traffic requires greater maneuverability to survive.</p>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="speedSlider" class="block text-sm font-semibold text-slate-700 mb-1">
+                            Simulation Speed: <span id="speedValue">1x</span>
+                        </label>
+                        <input type="range" id="speedSlider" min="1" max="5" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-600">
+                    </div>
+
+                    <div class="flex gap-2 mt-6">
+                        <button id="startBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded shadow-sm transition-colors">
+                            Play
+                        </button>
+                        <button id="resetBtn" class="flex-1 bg-slate-500 hover:bg-slate-600 text-white font-bold py-2.5 px-4 rounded shadow-sm transition-colors">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex-grow flex flex-col">
+                    <h3 class="font-bold text-lg mb-2 text-slate-700">Population Data</h3>
+                    <p class="text-sm font-medium text-slate-600 mb-4 border-b border-slate-100 pb-2">Generation: <span id="generationCounter" class="font-bold text-blue-800 text-xl">0</span></p>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-slate-50 p-3 rounded border border-slate-200 text-center">
+                            <span class="block text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Avg Wing Span</span>
+                            <span id="avgWingSpan" class="text-xl font-bold text-slate-800">110.0 mm</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded border border-slate-200 text-center">
+                            <span class="block text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Population</span>
+                            <span id="popCount" class="text-xl font-bold text-slate-800">200</span>
+                        </div>
+                    </div>
+
+                    <!-- Histogram Container -->
+                    <div class="mt-2 w-full flex-grow min-h-[220px] relative">
+                        <canvas id="histogramChart"></canvas>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Simulation Canvas -->
+            <section class="lg:w-2/3 bg-slate-800 flex flex-col relative overflow-hidden" style="min-height: 600px;">
+                <!-- Background Environment (Bridge & Highway) -->
+                <div class="absolute inset-0 pointer-events-none z-0">
+                    <!-- Sky -->
+                    <div class="w-full h-1/2 bg-gradient-to-b from-sky-400 to-sky-200"></div>
+                    <!-- Ground/Highway -->
+                    <div class="w-full h-1/2 bg-slate-600 relative">
+                        <!-- Road Lines -->
+                        <div class="absolute top-1/2 left-0 right-0 h-2 bg-white/50 border-y border-dashed border-white/80"></div>
+                        <div class="absolute top-1/4 left-0 right-0 h-1 bg-white/30 border-y border-dashed border-white/50"></div>
+                        <div class="absolute top-3/4 left-0 right-0 h-1 bg-white/30 border-y border-dashed border-white/50"></div>
+                    </div>
+                    <!-- Bridge structure -->
+                    <div class="absolute top-1/2 left-0 right-0 h-16 bg-slate-700 border-b-8 border-slate-900 shadow-2xl z-10 -translate-y-full flex justify-between px-12">
+                        <!-- Nests under bridge -->
+                        <div class="w-8 h-6 bg-[#8B5A2B] rounded-b-full shadow-inner mt-16 ml-10"></div>
+                        <div class="w-8 h-6 bg-[#8B5A2B] rounded-b-full shadow-inner mt-16 ml-32"></div>
+                        <div class="w-8 h-6 bg-[#8B5A2B] rounded-b-full shadow-inner mt-16 mr-20"></div>
+                        <div class="w-8 h-6 bg-[#8B5A2B] rounded-b-full shadow-inner mt-16 mr-40"></div>
+                        <!-- Pillars -->
+                        <div class="w-24 h-full bg-slate-800 border-x-4 border-slate-900"></div>
+                        <div class="w-24 h-full bg-slate-800 border-x-4 border-slate-900"></div>
+                    </div>
+                </div>
+
+                <canvas id="simCanvas" width="800" height="600" class="w-full h-full object-cover z-20"></canvas>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // --- Simulation Engine ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // UI Elements
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const trafficSlider = document.getElementById('trafficSlider');
+        const trafficValue = document.getElementById('trafficValue');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const genCounter = document.getElementById('generationCounter');
+        const avgWingSpanEl = document.getElementById('avgWingSpan');
+        const popCountEl = document.getElementById('popCount');
+
+        // Simulation State
+        let isRunning = false;
+        let animationId = null;
+        let generation = 0;
+        let ticks = 0;
+        const TICKS_PER_GEN = 200; // Visual frames before a new generation calculation
+
+        // Parameters
+        let POPULATION_SIZE = 200;
+        let TRAFFIC_DENSITY = 0; // 0 to 100
+        let SIM_SPEED = 1;
+
+        // Normal distribution random generator
+        function randomGaussian(mean, stdev) {
+            let u = 1 - Math.random();
+            let v = Math.random();
+            let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            return z * stdev + mean;
+        }
+
+        // --- Cars ---
+        class Car {
+            constructor() {
+                this.y = canvas.height/2 + Math.random() * (canvas.height/2 - 40);
+                this.direction = Math.random() > 0.5 ? 1 : -1;
+                this.x = this.direction === 1 ? -100 : canvas.width + 100;
+                this.speed = (5 + Math.random() * 5) * this.direction;
+                this.width = 60 + Math.random() * 40;
+                this.height = 30 + Math.random() * 20;
+                // Random car colors
+                const colors = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#6B7280', '#111827', '#FFFFFF'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.x += this.speed * SIM_SPEED;
+            }
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.fillStyle = '#111827';
+                // Wheels
+                ctx.fillRect(this.x + 10, this.y + this.height - 5, 15, 10);
+                ctx.fillRect(this.x + this.width - 25, this.y + this.height - 5, 15, 10);
+                // Windows
+                ctx.fillStyle = '#93C5FD';
+                if (this.direction === 1) {
+                    ctx.fillRect(this.x + this.width - 20, this.y + 5, 15, 15);
+                } else {
+                    ctx.fillRect(this.x + 5, this.y + 5, 15, 15);
+                }
+            }
+            isOffscreen() {
+                return (this.direction === 1 && this.x > canvas.width + 100) ||
+                       (this.direction === -1 && this.x < -100 - this.width);
+            }
+        }
+
+        let cars = [];
+
+        // --- Swallows ---
+        class Swallow {
+            constructor(wingSpan) {
+                // Initialize positions primarily around the "nesting" area under the bridge (top half)
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * (canvas.height / 2);
+
+                // Wing span trait (in mm, realistic cliff swallow wings are 100-115mm)
+                this.wingSpan = wingSpan;
+
+                // Biological properties based on wing span:
+                // Longer wings = better gliding/foraging efficiency (higher base survival)
+                // Shorter wings = better maneuverability (better chance to dodge cars)
+
+                // Normalizing wing span from ~90mm to 125mm for math:
+                // Let's say optimal foraging wing is 115mm.
+                // Maneuverability scales inversely with wing length.
+                this.foragingFitness = Math.min(1.0, Math.max(0.5, 0.5 + (this.wingSpan - 90) / 50));
+                this.maneuverability = Math.max(0.1, 1.0 - (this.wingSpan - 90) / 40); // Shorter is better
+
+                this.dead = false;
+
+                // Animation properties
+                this.flapCycle = Math.random() * Math.PI * 2;
+                this.tx = Math.random() * canvas.width;
+                this.ty = Math.random() * canvas.height; // They fly down to the road to catch insects
+
+                // Map wing span to visual size
+                this.visualWingLen = (this.wingSpan / 110) * 15;
+            }
+
+            update() {
+                if (this.dead) return;
+
+                // Fly towards target
+                const dx = this.tx - this.x;
+                const dy = this.ty - this.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                // Base speed
+                let speed = 2;
+
+                if (dist < 20) {
+                    // Pick new target
+                    this.tx = Math.random() * canvas.width;
+                    // Usually stay high, sometimes swoop low
+                    this.ty = Math.random() > 0.3 ? Math.random() * (canvas.height/2) : Math.random() * canvas.height;
+                } else {
+                    this.x += (dx/dist) * speed * SIM_SPEED;
+                    this.y += (dy/dist) * speed * SIM_SPEED;
+                }
+
+                // Flapping animation (shorter wings flap faster)
+                let flapSpeed = (0.1 + (this.maneuverability * 0.1)) * SIM_SPEED;
+                this.flapCycle += flapSpeed;
+
+                // Check collisions with cars
+                if (this.y > canvas.height/2) {
+                    for (let car of cars) {
+                        // Simple bounding box check
+                        if (this.x > car.x && this.x < car.x + car.width &&
+                            this.y > car.y && this.y < car.y + car.height) {
+
+                            // Chance to dodge based on maneuverability
+                            // If traffic is heavy, dodging is harder
+                            let dodgeChance = this.maneuverability;
+                            if (Math.random() > dodgeChance) {
+                                this.dead = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            draw(ctx) {
+                if (this.dead) return;
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // Rotation based on movement direction
+                const dx = this.tx - this.x;
+                const dy = this.ty - this.y;
+                const angle = Math.atan2(dy, dx);
+                ctx.rotate(angle);
+
+                // Body
+                ctx.fillStyle = '#1E293B'; // Dark slate
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 8, 4, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                // Wings
+                const flapOffset = Math.sin(this.flapCycle) * 10;
+                ctx.strokeStyle = '#334155';
+                ctx.lineWidth = 3;
+
+                // Left wing
+                ctx.beginPath();
+                ctx.moveTo(2, -2);
+                ctx.quadraticCurveTo(-5, -this.visualWingLen, -10, -this.visualWingLen + flapOffset);
+                ctx.stroke();
+
+                // Right wing
+                ctx.beginPath();
+                ctx.moveTo(2, 2);
+                ctx.quadraticCurveTo(-5, this.visualWingLen, -10, this.visualWingLen - flapOffset);
+                ctx.stroke();
+
+                // Tail (Swallows have forked tails)
+                ctx.beginPath();
+                ctx.moveTo(-6, -2);
+                ctx.lineTo(-12, -6);
+                ctx.moveTo(-6, 2);
+                ctx.lineTo(-12, 6);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        let population = [];
+
+        // --- Chart.js Setup (Histogram) ---
+        let chartInstance = null;
+
+        function initChart() {
+            if (typeof Chart === 'undefined') return;
+            const ctxChart = document.getElementById('histogramChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctxChart, {
+                type: 'bar',
+                data: {
+                    labels: ['<95', '95-100', '100-105', '105-110', '110-115', '115-120', '>120'],
+                    datasets: [{
+                        label: 'Number of Birds',
+                        data: [0,0,0,0,0,0,0],
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 0 },
+                    scales: {
+                        y: { beginAtZero: true, suggestedMax: 80, title: { display: true, text: 'Count' } },
+                        x: { title: { display: true, text: 'Wing Span (mm)' } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+
+        function updateHistogram() {
+            let bins = [0,0,0,0,0,0,0];
+            let totalWingspan = 0;
+            let aliveCount = 0;
+
+            for (let b of population) {
+                if (!b.dead) {
+                    aliveCount++;
+                    totalWingspan += b.wingSpan;
+
+                    if (b.wingSpan < 95) bins[0]++;
+                    else if (b.wingSpan < 100) bins[1]++;
+                    else if (b.wingSpan < 105) bins[2]++;
+                    else if (b.wingSpan < 110) bins[3]++;
+                    else if (b.wingSpan < 115) bins[4]++;
+                    else if (b.wingSpan < 120) bins[5]++;
+                    else bins[6]++;
+                }
+            }
+
+            if (typeof Chart !== 'undefined' && chartInstance) {
+                chartInstance.data.datasets[0].data = bins;
+                chartInstance.update();
+            }
+
+            let avg = aliveCount > 0 ? (totalWingspan / aliveCount).toFixed(1) : 0;
+            avgWingSpanEl.innerText = `${avg} mm`;
+            popCountEl.innerText = aliveCount;
+        }
+
+        // --- Initialization ---
+        function initSimulation() {
+            population = [];
+            cars = [];
+            generation = 0;
+            ticks = 0;
+
+            initChart();
+
+            // Initial population: normally distributed around 110mm wing span
+            for (let i = 0; i < POPULATION_SIZE; i++) {
+                let initialWingSpan = randomGaussian(110, 5);
+                population.push(new Swallow(initialWingSpan));
+            }
+
+            genCounter.innerText = generation;
+            updateHistogram();
+            if (!isRunning) drawFrame();
+        }
+
+        // Core genetic logic exposed for Playwright
+        window.updateSimulationGeneration = function() {
+            // End of generation evaluation
+
+            // 1. Determine survivors
+            let survivors = [];
+            for (let b of population) {
+                if (!b.dead) {
+                    // They survived the cars. Now apply baseline foraging/natural selection.
+                    // Longer wings = higher base fitness.
+                    // Short wings might starve if they aren't efficient enough.
+                    if (Math.random() < b.foragingFitness) {
+                        survivors.push(b);
+                    }
+                }
+            }
+
+            // 2. Reproduction
+            let nextGeneration = [];
+
+            if (survivors.length > 0) {
+                // To keep population stable, survivors breed to restore POPULATION_SIZE
+                for (let i = 0; i < POPULATION_SIZE; i++) {
+                    // Pick two parents randomly (simplified reproduction)
+                    let p1 = survivors[Math.floor(Math.random() * survivors.length)];
+                    let p2 = survivors[Math.floor(Math.random() * survivors.length)];
+
+                    // Child inherits average of parents + slight mutation
+                    let childWingSpan = (p1.wingSpan + p2.wingSpan) / 2;
+                    childWingSpan += randomGaussian(0, 2); // 2mm std dev mutation
+
+                    // Biological bounds
+                    childWingSpan = Math.max(80, Math.min(130, childWingSpan));
+
+                    nextGeneration.push(new Swallow(childWingSpan));
+                }
+                population = nextGeneration;
+            } else {
+                population = []; // Extinction
+            }
+
+            generation++;
+            genCounter.innerText = generation;
+            updateHistogram();
+        };
+
+        function drawFrame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Rely on CSS background for sky/road
+
+            // Spawn cars based on traffic density
+            if (Math.random() < (TRAFFIC_DENSITY / 100) * 0.1 * SIM_SPEED) {
+                cars.push(new Car());
+            }
+
+            // Update and draw cars
+            for (let i = cars.length - 1; i >= 0; i--) {
+                cars[i].update();
+                cars[i].draw(ctx);
+                if (cars[i].isOffscreen()) {
+                    cars.splice(i, 1);
+                }
+            }
+
+            // Update and draw swallows
+            for (let b of population) {
+                b.update();
+                b.draw(ctx);
+            }
+        }
+
+        function gameLoop() {
+            if (!isRunning) return;
+
+            drawFrame();
+
+            ticks += SIM_SPEED;
+            if (ticks >= TICKS_PER_GEN) {
+                ticks = 0;
+                window.updateSimulationGeneration();
+            }
+
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        // --- Event Listeners ---
+        startBtn.addEventListener('click', () => {
+            isRunning = !isRunning;
+            if (isRunning) {
+                startBtn.innerText = 'Pause';
+                startBtn.classList.replace('bg-blue-600', 'bg-amber-600');
+                startBtn.classList.replace('hover:bg-blue-700', 'hover:bg-amber-700');
+                gameLoop();
+            } else {
+                startBtn.innerText = 'Play';
+                startBtn.classList.replace('bg-amber-600', 'bg-blue-600');
+                startBtn.classList.replace('hover:bg-amber-700', 'hover:bg-blue-700');
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            isRunning = false;
+            startBtn.innerText = 'Play';
+            startBtn.classList.replace('bg-amber-600', 'bg-blue-600');
+            startBtn.classList.replace('hover:bg-amber-700', 'hover:bg-blue-700');
+            cancelAnimationFrame(animationId);
+            initSimulation();
+        });
+
+        trafficSlider.addEventListener('input', (e) => {
+            TRAFFIC_DENSITY = parseInt(e.target.value);
+            trafficValue.innerText = `${TRAFFIC_DENSITY * 10} cars/hr`;
+
+            if (TRAFFIC_DENSITY === 0) trafficValue.className = 'text-green-600 font-bold';
+            else if (TRAFFIC_DENSITY < 50) trafficValue.className = 'text-amber-600 font-bold';
+            else trafficValue.className = 'text-red-600 font-bold';
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            SIM_SPEED = parseFloat(e.target.value);
+            speedValue.innerText = SIM_SPEED + 'x';
+        });
+
+        // Start
+        window.onload = initSimulation;
+
+    </script>
+</body>
+</html>

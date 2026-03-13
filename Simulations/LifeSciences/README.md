@@ -656,6 +656,12 @@ Construct an explanation based on evidence for how natural selection leads to ad
     </ul>
   </details>
 
+
+- [The Tuskless Elephants of Gorongosa](GorongosaElephants.html) - An interactive simulation exploring how poaching acts as a selective pressure, driving the evolution of tusklessness in the African elephants of Gorongosa. [2026-03-13 21:58:22]
+
+
+- [The Evolving Wings of Nebraska's Cliff Swallows](CliffSwallows.html) - An interactive simulation of cliff swallows adapting to highway environments, illustrating how selective pressures drive the evolution of wing spans. [2026-03-13 22:03:21]
+
 ### HS-LS4-5
 Evaluate the evidence supporting claims that changes in environmental conditions may result in: (1) increases in the number of individuals of some species, (2) the emergence of new species over time, and (3) the extinction of other species.
 
@@ -686,6 +692,9 @@ Evaluate the evidence supporting claims that changes in environmental conditions
       </li>
     </ul>
   </details>
+
+
+- [Co-Evolutionary Arms Race: Newts vs. Garter Snakes](NewtsAndSnakes.html) - An interactive simulation demonstrating the co-evolutionary arms race between the toxic rough-skinned newt and the resistant garter snake. [2026-03-13 22:05:54]
 
 ### HS-LS4-6
 Create or revise a simulation to test a solution to mitigate adverse impacts of human activity on biodiversity.*

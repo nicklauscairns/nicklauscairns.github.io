@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co-Evolutionary Arms Race: Newts vs. Garter Snakes</title>
+    <meta name="description" content="An interactive simulation demonstrating the co-evolutionary arms race between the toxic rough-skinned newt and the resistant garter snake. Aligned to NGSS HS-LS4-5.">
+    <meta name="keywords" content="NGSS, HS-LS4-5, Co-evolution, Natural Selection, Newts, Snakes, TTX, Simulation, Interactive">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Co-Evolutionary Arms Race: Newts vs. Garter Snakes">
+    <meta property="og:description" content="Explore extreme trait changes driven by a localized predator-prey arms race between rough-skinned newts and garter snakes.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Co-Evolutionary Arms Race: Newts vs. Garter Snakes",
+      "description": "An interactive simulation demonstrating the co-evolutionary arms race between the toxic rough-skinned newt and the resistant garter snake.",
+      "learningResourceType": "Simulation",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-LS4-5",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ls4-5-biological-evolution-unity-and-diversity"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-stone-50 text-stone-900 font-sans p-4 md:p-8 flex flex-col items-center min-h-screen">
+
+    <main class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-stone-200">
+
+        <!-- Header -->
+        <header class="bg-orange-800 text-orange-50 p-6 border-b-4 border-orange-600">
+            <h1 class="text-3xl font-bold mb-2">The Co-Evolutionary Arms Race</h1>
+            <h2 class="text-xl font-medium text-orange-200">HS-LS4-5: Environmental Changes & Species Evolution</h2>
+            <p class="mt-4 text-sm md:text-base text-orange-100 max-w-4xl leading-relaxed">
+                The rough-skinned newt produces tetrodotoxin (TTX), one of the deadliest neurotoxins on Earth. In certain geographic hotspots, local common garter snakes have evolved resistance to this poison, sparking an extreme evolutionary "arms race" where newts become ever more toxic and snakes ever more resistant. Investigate how this predator-prey dynamic acts as an environmental change that drives rapid, localized evolution.
+            </p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row h-full">
+
+            <!-- Controls & Stats Panel -->
+            <section class="lg:w-1/3 p-6 bg-stone-100 border-r border-stone-200 flex flex-col gap-6">
+
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="font-bold text-lg mb-4 text-stone-700">Evolution Controls</h3>
+
+                    <div class="mb-5">
+                        <label for="mutationSlider" class="block text-sm font-semibold text-stone-700 mb-1">
+                            Mutation Rate: <span id="mutationValue" class="text-orange-700 font-bold">Low (1%)</span>
+                        </label>
+                        <input type="range" id="mutationSlider" min="1" max="10" value="1" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-orange-600">
+                        <p class="text-xs text-stone-500 mt-1">Drives the introduction of new extreme traits.</p>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="speedSlider" class="block text-sm font-semibold text-stone-700 mb-1">
+                            Simulation Speed: <span id="speedValue">1x</span>
+                        </label>
+                        <input type="range" id="speedSlider" min="1" max="5" value="1" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-600">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button id="startBtn" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-colors">
+                            Play
+                        </button>
+                        <button id="resetBtn" class="flex-1 bg-stone-500 hover:bg-stone-600 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-colors">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 flex-grow">
+                    <h3 class="font-bold text-lg mb-2 text-stone-700">Arms Race Data</h3>
+                    <p class="text-sm font-medium text-stone-600 mb-4 border-b border-stone-100 pb-2">Generation: <span id="generationCounter" class="font-bold text-orange-800 text-xl">0</span></p>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-orange-50 p-3 rounded-lg border border-orange-200 text-center">
+                            <span class="block text-xs text-orange-800 uppercase tracking-wider font-bold mb-1">Newt Toxicity</span>
+                            <span id="avgToxicity" class="text-2xl font-black text-orange-600">1.0</span>
+                            <span class="block text-[10px] text-orange-600/80">mg TTX</span>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200 text-center">
+                            <span class="block text-xs text-emerald-800 uppercase tracking-wider font-bold mb-1">Snake Resistance</span>
+                            <span id="avgResistance" class="text-2xl font-black text-emerald-600">1.0</span>
+                            <span class="block text-[10px] text-emerald-600/80">Tolerance Level</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div class="mt-4 w-full h-48 relative">
+                        <canvas id="armsRaceChart"></canvas>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Simulation Canvas -->
+            <section class="lg:w-2/3 p-4 bg-stone-800 flex flex-col items-center justify-center relative min-h-[500px]">
+                <canvas id="simCanvas" width="800" height="600" class="w-full h-auto max-w-full rounded-xl shadow-2xl bg-[#4A5D23] z-20 border-4 border-stone-900"></canvas>
+
+                <div class="absolute bottom-6 left-6 z-30 bg-black/70 text-white px-4 py-3 rounded-lg text-sm backdrop-blur-md shadow-lg border border-white/10">
+                    <p class="font-bold mb-2">Legend:</p>
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-4 h-4 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,1)]"></div>
+                        <span>Newt (Glow = Toxicity Level)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-2 rounded bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,1)]"></div>
+                        <span>Snake (Glow = Resistance Level)</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // --- Simulation Engine ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // UI
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const mutationSlider = document.getElementById('mutationSlider');
+        const mutationValue = document.getElementById('mutationValue');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const genCounter = document.getElementById('generationCounter');
+        const avgToxicityEl = document.getElementById('avgToxicity');
+        const avgResistanceEl = document.getElementById('avgResistance');
+
+        let isRunning = false;
+        let animationId = null;
+        let generation = 0;
+        let ticks = 0;
+        const TICKS_PER_GEN = 150;
+
+        // Parameters
+        let NEWT_POP = 100;
+        let SNAKE_POP = 40;
+        let MUTATION_RATE = 0.01;
+        let SIM_SPEED = 1;
+
+        // --- Organisms ---
+        class Newt {
+            constructor(toxicity) {
+                this.x = Math.random() * (canvas.width - 40) + 20;
+                this.y = Math.random() * (canvas.height - 40) + 20;
+                this.tx = Math.random() * canvas.width;
+                this.ty = Math.random() * canvas.height;
+                this.toxicity = Math.max(0.1, toxicity); // TTX level
+
+                // Extremely toxic newts suffer a slight metabolic penalty
+                // This prevents infinite toxicity if snakes are removed
+                this.fitnessPenalty = 1.0 - (this.toxicity * 0.01);
+
+                this.dead = false;
+                this.eaten = false; // Flag if eaten by snake
+            }
+            update() {
+                if (this.dead || this.eaten) return;
+
+                const dx = this.tx - this.x;
+                const dy = this.ty - this.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist < 10) {
+                    this.tx = Math.random() * canvas.width;
+                    this.ty = Math.random() * canvas.height;
+                } else {
+                    this.x += (dx/dist) * 0.5 * SIM_SPEED;
+                    this.y += (dy/dist) * 0.5 * SIM_SPEED;
+                }
+            }
+            draw(ctx) {
+                if (this.dead || this.eaten) return;
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
+
+                // Color intensity based on toxicity
+                let intensity = Math.min(255, Math.floor(this.toxicity * 20));
+                ctx.fillStyle = `rgb(255, ${150 - intensity/2}, 0)`;
+
+                // Glowing effect for highly toxic ones
+                ctx.shadowBlur = this.toxicity * 2;
+                ctx.shadowColor = ctx.fillStyle;
+
+                ctx.fill();
+                ctx.shadowBlur = 0; // reset
+            }
+        }
+
+        class Snake {
+            constructor(resistance) {
+                this.x = Math.random() * (canvas.width - 40) + 20;
+                this.y = Math.random() * (canvas.height - 40) + 20;
+                this.tx = Math.random() * canvas.width;
+                this.ty = Math.random() * canvas.height;
+                this.resistance = Math.max(0.1, resistance);
+
+                // High resistance reduces sprint speed/base fitness
+                this.speed = Math.max(0.5, 2.0 - (this.resistance * 0.05));
+                this.fitnessPenalty = 1.0 - (this.resistance * 0.02);
+
+                this.dead = false;
+                this.meals = 0; // Number of newts successfully eaten and survived
+            }
+            update(newts) {
+                if (this.dead) return;
+
+                // Hunt nearest newt
+                let nearest = null;
+                let minDist = 100; // Sight range
+
+                for (let n of newts) {
+                    if (n.dead || n.eaten) continue;
+                    let dist = Math.sqrt((n.x - this.x)**2 + (n.y - this.y)**2);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        nearest = n;
+                    }
+                }
+
+                if (nearest) {
+                    this.tx = nearest.x;
+                    this.ty = nearest.y;
+                } else if (Math.random() < 0.02) {
+                    this.tx = Math.random() * canvas.width;
+                    this.ty = Math.random() * canvas.height;
+                }
+
+                const dx = this.tx - this.x;
+                const dy = this.ty - this.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist > 2) {
+                    this.x += (dx/dist) * this.speed * SIM_SPEED;
+                    this.y += (dy/dist) * this.speed * SIM_SPEED;
+                }
+
+                // Eat collision
+                if (nearest && minDist < 8) {
+                    nearest.eaten = true;
+                    // Outcome of eating:
+                    if (nearest.toxicity > this.resistance) {
+                        // Snake dies from poison
+                        this.dead = true;
+                    } else {
+                        // Snake survives and gets a meal (fitness boost)
+                        this.meals++;
+                    }
+                }
+            }
+            draw(ctx) {
+                if (this.dead) return;
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                const dx = this.tx - this.x;
+                const dy = this.ty - this.y;
+                ctx.rotate(Math.atan2(dy, dx));
+
+                ctx.beginPath();
+                ctx.rect(-8, -3, 16, 6);
+
+                let intensity = Math.min(255, Math.floor(this.resistance * 20));
+                ctx.fillStyle = `rgb(0, ${150 + intensity/2}, 0)`;
+                ctx.fill();
+
+                // Tongue
+                if (Math.random() > 0.8) {
+                    ctx.strokeStyle = 'red';
+                    ctx.beginPath();
+                    ctx.moveTo(8, 0);
+                    ctx.lineTo(12, -2);
+                    ctx.moveTo(8, 0);
+                    ctx.lineTo(12, 2);
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        let newts = [];
+        let snakes = [];
+
+        // --- Chart Setup ---
+        let chartInstance = null;
+        const chartData = {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Avg Toxicity',
+                    data: [],
+                    borderColor: '#EA580C',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Avg Resistance',
+                    data: [],
+                    borderColor: '#10B981',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    yAxisID: 'y'
+                }
+            ]
+        };
+
+        function initChart() {
+            if (typeof Chart === 'undefined') return;
+            const ctxChart = document.getElementById('armsRaceChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctxChart, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Level' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Generation' },
+                            ticks: { maxTicksLimit: 10 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+
+        // --- Initialization ---
+        function initSimulation() {
+            newts = [];
+            snakes = [];
+            generation = 0;
+            ticks = 0;
+
+            chartData.labels = [];
+            chartData.datasets[0].data = [];
+            chartData.datasets[1].data = [];
+
+            initChart();
+
+            // Initial traits are low
+            for (let i = 0; i < NEWT_POP; i++) newts.push(new Newt(1.0 + (Math.random()-0.5)));
+            for (let i = 0; i < SNAKE_POP; i++) snakes.push(new Snake(1.0 + (Math.random()-0.5)));
+
+            updateStats();
+            if (!isRunning) drawFrame();
+        }
+
+        // Exposed for Playwright
+        window.updateSimulationGeneration = function() {
+            // Evaluates survival and reproduces
+
+            // 1. Newt Survival
+            let newtSurvivors = [];
+            for (let n of newts) {
+                if (!n.eaten && !n.dead) {
+                    // Base survival penalty for high toxicity
+                    if (Math.random() < n.fitnessPenalty) {
+                        newtSurvivors.push(n);
+                    }
+                }
+            }
+
+            // 2. Snake Survival
+            let snakeSurvivors = [];
+            for (let s of snakes) {
+                if (!s.dead) {
+                    // Base survival penalty + needs meals to survive
+                    let survivalChance = s.fitnessPenalty * (0.2 + (s.meals * 0.4));
+                    if (Math.random() < survivalChance) {
+                        snakeSurvivors.push(s);
+                    }
+                }
+            }
+
+            // 3. Reproduction (Maintain population caps)
+            let nextNewts = [];
+            if (newtSurvivors.length > 0) {
+                for (let i = 0; i < NEWT_POP; i++) {
+                    let parent = newtSurvivors[Math.floor(Math.random() * newtSurvivors.length)];
+                    let childTox = parent.toxicity + (Math.random() < MUTATION_RATE ? (Math.random() * 4 - 1.5) : (Math.random() * 0.4 - 0.2));
+                    nextNewts.push(new Newt(childTox));
+                }
+                newts = nextNewts;
+            } else { newts = []; }
+
+            let nextSnakes = [];
+            if (snakeSurvivors.length > 0) {
+                for (let i = 0; i < SNAKE_POP; i++) {
+                    let parent = snakeSurvivors[Math.floor(Math.random() * snakeSurvivors.length)];
+                    let childRes = parent.resistance + (Math.random() < MUTATION_RATE ? (Math.random() * 4 - 1.5) : (Math.random() * 0.4 - 0.2));
+                    nextSnakes.push(new Snake(childRes));
+                }
+                snakes = nextSnakes;
+            } else { snakes = []; }
+
+            generation++;
+            updateStats();
+        };
+
+        function updateStats() {
+            genCounter.innerText = generation;
+
+            let avgTox = newts.length > 0 ? newts.reduce((sum, n) => sum + n.toxicity, 0) / newts.length : 0;
+            let avgRes = snakes.length > 0 ? snakes.reduce((sum, s) => sum + s.resistance, 0) / snakes.length : 0;
+
+            avgTox = Math.max(0, avgTox);
+            avgRes = Math.max(0, avgRes);
+
+            avgToxicityEl.innerText = avgTox.toFixed(1);
+            avgResistanceEl.innerText = avgRes.toFixed(1);
+
+            chartData.labels.push(generation);
+            chartData.datasets[0].data.push(avgTox.toFixed(2));
+            chartData.datasets[1].data.push(avgRes.toFixed(2));
+
+            if (typeof Chart !== 'undefined' && chartInstance) {
+                chartInstance.update();
+            }
+        }
+
+        function drawFrame() {
+            ctx.fillStyle = '#4A5D23'; // Swampy green
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let n of newts) { n.update(); n.draw(ctx); }
+            for (let s of snakes) { s.update(newts); s.draw(ctx); }
+        }
+
+        function gameLoop() {
+            if (!isRunning) return;
+
+            drawFrame();
+
+            ticks += SIM_SPEED;
+            if (ticks >= TICKS_PER_GEN) {
+                ticks = 0;
+                window.updateSimulationGeneration();
+            }
+
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        // Listeners
+        startBtn.addEventListener('click', () => {
+            isRunning = !isRunning;
+            if (isRunning) {
+                startBtn.innerText = 'Pause';
+                startBtn.classList.replace('bg-orange-600', 'bg-stone-600');
+                startBtn.classList.replace('hover:bg-orange-700', 'hover:bg-stone-700');
+                gameLoop();
+            } else {
+                startBtn.innerText = 'Play';
+                startBtn.classList.replace('bg-stone-600', 'bg-orange-600');
+                startBtn.classList.replace('hover:bg-stone-700', 'hover:bg-orange-700');
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            isRunning = false;
+            startBtn.innerText = 'Play';
+            startBtn.classList.replace('bg-stone-600', 'bg-orange-600');
+            startBtn.classList.replace('hover:bg-stone-700', 'hover:bg-orange-700');
+            cancelAnimationFrame(animationId);
+            initSimulation();
+        });
+
+        mutationSlider.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value);
+            MUTATION_RATE = val / 100;
+
+            if (val <= 3) mutationValue.innerText = `Low (${val}%)`;
+            else if (val <= 7) mutationValue.innerText = `Medium (${val}%)`;
+            else mutationValue.innerText = `High (${val}%)`;
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            SIM_SPEED = parseFloat(e.target.value);
+            speedValue.innerText = SIM_SPEED + 'x';
+        });
+
+        window.onload = initSimulation;
+
+    </script>
+</body>
+</html>
