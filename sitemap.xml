@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://nicklauscairns.com/</loc>
-  </url>
-  <url>
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/BigBangEvidenceExplorer.html</loc>
   </url>
   <url>
@@ -49,9 +46,6 @@
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/WaterPropertiesEarthProcesses.html</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/</loc>
-  </url>
-  <url>
     <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/CityWaterInfrastructureSimulation.html</loc>
   </url>
   <url>
@@ -62,9 +56,6 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/WindTurbineSimulation.html</loc>
-  </url>
-  <url>
-    <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/AerobicAnaerobic.html</loc>
@@ -136,9 +127,6 @@
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/TrophicEnergy.html</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/LifeSciences/</loc>
-  </url>
-  <url>
     <loc>https://nicklauscairns.com/Simulations/Logic/LightsOut.html</loc>
   </url>
   <url>
@@ -146,9 +134,6 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/Logic/TowersOfHanoi.html</loc>
-  </url>
-  <url>
-    <loc>https://nicklauscairns.com/Simulations/Logic/</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/AlkaliMetalsPhenomenon.html</loc>
@@ -232,13 +217,28 @@
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/WaveSuperposition3D.html</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/NGSS/</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/EngineeringTechnologyScience/</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/LifeSciences/</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/Logic/</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/</loc>
-  </url>
-  <url>
-    <loc>https://nicklauscairns.com/</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/NGSS/HighSchoolEarthSpaceSciencesEvidenceStatements</loc>
