@@ -492,18 +492,19 @@
 
                 // Calculate new values
                 let newPol = lastPol + naturalIncrease - pReduction;
-                if (newPol < SIM_CONSTANTS.POLLUTION_FLOOR) newPol = SIM_CONSTANTS.POLLUTION_FLOOR; // Floor
-                if (newPol > SIM_CONSTANTS.POLLUTION_CEILING) newPol = SIM_CONSTANTS.POLLUTION_CEILING; // Ceiling
 
                 // Biodiversity tied to pollution and habitat creation
                 let bioImpactFromPol = (newPol - SIM_CONSTANTS.POLLUTION_BASE_LINE) * -0.2; // High pollution hurts, low pollution helps
                 let newBio = lastBio + bIncrease + bioImpactFromPol;
-                if (newBio < SIM_CONSTANTS.BIODIV_FLOOR) newBio = SIM_CONSTANTS.BIODIV_FLOOR;
-                if (newBio > SIM_CONSTANTS.BIODIV_CEILING) newBio = SIM_CONSTANTS.BIODIV_CEILING;
 
                 // Add noise
                 newPol += (Math.random() * 4 - 2);
                 newBio += (Math.random() * 2 - 1);
+
+                if (newPol < SIM_CONSTANTS.POLLUTION_FLOOR) newPol = SIM_CONSTANTS.POLLUTION_FLOOR; // Floor
+                if (newPol > SIM_CONSTANTS.POLLUTION_CEILING) newPol = SIM_CONSTANTS.POLLUTION_CEILING; // Ceiling
+                if (newBio < SIM_CONSTANTS.BIODIV_FLOOR) newBio = SIM_CONSTANTS.BIODIV_FLOOR;
+                if (newBio > SIM_CONSTANTS.BIODIV_CEILING) newBio = SIM_CONSTANTS.BIODIV_CEILING;
 
                 state.data.years.push(currentYear);
                 state.data.pollution.push(newPol);
