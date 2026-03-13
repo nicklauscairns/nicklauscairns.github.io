@@ -442,7 +442,12 @@
 
                 // Reduce the "oldest rock" age slowly.
                 // Actual formula for sim:
-                simState.earthSurfaceAge -= dt * resetFactor * 0.9;
+                                simState.earthSurfaceAge -= dt * resetFactor * 0.17;
+                // Floor the oldest rock age to roughly 3.8 BYA (3800 MY) to match geologic reality
+                if(simState.earthSurfaceAge < 3800) {
+                     simState.earthSurfaceAge = 3800;
+                }
+                // Ensure it doesn't go below theoretical max age for current time
                 if(simState.earthSurfaceAge < (TOTAL_TIME_MY - simState.currentTime)) {
                      simState.earthSurfaceAge = TOTAL_TIME_MY - simState.currentTime;
                 }

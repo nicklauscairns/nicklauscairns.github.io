@@ -61,3 +61,34 @@ def test_simulation_without_earth_processes(sim_page: Page):
 
     # Earth age should remain unchanged if processes are off
     assert float(sim_page.locator("#earthRockAge").inner_text()) == 4.60, "Earth age should remain 4.60 BYA if processes are off"
+
+
+if __name__ == "__main__":
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        try:
+            # Set up like the fixture
+            file_path = f"file://{os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Simulations', 'EarthSpaceSciences', 'CrateringHistory.html'))}"
+            page.route("*tailwindcss.com*", lambda route: route.abort())
+            page.goto(file_path)
+            page.wait_for_selector('canvas')
+            page.evaluate("Object.defineProperty(document, 'hidden', { value: false, writable: false });")
+
+            print("Running test_initial_state...")
+            test_initial_state(page)
+
+            print("Running test_simulation_with_all_processes...")
+            # Reset page state for next test
+            page.evaluate("document.getElementById('resetBtn').click()")
+            test_simulation_with_all_processes(page)
+
+            print("Running test_simulation_without_earth_processes...")
+            # Reset page state for next test
+            page.evaluate("document.getElementById('resetBtn').click()")
+            test_simulation_without_earth_processes(page)
+
+            print("All tests passed.")
+        finally:
+            browser.close()
