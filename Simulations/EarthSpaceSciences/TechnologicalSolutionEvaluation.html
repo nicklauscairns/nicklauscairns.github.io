@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Watershed Mitigation Design (HS-ESS3-4)</title>
+    <meta name="description" content="Evaluate and refine technological solutions to reduce impacts of human activities on a local watershed. NGSS HS-ESS3-4 aligned simulation.">
+    <meta name="keywords" content="NGSS, HS-ESS3-4, Watershed, Mitigation, Technology, Ecology, Environment, Simulation">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Urban Watershed Mitigation Design">
+    <meta property="og:description" content="Evaluate and refine technological solutions to reduce impacts of human activities on a local watershed.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Urban Watershed Mitigation Design",
+      "description": "Interactive simulation for NGSS HS-ESS3-4. Students evaluate and refine technological solutions to mitigate agricultural and urban runoff impacts on a watershed system.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "Next Generation Science Standards",
+        "targetName": "HS-ESS3-4",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ess3-4-earth-and-human-activity"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .slider-thumb::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #3b82f6;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .slider-thumb::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #3b82f6;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+    <header class="bg-blue-600 text-white p-4 shadow-md">
+        <div class="container mx-auto max-w-6xl">
+            <h1 class="text-2xl font-bold">Urban Watershed Mitigation Design</h1>
+            <p class="text-sm opacity-90">NGSS HS-ESS3-4: Evaluate or refine a technological solution that reduces impacts of human activities on natural systems.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto max-w-6xl p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Controls Panel -->
+        <section class="bg-white p-6 rounded-lg shadow-md col-span-1 lg:col-span-1 border-t-4 border-blue-500 flex flex-col">
+            <h2 class="text-xl font-semibold mb-2">Technological Refinements</h2>
+            <p class="text-sm text-gray-600 mb-4">Invest in solutions to reduce agricultural and urban runoff. Balance the budget and environmental tradeoffs.</p>
+
+            <div class="mb-4">
+                <div class="flex justify-between items-end mb-1">
+                    <label for="wetlands" class="font-medium text-sm">Constructed Wetlands</label>
+                    <span id="wetlands-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                </div>
+                <input type="range" id="wetlands" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>High Land Use</span>
+                    <span>High Effectiveness</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex justify-between items-end mb-1">
+                    <label for="filtration" class="font-medium text-sm">Advanced Wastewater Filtration</label>
+                    <span id="filtration-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                </div>
+                <input type="range" id="filtration" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>High Cost</span>
+                    <span>High Reliability</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex justify-between items-end mb-1">
+                    <label for="green-infra" class="font-medium text-sm">Urban Green Infrastructure</label>
+                    <span id="green-infra-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                </div>
+                <input type="range" id="green-infra" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>Moderate Cost</span>
+                    <span>Aesthetic Benefit</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex justify-between items-end mb-1">
+                    <label for="ag-buffers" class="font-medium text-sm">Agricultural Riparian Buffers</label>
+                    <span id="ag-buffers-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                </div>
+                <input type="range" id="ag-buffers" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>Low Cost</span>
+                    <span>Requires Landowner Buy-in</span>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-4 border-t border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-semibold text-gray-700">Project Budget:</span>
+                    <span class="font-bold text-lg" id="budget-display">$<span id="budget-value">10.0</span>M / $10.0M</span>
+                </div>
+
+                <div id="budget-warning" class="text-red-500 text-sm font-medium mb-3 hidden">
+                    Warning: Budget Exceeded!
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="run-btn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">
+                        Run Simulation (10 Yrs)
+                    </button>
+                    <button id="reset-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visualization Panel -->
+        <section class="bg-white p-6 rounded-lg shadow-md col-span-1 lg:col-span-2 border-t-4 border-green-500 flex flex-col">
+            <h2 class="text-xl font-semibold mb-4">System Impact & Tradeoffs</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-gray-50 p-3 rounded border border-gray-200 text-center">
+                    <div class="text-xs text-gray-500 font-bold uppercase">Pollutant Load (N/P)</div>
+                    <div class="text-xl font-bold text-red-600" id="metric-pollution">100%</div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded border border-gray-200 text-center">
+                    <div class="text-xs text-gray-500 font-bold uppercase">Biodiversity Index</div>
+                    <div class="text-xl font-bold text-green-600" id="metric-biodiversity">40/100</div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded border border-gray-200 text-center">
+                    <div class="text-xs text-gray-500 font-bold uppercase">System Reliability</div>
+                    <div class="text-xl font-bold text-blue-600" id="metric-reliability">Low</div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded border border-gray-200 text-center">
+                    <div class="text-xs text-gray-500 font-bold uppercase">Land Required</div>
+                    <div class="text-xl font-bold text-orange-600" id="metric-land">Low</div>
+                </div>
+            </div>
+
+            <div class="flex-grow min-h-[300px] relative w-full">
+                <canvas id="impactChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Explanation Panel -->
+        <section class="bg-white p-6 rounded-lg shadow-md col-span-1 lg:col-span-3 border-t-4 border-purple-500">
+            <h2 class="text-xl font-semibold mb-2">Scientific Explanation & Evidence</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-medium text-lg mb-2">Human Impacts & Solutions</h3>
+                    <p class="text-sm text-gray-700 mb-2">
+                        Human activities, such as agriculture and urban development, introduce excess nutrients (Nitrogen and Phosphorus) and pollutants into natural water systems. This destabilizes the ecosystem, leading to harmful algal blooms and reduced biodiversity.
+                    </p>
+                    <p class="text-sm text-gray-700">
+                        By engineering technological solutions—such as advanced filtration, constructed wetlands, and green infrastructure—scientists and engineers can reduce pollution. However, every solution involves evaluating criteria (effectiveness, reliability) and constraints (cost, land availability, social impact).
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-medium text-lg mb-2">Tradeoffs Analysis</h3>
+                    <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1" id="tradeoff-list">
+                        <li><strong>Baseline:</strong> The existing wastewater treatment is insufficient for current population and agricultural levels. Ecosystem is degrading.</li>
+                        <li class="italic text-gray-500">Adjust the refinements to see specific tradeoffs here.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto">
+        <p class="text-sm">Created for NGSS High School Earth and Space Sciences. Focus: Human Impacts on Earth Systems (ESS3.C).</p>
+    </footer>
+
+    <script>
+        // Simulation State
+        const state = {
+            budgetTotal: 10.0,
+            year: 0,
+            maxYears: 10,
+            isRunning: false,
+            data: {
+                years: [],
+                pollution: [],
+                biodiversity: []
+            },
+            refinements: {
+                wetlands: 0, // 0-3
+                filtration: 0, // 0-3
+                greenInfra: 0, // 0-3
+                agBuffers: 0 // 0-3
+            },
+            costs: {
+                wetlands: 1.5,
+                filtration: 2.5,
+                greenInfra: 1.0,
+                agBuffers: 0.5
+            },
+            metrics: {
+                basePollution: 100, // starting %
+                baseBiodiv: 40 // starting index out of 100
+            }
+        };
+
+        // DOM Elements
+        const els = {
+            wetlands: document.getElementById('wetlands'),
+            filtration: document.getElementById('filtration'),
+            greenInfra: document.getElementById('green-infra'),
+            agBuffers: document.getElementById('ag-buffers'),
+
+            wetlandsVal: document.getElementById('wetlands-val'),
+            filtrationVal: document.getElementById('filtration-val'),
+            greenInfraVal: document.getElementById('green-infra-val'),
+            agBuffersVal: document.getElementById('ag-buffers-val'),
+
+            budgetValue: document.getElementById('budget-value'),
+            budgetDisplay: document.getElementById('budget-display'),
+            budgetWarning: document.getElementById('budget-warning'),
+
+            runBtn: document.getElementById('run-btn'),
+            resetBtn: document.getElementById('reset-btn'),
+
+            metricPollution: document.getElementById('metric-pollution'),
+            metricBiodiversity: document.getElementById('metric-biodiversity'),
+            metricReliability: document.getElementById('metric-reliability'),
+            metricLand: document.getElementById('metric-land'),
+
+            tradeoffList: document.getElementById('tradeoff-list')
+        };
+
+        // Chart Initialization
+        const ctx = document.getElementById('impactChart').getContext('2d');
+        const impactChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Pollutant Load (%)',
+                        data: [],
+                        borderColor: 'rgb(220, 38, 38)', // red-600
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Biodiversity Index',
+                        data: [],
+                        borderColor: 'rgb(22, 163, 74)', // green-600
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 100,
+                        title: {
+                            display: true,
+                            text: 'Index / Percentage'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Years'
+                        }
+                    }
+                },
+                animation: {
+                    duration: 500
+                }
+            }
+        });
+
+        // Initialize Data
+        function initData() {
+            state.data.years = [0];
+            state.data.pollution = [state.metrics.basePollution];
+            state.data.biodiversity = [state.metrics.baseBiodiv];
+            updateChart();
+        }
+
+        // Calculate current cost
+        function calculateCost() {
+            let total = 0;
+            total += state.refinements.wetlands * state.costs.wetlands;
+            total += state.refinements.filtration * state.costs.filtration;
+            total += state.refinements.greenInfra * state.costs.greenInfra;
+            total += state.refinements.agBuffers * state.costs.agBuffers;
+            return total;
+        }
+
+        // Update UI based on sliders
+        function updateUI() {
+            // Update values
+            state.refinements.wetlands = parseInt(els.wetlands.value);
+            state.refinements.filtration = parseInt(els.filtration.value);
+            state.refinements.greenInfra = parseInt(els.greenInfra.value);
+            state.refinements.agBuffers = parseInt(els.agBuffers.value);
+
+            // Update text labels
+            els.wetlandsVal.textContent = 'Level ' + state.refinements.wetlands;
+            els.filtrationVal.textContent = 'Level ' + state.refinements.filtration;
+            els.greenInfraVal.textContent = 'Level ' + state.refinements.greenInfra;
+            els.agBuffersVal.textContent = 'Level ' + state.refinements.agBuffers;
+
+            // Budget calculations
+            const cost = calculateCost();
+            const remaining = (state.budgetTotal - cost).toFixed(1);
+
+            els.budgetValue.textContent = remaining;
+
+            if (cost > state.budgetTotal) {
+                els.budgetDisplay.classList.add('text-red-600');
+                els.budgetWarning.classList.remove('hidden');
+                els.runBtn.disabled = true;
+                els.runBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                els.budgetDisplay.classList.remove('text-red-600');
+                els.budgetWarning.classList.add('hidden');
+                els.runBtn.disabled = false;
+                els.runBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            // Update static tradeoff metrics
+            updateStaticMetrics();
+            updateTradeoffText();
+        }
+
+        function updateStaticMetrics() {
+            // Reliability
+            const fLevel = state.refinements.filtration;
+            let rel = 'Low';
+            if (fLevel === 3) rel = 'Very High';
+            else if (fLevel === 2) rel = 'High';
+            else if (fLevel === 1 || state.refinements.wetlands > 1) rel = 'Moderate';
+            els.metricReliability.textContent = rel;
+
+            // Land Use
+            const wLevel = state.refinements.wetlands;
+            const aLevel = state.refinements.agBuffers;
+            const totalLand = wLevel + aLevel;
+            let land = 'Low';
+            if (totalLand >= 5) land = 'Very High';
+            else if (totalLand >= 3) land = 'High';
+            else if (totalLand >= 1) land = 'Moderate';
+            els.metricLand.textContent = land;
+        }
+
+        function updateTradeoffText() {
+            els.tradeoffList.innerHTML = '';
+            const addLi = (text) => {
+                const li = document.createElement('li');
+                li.innerHTML = text;
+                els.tradeoffList.appendChild(li);
+            };
+
+            const w = state.refinements.wetlands;
+            const f = state.refinements.filtration;
+            const g = state.refinements.greenInfra;
+            const a = state.refinements.agBuffers;
+
+            if (w === 0 && f === 0 && g === 0 && a === 0) {
+                addLi('<strong>Baseline:</strong> The existing wastewater treatment is insufficient. Ecosystem is degrading.');
+                return;
+            }
+
+            if (f > 0) {
+                addLi('<strong>Advanced Filtration:</strong> High reliability and effectiveness, but very high financial cost and energy usage.');
+            }
+            if (w > 0) {
+                addLi('<strong>Constructed Wetlands:</strong> Excellent natural filtration and boosts local biodiversity, but requires significant land conversion.');
+            }
+            if (g > 0) {
+                addLi('<strong>Green Infrastructure:</strong> Reduces urban storm runoff and improves aesthetics, but requires widespread implementation to be highly effective.');
+            }
+            if (a > 0) {
+                addLi('<strong>Agricultural Buffers:</strong> Very cost-effective for reducing farming runoff, but relies heavily on cooperation from private landowners.');
+            }
+        }
+
+        function updateChart() {
+            impactChart.data.labels = state.data.years;
+            impactChart.data.datasets[0].data = state.data.pollution;
+            impactChart.data.datasets[1].data = state.data.biodiversity;
+            impactChart.update();
+
+            // Update top metric displays
+            const lastPol = state.data.pollution[state.data.pollution.length - 1].toFixed(1);
+            const lastBio = state.data.biodiversity[state.data.biodiversity.length - 1].toFixed(1);
+
+            els.metricPollution.textContent = lastPol + '%';
+            els.metricBiodiversity.textContent = lastBio + '/100';
+
+            // Color coding based on success
+            els.metricPollution.className = 'text-xl font-bold ' + (lastPol < 50 ? 'text-green-600' : (lastPol > 80 ? 'text-red-600' : 'text-orange-600'));
+            els.metricBiodiversity.className = 'text-xl font-bold ' + (lastBio > 70 ? 'text-green-600' : (lastBio < 50 ? 'text-red-600' : 'text-orange-600'));
+        }
+
+        // Expose to window for Playwright tests
+        window.updateSimulation = function() {
+            updateUI();
+        };
+
+        // Run Simulation Loop
+        function runSimulation() {
+            if (state.isRunning) return;
+            state.isRunning = true;
+            els.runBtn.disabled = true;
+            els.resetBtn.disabled = true;
+
+            // Disable sliders
+            [els.wetlands, els.filtration, els.greenInfra, els.agBuffers].forEach(el => el.disabled = true);
+
+            initData();
+            let currentYear = 0;
+
+            // Calculate impact factors based on levels
+            const w = state.refinements.wetlands;
+            const f = state.refinements.filtration;
+            const g = state.refinements.greenInfra;
+            const a = state.refinements.agBuffers;
+
+            // Pollution reduction formula
+            // Base pollution wants to increase by 2% per year without intervention
+            const naturalIncrease = 2.0;
+
+            // Reduction modifiers
+            const pReduction = (f * 5.0) + (w * 3.5) + (g * 1.5) + (a * 4.0);
+
+            // Biodiversity modifier
+            const bIncrease = (w * 4.0) + (g * 1.0) + (a * 2.0) - (state.data.pollution[0] > 80 ? 2.0 : 0);
+
+            const interval = setInterval(() => {
+                currentYear++;
+
+                let lastPol = state.data.pollution[currentYear - 1];
+                let lastBio = state.data.biodiversity[currentYear - 1];
+
+                // Calculate new values
+                let newPol = lastPol + naturalIncrease - pReduction;
+                if (newPol < 10) newPol = 10; // Floor
+                if (newPol > 150) newPol = 150; // Ceiling
+
+                // Biodiversity tied to pollution and habitat creation
+                let bioImpactFromPol = (newPol - 50) * -0.2; // High pollution hurts, low pollution helps
+                let newBio = lastBio + bIncrease + bioImpactFromPol;
+                if (newBio < 0) newBio = 0;
+                if (newBio > 100) newBio = 100;
+
+                // Add noise
+                newPol += (Math.random() * 4 - 2);
+                newBio += (Math.random() * 2 - 1);
+
+                state.data.years.push(currentYear);
+                state.data.pollution.push(newPol);
+                state.data.biodiversity.push(newBio);
+
+                updateChart();
+
+                if (currentYear >= state.maxYears) {
+                    clearInterval(interval);
+                    state.isRunning = false;
+                    els.resetBtn.disabled = false;
+                    els.runBtn.textContent = "Simulation Complete";
+                }
+            }, 200); // 200ms per year
+        }
+
+        function resetSimulation() {
+            els.wetlands.value = 0;
+            els.filtration.value = 0;
+            els.greenInfra.value = 0;
+            els.agBuffers.value = 0;
+
+            [els.wetlands, els.filtration, els.greenInfra, els.agBuffers].forEach(el => el.disabled = false);
+
+            els.runBtn.disabled = false;
+            els.runBtn.textContent = "Run Simulation (10 Yrs)";
+
+            state.isRunning = false;
+            initData();
+            updateUI();
+        }
+
+        // Event Listeners
+        [els.wetlands, els.filtration, els.greenInfra, els.agBuffers].forEach(el => {
+            el.addEventListener('input', updateUI);
+        });
+
+        els.runBtn.addEventListener('click', runSimulation);
+        els.resetBtn.addEventListener('click', resetSimulation);
+
+        // Initial setup
+        initData();
+        updateUI();
+
+    </script>
+</body>
+</html>
