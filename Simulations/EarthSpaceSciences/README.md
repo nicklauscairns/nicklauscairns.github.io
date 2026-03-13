@@ -453,6 +453,8 @@ Construct an explanation based on evidence for how the availability of natural r
 ### HS-ESS3-2
 Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.*
 
+- [Energy & Mineral Resources Cost-Benefit Analysis](EnergyResourcesCostBenefit.html) - Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios. [2026-03-13 21:18:58]
+
 
 
 ### HS-ESS3-3
