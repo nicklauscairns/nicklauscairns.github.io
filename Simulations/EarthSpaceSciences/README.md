@@ -66,6 +66,34 @@ Construct an explanation of the Big Bang theory based on astronomical evidence o
 ### HS-ESS1-3
 Communicate scientific ideas about the way stars, over their life cycle, produce elements.
 
+- [Stellar Nucleosynthesis Explorer](StellarNucleosynthesis.html) - An interactive simulation demonstrating the life cycle of stars (low and high mass) and how they produce elements through nuclear fusion and supernovae, with real-time nucleon conservation tracking. [2026-03-13 14:43:55]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 14:43:55</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon for stellar nucleosynthesis (Criterion 4). Students can actively explore how different initial masses lead to different life cycles and element production. The atomic balancer effectively reinforces conservation laws.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the DCI (ESS1.A) regarding the production of elements in stars and supernovae, and the CCC (Energy and Matter) via explicit nucleon tracking. For HS-ESS1-3, it provides the interactive model needed to communicate how stars produce elements over their life cycles.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Improve SEP (Communicating Information):</b> Add a feature where students can generate a "Stellar Report Card" at the end of a star's life, summarizing the elements produced and the conservation of matter, which they can then use to communicate their findings.</li>
+          <li><b>Enhance Relevance (Criterion 1):</b> Include visual percentages or abundances of the created elements relative to what is found in the human body or on Earth.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement a "Stellar Report Card" summary view at the end of the simulation.</li>
+          <li>[ ] Add elemental abundance comparisons (e.g., "This Iron is found in your blood").</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 
 
 ### HS-ESS1-4

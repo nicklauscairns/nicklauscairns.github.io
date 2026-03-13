@@ -37,6 +37,9 @@
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/ResourceManagementSimulator.html</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/StellarNucleosynthesis.html</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/StellarPhenomenaSimulator.html</loc>
   </url>
   <url>
@@ -157,6 +160,9 @@
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/ChemicalReactionsOutcomes.html</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/ChemicalReactionsOutcomesExperimental.html</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/ConservationOfMass.html</loc>
   </url>
   <url>
@@ -257,6 +263,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/NGSS/PhenomenaNGSS</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/NGSS/README</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/NGSS/TaskScreenerA</loc>
