@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synaptic Links Logic Game</title>
+    <meta name="description" content="A graph-theory deduction game. Connect nodes with edges to satisfy a list of procedurally generated logical rules.">
+    <meta name="keywords" content="logic game, deduction, graph theory, nodes, edges, cognitive ability">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Synaptic Links Logic Game">
+    <meta property="og:description" content="Use deduction to build a graph that satisfies a strict set of logical rules.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Synaptic Links Logic Game",
+        "description": "A logic deduction game where players must connect 6 nodes using edges to satisfy a list of procedural logical rules.",
+        "learningResourceType": "Simulation",
+        "educationalLevel": "High School"
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #canvasContainer {
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-slate-800 font-sans flex flex-col">
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl flex flex-col items-center">
+
+        <header class="text-center mb-8 w-full">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Synaptic Links</h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+                Deduce the correct network structure. Connect the 6 nodes (A-F) by drawing edges between them so that the graph perfectly satisfies all the listed rules.
+                <br><em>Click and drag between nodes to create or remove a connection.</em>
+            </p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8 w-full">
+
+            <!-- Canvas Area -->
+            <div class="flex-1 bg-white p-4 rounded-2xl shadow-xl border border-slate-200 aspect-square lg:aspect-auto min-h-[400px] lg:h-[600px] flex flex-col relative" id="canvasContainer">
+                <div class="absolute top-4 left-4 z-10 flex gap-4">
+                    <button id="resetEdgesBtn" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-sm font-semibold transition-colors border border-red-300">Clear Edges</button>
+                    <button id="newPuzzleBtn" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded text-sm font-semibold transition-colors border border-blue-300">New Puzzle</button>
+                </div>
+                <div id="winOverlay" class="hidden absolute inset-0 bg-green-500/90 z-20 rounded-2xl flex flex-col items-center justify-center text-white">
+                    <h2 class="text-5xl font-bold mb-4 drop-shadow-md">Network Verified!</h2>
+                    <p class="text-xl mb-6">You perfectly deduced the synaptic structure.</p>
+                    <button id="playAgainBtn" class="bg-white text-green-600 hover:bg-green-50 font-bold py-3 px-8 rounded-full text-lg shadow-lg transition-transform hover:scale-105">Solve Another</button>
+                </div>
+                <canvas id="graphCanvas"></canvas>
+            </div>
+
+            <!-- Rules Sidebar -->
+            <div class="w-full lg:w-80 bg-slate-800 text-slate-200 p-6 rounded-2xl shadow-xl flex flex-col h-auto lg:h-[600px]">
+                <h3 class="text-xl font-bold text-white mb-4 border-b border-slate-600 pb-2">Network Rules</h3>
+                <ul id="rulesList" class="space-y-3 overflow-y-auto flex-1 pr-2 text-sm leading-relaxed">
+                    <!-- Rules injected here -->
+                    <li class="text-slate-400 italic text-center mt-10">Generating rules...</li>
+                </ul>
+                <div class="mt-6 pt-4 border-t border-slate-600">
+                    <button id="checkBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors text-lg">Verify Network</button>
+                    <p id="errorMsg" class="text-red-400 text-sm mt-3 text-center hidden font-semibold"></p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const rulesList = document.getElementById('rulesList');
+        const checkBtn = document.getElementById('checkBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const winOverlay = document.getElementById('winOverlay');
+        const newPuzzleBtn = document.getElementById('newPuzzleBtn');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const resetEdgesBtn = document.getElementById('resetEdgesBtn');
+
+        const NUM_NODES = 6;
+        const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+        let nodes = [];
+        let solutionGraph = Array(NUM_NODES).fill(0).map(() => Array(NUM_NODES).fill(false));
+        let playerGraph = Array(NUM_NODES).fill(0).map(() => Array(NUM_NODES).fill(false));
+        let currentRules = [];
+        let isSolved = false;
+
+        // Resize Canvas and set up nodes
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            setupNodes();
+            draw();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function setupNodes() {
+            nodes = [];
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) * 0.6;
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                const angle = (i * 2 * Math.PI) / NUM_NODES - Math.PI / 2;
+                nodes.push({
+                    x: centerX + radius * Math.cos(angle),
+                    y: centerY + radius * Math.sin(angle),
+                    label: LETTERS[i],
+                    radius: 30
+                });
+            }
+        }
+
+        function generatePuzzle() {
+            isSolved = false;
+            winOverlay.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+            errorMsg.textContent = '';
+
+            playerGraph = Array(NUM_NODES).fill(0).map(() => Array(NUM_NODES).fill(false));
+            solutionGraph = Array(NUM_NODES).fill(0).map(() => Array(NUM_NODES).fill(false));
+
+            // Generate a random connected graph
+            const edgeProb = 0.4;
+            let edgesAdded = 0;
+
+            // Ensure connection
+            for (let i = 0; i < NUM_NODES - 1; i++) {
+                solutionGraph[i][i+1] = true;
+                solutionGraph[i+1][i] = true;
+                edgesAdded++;
+            }
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                for (let j = i + 2; j < NUM_NODES; j++) {
+                    if (Math.random() < edgeProb) {
+                        solutionGraph[i][j] = true;
+                        solutionGraph[j][i] = true;
+                        edgesAdded++;
+                    }
+                }
+            }
+
+            currentRules = generateRules(solutionGraph);
+            renderRules();
+            draw();
+        }
+
+        function getDegrees(graph) {
+            return graph.map(row => row.filter(val => val).length);
+        }
+
+        function generateRules(graph) {
+            const degrees = getDegrees(graph);
+            const rules = [];
+
+            // Rule Type 1: Exact Degree
+            for(let i=0; i<NUM_NODES; i++) {
+                if(Math.random() > 0.5) {
+                    rules.push({
+                        text: `Node ${LETTERS[i]} has exactly ${degrees[i]} connection(s).`,
+                        check: (g) => getDegrees(g)[i] === degrees[i]
+                    });
+                }
+            }
+
+            // Rule Type 2: Direct Connection
+            for(let i=0; i<NUM_NODES; i++) {
+                for(let j=i+1; j<NUM_NODES; j++) {
+                    if(Math.random() > 0.8) {
+                        if(graph[i][j]) {
+                            rules.push({
+                                text: `Node ${LETTERS[i]} is directly connected to Node ${LETTERS[j]}.`,
+                                check: (g) => g[i][j] === true
+                            });
+                        } else {
+                            rules.push({
+                                text: `Node ${LETTERS[i]} is NOT connected to Node ${LETTERS[j]}.`,
+                                check: (g) => g[i][j] === false
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Rule Type 3: Total Edges
+            const totalEdges = degrees.reduce((a, b) => a + b, 0) / 2;
+            rules.push({
+                text: `The entire network contains exactly ${totalEdges} total connections.`,
+                check: (g) => (getDegrees(g).reduce((a, b) => a + b, 0) / 2) === totalEdges
+            });
+
+            // If we have too few rules, add some connection rules
+            while(rules.length < 5) {
+                let i = Math.floor(Math.random() * NUM_NODES);
+                let j = Math.floor(Math.random() * NUM_NODES);
+                if (i !== j) {
+                    let exists = graph[i][j];
+                    let text = exists ? `Node ${LETTERS[i]} connects to ${LETTERS[j]}.` : `Node ${LETTERS[i]} does not connect to ${LETTERS[j]}.`;
+                    rules.push({ text: text, check: (g) => g[i][j] === exists });
+                }
+            }
+
+            // Shuffle rules
+            return rules.sort(() => Math.random() - 0.5).slice(0, 7); // Show max 7 rules
+        }
+
+        function renderRules() {
+            rulesList.innerHTML = '';
+            currentRules.forEach((rule, index) => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start gap-2 bg-slate-700/50 p-3 rounded';
+                li.innerHTML = `<span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">${index + 1}</span> <span>${rule.text}</span>`;
+                rulesList.appendChild(li);
+            });
+        }
+
+        let draggingNode = null;
+        let hoverNode = null;
+        let mouseX = 0;
+        let mouseY = 0;
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            // Handle touch or mouse
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function getNodeAt(x, y) {
+            for (let i = 0; i < NUM_NODES; i++) {
+                const node = nodes[i];
+                const dx = x - node.x;
+                const dy = y - node.y;
+                if (dx * dx + dy * dy < node.radius * node.radius) {
+                    return i;
+                }
+            }
+            return null;
+        }
+
+        function handleDown(e) {
+            if (isSolved) return;
+            const pos = getMousePos(e);
+            const clickedNodeIndex = getNodeAt(pos.x, pos.y);
+
+            if (clickedNodeIndex !== null) {
+                draggingNode = clickedNodeIndex;
+            }
+        }
+
+        function handleMove(e) {
+            if (isSolved) return;
+            const pos = getMousePos(e);
+            mouseX = pos.x;
+            mouseY = pos.y;
+            hoverNode = getNodeAt(pos.x, pos.y);
+
+            if (draggingNode !== null) {
+                draw();
+            }
+        }
+
+        function handleUp(e) {
+            if (isSolved || draggingNode === null) return;
+
+            if (hoverNode !== null && hoverNode !== draggingNode) {
+                // Toggle edge
+                const current = playerGraph[draggingNode][hoverNode];
+                playerGraph[draggingNode][hoverNode] = !current;
+                playerGraph[hoverNode][draggingNode] = !current;
+            }
+
+            draggingNode = null;
+            draw();
+            errorMsg.classList.add('hidden');
+        }
+
+        canvas.addEventListener('mousedown', handleDown);
+        canvas.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleUp);
+
+        canvas.addEventListener('touchstart', handleDown, {passive: true});
+        canvas.addEventListener('touchmove', handleMove, {passive: true});
+        window.addEventListener('touchend', handleUp);
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw player edges
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#94a3b8'; // slate-400
+
+            for (let i = 0; i < NUM_NODES; i++) {
+                for (let j = i + 1; j < NUM_NODES; j++) {
+                    if (playerGraph[i][j]) {
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw drag line
+            if (draggingNode !== null) {
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#3b82f6'; // blue-500
+                ctx.setLineDash([10, 10]);
+                ctx.beginPath();
+                ctx.moveTo(nodes[draggingNode].x, nodes[draggingNode].y);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw nodes
+            for (let i = 0; i < NUM_NODES; i++) {
+                const node = nodes[i];
+                const isHovered = (i === hoverNode) || (i === draggingNode);
+
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+                ctx.fillStyle = isHovered ? '#1e293b' : '#334155'; // slate-800 : slate-700
+                ctx.fill();
+
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = isHovered ? '#3b82f6' : '#cbd5e1'; // blue-500 : slate-300
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 24px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.label, node.x, node.y);
+            }
+        }
+
+        function checkWin() {
+            if (isSolved) return;
+
+            let allPassed = true;
+            let failedRuleIndex = -1;
+
+            for (let i = 0; i < currentRules.length; i++) {
+                if (!currentRules[i].check(playerGraph)) {
+                    allPassed = false;
+                    failedRuleIndex = i;
+                    break;
+                }
+            }
+
+            if (allPassed) {
+                // Ensure it's not empty if the solution isn't empty (edge case)
+                const playerEdges = getDegrees(playerGraph).reduce((a,b) => a+b, 0) / 2;
+                if(playerEdges === 0 && currentRules.length > 0) {
+                     errorMsg.textContent = `Network cannot be empty.`;
+                     errorMsg.classList.remove('hidden');
+                     return;
+                }
+
+                isSolved = true;
+                winOverlay.classList.remove('hidden');
+            } else {
+                errorMsg.textContent = `Rule ${failedRuleIndex + 1} is violated. Check your connections.`;
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        checkBtn.addEventListener('click', checkWin);
+
+        resetEdgesBtn.addEventListener('click', () => {
+            playerGraph = Array(NUM_NODES).fill(0).map(() => Array(NUM_NODES).fill(false));
+            draw();
+            errorMsg.classList.add('hidden');
+        });
+
+        newPuzzleBtn.addEventListener('click', generatePuzzle);
+        playAgainBtn.addEventListener('click', generatePuzzle);
+
+        // Initialize
+        window.onload = () => {
+            resizeCanvas();
+            generatePuzzle();
+        };
+
+        // Expose for testing
+        window.getPlayerGraph = () => playerGraph;
+        window.getSolutionGraph = () => solutionGraph;
+        window.getCurrentRules = () => currentRules;
+        window.checkWin = checkWin;
+        window.setPlayerGraph = (g) => { playerGraph = g; draw(); };
+        window.isSolvedState = () => isSolved;
+    </script>
+</body>
+</html>

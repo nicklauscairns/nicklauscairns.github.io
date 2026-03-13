@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Entanglement Puzzle</title>
+    <meta name="description" content="A 4x4 grid puzzle where nodes are secretly entangled in pairs. Increment one, decrement its hidden partner. Solve the puzzle by reaching a specific energy state.">
+    <meta name="keywords" content="logic game, puzzle, quantum entanglement, grid puzzle, cognitive ability">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Quantum Entanglement Puzzle">
+    <meta property="og:description" content="Solve the 4x4 entangled nodes puzzle by manipulating their hidden states.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Quantum Entanglement Puzzle",
+        "description": "A logic game involving a 4x4 grid where nodes are secretly entangled in pairs. Clicking a node increments its state but decrements its hidden partner's state.",
+        "learningResourceType": "Simulation",
+        "educationalLevel": "High School"
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .node { transition: all 0.3s ease; }
+        .state-0 { background-color: #f3f4f6; color: #9ca3af; } /* Gray */
+        .state-1 { background-color: #bfdbfe; color: #1e40af; } /* Blue */
+        .state-2 { background-color: #fef08a; color: #854d0e; } /* Yellow */
+        .state-3 { background-color: #fecaca; color: #991b1b; } /* Red */
+    </style>
+</head>
+<body class="bg-slate-900 min-h-screen text-slate-200 font-sans flex flex-col">
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl flex flex-col items-center justify-center">
+
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">Quantum Entanglement</h1>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+                The 16 nodes in this grid are secretly entangled in pairs.
+                Clicking a node increases its energy state (0 &rarr; 1 &rarr; 2 &rarr; 3 &rarr; 0),
+                but simultaneously decreases the state of its hidden partner (0 &rarr; 3 &rarr; 2 &rarr; 1 &rarr; 0).<br><br>
+                <strong>Goal:</strong> Stabilize the system by setting all nodes to state 0.
+            </p>
+        </header>
+
+        <div class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-2xl border border-slate-700 w-full max-w-md">
+
+            <div id="controls" class="flex justify-between items-center mb-6">
+                <div class="text-sm font-semibold tracking-wider text-slate-400 uppercase">Moves: <span id="moveCount" class="text-white">0</span></div>
+                <button id="resetBtn" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded transition-colors text-sm">Reset Puzzle</button>
+            </div>
+
+            <!-- The Grid Container -->
+            <div id="grid" class="grid grid-cols-4 gap-3 md:gap-4 w-full aspect-square mb-6">
+                <!-- Javascript will inject 16 buttons here -->
+            </div>
+
+            <div id="winMessage" class="hidden text-center bg-green-900/50 border border-green-500 text-green-300 p-4 rounded-xl">
+                <h2 class="text-2xl font-bold mb-2">System Stabilized!</h2>
+                <p>You solved the entanglement in <span id="finalMoves">0</span> moves.</p>
+                <button id="newGameBtn" class="mt-4 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg">Play Again</button>
+            </div>
+
+        </div>
+
+        <div class="mt-12 text-center text-slate-500 text-sm">
+            <p>Develops spatial reasoning, memory, and deductive logic.</p>
+        </div>
+
+    </main>
+
+    <script>
+        const GRID_SIZE = 16;
+        const STATES = 4;
+        const nodes = Array(GRID_SIZE).fill(0);
+        let partners = [];
+        let moves = 0;
+        let isSolved = false;
+
+        const gridEl = document.getElementById('grid');
+        const moveCountEl = document.getElementById('moveCount');
+        const resetBtn = document.getElementById('resetBtn');
+        const winMessage = document.getElementById('winMessage');
+        const newGameBtn = document.getElementById('newGameBtn');
+        const finalMovesEl = document.getElementById('finalMoves');
+
+        function generatePartners() {
+            let available = Array.from({length: GRID_SIZE}, (_, i) => i);
+            partners = Array(GRID_SIZE).fill(-1);
+
+            // Randomize array
+            for (let i = available.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [available[i], available[j]] = [available[j], available[i]];
+            }
+
+            for (let i = 0; i < GRID_SIZE; i += 2) {
+                const a = available[i];
+                const b = available[i + 1];
+                partners[a] = b;
+                partners[b] = a;
+            }
+        }
+
+        function scramble() {
+            // Start from all zeros
+            nodes.fill(0);
+
+            // Perform random valid moves to ensure solvability
+            const scrambleMoves = 20 + Math.floor(Math.random() * 20);
+            for (let i = 0; i < scrambleMoves; i++) {
+                const target = Math.floor(Math.random() * GRID_SIZE);
+                // Increment target
+                nodes[target] = (nodes[target] + 1) % STATES;
+                // Decrement partner
+                const partner = partners[target];
+                nodes[partner] = (nodes[partner] - 1 + STATES) % STATES;
+            }
+        }
+
+        function renderGrid() {
+            gridEl.innerHTML = '';
+            for (let i = 0; i < GRID_SIZE; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'node state-' + nodes[i] + ' rounded-xl shadow-inner font-bold text-2xl md:text-3xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400';
+                btn.textContent = nodes[i];
+                btn.dataset.index = i;
+                btn.onclick = () => handleNodeClick(i);
+                gridEl.appendChild(btn);
+            }
+        }
+
+        function updateUI() {
+            for (let i = 0; i < GRID_SIZE; i++) {
+                const btn = gridEl.children[i];
+                // Update class
+                btn.className = 'node state-' + nodes[i] + ' rounded-xl shadow-inner font-bold text-2xl md:text-3xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400';
+                btn.textContent = nodes[i];
+            }
+            moveCountEl.textContent = moves;
+        }
+
+        function initGame() {
+            isSolved = false;
+            moves = 0;
+            winMessage.classList.add('hidden');
+            gridEl.style.pointerEvents = 'auto';
+            generatePartners();
+            scramble();
+            renderGrid();
+            updateUI();
+        }
+
+        function handleNodeClick(index) {
+            if (isSolved) return;
+
+            // Increment clicked node
+            nodes[index] = (nodes[index] + 1) % STATES;
+
+            // Decrement hidden partner
+            const partnerIndex = partners[index];
+            nodes[partnerIndex] = (nodes[partnerIndex] - 1 + STATES) % STATES;
+
+            moves++;
+            updateUI();
+            checkWin();
+        }
+
+        function checkWin() {
+            if (nodes.every(state => state === 0)) {
+                isSolved = true;
+                finalMovesEl.textContent = moves;
+                winMessage.classList.remove('hidden');
+                gridEl.style.pointerEvents = 'none';
+            }
+        }
+
+        resetBtn.addEventListener('click', () => {
+            initGame();
+        });
+
+        newGameBtn.addEventListener('click', () => {
+            initGame();
+        });
+
+        // Initialize on load
+        window.onload = initGame;
+
+        // Expose for testing
+        window.simulateClick = handleNodeClick;
+        window.getNodes = () => nodes;
+        window.getPartners = () => partners;
+    </script>
+</body>
+</html>
