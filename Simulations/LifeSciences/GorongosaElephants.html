@@ -174,7 +174,7 @@
                 this.x = x;
                 this.y = y;
                 this.tx = Math.random() * canvas.width;
-                this.ty = Math.random() * canvas.width; // wandering target
+                this.ty = Math.random() * canvas.height; // wandering target
                 this.speed = 0.5 + Math.random() * 1.5;
                 this.hasTusks = hasTusks;
                 this.size = 6 + Math.random() * 3;
@@ -305,7 +305,6 @@
             }
 
             updateStats();
-            updateChart(generation, 4);
             drawFrame();
         }
 

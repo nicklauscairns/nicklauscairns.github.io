@@ -436,8 +436,8 @@
             avgResistanceEl.innerText = avgRes.toFixed(1);
 
             chartData.labels.push(generation);
-            chartData.datasets[0].data.push(avgTox.toFixed(2));
-            chartData.datasets[1].data.push(avgRes.toFixed(2));
+            chartData.datasets[0].data.push(parseFloat(avgTox.toFixed(2)));
+            chartData.datasets[1].data.push(parseFloat(avgRes.toFixed(2)));
 
             if (typeof Chart !== 'undefined' && chartInstance) {
                 chartInstance.update();
