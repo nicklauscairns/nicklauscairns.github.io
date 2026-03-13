@@ -111,10 +111,17 @@
 <p class="text-gray-600 mt-2 max-w-3xl mx-auto">NGSS HS-LS1-2: Develop and use a model to illustrate the hierarchical organization of interacting systems that provide specific functions within multicellular organisms.</p>
 </header>
 <!-- System Selection -->
+
 <div class="bg-white p-4 rounded-xl shadow-sm flex justify-center gap-4">
 <button class="system-btn active px-6 py-2 border-2 border-gray-200 rounded-lg font-bold text-gray-600 transition-colors" data-system="digestive">Digestive System</button>
 <button class="system-btn px-6 py-2 border-2 border-gray-200 rounded-lg font-bold text-gray-600 transition-colors" data-system="respiratory">Respiratory System</button>
 </div>
+<div class="bg-white p-4 rounded-xl shadow-sm flex justify-center gap-4">
+<button id="mode-explore-btn" class="active px-6 py-2 border-2 border-green-500 bg-green-50 rounded-lg font-bold text-green-700 transition-colors">Explore Mode</button>
+<button id="mode-build-btn" class="px-6 py-2 border-2 border-gray-200 rounded-lg font-bold text-gray-600 transition-colors">Build Mode</button>
+<button id="interactions-btn" class="hidden px-6 py-2 border-2 border-purple-500 bg-purple-50 rounded-lg font-bold text-purple-700 transition-colors">Show Interactions</button>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
 <!-- Left Column: Navigation & Info -->
 <div class="lg:col-span-1 space-y-6 flex flex-col">
@@ -179,10 +186,72 @@
 <span class="font-bold text-blue-600" id="scale-indicator">Microscopic (10µm)</span>
 </div>
 </div>
+
 <div class="flex-grow w-full h-full p-2 relative" id="canvas-container">
 <!-- Canvas for dynamic rendering -->
-<canvas height="600" id="visual-canvas" width="800"></canvas>
+<canvas height="600" id="visual-canvas" width="800" class="w-full h-full"></canvas>
+
+<!-- Build Mode Overlay -->
+<div id="build-mode-overlay" class="hidden absolute top-0 left-0 w-full h-full bg-white/90 z-20 flex flex-col p-4">
+    <h3 class="text-xl font-bold text-center mb-4 text-green-800" id="build-title">Build the Tissue Level</h3>
+    <p class="text-center text-sm text-gray-600 mb-4" id="build-instructions">Drag the correct lower-level components into the drop zone to construct the current level.</p>
+
+    <div class="flex-grow flex flex-col items-center justify-center space-y-8">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="w-64 h-64 border-4 border-dashed border-gray-400 rounded-xl flex items-center justify-center bg-gray-50 transition-colors">
+            <span class="text-gray-400 font-bold" id="drop-zone-text">Drop Components Here (0/3)</span>
+        </div>
+
+        <!-- Component Bin -->
+        <div id="component-bin" class="flex gap-4 p-4 bg-gray-100 rounded-xl w-full justify-center min-h-[100px]">
+            <!-- draggable items will be injected here -->
+        </div>
+    </div>
+
+    <button id="build-next-btn" class="hidden mt-4 mx-auto px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700">Level Complete! Continue...</button>
+</div>
+
+<!-- Interactions Overlay -->
+<div id="interactions-overlay" class="hidden absolute top-0 left-0 w-full h-full bg-black/80 z-30 flex items-center justify-center p-8">
+    <div class="bg-white p-6 rounded-xl max-w-2xl w-full relative">
+        <button id="close-interactions" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 font-bold text-xl">&times;</button>
+        <h3 class="text-2xl font-bold text-purple-800 mb-4 border-b pb-2">System Interactions</h3>
+        <div class="flex justify-between items-center mb-6">
+            <div class="text-center flex-1">
+                <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-red-300">
+                    <span class="font-bold text-red-800 text-sm">Respiratory<br>System</span>
+                </div>
+                <p class="text-xs text-gray-600">Provides O₂<br>Removes CO₂</p>
+            </div>
+
+            <div class="flex-1 flex flex-col items-center justify-center relative px-4">
+                <!-- Arrows -->
+                <div class="w-full flex justify-center items-center mb-2">
+                    <span class="text-blue-600 font-bold mr-2">O₂</span>
+                    <svg class="w-24 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <div class="w-full flex justify-center items-center">
+                    <svg class="w-24 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16l-4-4m0 0l4-4m-4 4h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    <span class="text-green-600 font-bold ml-2">Nutrients</span>
+                </div>
+            </div>
+
+            <div class="text-center flex-1">
+                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-green-300">
+                    <span class="font-bold text-green-800 text-sm">Digestive<br>System</span>
+                </div>
+                <p class="text-xs text-gray-600">Provides Nutrients<br>(Glucose, Amino Acids)</p>
+            </div>
+        </div>
+        <p class="text-gray-700 bg-gray-50 p-4 rounded border text-sm">
+            <b>Interaction:</b> The Respiratory System brings in oxygen needed for cellular respiration. The Digestive System breaks down food into glucose and other nutrients.
+            Both systems pass these resources to the Circulatory System, which delivers them to every cell in the organism so they can produce energy (ATP).
+        </p>
+    </div>
+</div>
+
 <!-- Overlay hints -->
+
 <div class="absolute bottom-4 right-4 bg-white/90 px-3 py-1 rounded shadow text-xs font-semibold text-gray-600 pointer-events-none" id="hint-text">
                         Select higher levels to zoom out
                     </div>
@@ -293,6 +362,184 @@
         const elHintText = document.getElementById('hint-text');
 
         // Initialization
+
+        // Build mode variables
+        let isBuildMode = false;
+        let buildProgress = 0; // items dropped
+        let requiredItems = 3;
+
+        const modeExploreBtn = document.getElementById('mode-explore-btn');
+        const modeBuildBtn = document.getElementById('mode-build-btn');
+        const interactionsBtn = document.getElementById('interactions-btn');
+        const buildModeOverlay = document.getElementById('build-mode-overlay');
+        const interactionsOverlay = document.getElementById('interactions-overlay');
+        const closeInteractionsBtn = document.getElementById('close-interactions');
+
+        const dropZone = document.getElementById('drop-zone');
+        const dropZoneText = document.getElementById('drop-zone-text');
+        const componentBin = document.getElementById('component-bin');
+        const buildNextBtn = document.getElementById('build-next-btn');
+        const buildTitle = document.getElementById('build-title');
+
+        // Mode switching
+        modeExploreBtn.addEventListener('click', () => {
+            isBuildMode = false;
+            modeExploreBtn.className = "active px-6 py-2 border-2 border-green-500 bg-green-50 rounded-lg font-bold text-green-700 transition-colors";
+            modeBuildBtn.className = "px-6 py-2 border-2 border-gray-200 rounded-lg font-bold text-gray-600 transition-colors";
+            buildModeOverlay.classList.add('hidden');
+            updateUI();
+        });
+
+        modeBuildBtn.addEventListener('click', () => {
+            isBuildMode = true;
+            modeBuildBtn.className = "active px-6 py-2 border-2 border-green-500 bg-green-50 rounded-lg font-bold text-green-700 transition-colors";
+            modeExploreBtn.className = "px-6 py-2 border-2 border-gray-200 rounded-lg font-bold text-gray-600 transition-colors";
+            if(currentLevel === 1) currentLevel = 2; // Can't build level 1 out of nothing
+            setupBuildMode();
+            updateUI();
+        });
+
+        // Interactions switching
+        interactionsBtn.addEventListener('click', () => {
+            interactionsOverlay.classList.remove('hidden');
+        });
+        closeInteractionsBtn.addEventListener('click', () => {
+            interactionsOverlay.classList.add('hidden');
+        });
+
+        function getComponentEmoji(level, system) {
+            if(system === 'digestive') {
+                if(level === 1) return '🦠'; // cell
+                if(level === 2) return '🥩'; // tissue
+                if(level === 3) return '🍖'; // organ
+                if(level === 4) return '🧍'; // system
+            } else {
+                if(level === 1) return '🟡'; // cell
+                if(level === 2) return '🩸'; // tissue
+                if(level === 3) return '🫁'; // organ
+                if(level === 4) return '🧍'; // system
+            }
+            return '❓';
+        }
+
+        function getComponentName(level, system) {
+            return hierarchyData[system].levels[level-1].name;
+        }
+
+        function setupBuildMode() {
+            buildModeOverlay.classList.remove('hidden');
+            buildProgress = 0;
+
+            // Set requirements based on level
+            let targetLevelName = hierarchyData[currentSystem].levels[currentLevel-1].name;
+            let componentLevelName = hierarchyData[currentSystem].levels[currentLevel-2].name;
+
+            buildTitle.innerText = `Build the ${targetLevelName} Level`;
+
+            if (currentLevel === 5) {
+                // Organism level - needs multiple systems
+                requiredItems = 2;
+                dropZoneText.innerText = `Drop Organ Systems Here (0/2)`;
+
+                componentBin.innerHTML = `
+                    <div class="draggable-item w-20 h-20 bg-white border-2 border-blue-400 rounded cursor-move flex flex-col items-center justify-center shadow" draggable="true" data-type="digestive">
+                        <span class="text-2xl">🧍</span><span class="text-xs text-center mt-1">Digestive System</span>
+                    </div>
+                    <div class="draggable-item w-20 h-20 bg-white border-2 border-red-400 rounded cursor-move flex flex-col items-center justify-center shadow" draggable="true" data-type="respiratory">
+                        <span class="text-2xl">🧍</span><span class="text-xs text-center mt-1">Respiratory System</span>
+                    </div>
+                `;
+            } else {
+                requiredItems = 3; // Generic 3 items to build next level
+                dropZoneText.innerText = `Drop ${componentLevelName}s Here (0/3)`;
+
+                let emoji = getComponentEmoji(currentLevel - 1, currentSystem);
+
+                componentBin.innerHTML = '';
+                for(let i=0; i<3; i++) {
+                    componentBin.innerHTML += `
+                        <div class="draggable-item w-20 h-20 bg-white border-2 border-blue-400 rounded cursor-move flex flex-col items-center justify-center shadow" draggable="true">
+                            <span class="text-2xl">${emoji}</span><span class="text-xs text-center mt-1">${componentLevelName}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            dropZone.className = "w-64 h-64 border-4 border-dashed border-gray-400 rounded-xl flex items-center justify-center bg-gray-50 transition-colors";
+            buildNextBtn.classList.add('hidden');
+
+            attachDragEvents();
+        }
+
+        function attachDragEvents() {
+            const items = document.querySelectorAll('.draggable-item');
+
+            items.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', 'component');
+                    setTimeout(() => item.classList.add('opacity-50'), 0);
+                });
+
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('opacity-50');
+                });
+            });
+
+            // Only attach once
+            if(!dropZone.dataset.eventsAttached) {
+                dropZone.dataset.eventsAttached = 'true';
+
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('border-green-500', 'bg-green-50');
+                });
+
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('border-green-500', 'bg-green-50');
+                });
+
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-green-500', 'bg-green-50');
+
+                    const draggedItem = document.querySelector('.draggable-item.opacity-50');
+                    if(draggedItem && buildProgress < requiredItems) {
+                        draggedItem.remove();
+                        buildProgress++;
+
+                        let compName = currentLevel === 5 ? "Systems" : hierarchyData[currentSystem].levels[currentLevel-2].name + "s";
+                        dropZoneText.innerText = `Drop ${compName} Here (${buildProgress}/${requiredItems})`;
+
+                        if(buildProgress >= requiredItems) {
+                            dropZone.className = "w-64 h-64 border-4 border-solid border-green-500 rounded-xl flex items-center justify-center bg-green-100";
+                            dropZoneText.innerHTML = `<span class="text-green-700 font-bold text-xl">Level Complete! 🎉</span>`;
+                            buildNextBtn.classList.remove('hidden');
+                        }
+                    }
+                });
+            }
+        }
+
+        buildNextBtn.addEventListener('click', () => {
+            buildModeOverlay.classList.add('hidden');
+            // Visually show the newly built level on canvas
+            drawCanvas();
+            // Then after a short delay, maybe prep the next level if they want to keep building
+            setTimeout(() => {
+                if(currentLevel < 5) {
+                    currentLevel++;
+                    updateUI();
+                    setupBuildMode();
+                } else {
+                    isBuildMode = false; // Done building
+                    modeExploreBtn.click();
+                }
+            }, 2000);
+        });
+
+        // We need to inject logic into the updateUI function to handle the interactions button visibility.
+        // We will override the existing function later.
+
         function init() {
             setupEventListeners();
             updateUI();
@@ -341,7 +588,26 @@
         function updateUI() {
             updateLevelButtons();
             updateInfoPanel();
-            drawCanvas(); // Placeholder call for Step 3
+
+            // Interactions button visibility (only level 4 and 5)
+            if (typeof interactionsBtn !== 'undefined' && interactionsBtn) {
+                if (currentLevel >= 4) {
+                    interactionsBtn.classList.remove('hidden');
+                } else {
+                    interactionsBtn.classList.add('hidden');
+                }
+            }
+
+            if (typeof isBuildMode !== 'undefined' && isBuildMode) {
+                if(currentLevel === 1) currentLevel = 2; // Can't build level 1
+                setupBuildMode();
+            } else {
+                if (typeof buildModeOverlay !== 'undefined' && buildModeOverlay) {
+                    buildModeOverlay.classList.add('hidden');
+                }
+                drawCanvas();
+            }
+
         }
 
         function updateLevelButtons() {
