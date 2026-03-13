@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonance Cascade Puzzle</title>
+    <meta name="description" content="A 5x5 grid puzzle where nodes have different energy states. Clicking a node cascades energy to its neighbors based on its state. Clear the board to solve the puzzle.">
+    <meta name="keywords" content="logic game, puzzle, resonance cascade, grid puzzle, cognitive ability">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Resonance Cascade Puzzle">
+    <meta property="og:description" content="Solve the 5x5 resonance grid by manipulating nodes that cascade energy differently based on their state.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Resonance Cascade Puzzle",
+        "description": "A logic game involving a 5x5 grid of nodes. Clicking a node increases its state and cascades energy to neighboring nodes based on its initial state (orthogonal, diagonal, etc.).",
+        "learningResourceType": "Simulation",
+        "educationalLevel": "High School"
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .node { transition: all 0.2s ease-in-out; }
+        .state-0 { background-color: #1e293b; border-color: #334155; color: #64748b; } /* Dark */
+        .state-1 { background-color: #065f46; border-color: #059669; color: #a7f3d0; } /* Green */
+        .state-2 { background-color: #1e3a8a; border-color: #2563eb; color: #bfdbfe; } /* Blue */
+        .state-3 { background-color: #701a75; border-color: #c026d3; color: #f5d0fe; } /* Purple */
+
+        .pulse { animation: pulseAnim 0.4s ease-out; }
+        @keyframes pulseAnim {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.5); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-950 min-h-screen text-slate-200 font-sans flex flex-col">
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl flex flex-col lg:flex-row items-center justify-center gap-8">
+
+        <div class="flex-1 max-w-lg lg:pr-8">
+            <header class="mb-8">
+                <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500 mb-4">Resonance Cascade</h1>
+                <p class="text-lg text-slate-400 mb-6">
+                    A 5x5 grid where each node holds an energy state (0-3). Clicking a node increments its state, but causes a "cascade" that also increments specific neighbors.
+                </p>
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 text-sm text-gray-300">
+                    <h3 class="font-bold text-white mb-2 uppercase tracking-wide">Cascade Patterns:</h3>
+                    <ul class="space-y-2">
+                        <li><span class="inline-block w-4 h-4 bg-[#1e293b] border border-[#334155] align-middle mr-2"></span><strong>State 0:</strong> Splashes orthogonally (Up, Down, Left, Right).</li>
+                        <li><span class="inline-block w-4 h-4 bg-[#065f46] border border-[#059669] align-middle mr-2"></span><strong>State 1:</strong> Splashes diagonally (4 corners).</li>
+                        <li><span class="inline-block w-4 h-4 bg-[#1e3a8a] border border-[#2563eb] align-middle mr-2"></span><strong>State 2:</strong> Splashes horizontally only (Left, Right).</li>
+                        <li><span class="inline-block w-4 h-4 bg-[#701a75] border border-[#c026d3] align-middle mr-2"></span><strong>State 3:</strong> Splashes vertically only (Up, Down).</li>
+                    </ul>
+                </div>
+                <p class="mt-6 text-sm text-emerald-400 font-semibold">Goal: Neutralize the entire grid to State 0.</p>
+            </header>
+        </div>
+
+        <div class="bg-gray-900 p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-800 w-full max-w-md flex-shrink-0">
+
+            <div id="controls" class="flex justify-between items-center mb-6">
+                <div class="text-sm font-semibold tracking-wider text-slate-400 uppercase">Pulses: <span id="moveCount" class="text-white">0</span></div>
+                <button id="resetBtn" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded transition-colors text-sm">Reset Grid</button>
+            </div>
+
+            <!-- The Grid Container -->
+            <div id="grid" class="grid grid-cols-5 gap-2 w-full aspect-square mb-6">
+                <!-- Javascript will inject 25 buttons here -->
+            </div>
+
+            <div id="winMessage" class="hidden text-center bg-emerald-900/40 border border-emerald-500 text-emerald-300 p-4 rounded-xl">
+                <h2 class="text-2xl font-bold mb-2">Grid Neutralized!</h2>
+                <p>Resonance contained in <span id="finalMoves">0</span> pulses.</p>
+                <button id="newGameBtn" class="mt-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg">New Grid</button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        const ROWS = 5;
+        const COLS = 5;
+        const GRID_SIZE = ROWS * COLS;
+        const STATES = 4;
+        const nodes = Array(GRID_SIZE).fill(0);
+        let moves = 0;
+        let isSolved = false;
+
+        const NODE_CLASS = 'border-2 rounded-xl shadow-inner font-bold text-xl md:text-2xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-400';
+
+        const gridEl = document.getElementById('grid');
+        const moveCountEl = document.getElementById('moveCount');
+        const resetBtn = document.getElementById('resetBtn');
+        const winMessage = document.getElementById('winMessage');
+        const newGameBtn = document.getElementById('newGameBtn');
+        const finalMovesEl = document.getElementById('finalMoves');
+
+        function getNeighbors(index, state) {
+            const row = Math.floor(index / COLS);
+            const col = index % COLS;
+            const neighbors = [];
+
+            const addValid = (r, c) => {
+                if (r >= 0 && r < ROWS && c >= 0 && c < COLS) {
+                    neighbors.push(r * COLS + c);
+                }
+            };
+
+            switch (state) {
+                case 0:
+                    // Orthogonal
+                    addValid(row - 1, col); // Up
+                    addValid(row + 1, col); // Down
+                    addValid(row, col - 1); // Left
+                    addValid(row, col + 1); // Right
+                    break;
+                case 1:
+                    // Diagonal
+                    addValid(row - 1, col - 1); // TL
+                    addValid(row - 1, col + 1); // TR
+                    addValid(row + 1, col - 1); // BL
+                    addValid(row + 1, col + 1); // BR
+                    break;
+                case 2:
+                    // Horizontal
+                    addValid(row, col - 1); // Left
+                    addValid(row, col + 1); // Right
+                    break;
+                case 3:
+                    // Vertical
+                    addValid(row - 1, col); // Up
+                    addValid(row + 1, col); // Down
+                    break;
+            }
+
+            return neighbors;
+        }
+
+        function scramble() {
+            nodes.fill(0);
+            const scrambleMoves = 25 + Math.floor(Math.random() * 25);
+            for (let i = 0; i < scrambleMoves; i++) {
+                const target = Math.floor(Math.random() * GRID_SIZE);
+                const currentState = nodes[target];
+                const affected = getNeighbors(target, currentState);
+
+                nodes[target] = (currentState + 1) % STATES;
+                for (const neighbor of affected) {
+                    nodes[neighbor] = (nodes[neighbor] + 1) % STATES;
+                }
+            }
+        }
+
+        function renderGrid() {
+            gridEl.innerHTML = '';
+            for (let i = 0; i < GRID_SIZE; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'node state-' + nodes[i] + ' ' + NODE_CLASS;
+                btn.textContent = nodes[i];
+                btn.dataset.index = i;
+                btn.onclick = () => handleNodeClick(i);
+                gridEl.appendChild(btn);
+            }
+        }
+
+        function updateUI() {
+            for (let i = 0; i < GRID_SIZE; i++) {
+                const btn = gridEl.children[i];
+                btn.className = 'node state-' + nodes[i] + ' ' + NODE_CLASS;
+                btn.textContent = nodes[i];
+            }
+            moveCountEl.textContent = moves;
+        }
+
+        function initGame() {
+            isSolved = false;
+            moves = 0;
+            winMessage.classList.add('hidden');
+            gridEl.style.pointerEvents = 'auto';
+            scramble();
+            renderGrid();
+            updateUI();
+        }
+
+        function triggerPulseAnimation(indices) {
+            indices.forEach(idx => {
+                const btn = gridEl.children[idx];
+                // Remove class to reset animation if already pulsing
+                btn.classList.remove('pulse');
+                // Trigger reflow
+                void btn.offsetWidth;
+                btn.classList.add('pulse');
+            });
+        }
+
+        function handleNodeClick(index) {
+            if (isSolved) return;
+
+            const currentState = nodes[index];
+            const affected = getNeighbors(index, currentState);
+
+            // Increment clicked node
+            nodes[index] = (currentState + 1) % STATES;
+
+            // Increment neighbors
+            for (const neighbor of affected) {
+                nodes[neighbor] = (nodes[neighbor] + 1) % STATES;
+            }
+
+            moves++;
+            updateUI();
+
+            // Trigger visual pulse
+            triggerPulseAnimation([index, ...affected]);
+
+            checkWin();
+        }
+
+        function checkWin() {
+            if (nodes.every(state => state === 0)) {
+                isSolved = true;
+                finalMovesEl.textContent = moves;
+                winMessage.classList.remove('hidden');
+                gridEl.style.pointerEvents = 'none';
+            }
+        }
+
+        resetBtn.addEventListener('click', () => {
+            initGame();
+        });
+
+        newGameBtn.addEventListener('click', () => {
+            initGame();
+        });
+
+        // Initialize on load
+        window.onload = initGame;
+
+        // Expose for testing
+        window.simulateClick = handleNodeClick;
+        window.getNodes = () => nodes;
+        window.getNeighbors = getNeighbors;
+    </script>
+</body>
+</html>
