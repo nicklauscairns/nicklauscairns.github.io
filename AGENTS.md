@@ -57,7 +57,11 @@ As an AI agent working in this repository, you must adhere to the following best
 *   Ensure the internal content has structured items including Overview, Dimensional Evaluation & Evidence Statements, AI Action Items for Improvement (with explicit code directives), and an Implementation Checklist.
 *   After appending the evaluation, execute `python convert_readme_to_html.py` to publish the evaluation to the static website.
 
-## 7. Workflow & Pull Request Directives
+## 7. Improving Existing Simulations
+*   Read `Guidelines/Improvement.md` before making any improvements to an existing simulation.
+*   This file outlines how to use an existing evaluation to guide improvements, ensuring strong pedagogical alignment and addressing explicit AI action items from the simulation's evaluation block.
+
+## 8. Workflow & Pull Request Directives
 *   **Deep Planning:** Always start tasks in a deep planning mode: interact with the user via `request_user_input` or `message_user` to ask questions and clarify requirements. Discourage asking questions that can be derived from code exploration. Once absolutely certain, create the plan using `set_plan`.
 *   **Execution Rule:** When creating simulations for multiple NGSS performance expectations, process them iteratively. Plan, implement, and verify one simulation at a time rather than batch-planning them.
 *   **PR Titles & Descriptions:**
