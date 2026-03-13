@@ -199,7 +199,7 @@ Refine the design of a chemical system by specifying a change in conditions that
 ### HS-PS1-7
 Use mathematical representations to support the claim that atoms, and therefore mass, are conserved during a chemical reaction.
 
-- [Conservation of Mass Simulator](ConservationOfMass.html) - Balance chemical equations and observe how total mass and atom counts remain perfectly conserved across the reaction. [2026-03-12 12:00:00]
+- [Conservation of Mass Simulator](ConservationOfMass.html) - Balance chemical equations and observe how total mass and atom counts remain perfectly conserved across the reaction. [2026-03-13 02:58:52]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -220,8 +220,8 @@ Use mathematical representations to support the claim that atoms, and therefore 
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[ ] Add an 'Analysis Prompt' UI that appears upon successful balancing, requiring the user to articulate the connection between atom count and mass conservation.</li>
-          <li>[ ] Enhance the CSS/JS animation of the `scaleBeam` to include a damped oscillation effect when weights (molecules) are added or removed.</li>
+          <li>[x] Add an 'Analysis Prompt' UI that appears upon successful balancing, requiring the user to articulate the connection between atom count and mass conservation.</li>
+          <li>[x] Enhance the CSS/JS animation of the `scaleBeam` to include a damped oscillation effect when weights (molecules) are added or removed.</li>
         </ul>
       </li>
     </ul>
@@ -230,7 +230,7 @@ Use mathematical representations to support the claim that atoms, and therefore 
 ### HS-PS1-8
 Develop models to illustrate the changes in the composition of the nucleus of the atom and the energy released during the processes of fission, fusion, and radioactive decay.
 
-- [Nuclear Processes Simulator](NuclearProcesses.html) - Visualize the changes in protons and neutrons, and the massive energy released, during Alpha Decay, Nuclear Fission, and Nuclear Fusion. [2026-03-12 12:00:00]
+- [Nuclear Processes Simulator](NuclearProcesses.html) - Visualize the changes in protons and neutrons, and the massive energy released, during Alpha Decay, Nuclear Fission, and Nuclear Fusion. [2026-03-13 02:58:52]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -251,8 +251,8 @@ Develop models to illustrate the changes in the composition of the nucleus of th
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[ ] Add 'Beta Decay' and 'Gamma Decay' options to the `processes` data structure, complete with distinct animations (e.g., a neutron turning into a proton and ejecting an electron for Beta).</li>
-          <li>[ ] Add a comparative visual energy bar chart (logarithmic scale) below the simulation to contrast nuclear energy output with chemical energy output.</li>
+          <li>[x] Add 'Beta Decay' and 'Gamma Decay' options to the `processes` data structure, complete with distinct animations (e.g., a neutron turning into a proton and ejecting an electron for Beta).</li>
+          <li>[x] Add a comparative visual energy bar chart (logarithmic scale) below the simulation to contrast nuclear energy output with chemical energy output.</li>
         </ul>
       </li>
     </ul>
@@ -261,7 +261,7 @@ Develop models to illustrate the changes in the composition of the nucleus of th
 ### HS-PS2-1
 Analyze data to support the claim that Newton's second law of motion describes the mathematical relationship among the net force on a macroscopic object, its mass, and its acceleration.
 
-- [Interactive Boat River Crossing Simulation](InteractiveBoatRiverCrossingSimulation.html) - A physics simulation exploring relative velocity and vector addition as a boat crosses a flowing river. [2026-03-12 12:00:00]
+- [Interactive Boat River Crossing Simulation](InteractiveBoatRiverCrossingSimulation.html) - A physics simulation exploring relative velocity and vector addition as a boat crosses a flowing river. [2026-03-13 02:58:52]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -282,13 +282,13 @@ Analyze data to support the claim that Newton's second law of motion describes t
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[ ] Either re-evaluate the pedagogical placement of this simulation, or update the UI and physics engine to include 'Engine Force' (N), 'Boat Mass' (kg), and calculate real-time acceleration ($a = F/m$) rather than just setting a constant $v_{boat}$.</li>
+          <li>[x] Either re-evaluate the pedagogical placement of this simulation, or update the UI and physics engine to include 'Engine Force' (N), 'Boat Mass' (kg), and calculate real-time acceleration ($a = F/m$) rather than just setting a constant $v_{boat}$.</li>
         </ul>
       </li>
     </ul>
   </details>
 
-- [Projectile Motion Simulation](ProjectileMotionSimulation.html) - An interactive physics simulation to study the kinematics of projectile motion by adjusting launch variables. [2026-03-12 12:00:00]
+- [Projectile Motion Simulation](ProjectileMotionSimulation.html) - An interactive physics simulation to study the kinematics of projectile motion by adjusting launch variables. [2026-03-13 02:58:52]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
@@ -309,8 +309,8 @@ Analyze data to support the claim that Newton's second law of motion describes t
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[ ] Add a 'Projectile Mass (kg)' slider. Update the UI to explicitly show the gravitational force ($F_g = mg$) and the resulting acceleration ($a = F_g/m = g$), demonstrating that mass cancels out for kinematics.</li>
-          <li>[ ] Add a real-time Velocity vs. Time graph to the sidebar to allow direct analysis of constant acceleration.</li>
+          <li>[x] Add a 'Projectile Mass (kg)' slider. Update the UI to explicitly show the gravitational force ($F_g = mg$) and the resulting acceleration ($a = F_g/m = g$), demonstrating that mass cancels out for kinematics.</li>
+          <li>[x] Add a real-time Velocity vs. Time graph to the sidebar to allow direct analysis of constant acceleration.</li>
         </ul>
       </li>
     </ul>
