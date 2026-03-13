@@ -1,32 +1,60 @@
 name: Repost Bot Comments with @jules
 
 on:
-  issue_comment: # Fixed: Singular, not plural
-    types: [created]
+  # Only trigger when the final review is officially submitted
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   repost-comment:
     runs-on: ubuntu-latest
-    # This condition ensures the action only runs if the commenter is one of the bots AND it is on a Pull Request
     if: |
-      contains(fromJSON('["gemini-code-assist[bot]", "coderabbitai[bot]", "chatgpt-codex-connector[bot]"]'), github.actor) &&
-      github.event.issue.pull_request != null
+      contains(fromJSON('["gemini-code-assist[bot]", "chatgpt-codex-connector[bot]", "coderabbitai[bot]"]'), github.actor)
     steps:
-      - name: Quote and repost comment
+      - name: Quote and bundle review comments
         uses: actions/github-script@v7
         with:
-          # Uses your Fine-grained Personal Access Token so the comment posts from your account
           github-token: ${{ secrets.MY_PAT }} 
           script: |
-            const comment = context.payload.comment.body;
-            const author = context.payload.comment.user.login;
-            const issueNumber = context.issue.number;
+            const reviewId = context.payload.review.id;
+            const issueNumber = context.payload.pull_request.number;
+            const author = context.payload.review.user.login;
+            const reviewBody = context.payload.review.body || '';
             
-            const quotedComment = `> ${comment.split('\n').join('\n> ')}\n\n—@${author}\n\n@jules`;
+            // Fetch all inline comments tied to this specific review submission
+            const { data: comments } = await github.rest.pulls.listCommentsForReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: issueNumber,
+              review_id: reviewId
+            });
+            
+            let digest = '';
+            
+            // Add the main review summary if one exists
+            if (reviewBody.trim()) {
+              digest += `**Review Summary:**\n> ${reviewBody.split('\n').join('\n> ')}\n\n`;
+            }
+            
+            // Append each inline comment with its associated file path
+            if (comments.length > 0) {
+              digest += `**Inline Code Suggestions:**\n`;
+              comments.forEach(c => {
+                digest += `*On \`${c.path}\`:*\n> ${c.body.split('\n').join('\n> ')}\n\n`;
+              });
+            }
+            
+            // Skip posting if the review was just a blank approval
+            if (!digest.trim()) {
+              console.log("Empty review body and no inline comments. Skipping.");
+              return;
+            }
+            
+            const finalComment = `${digest}—@${author}\n\n@jules`;
             
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
-              body: quotedComment
+              body: finalComment
             });
