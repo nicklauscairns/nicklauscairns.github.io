@@ -22,6 +22,8 @@ def test_initial_state(sim_page: Page):
 def test_simulation_with_all_processes(sim_page: Page):
     # Enable all processes by default, they should be enabled
     assert sim_page.evaluate("document.getElementById('toggleErosion').checked") is True
+    assert sim_page.evaluate("document.getElementById('toggleTectonics').checked") is True
+    assert sim_page.evaluate("document.getElementById('toggleVolcanism').checked") is True
 
     # Run simulation forward 2000 MY (to 2.6 BYA)
     sim_page.evaluate("window.updateSimulation(2000)")
@@ -52,7 +54,7 @@ def test_simulation_without_earth_processes(sim_page: Page):
     earth_craters = int(sim_page.locator("#earthCraterCount").inner_text())
 
     # Due to randomness they might not be perfectly identical but should be very close
-    assert abs(earth_craters - moon_craters) < 100, "Earth and Moon should have similar crater counts if processes are off"
+    assert abs(earth_craters - moon_craters) < 50, "Earth and Moon should have similar crater counts if processes are off"
 
     # Earth age should remain unchanged if processes are off
     assert float(sim_page.locator("#earthRockAge").inner_text()) == 4.60, "Earth age should remain 4.60 BYA if processes are off"

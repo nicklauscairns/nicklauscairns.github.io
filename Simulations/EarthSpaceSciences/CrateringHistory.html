@@ -293,7 +293,12 @@
 
         let animationFrameId = null;
         let lastTimestamp = 0;
-        const SIM_SPEED = 20; // Simulated million years per frame step (approx 60fps)
+
+        const DESTRUCTION_RATE_EROSION = 0.0005;
+        const DESTRUCTION_RATE_TECTONICS = 0.0008;
+        const DESTRUCTION_RATE_VOLCANISM = 0.0007;
+        const SIM_DURATION_SECONDS = 15;
+
 
         // Make state accessible for Playwright testing
         window.simState = simState;
@@ -367,21 +372,16 @@
                 const stepTime = oldTime + i;
                 const prob = getImpactProbability(stepTime);
 
-                // Earth Impact
-                if (Math.random() < prob) {
-                    const r = 5 + Math.random() * 25 + (Math.random() < 0.1 ? 40 : 0); // Occasional huge impact
-                    simState.earthCraters.push(new Crater(
-                        Math.random() * 600, Math.random() * 600, r, stepTime, 'earth'
-                    ));
+                function createImpact(prob, stepTime, bodyType, craterArray) {
+                    if (Math.random() < prob) {
+                        const r = 5 + Math.random() * 25 + (Math.random() < 0.1 ? 40 : 0);
+                        craterArray.push(new Crater(
+                            Math.random() * 600, Math.random() * 600, r, stepTime, bodyType
+                        ));
+                    }
                 }
-
-                // Moon Impact
-                if (Math.random() < prob) {
-                    const r = 5 + Math.random() * 25 + (Math.random() < 0.1 ? 40 : 0);
-                    simState.moonCraters.push(new Crater(
-                        Math.random() * 600, Math.random() * 600, r, stepTime, 'moon'
-                    ));
-                }
+                createImpact(prob, stepTime, 'earth', simState.earthCraters);
+                createImpact(prob, stepTime, 'moon', simState.moonCraters);
             }
 
             // 2. Apply Earth Geological Processes (erasing craters)
@@ -391,13 +391,11 @@
 
             // Calculate base erosion rate based on toggles
             let destructionRate = 0;
-            if (isErosion) destructionRate += 0.0005 * dt;
-            if (isTectonics) destructionRate += 0.0008 * dt;
-            if (isVolcanism) destructionRate += 0.0007 * dt;
+            if (isErosion) destructionRate += DESTRUCTION_RATE_EROSION * dt;
+            if (isTectonics) destructionRate += DESTRUCTION_RATE_TECTONICS * dt;
+            if (isVolcanism) destructionRate += DESTRUCTION_RATE_VOLCANISM * dt;
 
             // Apply destruction to Earth craters
-            let cratersDestroyed = false;
-            let activeCraters = 0;
             for (let i = simState.earthCraters.length - 1; i >= 0; i--) {
                 let crater = simState.earthCraters[i];
 
@@ -417,12 +415,10 @@
                 }
 
                 if (crater.opacity <= 0.05) {
-                    cratersDestroyed = true;
-                } else {
-                    activeCraters++;
+                    simState.earthCraters.splice(i, 1); // Remove destroyed crater
                 }
             }
-            simState.activeCratersEarth = activeCraters;
+            simState.activeCratersEarth = simState.earthCraters.length;
             simState.activeCratersMoon = simState.moonCraters.length; // Moon craters never fade
 
             // 3. Update Surface Ages
@@ -492,7 +488,7 @@
 
             if (simState.isPlaying && simState.currentTime < TOTAL_TIME_MY) {
                 // Calculate how much sim time passed based on real time
-                const deltaSimTime = (deltaMs / 1000) * (TOTAL_TIME_MY / 15); // 15 seconds real time to finish 4.6BY
+                const deltaSimTime = (deltaMs / 1000) * (TOTAL_TIME_MY / SIM_DURATION_SECONDS); // 15 seconds real time to finish 4.6BY
 
                 updateSimulationStep(deltaSimTime);
 
@@ -688,10 +684,6 @@
         timeSlider.addEventListener('input', (e) => {
             const target = parseFloat(e.target.value);
             window.updateSimulation(target); // Use the exposed function for direct state update
-            if(!simState.isPlaying) {
-                drawSurfaces();
-                updateUI();
-            }
         });
 
         // Initialize
