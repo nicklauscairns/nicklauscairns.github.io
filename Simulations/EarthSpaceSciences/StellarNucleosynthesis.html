@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellar Nucleosynthesis Explorer</title>
+    <meta name="description" content="An interactive simulation exploring how stars, over their life cycles, produce elements. Investigate the life stages of stars based on their mass and the nuclear fusion processes that create the elements in our universe.">
+    <meta name="keywords" content="NGSS, HS-ESS1-3, Earth and Space Sciences, Stellar Nucleosynthesis, Star Life Cycle, Nuclear Fusion, Elements, Supernova, Main Sequence, Red Giant">
+    <meta name="author" content="NGSS Simulations Project">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Stellar Nucleosynthesis Explorer">
+    <meta property="og:description" content="Investigate the life stages of stars and the nuclear fusion processes that create the elements in our universe.">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Stellar Nucleosynthesis Explorer",
+      "description": "An interactive simulation exploring how stars, over their life cycles, produce elements. Investigate the life stages of stars based on their mass and the nuclear fusion processes that create the elements in our universe.",
+      "educationalAlignment": [
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "educationalSubject",
+          "targetName": "Earth and Space Sciences"
+        },
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "educationalStandard",
+          "targetName": "HS-ESS1-3",
+          "targetUrl": "https://www.nextgenscience.org/pe/hs-ess1-3-earth-s-place-universe"
+        }
+      ],
+      "audience": {
+        "@type": "EducationalAudience",
+        "educationalRole": "student"
+      }
+    }
+    </script>
+
+    <style>
+        body {
+            background-color: #0f172a; /* Slate 900 */
+            color: #e2e8f0; /* Slate 200 */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        #simulation-canvas {
+            background-color: #000000;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7); /* Slate 800 with opacity */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+        }
+
+        /* Custom Scrollbar for logs */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.8);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 1);
+        }
+
+        .element-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            margin: 0.125rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-6 lg:p-8">
+
+    <!-- Header -->
+    <header class="mb-6">
+        <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-500 mb-2">Stellar Nucleosynthesis Explorer</h1>
+        <p class="text-sm text-slate-400">Investigate how stars produce elements over their life cycles. Select an initial mass, advance through the stages, and observe the fusion processes.</p>
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+
+        <!-- Left Column: Controls and Data -->
+        <div class="lg:col-span-1 space-y-6">
+
+            <!-- Controls Panel -->
+            <div class="glass-panel p-5">
+                <h2 class="text-xl font-bold mb-4 text-slate-100 border-b border-slate-600 pb-2">Simulation Controls</h2>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium mb-2 text-slate-300">Initial Star Mass</label>
+                    <div class="flex space-x-2">
+                        <button id="btn-low-mass" class="flex-1 py-2 px-3 bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors text-sm font-semibold border-2 border-blue-400">Low/Medium Mass (Sun-like)</button>
+                        <button id="btn-high-mass" class="flex-1 py-2 px-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors text-sm font-semibold border-2 border-transparent">High Mass (&gt;8 Solar Masses)</button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2 text-slate-300">Advance Life Stage</label>
+                    <button id="btn-next-stage" class="w-full py-3 px-4 bg-orange-600 hover:bg-orange-500 text-white rounded shadow-lg transition-transform transform hover:scale-105 font-bold flex justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Advance Time
+                    </button>
+                    <button id="btn-reset" class="w-full mt-2 py-2 px-4 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-sm transition-colors">Restart Simulation</button>
+                </div>
+            </div>
+
+            <!-- Current State Panel -->
+            <div class="glass-panel p-5">
+                <h2 class="text-xl font-bold mb-4 text-slate-100 border-b border-slate-600 pb-2">Stellar Diagnostics</h2>
+
+                <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                    <div class="bg-slate-800 p-3 rounded border border-slate-700">
+                        <span class="block text-slate-400 text-xs uppercase tracking-wider mb-1">Current Stage</span>
+                        <span id="stat-stage" class="font-bold text-lg text-yellow-400">Protostar</span>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded border border-slate-700">
+                        <span class="block text-slate-400 text-xs uppercase tracking-wider mb-1">Core Temp</span>
+                        <span id="stat-temp" class="font-bold text-lg text-orange-400">&lt; 10M K</span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <span class="block text-slate-400 text-xs uppercase tracking-wider mb-2">Primary Core Reaction</span>
+                    <div id="stat-reaction" class="bg-slate-800 p-3 rounded border border-slate-700 text-slate-200 text-center font-mono text-sm min-h-[3rem] flex items-center justify-center">
+                        Gravitational Contraction
+                    </div>
+                </div>
+
+                <div>
+                    <span class="block text-slate-400 text-xs uppercase tracking-wider mb-2">Elements Produced/Present</span>
+                    <div id="stat-elements" class="bg-slate-800 p-3 rounded border border-slate-700 min-h-[5rem] flex flex-wrap content-start">
+                        <!-- Badges injected here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Center & Right Column: Canvas and Interactive Model -->
+        <div class="lg:col-span-2 space-y-6 flex flex-col">
+
+            <!-- Canvas Area -->
+            <div class="glass-panel p-1 flex-grow flex flex-col justify-center items-center relative overflow-hidden" style="min-height: 400px;">
+                <canvas id="simulation-canvas" width="800" height="450" class="w-full h-auto max-w-full max-h-full"></canvas>
+                <!-- Tooltip for Canvas -->
+                <div id="canvas-tooltip" class="absolute bottom-4 left-4 right-4 bg-black bg-opacity-80 text-white p-3 rounded text-sm text-center border border-slate-600 hidden transition-opacity duration-300">
+                </div>
+            </div>
+
+            <!-- Atomic Balancer Panel (CCC Focus) -->
+            <div class="glass-panel p-5 border-l-4 border-indigo-500">
+                <h2 class="text-xl font-bold mb-2 text-indigo-300 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    Nucleon Conservation Analysis
+                </h2>
+                <p class="text-sm text-slate-300 mb-4">Analyze the current core reaction. During nuclear fusion, atoms change, but the total number of protons (P) and neutrons (N) is conserved.</p>
+
+                <div id="balancer-container" class="bg-slate-800 rounded p-4 border border-slate-700 flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-4">
+                    <!-- Dynamic Content Injected Here -->
+                    <div class="text-slate-400 italic w-full text-center py-4">Waiting for fusion to begin...</div>
+                </div>
+
+                <div class="mt-4 bg-indigo-900 bg-opacity-30 p-3 rounded text-xs text-indigo-200">
+                    <strong>CCC: Energy and Matter.</strong> In nuclear processes, atoms are not conserved, but the total number of protons plus neutrons is conserved.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Data Logger for investigation -->
+    <div class="mt-6 glass-panel p-5">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-slate-100">Evolution Data Log</h2>
+            <button id="btn-download-csv" class="py-1 px-3 bg-green-700 hover:bg-green-600 text-white rounded text-sm transition-colors flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Export CSV
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-slate-300">
+                <thead class="text-xs text-slate-400 uppercase bg-slate-800 border-b border-slate-700">
+                    <tr>
+                        <th scope="col" class="px-4 py-3">Mass Type</th>
+                        <th scope="col" class="px-4 py-3">Life Stage</th>
+                        <th scope="col" class="px-4 py-3">Core Temp (K)</th>
+                        <th scope="col" class="px-4 py-3">Primary Fusion</th>
+                        <th scope="col" class="px-4 py-3">Heaviest Element</th>
+                    </tr>
+                </thead>
+                <tbody id="data-log-body">
+                    <!-- Logs injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // --- Simulation State ---
+        const state = {
+            massType: 'low', // 'low' or 'high'
+            stageIndex: 0,
+            animationFrameId: null,
+            particles: [],
+            // Stage definitions
+            stages: {
+                low: [
+                    { name: "Protostar", temp: "< 10M", reaction: "Gravitational Contraction", elements: ["H", "He (Primordial)"], desc: "Gas and dust collapse under gravity. Core is not hot enough for fusion.", color: "#ffaa00", size: 1.2, coreColor: "#552200", reactionData: null },
+                    { name: "Main Sequence", temp: "15M", reaction: "Hydrogen &rarr; Helium", elements: ["H", "He"], desc: "Core reaches 10 million K. Hydrogen fuses into Helium (Proton-Proton Chain). Star is stable.", color: "#ffffaa", size: 1.0, coreColor: "#ffffff", reactionData: { in: [{n:4, sym:'¹H', p:1, ne:0}], out: [{n:1, sym:'⁴He', p:2, ne:2}], e: "Energy + Positrons + Neutrinos" } },
+                    { name: "Red Giant", temp: "100M", reaction: "Helium &rarr; Carbon/Oxygen", elements: ["H", "He", "C", "O"], desc: "Hydrogen core depleted. Core contracts and heats, outer layers expand and cool. Helium fusion begins (Triple-Alpha Process).", color: "#ff3300", size: 2.5, coreColor: "#ffaaaa", reactionData: { in: [{n:3, sym:'⁴He', p:2, ne:2}], out: [{n:1, sym:'¹²C', p:6, ne:6}], e: "Energy" } },
+                    { name: "Planetary Nebula", temp: "Cooling", reaction: "None (Shell Expansion)", elements: ["H", "He", "C", "O"], desc: "Outer layers are ejected into space, enriching the interstellar medium with C and O.", color: "#33aaff", size: 3.5, coreColor: "#ffffff", isNebula: true, reactionData: null },
+                    { name: "White Dwarf", temp: "100k (Cooling)", reaction: "None (Degenerate Core)", elements: ["C", "O"], desc: "The hot, dense core remains. No fusion occurs. It will slowly cool over billions of years.", color: "#ffffff", size: 0.2, coreColor: "#ffffff", reactionData: null }
+                ],
+                high: [
+                    { name: "Protostar", temp: "< 10M", reaction: "Gravitational Contraction", elements: ["H", "He (Primordial)"], desc: "Gas and dust collapse rapidly due to high mass.", color: "#ffaa00", size: 1.5, coreColor: "#552200", reactionData: null },
+                    { name: "Main Sequence", temp: "40M", reaction: "Hydrogen &rarr; Helium", elements: ["H", "He"], desc: "Hydrogen fuses via the CNO cycle. Very hot, blue-white star. Burns fuel very quickly.", color: "#aaddff", size: 1.8, coreColor: "#ffffff", reactionData: { in: [{n:4, sym:'¹H', p:1, ne:0}], out: [{n:1, sym:'⁴He', p:2, ne:2}], e: "Energy (CNO Cycle)" } },
+                    { name: "Red Supergiant", temp: "> 500M", reaction: "C/O/Ne/Si &rarr; Iron", elements: ["H", "He", "C", "O", "Ne", "Mg", "Si", "Fe"], desc: "Multiple fusion shells develop. Elements fuse successively up to Iron in the core.", color: "#ff2200", size: 4.0, coreColor: "#ffffaa", reactionData: { in: [{n:2, sym:'²⁸Si', p:14, ne:14}], out: [{n:1, sym:'⁵⁶Ni', p:28, ne:28}, {n:1, note:'decays to ⁵⁶Fe'}], e: "Energy (Final exothermic stage)" } },
+                    { name: "Supernova", temp: "> 100 Billion", reaction: "Rapid Neutron Capture (r-process)", elements: ["Fe", "Au", "U", "Heavy Elements"], desc: "Core collapses. Shockwave blasts star apart. Extreme energy allows fusion of elements heavier than Iron (e.g., Gold, Uranium).", color: "#ffffff", size: 5.0, coreColor: "#aaaaff", isExplosion: true, reactionData: { in: [{n:1, sym:'⁵⁶Fe', p:26, ne:30}, {n:'many', sym:'n', p:0, ne:1}], out: [{n:'1', sym:'Heavy Isotopes', p:'var', ne:'var'}], e: "Elements heavier than Iron" } },
+                    { name: "Neutron Star / Black Hole", temp: "Variable", reaction: "None", elements: ["Neutrons" , "(Singularity)"], desc: "Remnant is either a hyper-dense Neutron Star or collapses completely into a Black Hole.", color: "#444444", size: 0.1, coreColor: "#111111", reactionData: null }
+                ]
+            },
+            dataLog: []
+        };
+
+        // --- Colors for Elements ---
+        const elementColors = {
+            "H": "bg-slate-400 text-slate-900",
+            "He": "bg-blue-300 text-blue-900",
+            "He (Primordial)": "bg-blue-300 text-blue-900",
+            "C": "bg-zinc-700 text-white",
+            "O": "bg-red-400 text-red-900",
+            "Ne": "bg-orange-300 text-orange-900",
+            "Mg": "bg-slate-300 text-slate-800",
+            "Si": "bg-stone-400 text-stone-900",
+            "Fe": "bg-orange-600 text-white",
+            "Au": "bg-yellow-400 text-yellow-900",
+            "U": "bg-green-500 text-green-900",
+            "Heavy Elements": "bg-purple-500 text-white",
+            "Neutrons": "bg-slate-600 text-white",
+            "(Singularity)": "bg-black text-white border border-slate-500"
+        };
+
+        // --- DOM Elements ---
+        const canvas = document.getElementById('simulation-canvas');
+        const ctx = canvas.getContext('2d');
+        const btnLowMass = document.getElementById('btn-low-mass');
+        const btnHighMass = document.getElementById('btn-high-mass');
+        const btnNextStage = document.getElementById('btn-next-stage');
+        const btnReset = document.getElementById('btn-reset');
+        const btnDownloadCsv = document.getElementById('btn-download-csv');
+
+        const uiStage = document.getElementById('stat-stage');
+        const uiTemp = document.getElementById('stat-temp');
+        const uiReaction = document.getElementById('stat-reaction');
+        const uiElements = document.getElementById('stat-elements');
+        const canvasTooltip = document.getElementById('canvas-tooltip');
+        const balancerContainer = document.getElementById('balancer-container');
+        const dataLogBody = document.getElementById('data-log-body');
+
+        // --- Initialization ---
+        function init() {
+            bindEvents();
+            updateSimulation(); // Set initial state
+            logData();
+            startAnimationLoop();
+        }
+
+        // --- Event Listeners ---
+        function bindEvents() {
+            btnLowMass.addEventListener('click', () => setMassType('low'));
+            btnHighMass.addEventListener('click', () => setMassType('high'));
+            btnNextStage.addEventListener('click', advanceStage);
+            btnReset.addEventListener('click', resetSimulation);
+            btnDownloadCsv.addEventListener('click', downloadCSV);
+        }
+
+        // --- Logic ---
+        function setMassType(type) {
+            state.massType = type;
+            state.stageIndex = 0;
+
+            if (type === 'low') {
+                btnLowMass.classList.replace('bg-slate-700', 'bg-blue-600');
+                btnLowMass.classList.replace('text-slate-300', 'text-white');
+                btnLowMass.classList.replace('border-transparent', 'border-blue-400');
+
+                btnHighMass.classList.replace('bg-blue-600', 'bg-slate-700');
+                btnHighMass.classList.replace('text-white', 'text-slate-300');
+                btnHighMass.classList.replace('border-blue-400', 'border-transparent');
+            } else {
+                btnHighMass.classList.replace('bg-slate-700', 'bg-blue-600');
+                btnHighMass.classList.replace('text-slate-300', 'text-white');
+                btnHighMass.classList.replace('border-transparent', 'border-blue-400');
+
+                btnLowMass.classList.replace('bg-blue-600', 'bg-slate-700');
+                btnLowMass.classList.replace('text-white', 'text-slate-300');
+                btnLowMass.classList.replace('border-blue-400', 'border-transparent');
+            }
+
+            updateSimulation();
+            logData();
+        }
+
+        function advanceStage() {
+            const maxStages = state.stages[state.massType].length - 1;
+            if (state.stageIndex < maxStages) {
+                state.stageIndex++;
+
+                // If explosion, create particles
+                const currentStageData = state.stages[state.massType][state.stageIndex];
+                if (currentStageData.isExplosion) {
+                    createExplosion();
+                } else if (currentStageData.isNebula) {
+                    createNebula();
+                } else {
+                    state.particles = []; // clear particles
+                }
+
+                updateSimulation();
+                logData();
+            }
+        }
+
+        function resetSimulation() {
+            state.stageIndex = 0;
+            state.particles = [];
+            state.dataLog = [];
+            dataLogBody.innerHTML = '';
+            updateSimulation();
+            logData();
+        }
+
+        function updateSimulation() {
+            const currentStageData = state.stages[state.massType][state.stageIndex];
+
+            // Update UI
+            uiStage.textContent = currentStageData.name;
+            uiTemp.textContent = currentStageData.temp + (currentStageData.temp.includes('Cooling') || currentStageData.temp.includes('Variable') ? '' : ' K');
+            uiReaction.innerHTML = currentStageData.reaction;
+
+            // Render Elements Badges
+            uiElements.innerHTML = currentStageData.elements.map(el => {
+                const colorClass = elementColors[el] || "bg-slate-500 text-white";
+                return `<span class="element-badge ${colorClass}">${el}</span>`;
+            }).join('');
+
+            // Update Tooltip
+            canvasTooltip.textContent = currentStageData.desc;
+            canvasTooltip.classList.remove('hidden');
+
+            // Update Button State
+            const maxStages = state.stages[state.massType].length - 1;
+            if (state.stageIndex >= maxStages) {
+                btnNextStage.disabled = true;
+                btnNextStage.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                btnNextStage.disabled = false;
+                btnNextStage.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            updateAtomicBalancer(currentStageData.reactionData);
+        }
+
+        function updateAtomicBalancer(rData) {
+            if (!rData) {
+                balancerContainer.innerHTML = `<div class="text-slate-400 italic w-full text-center py-4">No active core fusion (or process not quantifiable simply).</div>`;
+                return;
+            }
+
+            if (rData.out[0].sym === 'Heavy Isotopes') {
+                 balancerContainer.innerHTML = `
+                    <div class="text-slate-300 w-full text-center">
+                        <p class="font-bold text-lg mb-2 text-purple-400">Rapid Neutron Capture (r-process)</p>
+                        <p class="text-sm">Iron nuclei capture free neutrons extremely rapidly during the supernova blast, forming highly unstable heavy isotopes that decay into stable heavy elements (Au, U, etc.).</p>
+                    </div>`;
+                 return;
+            }
+
+            // Calculate totals
+            let inP = 0, inN = 0, outP = 0, outN = 0;
+
+            let inHTML = `<div class="flex-1 bg-slate-900 p-3 rounded border border-slate-600"><h3 class="text-center font-bold text-slate-400 text-xs uppercase mb-2">Reactants</h3><div class="flex justify-center space-x-2">`;
+            rData.in.forEach(item => {
+                inP += item.n * item.p;
+                inN += item.n * item.ne;
+                inHTML += `<div class="text-center"><span class="text-2xl font-bold text-white">${item.n}</span><span class="text-lg text-slate-300 ml-1">${item.sym}</span>
+                           <div class="text-xs text-slate-500 mt-1">${item.p}p, ${item.ne}n per</div></div>`;
+            });
+            inHTML += `</div><div class="mt-2 text-center text-sm font-mono text-indigo-300 border-t border-slate-700 pt-1">Total: ${inP}P, ${inN}N</div></div>`;
+
+            let outHTML = `<div class="flex-1 bg-slate-900 p-3 rounded border border-slate-600"><h3 class="text-center font-bold text-slate-400 text-xs uppercase mb-2">Products</h3><div class="flex justify-center space-x-2">`;
+            rData.out.forEach(item => {
+                if(item.note) {
+                     outHTML += `<div class="text-center text-xs text-slate-400 italic self-center ml-2">(${item.note})</div>`;
+                } else {
+                    outP += item.n * item.p;
+                    outN += item.n * item.ne;
+                    outHTML += `<div class="text-center"><span class="text-2xl font-bold text-white">${item.n}</span><span class="text-lg text-slate-300 ml-1">${item.sym}</span>
+                               <div class="text-xs text-slate-500 mt-1">${item.p}p, ${item.ne}n per</div></div>`;
+                }
+            });
+
+            // Add energy string if present and calculate remaining nucleons if they don't match exactly (e.g. positrons)
+            let diffMsg = "";
+            if (inP !== outP || inN !== outN) {
+                // Simplified for HS level: just show they balance via other particles if not exact in main isotopes
+                diffMsg = `<span class="text-xs text-orange-400 ml-1">(+ subatomic particles)</span>`;
+            }
+
+            outHTML += `</div><div class="mt-2 text-center text-sm font-mono text-indigo-300 border-t border-slate-700 pt-1">Total: ${outP}P, ${outN}N ${diffMsg}</div></div>`;
+
+            let arrowHTML = `<div class="flex flex-col items-center justify-center px-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg><span class="text-xs text-yellow-400 font-bold text-center">${rData.e}</span></div>`;
+
+            balancerContainer.innerHTML = inHTML + arrowHTML + outHTML;
+        }
+
+        // --- Data Logging ---
+        function logData() {
+            const currentStageData = state.stages[state.massType][state.stageIndex];
+            const logEntry = {
+                massType: state.massType === 'low' ? 'Low/Medium' : 'High',
+                stage: currentStageData.name,
+                temp: currentStageData.temp,
+                reaction: currentStageData.reaction.replace(/&rarr;/g, '->'),
+                heaviestElement: currentStageData.elements[currentStageData.elements.length - 1]
+            };
+
+            state.dataLog.push(logEntry);
+
+            const row = document.createElement('tr');
+            row.className = "bg-slate-800 border-b border-slate-700 hover:bg-slate-700 transition-colors";
+            row.innerHTML = `
+                <td class="px-4 py-2">${logEntry.massType}</td>
+                <td class="px-4 py-2 font-medium text-slate-200">${logEntry.stage}</td>
+                <td class="px-4 py-2">${logEntry.temp}</td>
+                <td class="px-4 py-2 font-mono text-xs">${logEntry.reaction}</td>
+                <td class="px-4 py-2">${logEntry.heaviestElement}</td>
+            `;
+            // Prepend so newest is on top
+            dataLogBody.insertBefore(row, dataLogBody.firstChild);
+        }
+
+        function downloadCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Mass Type,Life Stage,Core Temp (K),Primary Fusion,Heaviest Element\n";
+
+            state.dataLog.forEach(row => {
+                csvContent += `${row.massType},${row.stage},${row.temp},${row.reaction},${row.heaviestElement}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "stellar_nucleosynthesis_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+
+        // --- Canvas Animation ---
+        function createExplosion() {
+            state.particles = [];
+            for (let i = 0; i < 200; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                state.particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: Math.random() * 3 + 1,
+                    color: i % 3 === 0 ? '#aaaaff' : (i % 2 === 0 ? '#ffffff' : '#ffaaaa'),
+                    life: 1.0
+                });
+            }
+        }
+
+        function createNebula() {
+            state.particles = [];
+            for (let i = 0; i < 150; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                // Use square root for uniform distribution in a circle initially, then push outward
+                const dist = Math.sqrt(Math.random()) * 20 + 30;
+                state.particles.push({
+                    x: canvas.width / 2 + Math.cos(angle) * dist,
+                    y: canvas.height / 2 + Math.sin(angle) * dist,
+                    vx: Math.cos(angle) * 0.5,
+                    vy: Math.sin(angle) * 0.5,
+                    radius: Math.random() * 20 + 10,
+                    color: 'hsla(' + (Math.random() * 60 + 180) + ', 100%, 70%, 0.3)', // Blues and cyans
+                    life: 1.0,
+                    decay: Math.random() * 0.005 + 0.001
+                });
+            }
+        }
+
+        function drawStar(cx, cy, currentStageData) {
+            // Pulsing effect for stars
+            const pulse = Math.sin(Date.now() / 500) * 0.05 + 1;
+            const baseRadius = 50 * currentStageData.size;
+            let radius = baseRadius * pulse;
+
+            // Draw Glow
+            const glowGradient = ctx.createRadialGradient(cx, cy, radius * 0.8, cx, cy, radius * 2);
+            glowGradient.addColorStop(0, currentStageData.color);
+            glowGradient.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = glowGradient;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius * 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Star Body
+            const bodyGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+            bodyGradient.addColorStop(0, currentStageData.coreColor);
+            bodyGradient.addColorStop(0.8, currentStageData.color);
+            bodyGradient.addColorStop(1, currentStageData.color);
+
+            ctx.fillStyle = bodyGradient;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Add some "surface detail" if it's a star (not a black hole)
+            if (currentStageData.size > 0.5) {
+                ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                for(let i=0; i<3; i++) {
+                    ctx.beginPath();
+                    ctx.arc(cx + (Math.random()-0.5)*radius, cy + (Math.random()-0.5)*radius, radius * Math.random() * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        function drawParticles() {
+            const currentStageData = state.stages[state.massType][state.stageIndex];
+
+            for (let i = state.particles.length - 1; i >= 0; i--) {
+                const p = state.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (currentStageData.isExplosion) {
+                    p.life -= 0.01;
+                    ctx.globalAlpha = Math.max(0, p.life);
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (currentStageData.isNebula) {
+                    // Nebulas expand and fade slowly
+                    p.radius += 0.1;
+                    p.life -= p.decay;
+                    ctx.globalAlpha = Math.max(0, p.life);
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                if (p.life <= 0) {
+                    state.particles.splice(i, 1);
+                }
+            }
+            ctx.globalAlpha = 1.0;
+        }
+
+        function draw() {
+            // Clear canvas with space background
+            ctx.fillStyle = '#050510';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw some static background stars
+            ctx.fillStyle = '#ffffff';
+            for(let i=0; i<50; i++) {
+                // Static seed for background stars based on index so they don't flicker
+                const x = (Math.sin(i*123) * 0.5 + 0.5) * canvas.width;
+                const y = (Math.cos(i*321) * 0.5 + 0.5) * canvas.height;
+                const r = (Math.sin(i*555) * 0.5 + 0.5) * 1.5;
+                ctx.globalAlpha = Math.sin(Date.now() / 1000 + i) * 0.5 + 0.5; // twinkle
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const currentStageData = state.stages[state.massType][state.stageIndex];
+
+            if (state.particles.length > 0) {
+                 drawParticles();
+            }
+
+            // Draw core/remnant even during explosion/nebula if applicable
+            if (currentStageData.isExplosion) {
+                // Draw a small bright remnant
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (currentStageData.isNebula) {
+                // Draw White Dwarf inside nebula
+                drawStar(cx, cy, state.stages.low[state.stages.low.length-1]);
+            } else {
+                drawStar(cx, cy, currentStageData);
+            }
+
+            state.animationFrameId = requestAnimationFrame(draw);
+        }
+
+        function startAnimationLoop() {
+            if (state.animationFrameId) {
+                cancelAnimationFrame(state.animationFrameId);
+            }
+            draw();
+        }
+
+        // --- Expose for Playwright Testing ---
+        window.simulationState = state;
+        window.updateSimulation = updateSimulation;
+        window.setMassType = setMassType;
+        window.advanceStage = advanceStage;
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
