@@ -7,9 +7,9 @@ on:
 jobs:
   repost-comment:
     runs-on: ubuntu-latest
-    # Added Qodo bot variations to the actor check
+    # Updated to specifically target qodo-code-review[bot]
     if: |
-      contains(fromJSON('["gemini-code-assist[bot]", "chatgpt-codex-connector[bot]", "coderabbitai[bot]", "qodo-merge[bot]", "qodo[bot]"]'), github.actor)
+      contains(fromJSON('["gemini-code-assist[bot]", "chatgpt-codex-connector[bot]", "coderabbitai[bot]", "qodo-code-review[bot]"]'), github.actor)
     steps:
       - name: Quote and bundle review comments
         uses: actions/github-script@v7
@@ -40,12 +40,11 @@ jobs:
             if (comments.length > 0) {
               digest += `**Inline Code Suggestions:**\n`;
               comments.forEach(c => {
-                // c.html_url links directly to the line of code in the PR's 'Files changed' tab
                 digest += `*On [\`${c.path}\`](${c.html_url}):*\n> ${c.body.split('\n').join('\n> ')}\n\n`;
               });
             }
             
-            // Skip posting if the review was just a blank approval
+            // Skip posting if the review was just a blank approval with no comments
             if (!digest.trim()) {
               console.log("Empty review body and no inline comments. Skipping.");
               return;
