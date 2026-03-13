@@ -66,6 +66,8 @@ Construct and revise an explanation for the outcome of a simple chemical reactio
     </ul>
   </details>
 
+- [Chemical Reaction Outcomes Predictor (Experimental 3D)](ChemicalReactionsOutcomesExperimental.html) - An experimental version of the Chemical Reactions Predictor featuring interactive 3D molecular visualizations of the products using 3Dmol.js. [2026-03-13 13:32:44]
+
 ### HS-PS1-3
 Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
 
