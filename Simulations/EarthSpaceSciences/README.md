@@ -99,6 +99,8 @@ Communicate scientific ideas about the way stars, over their life cycle, produce
 ### HS-ESS1-4
 Use mathematical or computational representations to predict the motion of orbiting objects in the solar system.
 
+- [Planetary Defense: Asteroid Deflection](PlanetaryDefense.html) - Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision.
+
 - [Orbital Motion & Kepler's Laws Simulation](OrbitalMotion2.html) - An interactive simulation exploring Newton's Law of Universal Gravitation and Kepler's Laws by adjusting planetary parameters. [2026-03-12 12:00:00]
 
   <details>
@@ -299,6 +301,7 @@ Develop a model based on evidence of Earth’s interior to describe the cycling 
 ### HS-ESS2-4
 Use a model to describe how variations in the flow of energy into and out of Earth’s systems result in changes in climate.
 
+- [Tambora 1816: Year Without a Summer](Tambora1816.html) - Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly.
 - [Greenhouse Effect & Earth's Energy Budget Simulation](GreenhouseEffect.html) - An interactive simulation exploring how greenhouse gases affect Earth's energy budget and global temperature. [2026-03-12 12:00:00]
 
   <details>

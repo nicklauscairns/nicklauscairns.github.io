@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambora 1816: Year Without a Summer</title>
+    <meta name="description" content="Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly.">
+    <meta name="keywords" content="NGSS, HS-ESS2-4, Earth Science, Climate, Volcano, Albedo, Simulation">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Tambora 1816: Year Without a Summer">
+    <meta property="og:description" content="Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Tambora 1816: Year Without a Summer",
+      "description": "Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly.",
+      "learningResourceType": "Interactive Simulation",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "targetName": "HS-ESS2-4",
+        "educationalFramework": "Next Generation Science Standards"
+      }
+    }
+    </script>
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .slider-custom { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+        .slider-custom::-webkit-slider-runnable-track { width: 100%; height: 6px; border-radius: 3px; background: #475569; }
+        .slider-custom::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #38bdf8; margin-top: -6px; }
+        .slider-custom::-webkit-slider-thumb:hover { background: #7dd3fc; }
+        .slider-custom:disabled::-webkit-slider-thumb { background: #64748b; cursor: not-allowed; }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 bg-slate-900 text-slate-50 overflow-x-hidden">
+
+    <header class="text-center mb-6 w-full max-w-6xl">
+        <h1 class="text-3xl md:text-4xl font-bold text-sky-300 mb-2">Tambora 1816: Year Without a Summer</h1>
+        <p class="text-slate-400 text-sm md:text-base">HS-ESS2-4: Variations in energy flow causing climate changes. Investigate how volcanic stratospheric aerosols alter Earth's albedo and global temperatures.</p>
+    </header>
+
+    <main class="w-full max-w-6xl flex flex-col lg:flex-row gap-6">
+
+        <!-- Controls Panel -->
+        <section class="bg-slate-800/70 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-6 flex-1 lg:max-w-md flex flex-col gap-6">
+            <div>
+                <h2 class="text-xl font-semibold text-white mb-4 border-b border-slate-600 pb-2">Eruption Parameters</h2>
+                <p class="text-sm text-slate-400 mb-4">Set the conditions for the volcanic eruption to observe its effect on Earth's energy budget over a 5-year period.</p>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
+                        <span>Volcanic Explosivity Index (VEI)</span>
+                        <span id="veiVal" class="text-sky-300 font-bold">7</span>
+                    </label>
+                    <input type="range" id="veiSlider" class="slider-custom" min="3" max="8" step="1" value="7">
+                    <div class="flex justify-between text-xs text-slate-500 mt-1">
+                        <span>Small (3)</span>
+                        <span>Cataclysmic (8)</span>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Eruption Latitude</label>
+                    <select id="latitudeSelect" class="w-full bg-slate-800 text-white rounded p-2 border border-slate-600 focus:outline-none focus:border-sky-500">
+                        <option value="equator">Equatorial (0°)</option>
+                        <option value="mid">Mid-Latitude (45° N/S)</option>
+                        <option value="polar">Polar (90° N/S)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-3 mt-auto">
+                <button id="btnErupt" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded shadow-lg transition-colors flex justify-center items-center">
+                    Initiate Eruption (Year 0)
+                </button>
+                <button id="btnReset" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded transition-colors hidden">
+                    Reset Simulation
+                </button>
+            </div>
+
+            <div id="targetBox" class="bg-slate-800 p-4 rounded mt-2 border-l-4 border-amber-500">
+                <h3 class="text-amber-500 font-bold text-sm mb-1">Mission: The 1816 Anomaly</h3>
+                <p class="text-xs text-slate-300">In 1816, global temperatures dropped by roughly <span class="text-white font-bold">~0.7°C to 1.0°C</span>. Can you find the eruption parameters that replicate this sudden climate shift?</p>
+            </div>
+        </section>
+
+        <!-- Visualization Panel -->
+        <section class="flex-[2] flex flex-col gap-6">
+
+            <!-- Earth View & Live Stats -->
+            <div class="bg-slate-800/70 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 items-center justify-center">
+
+                <!-- Earth Canvas Wrapper -->
+                <div class="relative w-64 h-64 md:w-80 md:h-80 shrink-0">
+                    <canvas id="earthCanvas" width="320" height="320" class="w-full h-full rounded-full bg-[radial-gradient(circle_at_30%_30%,#1e40af,#082f49)] shadow-[0_0_20px_rgba(56,189,248,0.2),inset_-20px_-20px_40px_rgba(0,0,0,0.8)]"></canvas>
+                    <div id="aerosolOverlay" class="absolute inset-0 w-full h-full rounded-full pointer-events-none mix-blend-screen" style="background: radial-gradient(circle, rgba(200,200,200,0) 0%, rgba(200,200,200,0) 100%);"></div>
+
+                    <!-- Sun / Energy indicators -->
+                    <div class="absolute -right-16 top-1/2 -translate-y-1/2 text-yellow-300 flex flex-col items-center">
+                        <svg class="w-8 h-8 mb-1 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+                        <span id="sunInputDisplay" class="text-xs font-mono">100%</span>
+                    </div>
+                </div>
+
+                <!-- Live Metrics -->
+                <div class="flex flex-col w-full gap-4">
+                    <div class="bg-slate-800 p-4 rounded border border-slate-700">
+                        <div class="text-sm text-slate-400 mb-1">Time Post-Eruption</div>
+                        <div class="text-3xl font-mono text-white" id="timeDisplay">0.0 Years</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800 p-4 rounded border border-slate-700">
+                            <div class="text-xs text-slate-400 mb-1">Global Temp Anomaly</div>
+                            <div class="text-2xl font-mono font-bold" id="tempDisplay"><span class="text-white">0.00°C</span></div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded border border-slate-700">
+                            <div class="text-xs text-slate-400 mb-1">Stratospheric Aerosol Depth</div>
+                            <div class="text-2xl font-mono font-bold text-slate-300" id="aerosolDisplay">0.00</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded border border-slate-700">
+                            <div class="text-xs text-slate-400 mb-1">Global Albedo</div>
+                            <div class="text-2xl font-mono font-bold text-sky-200" id="albedoDisplay">0.300</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded border border-slate-700">
+                            <div class="text-xs text-slate-400 mb-1">Surface Solar Radiation</div>
+                            <div class="text-2xl font-mono font-bold text-yellow-300" id="radiationDisplay">100.0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="bg-slate-800/70 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-4 h-64 relative">
+                <canvas id="climateChart"></canvas>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        // DOM Elements
+        const els = {
+            veiSlider: document.getElementById('veiSlider'),
+            veiVal: document.getElementById('veiVal'),
+            latSelect: document.getElementById('latitudeSelect'),
+            btnErupt: document.getElementById('btnErupt'),
+            btnReset: document.getElementById('btnReset'),
+            timeDisplay: document.getElementById('timeDisplay'),
+            tempDisplay: document.getElementById('tempDisplay'),
+            aerosolDisplay: document.getElementById('aerosolDisplay'),
+            albedoDisplay: document.getElementById('albedoDisplay'),
+            radDisplay: document.getElementById('radiationDisplay'),
+            sunDisplay: document.getElementById('sunInputDisplay'),
+            earthCanvas: document.getElementById('earthCanvas'),
+            aerosolOverlay: document.getElementById('aerosolOverlay')
+        };
+
+        const ctx = els.earthCanvas.getContext('2d');
+
+        // Simulation State
+        const SIM_DURATION_YEARS = 5;
+        const FPS = 30;
+        const SECONDS_PER_YEAR = 4; // 1 simulation year = 4 real seconds
+        const TOTAL_FRAMES = SIM_DURATION_YEARS * SECONDS_PER_YEAR * FPS;
+        const BASE_ALBEDO = 0.300;
+        const BASE_TEMP = 15.0; // °C baseline
+
+        let simState = {
+            isRunning: false,
+            frame: 0,
+            timeYears: 0,
+            vei: 7,
+            latitude: 'equator',
+            aerosolDepth: 0, // Optical depth
+            tempAnomaly: 0,
+            albedo: BASE_ALBEDO,
+            radiationPct: 100,
+            history: {
+                time: [],
+                temp: [],
+                rad: []
+            }
+        };
+
+        let animationFrameId;
+        let climateChart;
+
+        // Constants mapping VEI to Sulfur Dioxide (Tg) injected into stratosphere
+        const SO2_YIELD = {
+            3: 0.1,
+            4: 1.0,
+            5: 5.0,  // St. Helens
+            6: 20.0, // Pinatubo
+            7: 100.0, // Tambora
+            8: 1000.0 // Toba
+        };
+
+        // Initialize Chart
+        function initChart() {
+            const ctxChart = document.getElementById('climateChart').getContext('2d');
+
+            // Populate initial empty data for 5 years
+            for(let i=0; i<=SIM_DURATION_YEARS; i+=0.5) {
+                simState.history.time.push(i);
+                simState.history.temp.push(null);
+                simState.history.rad.push(null);
+            }
+            simState.history.temp[0] = 0;
+            simState.history.rad[0] = 100;
+
+            climateChart = new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: simState.history.time,
+                    datasets: [
+                        {
+                            label: 'Temp Anomaly (°C)',
+                            data: simState.history.temp,
+                            borderColor: '#ef4444', // red-500
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            yAxisID: 'y',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Surface Radiation (%)',
+                            data: simState.history.rad,
+                            borderColor: '#facc15', // yellow-400
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            yAxisID: 'y1',
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1' } }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Years Post-Eruption', color: '#94a3b8' },
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Temp Anomaly (°C)', color: '#ef4444' },
+                            ticks: { color: '#ef4444' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            suggestedMin: -3,
+                            suggestedMax: 1
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Surface Radiation (%)', color: '#facc15' },
+                            ticks: { color: '#facc15' },
+                            grid: { drawOnChartArea: false },
+                            suggestedMin: 90,
+                            suggestedMax: 105
+                        }
+                    }
+                }
+            });
+        }
+
+        // Draw basic Earth map
+        function drawEarth() {
+            ctx.clearRect(0, 0, els.earthCanvas.width, els.earthCanvas.height);
+
+            // Very abstract continents for visual flavor
+            ctx.fillStyle = '#065f46'; // emerald-800
+
+            // North Americaish
+            ctx.beginPath();
+            ctx.ellipse(80, 80, 40, 60, Math.PI / 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Eurasiaish
+            ctx.beginPath();
+            ctx.ellipse(220, 90, 60, 40, -Math.PI / 6, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Africaish
+            ctx.beginPath();
+            ctx.ellipse(200, 180, 40, 50, Math.PI / 8, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // South Americaish
+            ctx.beginPath();
+            ctx.ellipse(100, 200, 30, 50, -Math.PI / 8, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Draw Equator Line
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, 160);
+            ctx.lineTo(320, 160);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Calculate Physics Step
+        function stepPhysics() {
+            const dt = 1 / (FPS * SECONDS_PER_YEAR); // Years per frame
+            simState.timeYears += dt;
+
+            // 1. Aerosol Formation & Dispersion
+            // SO2 oxidizes to H2SO4 aerosols over a few months, peaking around 0.5 years.
+            // Then it slowly falls out of the stratosphere over 2-3 years.
+            const so2Mass = SO2_YIELD[simState.vei];
+
+            // Dispersion efficiency depends on latitude.
+            // Equatorial eruptions spread globally into both hemispheres.
+            // High latitude eruptions mostly stay in one hemisphere, reducing global average impact.
+            let dispersionFactor = 1.0;
+            if (simState.latitude === 'mid') dispersionFactor = 0.6;
+            if (simState.latitude === 'polar') dispersionFactor = 0.3;
+
+            // Simple mathematical model for aerosol optical depth (AOD)
+            // AOD peaks quickly then decays exponentially
+            const peakTime = 0.5; // years
+            const decayRate = 1.2; // roughly 1/e every ~10 months
+
+            if (simState.timeYears < peakTime) {
+                // Rising phase
+                simState.aerosolDepth = (so2Mass / 100) * dispersionFactor * (simState.timeYears / peakTime);
+            } else {
+                // Decay phase
+                const peakAOD = (so2Mass / 100) * dispersionFactor;
+                simState.aerosolDepth = peakAOD * Math.exp(-decayRate * (simState.timeYears - peakTime));
+            }
+
+            // 2. Albedo and Radiation
+            // Increased AOD scatters incoming solar radiation back to space (increasing albedo)
+            simState.albedo = BASE_ALBEDO + (simState.aerosolDepth * 0.1);
+
+            // Surface radiation drops as albedo increases
+            simState.radiationPct = 100 * (1 - (simState.albedo - BASE_ALBEDO));
+
+            // 3. Global Temperature Anomaly
+            // Less radiation = cooling. Ocean heat capacity creates a thermal lag.
+            // Simple energy balance box model lag: dT/dt = (TargetT - CurrentT) / Tau
+            const climateSensitivity = 3.0; // °C per doubling CO2 equivalent, but we use it for forcing
+            const forcing = -5.0 * (simState.albedo - BASE_ALBEDO); // W/m2 approx
+            const targetTempAnomaly = forcing * climateSensitivity;
+            const thermalLag = 0.8; // years (shallow ocean response time)
+
+            simState.tempAnomaly += (targetTempAnomaly - simState.tempAnomaly) * (dt / thermalLag);
+
+            // Record data occasionally
+            if (simState.frame % (FPS * SECONDS_PER_YEAR / 2) === 0) { // Every 0.5 sim years
+                const index = Math.round(simState.timeYears * 2);
+                if (index < simState.history.temp.length) {
+                    simState.history.temp[index] = simState.tempAnomaly;
+                    simState.history.rad[index] = simState.radiationPct;
+                    climateChart.update('none');
+                }
+            }
+        }
+
+        // Update visuals
+        function updateVisuals() {
+            // UI Text
+            els.timeDisplay.textContent = simState.timeYears.toFixed(2) + " Years";
+
+            els.tempDisplay.innerHTML = `<span class="${simState.tempAnomaly < -0.5 ? 'text-blue-400' : (simState.tempAnomaly < -0.1 ? 'text-blue-200' : 'text-white')}">${simState.tempAnomaly > 0 ? '+' : ''}${simState.tempAnomaly.toFixed(2)}°C</span>`;
+
+            els.aerosolDisplay.textContent = simState.aerosolDepth.toFixed(3);
+            els.albedoDisplay.textContent = simState.albedo.toFixed(3);
+            els.radDisplay.textContent = simState.radiationPct.toFixed(1) + "%";
+            els.sunDisplay.textContent = simState.radiationPct.toFixed(0) + "%";
+
+            // Earth Overlay (Aerosol Cloud)
+            // Visual opacity based on depth. Spread based on latitude.
+            const opacity = Math.min(0.8, simState.aerosolDepth * 2);
+            let grad = '';
+
+            if (simState.latitude === 'equator') {
+                // Spreads globally but thicker at equator
+                grad = `radial-gradient(ellipse at center, rgba(203,213,225,${opacity}) 0%, rgba(203,213,225,${opacity*0.5}) 100%)`;
+            } else if (simState.latitude === 'mid') {
+                // Northern hemisphere mid
+                grad = `radial-gradient(ellipse at 50% 30%, rgba(203,213,225,${opacity}) 0%, rgba(203,213,225,0) 70%)`;
+            } else {
+                // Northern polar
+                grad = `radial-gradient(ellipse at 50% 0%, rgba(203,213,225,${opacity}) 0%, rgba(203,213,225,0) 60%)`;
+            }
+
+            els.aerosolOverlay.style.background = grad;
+
+            // Dim the sun input icon slightly
+            els.sunDisplay.parentElement.style.opacity = simState.radiationPct / 100;
+        }
+
+        // Main Loop
+        function animate() {
+            if (!simState.isRunning) return;
+
+            stepPhysics();
+            updateVisuals();
+
+            simState.frame++;
+
+            if (simState.frame < TOTAL_FRAMES) {
+                animationFrameId = requestAnimationFrame(animate);
+            } else {
+                simState.isRunning = false;
+                els.btnReset.classList.remove('hidden');
+            }
+        }
+
+        // Controls
+        els.veiSlider.addEventListener('input', (e) => {
+            els.veiVal.textContent = e.target.value;
+        });
+
+        els.btnErupt.addEventListener('click', () => {
+            // Lock inputs
+            els.veiSlider.disabled = true;
+            els.latSelect.disabled = true;
+            els.btnErupt.classList.add('hidden');
+
+            simState.vei = parseInt(els.veiSlider.value);
+            simState.latitude = els.latSelect.value;
+            simState.isRunning = true;
+
+            // Add initial eruption marker to chart
+            climateChart.options.plugins.annotation = {
+                annotations: {
+                    line1: {
+                        type: 'line',
+                        xMin: 0,
+                        xMax: 0,
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 2,
+                        label: { content: 'Eruption', display: true, position: 'start' }
+                    }
+                }
+            };
+
+            // Flash screen
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, els.earthCanvas.width, els.earthCanvas.height);
+            setTimeout(() => { drawEarth(); }, 100);
+
+            animate();
+        });
+
+        els.btnReset.addEventListener('click', () => {
+            cancelAnimationFrame(animationFrameId);
+
+            simState = {
+                isRunning: false,
+                frame: 0,
+                timeYears: 0,
+                vei: parseInt(els.veiSlider.value),
+                latitude: els.latSelect.value,
+                aerosolDepth: 0,
+                tempAnomaly: 0,
+                albedo: BASE_ALBEDO,
+                radiationPct: 100,
+                history: { time: [], temp: [], rad: [] }
+            };
+
+            for(let i=0; i<=SIM_DURATION_YEARS; i+=0.5) {
+                simState.history.time.push(i);
+                simState.history.temp.push(null);
+                simState.history.rad.push(null);
+            }
+            simState.history.temp[0] = 0;
+            simState.history.rad[0] = 100;
+
+            climateChart.data.datasets[0].data = simState.history.temp;
+            climateChart.data.datasets[1].data = simState.history.rad;
+            climateChart.update();
+
+            els.veiSlider.disabled = false;
+            els.latSelect.disabled = false;
+            els.btnErupt.classList.remove('hidden');
+            els.btnReset.classList.add('hidden');
+
+            drawEarth();
+            updateVisuals();
+        });
+
+        // Global exposure for Playwright testing
+        window.getSimState = () => simState;
+        window.erupt = () => els.btnErupt.click();
+        window.setParams = (vei, lat) => {
+            els.veiSlider.value = vei;
+            els.veiVal.textContent = vei;
+            els.latSelect.value = lat;
+        };
+        // For fast-forwarding in tests
+        window.simulateFast = (years) => {
+            const frames = years * FPS * SECONDS_PER_YEAR;
+            for(let i=0; i<frames; i++) {
+                stepPhysics();
+                simState.frame++;
+            }
+            updateVisuals();
+            return simState;
+        };
+
+        // Init
+        drawEarth();
+        initChart();
+        updateVisuals();
+
+    </script>
+</body>
+</html>
