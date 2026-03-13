@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Energy Change Computational Model</title>
+<title>Rollercoaster Energy Computational Model</title>
     <meta content="https://nicklauscairns.com/Simulations/PhysicalSciences/EnergyChangeModel.html" property="og:url"/>
     <meta content="website" property="og:type"/>
     <meta content="Interactive science simulation for Energy Change Computational Model. Explore and learn with this engaging, NGSS-aligned high school educational tool." property="og:description"/>
@@ -53,8 +53,8 @@
 <body class="bg-gray-100 min-h-screen p-4">
 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
 <div class="bg-indigo-600 text-white p-6">
-<h1 class="text-3xl font-bold">Energy Conservation &amp; Transfer Model</h1>
-<p class="mt-2 text-indigo-100">Calculate the change in energy of one component in a system when the change in other components and energy flows are known (HS-PS3-1).</p>
+<h1 class="text-3xl font-bold">Rollercoaster Energy Conservation Model</h1>
+<p class="mt-2 text-indigo-100">Calculate the change in energy of a rollercoaster cart in a system when the change in other components and energy flows are known (HS-PS3-1).</p>
 </div>
 <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 <!-- Controls / Inputs -->
@@ -64,14 +64,14 @@
                 Define the energy changes (ΔE) for components in a 3-part system. The total change in system energy must equal the energy transferred in/out.
             </p>
 <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-<label class="block font-semibold text-blue-800">Component 1: Kinetic Energy (ΔE<sub>k</sub>)</label>
+<label class="block font-semibold text-blue-800">Cart Kinetic Energy (ΔE<sub>k</sub>)</label>
 <div class="flex items-center gap-2">
 <input class="w-full" id="ek-slider" max="500" min="-500" oninput="updateValues()" type="range" value="100"/>
 <span class="font-mono w-16 text-right font-bold text-blue-900" id="ek-val">100 J</span>
 </div>
 </div>
 <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded">
-<label class="block font-semibold text-green-800">Component 2: Gravitational Potential (ΔE<sub>g</sub>)</label>
+<label class="block font-semibold text-green-800">Cart Potential Energy (ΔE<sub>g</sub>)</label>
 <div class="flex items-center gap-2">
 <input class="w-full" id="eg-slider" max="500" min="-500" oninput="updateValues()" type="range" value="-50"/>
 <span class="font-mono w-16 text-right font-bold text-green-900" id="eg-val">-50 J</span>
@@ -110,6 +110,16 @@
 </div>
 </div>
 </div>
+
+<!-- Rollercoaster Visualization -->
+<div class="bg-white p-4 rounded-lg border shadow-sm mb-6">
+    <h3 class="text-lg font-bold text-gray-700 mb-4">Physical System: Rollercoaster</h3>
+    <div class="relative w-full h-48 bg-sky-100 border rounded overflow-hidden">
+        <canvas id="rcCanvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+    </div>
+    <p class="text-sm text-gray-600 mt-2 text-center">Cart height reflects Potential Energy (&Delta;E<sub>g</sub>). Speed/blur reflects Kinetic Energy (&Delta;E<sub>k</sub>).</p>
+</div>
+
 <!-- Bar Chart Visualization -->
 <div class="bg-white p-4 rounded-lg border shadow-sm">
 <h3 class="text-lg font-bold text-gray-700 mb-4">Energy Changes Bar Chart (ΔE)</h3>
@@ -119,9 +129,119 @@
 </div>
 </div>
 </div>
+    <!-- End Grid -->
+
+
+
+</div>
+
+<!-- Model Assumptions & Limitations Full Width -->
+<div class="bg-yellow-50 border-t border-yellow-300 p-6">
+    <h2 class="text-2xl font-bold text-yellow-800 mb-2">Model Assumptions & Limitations</h2>
+    <p class="text-sm text-yellow-900 mb-4 max-w-4xl">
+        All computational models have limitations. To complete this simulation, review the assumptions made by our simple 3-variable equation and identify which real-world energy transfers are missing.
+    </p>
+
+    <div id="quiz-container" class="bg-white p-4 rounded border border-yellow-200 max-w-4xl shadow-sm">
+        <p class="font-semibold text-gray-800 mb-3 text-lg">Question: Does this computational model account for energy lost to sound or permanent track deformation?</p>
+        <div class="flex gap-4">
+            <button onclick="checkAnswer(false)" class="px-4 py-2 bg-gray-200 hover:bg-red-200 rounded text-gray-800 font-semibold transition">Yes, it is perfectly accurate.</button>
+            <button onclick="checkAnswer(true)" class="px-4 py-2 bg-gray-200 hover:bg-green-200 rounded text-gray-800 font-semibold transition">No, real systems lose energy to unmeasured forms.</button>
+        </div>
+        <p id="quiz-feedback" class="mt-4 text-sm hidden font-bold p-3 rounded"></p>
+    </div>
+</div>
+
+<script>
+    function checkAnswer(isCorrect) {
+        const feedback = document.getElementById('quiz-feedback');
+        feedback.className = 'mt-4 text-sm font-bold p-3 rounded'; // reset classes
+        if (isCorrect) {
+            feedback.innerHTML = "Correct! This simple model only considers Kinetic, Gravitational, and generic 'Thermal' energy. In a real rollercoaster, energy is constantly lost to sound, vibration, and track deformation, making this model an approximation.";
+            feedback.classList.add('text-green-800', 'bg-green-100', 'border', 'border-green-300');
+        } else {
+            feedback.innerHTML = "Incorrect. Think about what happens in the real world when a rollercoaster runs. Is it perfectly silent?";
+            feedback.classList.add('text-red-800', 'bg-red-100', 'border', 'border-red-300');
+        }
+    }
+</script>
+
 </div>
 <script>
     let energyChart;
+
+    const rcCanvas = document.getElementById('rcCanvas');
+    let rcCtx;
+
+    function initRollercoaster() {
+        rcCtx = rcCanvas.getContext('2d');
+        // Handle resize
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+    }
+
+    function resizeCanvas() {
+        rcCanvas.width = rcCanvas.offsetWidth;
+        rcCanvas.height = rcCanvas.offsetHeight;
+        updateRollercoaster();
+    }
+
+    function updateRollercoaster() {
+        if (!rcCtx) return;
+        const ek = parseInt(document.getElementById('ek-slider').value);
+        const eg = parseInt(document.getElementById('eg-slider').value);
+
+        const w = rcCanvas.width;
+        const h = rcCanvas.height;
+        rcCtx.clearRect(0, 0, w, h);
+
+        // Draw track base (grass)
+        rcCtx.fillStyle = '#bbf7d0'; // green-200
+        rcCtx.fillRect(0, h * 0.8, w, h * 0.2);
+
+        // Calculate cart position and appearance
+        // eg from -500 to 500. Map -500 to bottom (h*0.8), 500 to top (h*0.2)
+        // Since it's change in energy, if eg = 0, cart is at h*0.5
+        const cartY = h * 0.5 - (eg / 500) * (h * 0.3);
+        const cartX = w / 2;
+
+        // Draw track curve going through the cart
+        rcCtx.beginPath();
+        rcCtx.moveTo(0, h * 0.5);
+        rcCtx.quadraticCurveTo(w/4, cartY, cartX, cartY);
+        rcCtx.quadraticCurveTo(w*3/4, cartY, w, h * 0.5);
+        rcCtx.strokeStyle = '#555';
+        rcCtx.lineWidth = 4;
+        rcCtx.stroke();
+
+        // Calculate speed blur from ek
+        const speed = Math.abs(ek) / 50; // 0 to 10
+
+        // Draw cart
+        rcCtx.fillStyle = '#dc2626'; // red-600
+        const cartWidth = 40 + speed * 2; // stretch
+        const cartHeight = 24;
+
+        // Draw motion blur trails
+        if (speed > 1) {
+            rcCtx.globalAlpha = 0.3;
+            for (let i = 1; i <= 3; i++) {
+                const offset = (ek >= 0 ? -1 : 1) * i * speed * 3;
+                rcCtx.fillRect(cartX - cartWidth/2 + offset, cartY - cartHeight, cartWidth, cartHeight);
+            }
+        }
+
+        rcCtx.globalAlpha = 1.0;
+        rcCtx.fillRect(cartX - cartWidth/2, cartY - cartHeight, cartWidth, cartHeight);
+
+        // Wheels
+        rcCtx.fillStyle = '#111';
+        rcCtx.beginPath();
+        rcCtx.arc(cartX - cartWidth/2 + 8, cartY, 6, 0, Math.PI * 2);
+        rcCtx.arc(cartX + cartWidth/2 - 8, cartY, 6, 0, Math.PI * 2);
+        rcCtx.fill();
+    }
+
 
     function initChart() {
         const ctx = document.getElementById('energyChart').getContext('2d');
@@ -201,6 +321,7 @@
 
             energyChart.update();
         }
+        updateRollercoaster();
     }
 
     // Expose for testing
@@ -216,6 +337,7 @@
 
     window.onload = () => {
         initChart();
+        initRollercoaster();
         updateValues();
     };
 
