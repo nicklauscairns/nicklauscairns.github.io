@@ -122,9 +122,48 @@
 <p class="text-sm text-gray-700">Returning a spacecraft to Earth is one of the most difficult engineering challenges. As a spacecraft hits the atmosphere at orbital velocities, immense kinetic energy is converted into heat, creating a superheated plasma. Concurrently, the spacecraft experiences massive deceleration (G-forces). If the heat shield fails, the spacecraft burns up. If the deceleration is too severe, the crew or sensitive payload will not survive. How can you design a reentry vehicle by optimizing mass, heat shield size, entry angle, and material to ensure survival within constraints?</p>
 </div>
 </header>
+
+<!-- Assumptions Modal -->
+<div id="assumptions-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Simulation Assumptions &amp; Limitations</h3>
+            <div class="mt-2 text-sm text-gray-500 space-y-2">
+                <p>This computational model uses several physical simplifications:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Uniform Atmosphere:</strong> Atmospheric density changes are generalized rather than modeled layer-by-layer.</li>
+                    <li><strong>Simplified Drag:</strong> Uses a constant drag coefficient rather than one that changes with hypersonic speeds.</li>
+                    <li><strong>Ablation Physics:</strong> Ignores the complex phase changes and mass loss that occur as heat shields burn away.</li>
+                    <li><strong>Ballistic Trajectory:</strong> Assumes a direct descent without lift generation from the capsule shape.</li>
+                </ul>
+                <p class="italic mt-3">I acknowledge these limitations when interpreting the simulation results.</p>
+            </div>
+            <div class="items-center px-4 py-3 mt-4">
+                <button id="close-modal-btn" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    Acknowledge &amp; Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 <!-- Controls Panel -->
-<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 h-full flex flex-col">
+<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 h-full flex flex-col relative">
+
+<!-- Mission Briefing -->
+<div class="mb-5 bg-blue-50 border border-blue-200 p-4 rounded-lg shadow-sm">
+    <div class="flex justify-between items-start mb-2">
+        <h3 class="text-lg font-bold text-blue-900">Mission Briefing</h3>
+        <button id="open-modal-btn" class="text-xs bg-blue-200 hover:bg-blue-300 text-blue-800 py-1 px-2 rounded transition">Model Limitations</button>
+    </div>
+    <p class="text-sm text-gray-700 mb-2">Target Safety Limits for payload survival:</p>
+    <ul class="text-sm text-red-700 font-semibold space-y-1">
+        <li>&bull; Max G-force: &le; 15.0 G</li>
+        <li>&bull; Max Temp: &le; 2000 &deg;C</li>
+    </ul>
+</div>
+
 <h3 class="text-lg font-semibold mb-4 border-b pb-2">Vehicle Parameters</h3>
 <div class="space-y-5 flex-grow">
 <div>
@@ -197,7 +236,19 @@
 </div>
 </div>
 <!-- Data & Graphing -->
-<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col">
+<div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col relative">
+
+<!-- Post-Simulation Prompt Overlay -->
+<div id="evaluation-prompt" class="absolute inset-0 bg-white bg-opacity-95 z-20 flex flex-col items-center justify-center p-6 rounded-lg hidden">
+    <h4 class="text-xl font-bold text-gray-800 mb-2">Trial Complete</h4>
+    <p class="text-sm text-gray-600 mb-4 text-center">Compare your results (<span id="prompt-temp" class="font-bold"></span>&deg;C, <span id="prompt-g" class="font-bold"></span> G) against the Mission Briefing targets (2000&deg;C, 15.0 G).</p>
+    <p class="text-md font-semibold text-gray-800 mb-3">Did this design meet the mission criteria?</p>
+    <div class="flex gap-3 w-full max-w-xs">
+        <button id="eval-met-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow">Met</button>
+        <button id="eval-failed-btn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow">Failed</button>
+    </div>
+</div>
+
 <h3 class="text-lg font-semibold mb-4 border-b pb-2">Trial Data</h3>
 <div class="mb-4 flex-grow-0" style="position: relative; height: 200px; width: 100%">
 <canvas id="resultsChart"></canvas>
@@ -232,7 +283,8 @@
         const CONSTANTS = {
             GRAVITY: 9.81, // m/s^2
             ENTRY_VELOCITY: 7800, // m/s (approx LEO reentry)
-            MAX_SAFE_G: 8.0,
+            MAX_SAFE_G: 15.0, // Updated for mission briefing
+            MAX_MISSION_TEMP: 2000,
             MATERIALS: {
                 'pica': { name: 'PICA-X', maxTemp: 2800, massFactor: 1.0 },
                 'carbon': { name: 'Carbon-Carbon', maxTemp: 3200, massFactor: 1.2 },
@@ -247,7 +299,8 @@
             material: 'pica',
             trials: [],
             currentResult: null,
-            isSimulating: false
+            isSimulating: false,
+            acknowledgedLimitations: false
         };
 
         // --- DOM Elements ---
@@ -269,6 +322,18 @@
             gforceStatus: document.getElementById('gforce-status'),
             gforcePanel: document.getElementById('gforce-panel'),
             missionStatus: document.getElementById('mission-status'),
+
+            // Modal
+            modal: document.getElementById('assumptions-modal'),
+            openModalBtn: document.getElementById('open-modal-btn'),
+            closeModalBtn: document.getElementById('close-modal-btn'),
+
+            // Evaluation Prompt
+            evalPrompt: document.getElementById('evaluation-prompt'),
+            promptTemp: document.getElementById('prompt-temp'),
+            promptG: document.getElementById('prompt-g'),
+            evalMetBtn: document.getElementById('eval-met-btn'),
+            evalFailedBtn: document.getElementById('eval-failed-btn'),
             // Visuals
             capsule: document.getElementById('sim-capsule'),
             shield: document.getElementById('sim-shield'),
@@ -281,6 +346,16 @@
             // Table
             dataTableBody: document.getElementById('data-table-body')
         };
+
+        // --- Modal Event Listeners ---
+        els.openModalBtn.addEventListener('click', () => {
+            els.modal.classList.remove('hidden');
+        });
+
+        els.closeModalBtn.addEventListener('click', () => {
+            els.modal.classList.add('hidden');
+            state.acknowledgedLimitations = true;
+        });
 
         // --- Event Listeners for Input Updates ---
         function updateInputDisplays() {
@@ -382,6 +457,11 @@
 
         // --- Simulation Execution ---
         function runSimulation() {
+            if (!state.acknowledgedLimitations) {
+                alert("Please review and acknowledge the Model Limitations before simulating.");
+                els.modal.classList.remove('hidden');
+                return;
+            }
             if (state.isSimulating) return;
             state.isSimulating = true;
 
@@ -421,22 +501,24 @@
 
                 // Show telemetry
                 els.tempOutput.textContent = result.peakTemp.toFixed(0);
-                els.tempStatus.textContent = `Limit: ${result.maxTempLimit}°C`;
-                els.tempPanel.className = result.tempSuccess ? 'bg-green-50 p-4 rounded-lg border border-green-200 shadow-inner transition-colors' : 'bg-red-100 p-4 rounded-lg border border-red-300 shadow-inner transition-colors animate-pulse';
+                els.tempStatus.textContent = `Mat. Limit: ${result.maxTempLimit}°C | Miss. Limit: ${CONSTANTS.MAX_MISSION_TEMP}°C`;
+                els.tempPanel.className = result.peakTemp <= CONSTANTS.MAX_MISSION_TEMP ? 'bg-green-50 p-4 rounded-lg border border-green-200 shadow-inner transition-colors' : 'bg-red-100 p-4 rounded-lg border border-red-300 shadow-inner transition-colors animate-pulse';
 
                 els.gforceOutput.textContent = result.gForce.toFixed(1);
-                els.gforcePanel.className = result.gForceSuccess ? 'bg-green-50 p-4 rounded-lg border border-green-200 shadow-inner transition-colors' : 'bg-orange-100 p-4 rounded-lg border border-orange-300 shadow-inner transition-colors animate-pulse';
+                els.gforcePanel.className = result.gForce <= CONSTANTS.MAX_SAFE_G ? 'bg-green-50 p-4 rounded-lg border border-green-200 shadow-inner transition-colors' : 'bg-orange-100 p-4 rounded-lg border border-orange-300 shadow-inner transition-colors animate-pulse';
 
                 els.missionStatus.textContent = result.status;
                 els.missionStatus.className = `px-4 py-1 rounded-full text-sm font-bold ${result.statusClass}`;
 
-                // Reset button and enable recording
+                // Show evaluation prompt instead of enabling record data
+                els.promptTemp.textContent = result.peakTemp.toFixed(0);
+                els.promptG.textContent = result.gForce.toFixed(1);
+                els.evalPrompt.classList.remove('hidden');
+
+                // Reset simulate button
                 els.runSimulation.disabled = false;
                 els.runSimulation.className = 'flex-1 bg-gray-400 text-white font-bold py-3 px-4 rounded shadow flex items-center justify-center cursor-not-allowed';
                 els.runSimulation.innerHTML = 'Simulated';
-
-                els.recordData.disabled = false;
-                els.recordData.className = 'flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center cursor-pointer';
 
                 state.isSimulating = false;
 
@@ -451,6 +533,21 @@
         }
 
         els.runSimulation.addEventListener('click', runSimulation);
+
+        // --- Post-Simulation Evaluation ---
+        function handleEvaluation(studentEvaluation) {
+            els.evalPrompt.classList.add('hidden');
+            state.currentResult.studentEvaluation = studentEvaluation;
+
+            els.recordData.disabled = false;
+            els.recordData.className = 'flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow transition duration-150 flex items-center justify-center cursor-pointer';
+
+            // Automatically click record to save a step, or leave it to the user.
+            // Leaving it to user so they see the button turn blue.
+        }
+
+        els.evalMetBtn.addEventListener('click', () => handleEvaluation('Met'));
+        els.evalFailedBtn.addEventListener('click', () => handleEvaluation('Failed'));
 
         // --- Data Logging & Charting ---
         let chartInstance = null;
@@ -516,6 +613,9 @@
             const trialNum = state.trials.length + 1;
             const res = state.currentResult;
 
+            // Evaluate overall success strictly based on mission briefing limits
+            const missionSuccess = res.peakTemp <= CONSTANTS.MAX_MISSION_TEMP && res.gForce <= CONSTANTS.MAX_SAFE_G;
+
             const trialData = {
                 id: trialNum,
                 mass: els.mass.value,
@@ -524,7 +624,8 @@
                 mat: els.material.options[els.material.selectedIndex].text,
                 temp: res.peakTemp,
                 gforce: res.gForce,
-                success: res.tempSuccess && res.gForceSuccess,
+                success: missionSuccess,
+                studentEval: res.studentEvaluation,
                 status: res.status
             };
 
@@ -538,9 +639,9 @@
                 <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.mass}</td>
                 <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.diam}</td>
                 <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">${trialData.ang}°</td>
-                <td class="px-2 py-2 whitespace-nowrap text-sm ${res.tempSuccess ? 'text-gray-500' : 'text-red-500 font-bold'}">${trialData.temp.toFixed(0)}</td>
-                <td class="px-2 py-2 whitespace-nowrap text-sm ${res.gForceSuccess ? 'text-gray-500' : 'text-red-500 font-bold'}">${trialData.gforce.toFixed(1)}</td>
-                <td class="px-2 py-2 whitespace-nowrap text-xs font-bold ${statusColor}">${trialData.success ? 'PASS' : 'FAIL'}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm ${trialData.temp <= CONSTANTS.MAX_MISSION_TEMP ? 'text-gray-500' : 'text-red-500 font-bold'}">${trialData.temp.toFixed(0)}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-sm ${trialData.gforce <= CONSTANTS.MAX_SAFE_G ? 'text-gray-500' : 'text-red-500 font-bold'}">${trialData.gforce.toFixed(1)}</td>
+                <td class="px-2 py-2 whitespace-nowrap text-xs font-bold ${statusColor}">${trialData.success ? 'PASS' : 'FAIL'} <br><span class="text-gray-400 font-normal text-[10px]">(Eval: ${trialData.studentEval})</span></td>
             `;
             els.dataTableBody.appendChild(tr);
             els.dataTableBody.parentElement.parentElement.scrollTop = els.dataTableBody.parentElement.parentElement.scrollHeight;
@@ -580,10 +681,10 @@
             }
 
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Trial,Mass (kg),Diameter (m),Angle (deg),Material,Peak Temp (C),Max G-Force,Result\n";
+            csvContent += "Trial,Mass (kg),Diameter (m),Angle (deg),Material,Peak Temp (C),Max G-Force,Mission Result,Student Eval\n";
 
             state.trials.forEach(t => {
-                const row = `${t.id},${t.mass},${t.diam},${t.ang},${t.mat},${t.temp.toFixed(1)},${t.gforce.toFixed(2)},${t.success ? 'Success' : 'Failure'}`;
+                const row = `${t.id},${t.mass},${t.diam},${t.ang},${t.mat},${t.temp.toFixed(1)},${t.gforce.toFixed(2)},${t.success ? 'Success' : 'Failure'},${t.studentEval}`;
                 csvContent += row + "\n";
             });
 
@@ -599,6 +700,10 @@
         els.recordData.addEventListener('click', recordTrial);
         els.clearData.addEventListener('click', clearData);
         els.exportData.addEventListener('click', exportData);
+
+        // Make sure UI shows correct max limits on init
+        document.getElementById('gforce-status').textContent = `Mission Limit: ${CONSTANTS.MAX_SAFE_G.toFixed(1)} G`;
+        document.getElementById('temp-status').textContent = `Mission Limit: ${CONSTANTS.MAX_MISSION_TEMP}°C`;
 
         // Initialize display
         updateInputDisplays();
