@@ -12,8 +12,48 @@
     <meta content="Nicklaus Cairns" name="author"/>
     <meta content="science, simulation, NGSS, Reaction Rates Simulation, education, interactive" name="keywords"/>
     <meta content="Interactive science simulation for Reaction Rates Simulation. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.tailwindcss.com">
+        // Quiz listeners
+        ['q1', 'q2', 'q3', 'q4'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', () => {
+                    const q1 = document.getElementById('q1').value;
+                    const q2 = document.getElementById('q2').value;
+                    const q3 = document.getElementById('q3').value;
+                    const q4 = document.getElementById('q4').value;
+
+                    if(q1 === 'increases' && q2 === 'collisions' && q3 === 'both_increase' && q4 === 'energy') {
+                        document.getElementById('quizFeedback').classList.remove('hidden');
+                    } else {
+                        document.getElementById('quizFeedback').classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+        // Quiz listeners
+        ['q1', 'q2', 'q3', 'q4'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', () => {
+                    const q1 = document.getElementById('q1').value;
+                    const q2 = document.getElementById('q2').value;
+                    const q3 = document.getElementById('q3').value;
+                    const q4 = document.getElementById('q4').value;
+
+                    if(q1 === 'increases' && q2 === 'collisions' && q3 === 'both_increase' && q4 === 'energy') {
+                        document.getElementById('quizFeedback').classList.remove('hidden');
+                    } else {
+                        document.getElementById('quizFeedback').classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+</script>
 <style>
         body { font-family: 'Inter', sans-serif; }
         .slider-container { margin-bottom: 1rem; }
@@ -44,16 +84,76 @@
     },
     "learningResourceType": "Interactive Simulation"
 }
-    </script>
+
+        // Quiz listeners
+        ['q1', 'q2', 'q3', 'q4'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', () => {
+                    const q1 = document.getElementById('q1').value;
+                    const q2 = document.getElementById('q2').value;
+                    const q3 = document.getElementById('q3').value;
+                    const q4 = document.getElementById('q4').value;
+
+                    if(q1 === 'increases' && q2 === 'collisions' && q3 === 'both_increase' && q4 === 'energy') {
+                        document.getElementById('quizFeedback').classList.remove('hidden');
+                    } else {
+                        document.getElementById('quizFeedback').classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+</script>
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1">
+        // Quiz listeners
+        ['q1', 'q2', 'q3', 'q4'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', () => {
+                    const q1 = document.getElementById('q1').value;
+                    const q2 = document.getElementById('q2').value;
+                    const q3 = document.getElementById('q3').value;
+                    const q4 = document.getElementById('q4').value;
+
+                    if(q1 === 'increases' && q2 === 'collisions' && q3 === 'both_increase' && q4 === 'energy') {
+                        document.getElementById('quizFeedback').classList.remove('hidden');
+                    } else {
+                        document.getElementById('quizFeedback').classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-DKDGNLCXQ1');
+
+        // Quiz listeners
+        ['q1', 'q2', 'q3', 'q4'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', () => {
+                    const q1 = document.getElementById('q1').value;
+                    const q2 = document.getElementById('q2').value;
+                    const q3 = document.getElementById('q3').value;
+                    const q4 = document.getElementById('q4').value;
+
+                    if(q1 === 'increases' && q2 === 'collisions' && q3 === 'both_increase' && q4 === 'energy') {
+                        document.getElementById('quizFeedback').classList.remove('hidden');
+                    } else {
+                        document.getElementById('quizFeedback').classList.add('hidden');
+                    }
+                });
+            }
+        });
+
 </script>
 </head>
 <body class="bg-gray-50 text-slate-800 p-6">
@@ -100,9 +200,17 @@
 <p class="text-xs text-slate-500 mt-1">Increases particle speed and collision energy.</p>
 </div>
 <div class="slider-container mt-4">
-<div class="slider-label">
+<div class="slider-label flex justify-between items-center w-full">
 <label for="activationEnergySlider">Activation Energy Barrier</label>
-<span class="text-slate-600" id="activationEnergyVal">Medium</span>
+<div class="flex items-center space-x-2">
+    <span class="text-xs font-bold text-slate-500">Catalyst:</span>
+    <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="catalystToggle" class="sr-only peer">
+        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+    </label>
+    <span id="catLabel" class="text-xs font-bold text-gray-500 w-6">OFF</span>
+</div>
+<span class="text-slate-600 ml-2" id="activationEnergyVal">Medium</span>
 </div>
 <input class="w-full accent-slate-500" id="activationEnergySlider" max="100" min="1" step="1" type="range" value="50"/>
 <p class="text-xs text-slate-500 mt-1">Minimum energy required for a successful collision.</p>
@@ -168,14 +276,46 @@
 <button class="mt-3 w-full border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded text-sm transition-colors" id="clearDataBtn">Clear Data</button>
 </div>
 <!-- Educational Content -->
-<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-<h4 class="font-bold mb-2 flex items-center">
-<svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                        Constructing Explanations
-                    </h4>
-<p class="mb-2"><strong>Temperature:</strong> Raising temperature increases the average kinetic energy of particles. This means more particles have energy greater than the activation energy, leading to more successful collisions per second.</p>
-<p><strong>Concentration:</strong> Increasing concentration means more particles in the same volume. This increases the overall frequency of collisions, thereby increasing the reaction rate.</p>
-</div>
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900" id="explanationBox">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Constructing Explanations
+                        </h4>
+
+                        <div class="space-y-3">
+                            <label class="block font-bold text-blue-800">1. Based on the data, how does increasing concentration affect the reaction rate?</label>
+                            <select id="q1" class="w-full border border-blue-300 rounded p-1 text-blue-900">
+                                <option value="">-- Select --</option>
+                                <option value="increases">It increases the reaction rate</option>
+                                <option value="decreases">It decreases the reaction rate</option>
+                            </select>
+
+                            <label class="block font-bold text-blue-800">Why? (Based on the particle view)</label>
+                            <select id="q2" class="w-full border border-blue-300 rounded p-1 text-blue-900">
+                                <option value="">-- Select --</option>
+                                <option value="faster">Particles move faster</option>
+                                <option value="collisions">More particles lead to a higher frequency of collisions</option>
+                            </select>
+
+                            <label class="block font-bold text-blue-800 mt-2">2. How does adding a catalyst or increasing temperature affect the reaction?</label>
+                            <select id="q3" class="w-full border border-blue-300 rounded p-1 text-blue-900">
+                                <option value="">-- Select --</option>
+                                <option value="both_increase">They both increase the reaction rate</option>
+                                <option value="opposite">One increases it, the other decreases it</option>
+                            </select>
+
+                            <label class="block font-bold text-blue-800">What is the underlying mechanism?</label>
+                            <select id="q4" class="w-full border border-blue-300 rounded p-1 text-blue-900">
+                                <option value="">-- Select --</option>
+                                <option value="energy">Temperature increases kinetic energy; catalysts lower the activation energy barrier</option>
+                                <option value="number">Both increase the total number of particles in the container</option>
+                            </select>
+
+                            <div id="quizFeedback" class="hidden mt-2 p-2 bg-green-100 text-green-800 font-bold border border-green-300 rounded text-center">
+                                Great job! You have correctly constructed an explanation for reaction rates based on collision theory.
+                            </div>
+                        </div>
+                    </div>
 </div>
 </div>
 </div>
@@ -663,6 +803,26 @@
         downloadLink.click();
         document.body.removeChild(downloadLink);
     }
-    </script>
+
+        // Quiz listeners
+        ['q1', 'q2', 'q3', 'q4'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', () => {
+                    const q1 = document.getElementById('q1').value;
+                    const q2 = document.getElementById('q2').value;
+                    const q3 = document.getElementById('q3').value;
+                    const q4 = document.getElementById('q4').value;
+
+                    if(q1 === 'increases' && q2 === 'collisions' && q3 === 'both_increase' && q4 === 'energy') {
+                        document.getElementById('quizFeedback').classList.remove('hidden');
+                    } else {
+                        document.getElementById('quizFeedback').classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+</script>
 </body>
 </html>
