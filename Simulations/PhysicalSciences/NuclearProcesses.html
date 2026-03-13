@@ -331,10 +331,85 @@
 
             if (currentProcess === 'alpha') {
                 animateAlpha();
+            } else if (currentProcess === 'beta') {
+                animateBeta();
+            } else if (currentProcess === 'gamma') {
+                animateGamma();
             } else if (currentProcess === 'fission') {
                 animateFission();
             } else if (currentProcess === 'fusion') {
                 animateFusion();
+            }
+        }
+
+
+        function animateBeta() {
+            const u238 = document.getElementById('c14');
+            u238.classList.add('vibrate');
+
+            setTimeout(() => {
+                u238.classList.remove('vibrate');
+                u238.remove();
+
+                const th234 = createNucleusDOM({ id: 'n14', type: 'nucleus', protons: 7, neutrons: 7, symbol: 'N', x: -50, y: 0 });
+                const alpha = createNucleusDOM({ id: 'beta_p', type: 'nucleus', protons: 0, neutrons: 1, symbol: 'e⁻', x: 50, y: 0 });
+                alpha.querySelector('.nucleus-circle').style.backgroundColor = '#fde047'; // electron color
+                alpha.querySelector('.nucleus-circle').style.width = '15px';
+                alpha.querySelector('.nucleus-circle').style.height = '15px';
+                alpha.querySelector('.nucleus-circle').style.border = '2px solid #d97706';
+
+                // Repel
+                setTimeout(() => {
+                    th234.style.transform = `translate(-60px, -50%)`;
+                    alpha.style.transform = `translate(150px, -50%)`;
+                }, 50);
+
+                triggerEnergyWave(0, 0);
+                showPostReaction();
+            }, 1000);
+        }
+
+        function animateGamma() {
+            const u238 = document.getElementById('tc99m');
+            u238.classList.add('vibrate');
+
+            setTimeout(() => {
+                u238.classList.remove('vibrate');
+                u238.remove();
+
+                const th234 = createNucleusDOM({ id: 'tc99', type: 'nucleus', protons: 43, neutrons: 56, symbol: 'Tc', x: 0, y: 0 });
+
+                // Photon particle
+                const alpha = document.createElement('div');
+                alpha.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center transition-all duration-[2000ms] ease-out';
+                alpha.style.marginLeft = '0px';
+                alpha.style.marginTop = '0px';
+                alpha.innerHTML = `<svg width="40" height="20" viewBox="0 0 40 20" stroke="#a855f7" stroke-width="3" fill="none"><path d="M0,10 Q5,0 10,10 T20,10 T30,10 T40,10"/></svg><div class="text-xs font-bold mt-1">γ</div>`;
+                canvasArea.appendChild(alpha);
+
+                // Repel
+                setTimeout(() => {
+                    alpha.style.transform = `translate(200px, -50%)`;
+                }, 50);
+
+                triggerEnergyWave(0, 0);
+                showPostReaction();
+            }, 1000);
+        }
+
+
+        function completeReaction(data) {
+            equationDisplay.innerHTML = data.equationPre + data.equationPost;
+
+            const chartContainer = document.getElementById('energyChartContainer');
+            if(chartContainer && data.energyVal) {
+                const minLog = -6;
+                const maxLog = 3;
+                const nucLog = Math.log10(data.energyVal);
+                const mappedWidth = Math.max(5, ((nucLog - minLog) / (maxLog - minLog)) * 100);
+                const bar = document.getElementById('nuclearEnergyBar');
+                bar.style.width = mappedWidth + '%';
+                bar.textContent = data.energyVal + ' MeV';
             }
         }
 
@@ -344,7 +419,53 @@
             energyWave.classList.remove('anim-energy');
             void energyWave.offsetWidth; // trigger reflow
             energyWave.classList.add('anim-energy');
-            equationDisplay.innerHTML = processes[currentProcess].equationPre + processes[currentProcess].equationPost;
+            completeReaction(processes[currentProcess]);
+        }
+
+
+        function animateBeta() {
+            const c14 = objects.find(o => o.id === 'c14');
+            c14.el.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                c14.el.remove();
+                const n14 = { id: 'n14', type: 'nucleus', protons: 7, neutrons: 7, symbol: 'N', x: -20, y: 0 };
+                n14.el = createNucleusDOM(n14);
+
+                const e = { id: 'beta', type: 'nucleus', protons: 0, neutrons: 1, symbol: 'e⁻', x: 50, y: 0 };
+                e.el = createNucleusDOM(e);
+                // Style as electron
+                const ns = e.el.querySelectorAll('.nucleon');
+                ns.forEach(n => { n.style.backgroundColor = '#fde047'; n.style.border = '1px solid #d97706'; n.style.width='10px'; n.style.height='10px'; });
+
+                triggerEnergyWave(0, 0);
+                setTimeout(() => {
+                    n14.el.style.transform = `translate(calc(-50% - 40px), -50%)`;
+                    e.el.style.transform = `translate(calc(-50% + 150px), -50%)`;
+                }, 50);
+                completeReaction(processes['beta']);
+            }, 500);
+        }
+
+        function animateGamma() {
+            const tc = objects.find(o => o.id === 'tc99m');
+            tc.el.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                tc.el.remove();
+                const tc99 = { id: 'tc99', type: 'nucleus', protons: 43, neutrons: 56, symbol: 'Tc', x: -10, y: 0 };
+                tc99.el = createNucleusDOM(tc99);
+
+                const gamma = document.createElement('div');
+                gamma.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-all duration-[2000ms] ease-out';
+                gamma.innerHTML = `<svg width="40" height="20" viewBox="0 0 40 20" stroke="#a855f7" stroke-width="3" fill="none"><path d="M0,10 Q5,0 10,10 T20,10 T30,10 T40,10"/></svg><span class="ml-1 text-purple-400 font-bold text-xs">γ</span>`;
+                simArea.appendChild(gamma);
+
+                triggerEnergyWave(0, 0);
+                setTimeout(() => {
+                    tc99.el.style.transform = `translate(calc(-50% - 20px), -50%)`;
+                    gamma.style.transform = `translate(calc(-50% + 200px), -50%)`;
+                }, 50);
+                completeReaction(processes['gamma']);
+            }, 500);
         }
 
         function animateAlpha() {
