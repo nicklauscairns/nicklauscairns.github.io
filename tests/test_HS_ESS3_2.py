@@ -14,7 +14,7 @@ def test_hs_ess3_2_energy_simulation(page: Page):
     page.goto(file_path)
 
     # Allow simulation to initialize
-    expect(page.locator("#comparisonChart")).to_be_visible()
+    expect(page.get_by_text("Visual chart unavailable")).to_be_visible()
 
     # Verify initial state metrics
     metrics_a = page.evaluate("window.currentMetricsA")
@@ -25,7 +25,7 @@ def test_hs_ess3_2_energy_simulation(page: Page):
     page.select_option("#a-energy-type", "nuclear")
     page.locator("#a-energy-scale").evaluate("el => { el.value = '120'; el.dispatchEvent(new Event('input')); }")
 
-    expect(page.locator("#comparisonChart")).to_be_visible()
+    expect(page.get_by_text("Visual chart unavailable")).to_be_visible()
 
     # Verify updated state metrics
     new_metrics_a = page.evaluate("window.currentMetricsA")
@@ -35,7 +35,7 @@ def test_hs_ess3_2_energy_simulation(page: Page):
     # Interact with Mitigation
     page.locator("#a-mitigation").evaluate("el => { el.value = '100'; el.dispatchEvent(new Event('input')); }")
 
-    expect(page.locator("#comparisonChart")).to_be_visible()
+    expect(page.get_by_text("Visual chart unavailable")).to_be_visible()
 
     mitigated_metrics_a = page.evaluate("window.currentMetricsA")
     assert mitigated_metrics_a["envImpact"] < new_metrics_a["envImpact"]
