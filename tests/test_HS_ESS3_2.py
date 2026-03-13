@@ -1,5 +1,4 @@
 import os
-import pytest
 from playwright.sync_api import Page, expect
 
 def test_hs_ess3_2_energy_simulation(page: Page):
