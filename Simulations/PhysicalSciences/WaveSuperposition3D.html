@@ -57,6 +57,7 @@
         input[type=range] { width: 100%; accent-color: #3b82f6; }
 
         #info-overlay { position: absolute; top: 1rem; right: 1rem; z-index: 10; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid #334155; padding: 1rem; border-radius: 0.5rem; max-width: 300px; color: #cbd5e1; font-size: 0.875rem; }
+        .slice-container { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid #334155; padding: 1rem; border-radius: 0.5rem; position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); z-index: 10; }
     </style>
 </head>
 <body>
@@ -99,6 +100,11 @@
             <li>Enable the reflecting wall and place one source near it to create standing waves (nodes and antinodes).</li>
             <li>Observe how changing the <b>Wave Speed</b> affects the wavelength (since v = f&lambda;).</li>
         </ul>
+    </div>
+
+    <div id="slice-container" class="slice-container" style="display: none;">
+        <h3 class="font-bold text-white mb-2 text-center text-sm">2D Slice (Source 1 to Source 2)</h3>
+        <canvas id="slice-canvas" width="400" height="150"></canvas>
     </div>
 
     <script>
@@ -184,6 +190,27 @@
             return totalZ;
         }
 
+        function calculateWaveHeightWithPrecomputed(x, y, precomputedSources) {
+            let totalZ = 0;
+            for (let s = 0; s < precomputedSources.length; s++) {
+                const src = precomputedSources[s];
+                const dx = x - src.x;
+                const dy = y - src.y;
+                const d = Math.sqrt(dx*dx + dy*dy);
+
+                totalZ += src.amplitude * Math.sin(src.k * d - src.omega_t + src.phase);
+
+                if (SimState.wallEnabled) {
+                    const reflectedX = 2 * SimState.wallPositionX - src.x;
+                    const dxRef = x - reflectedX;
+                    const dRef = Math.sqrt(dxRef*dxRef + dy*dy);
+                    const reflectedPhase = src.phase + Math.PI;
+                    totalZ += src.amplitude * Math.sin(src.k * dRef - src.omega_t + reflectedPhase);
+                }
+            }
+            return totalZ;
+        }
+
         // Expose for testing
         window.calculateWaveHeight = calculateWaveHeight;
 
@@ -222,7 +249,7 @@
 
         // Water Plane
         const planeSize = 20; // -10 to 10
-        const segments = 150; // Resolution
+        const segments = 80; // Reduced resolution for better performance on lower-end devices
         const geometry = new THREE.PlaneGeometry(planeSize, planeSize, segments, segments);
 
         // Ensure geometry is dynamic
@@ -422,6 +449,23 @@
         addSource(4, 0, 1.0, 1.0);
         updateSourceIndicators();
 
+        // --- 2D Slice Setup ---
+        const sliceContainer = document.getElementById('slice-container');
+        const sliceCanvas = document.getElementById('slice-canvas');
+        const sliceCtx = sliceCanvas.getContext('2d');
+        const sliceLineMaterial = new THREE.LineDashedMaterial({
+            color: 0xffffff,
+            dashSize: 0.3,
+            gapSize: 0.2
+        });
+        const sliceLineGeometry = new THREE.BufferGeometry();
+        // Placeholder positions for 2 points (x, y, z)
+        const slicePositions = new Float32Array(2 * 3);
+        sliceLineGeometry.setAttribute('position', new THREE.BufferAttribute(slicePositions, 3));
+        const sliceLine = new THREE.Line(sliceLineGeometry, sliceLineMaterial);
+        sliceLine.computeLineDistances();
+        scene.add(sliceLine);
+
         // --- Animation Loop ---
         const clock = new THREE.Clock();
 
@@ -435,6 +479,25 @@
                 SimState.time += delta;
             }
 
+            const t = SimState.time;
+            const v = SimState.waveSpeed;
+
+            // Precompute source properties to avoid redundant math in the inner loop
+            const precomputedSources = SimState.sources.map(src => {
+                const f = src.frequency;
+                const lambda = v / f;
+                const k = (2 * Math.PI) / lambda;
+                const omega_t = 2 * Math.PI * f * t;
+                return {
+                    x: src.x,
+                    y: src.y,
+                    amplitude: src.amplitude,
+                    phase: src.phase,
+                    k: k,
+                    omega_t: omega_t
+                };
+            });
+
             // Update Water Mesh Vertices
             const positions = geometry.attributes.position.array;
             let vertexIndex = 0;
@@ -444,13 +507,8 @@
                 for (let j = 0; j <= segments; j++) {
                     const x = (j / segments) * planeSize - planeSize / 2;
 
-                    // The Z coordinate is at index vertexIndex + 2
-                    // positions is a flat array [x, y, z, x, y, z, ...]
-                    // In a PlaneGeometry created without rotations, X is x, Y is y, Z is 0 initially.
-                    // PlaneGeometry generates vertices from top to bottom (+y to -y).
-                    const z = calculateWaveHeight(x, y);
-                    positions[vertexIndex + 2] = z;
-
+                    // Calculate wave height for maximum performance using precomputed sources
+                    positions[vertexIndex + 2] = calculateWaveHeightWithPrecomputed(x, y, precomputedSources);
                     vertexIndex += 3;
                 }
             }
@@ -461,9 +519,75 @@
             // Update Indicator heights
             SimState.sources.forEach(src => {
                 if (src.meshRef) {
-                    src.meshRef.position.z = calculateWaveHeight(src.x, src.y) + 0.5;
+                    src.meshRef.position.z = calculateWaveHeightWithPrecomputed(src.x, src.y, precomputedSources) + 0.5;
                 }
             });
+
+            // --- Update 2D Slice ---
+            if (SimState.sources.length >= 2) {
+                sliceContainer.style.display = 'block';
+                sliceLine.visible = true;
+
+                const src1 = SimState.sources[0];
+                const src2 = SimState.sources[1];
+
+                // Update 3D Line
+                const z1 = calculateWaveHeightWithPrecomputed(src1.x, src1.y, precomputedSources) + 0.5;
+                const z2 = calculateWaveHeightWithPrecomputed(src2.x, src2.y, precomputedSources) + 0.5;
+
+                slicePositions[0] = src1.x; slicePositions[1] = src1.y; slicePositions[2] = z1;
+                slicePositions[3] = src2.x; slicePositions[4] = src2.y; slicePositions[5] = z2;
+
+                sliceLineGeometry.attributes.position.needsUpdate = true;
+                sliceLine.computeLineDistances();
+
+                // Draw 2D Graph
+                sliceCtx.clearRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+
+                const numPoints = 100;
+                const cw = sliceCanvas.width;
+                const ch = sliceCanvas.height;
+                const midY = ch / 2;
+                const scaleY = 15; // Vertical scaling for wave amplitude
+
+                sliceCtx.beginPath();
+                sliceCtx.strokeStyle = '#3b82f6'; // Blue-500
+                sliceCtx.lineWidth = 2;
+
+                for (let i = 0; i <= numPoints; i++) {
+                    const t_interp = i / numPoints;
+                    const x_sample = src1.x + (src2.x - src1.x) * t_interp;
+                    const y_sample = src1.y + (src2.y - src1.y) * t_interp;
+
+                    // Compute wave height efficiently for the slice
+                    const totalZ = calculateWaveHeightWithPrecomputed(x_sample, y_sample, precomputedSources);
+
+                    const canvasX = (i / numPoints) * cw;
+                    const canvasY = midY - (totalZ * scaleY);
+
+                    if (i === 0) sliceCtx.moveTo(canvasX, canvasY);
+                    else sliceCtx.lineTo(canvasX, canvasY);
+                }
+
+                sliceCtx.stroke();
+
+                // Draw source markers on 2D canvas
+                sliceCtx.fillStyle = '#fef08a'; // Yellow
+                sliceCtx.beginPath();
+                // We assume source 1 is at t=0 and source 2 is at t=1, which is true for the line segment
+                // We need to calculate height of src1 and src2 for marker placement
+                const z1_2d = calculateWaveHeightWithPrecomputed(src1.x, src1.y, precomputedSources);
+                const z2_2d = calculateWaveHeightWithPrecomputed(src2.x, src2.y, precomputedSources);
+                sliceCtx.arc(0, midY - (z1_2d * scaleY), 5, 0, Math.PI * 2);
+                sliceCtx.fill();
+                sliceCtx.beginPath();
+                sliceCtx.arc(cw, midY - (z2_2d * scaleY), 5, 0, Math.PI * 2);
+                sliceCtx.fill();
+
+            } else {
+                sliceContainer.style.display = 'none';
+                sliceLine.visible = false;
+            }
 
             controls.update();
             renderer.render(scene, camera);
