@@ -71,31 +71,27 @@
 <h3>HS-PS1-2</h3>
 <p>Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.</p>
 <ul>
-<li><p><a href="ChemicalReactionsOutcomes.html">Chemical Reaction Outcomes Predictor</a> - An interactive sandbox to predict outcomes and explore the octet rule by combining atoms with varying valence electrons. [2026-03-12 12:00:00]</p>
+<li><p><a href="ChemicalReactionsOutcomes.html">Chemical Reaction Outcomes Predictor</a> - An interactive sandbox to predict outcomes and construct explanations for simple chemical reactions based on valence electrons, featuring progressive challenges and real-world contexts. [2026-03-13 11:46:28]</p>
 <details>
-  <summary><b>Evaluation: Investigative Phenomenon | 3.0/5 Stars | 2026-03-12 20:13:28</b></summary>
+  <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 11:46:28</b></summary>
   <ul>
     <li>
-      <b>Overview:</b> Functions as a basic drill-and-practice sandbox for valence electrons and the octet rule rather than a compelling phenomenon. It addresses the DCI but lacks Cultural and Personal Relevance (Criterion 1) and does not present a puzzling real-world scenario to solve.
+      <b>Overview:</b> Functions as an investigative sandbox for discovering how valence electrons govern chemical bonding. It presents students with specific atom combinations and real-world contexts, challenging them to figure out the bonding patterns and construct their own explanations for why reactions occur or fail.
     </li>
     <li>
-      <b>Dimensional Evaluation & Evidence Statements:</b> Partially supports the target dimensions. It addresses DCI PS1.B and CCC Patterns by showing how valence electrons dictate bonding patterns. It supports SEP Constructing Explanations weakly as it provides the explanation rather than having students construct it. It covers Observable Features 1.a.ii-iii and 2.a.i-iii. It fails to support 4.a (revising an explanation given new context/evidence).
+      <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS1.B and CCC Patterns by showing how valence electrons dictate bonding ratios. It deeply engages SEP Constructing Explanations by requiring students to write their own rationale based on observations of the simulation, rather than just providing the answer. It fully covers Observable Features 1.a.ii-iii, 2.a.i-iii, and now correctly fulfills 4.a by challenging students to revise their explanations when presented with new, more complex contexts (like moving from NaCl to MgCl2).
     </li>
     <li>
       <b>AI Action Items for Improvement:</b>
       <ul>
-        <li><b>Improve SEP (Constructing Explanations):</b> Hide the pre-written 'Scientific Explanation' box by default. Replace it with a text area where students must type their own explanation of *why* the reaction occurred based on valence electrons. Add a 'Check Explanation' button that uses a simple keyword check (e.g., 'valence', 'octet', 'transfer', 'share') before revealing the correct explanation.</li>
-        <li><b>Fulfill Observable Feature 4.a (Revising Explanations):</b> Add a 'New Context/Challenge' mode. After successfully predicting a simple reaction (like NaCl), present a slightly more complex, related reaction (like MgCl2, requiring adding Mg to the elements list) and ask the user to revise their previous explanation to account for the new ratio.</li>
-        <li><b>Enhance Relevance (Criterion 1):</b> Add a real-world context toggle. For example, instead of just 'Na + Cl -> NaCl', label it 'Forming Table Salt from Toxic Gas and Reactive Metal'.</li>
+        <li><b>Enhance Phenomenon:</b> While the context labels are great, consider adding visual animations of the electron transfer/sharing to make the invisible process more concrete, moving it closer to a 5-star anchoring phenomenon.</li>
       </ul>
     </li>
     <li>
       <b>Implementation Checklist for AI Agent:</b>
       <ul>
-        <li>[ ] Add a user input `&lt;textarea&gt;` for students to construct their own explanations before viewing the provided one.</li>
-        <li>[ ] Implement a 'Check Explanation' keyword validation function.</li>
-        <li>[ ] Add 'Mg' (Magnesium, Group 2, valence 2) to the element selection and include a reaction for `MgCl2` to allow testing of multi-atom balancing.</li>
-        <li>[ ] Update the UI to include a 'Challenge Mode' that prompts users to revise explanations for more complex molecules.</li>
+        <li>[ ] Animate the electron `div` elements moving from the metal atom's shell to the non-metal's shell during ionic bonding.</li>
+        <li>[ ] Draw lines between shared electrons to visualize covalent bonds for molecules like H2O and CH4.</li>
       </ul>
     </li>
   </ul>

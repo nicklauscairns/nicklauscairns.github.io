@@ -25,7 +25,7 @@ def test_chemical_reactions():
         # Verify result
         assert page.locator("#productsArea").is_visible()
         result_text = page.locator("#productsArea").inner_text()
-        assert "Na+ Cl- (Sodium Chloride)" in result_text
+        assert "Na+ Cl-\nSodium Chloride" in result_text
 
         # Clear
         page.click("#clearBtn")

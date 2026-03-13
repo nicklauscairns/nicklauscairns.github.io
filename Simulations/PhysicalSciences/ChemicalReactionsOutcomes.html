@@ -88,6 +88,13 @@
 </div>
 </div>
 <div>
+<h4 class="text-sm font-medium text-slate-500 mb-2 mt-4">Alkaline Earth & Other Metals</h4>
+<div class="flex gap-2">
+<button class="bg-orange-500 hover:bg-orange-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#f97316" data-element="Mg" data-valence="2">Mg</button>
+<button class="bg-yellow-500 hover:bg-yellow-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#eab308" data-element="Al" data-valence="3">Al</button>
+</div>
+</div>
+<div>
 <h4 class="text-sm font-medium text-slate-500 mb-2">Halogens (Group 17)</h4>
 <div class="flex gap-2">
 <button class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-lg font-bold element-btn" data-color="#22c55e" data-element="Cl" data-valence="7">Cl</button>
@@ -122,15 +129,30 @@
 <!-- Products will appear here -->
 </div>
 </div>
-<!-- Explanation Panel -->
-<div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-<h3 class="font-bold text-blue-900 mb-2 flex items-center">
-<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                        Scientific Explanation
-                    </h3>
-<div class="text-blue-800 text-sm leading-relaxed" id="explanationText">
-                        Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.
-                    </div>
+<!-- Student Explanation Panel -->
+<div id="explanationPanel" class="bg-blue-50 border border-blue-200 rounded-lg p-6 hidden">
+    <h3 class="font-bold text-blue-900 mb-2 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Construct an Explanation
+    </h3>
+    <p class="text-blue-800 text-sm mb-3" id="explanationPrompt">
+        Based on your observations of the outermost (valence) electrons, construct an explanation for why this specific reaction occurred. What pattern do you notice?
+    </p>
+    <textarea id="studentExplanation" class="w-full h-24 p-3 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm" placeholder="Type your scientific explanation here..."></textarea>
+
+    <div id="challengeContainer" class="mt-6 pt-4 border-t border-blue-200 hidden">
+        <h4 class="font-bold text-purple-800 mb-2 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Challenge: New Context
+        </h4>
+        <p class="text-purple-700 text-sm mb-3" id="challengeText"></p>
+        <label for="revisedExplanation" class="block text-sm font-medium text-purple-800 mb-1">Revise your explanation:</label>
+        <textarea id="revisedExplanation" class="w-full h-24 p-3 border border-purple-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-sm" placeholder="Does your previous explanation hold true? Revise it to account for this new combination..."></textarea>
+    </div>
+</div>
+
+<div id="initialInstructions" class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center text-gray-500">
+    Add reactants and click "Predict Outcome" to observe how valence electrons dictate chemical reactions.
 </div>
 </div>
 </div>
@@ -147,40 +169,79 @@
         const clearBtn = document.getElementById('clearBtn');
         const reactionArrow = document.getElementById('reactionArrow');
         const productsArea = document.getElementById('productsArea');
-        const explanationText = document.getElementById('explanationText');
+        const explanationPanel = document.getElementById('explanationPanel');
+        const initialInstructions = document.getElementById('initialInstructions');
+        const explanationPrompt = document.getElementById('explanationPrompt');
+        const challengeContainer = document.getElementById('challengeContainer');
+        const challengeText = document.getElementById('challengeText');
+        const studentExplanation = document.getElementById('studentExplanation');
+        const revisedExplanation = document.getElementById('revisedExplanation');
         const elementBtns = document.querySelectorAll('.element-btn');
 
         // Known Reactions Database
         const reactions = [
             {
+                id: 'NaCl',
                 reactants: { Na: 1, Cl: 1 },
-                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">Na<sup>+</sup> Cl<sup>-</sup> (Sodium Chloride)</div>',
-                explanation: "<strong>Synthesis Reaction (Ionic Bond):</strong> Sodium (Na) is an alkali metal in Group 1 with 1 valence electron. Chlorine (Cl) is a halogen in Group 17 with 7 valence electrons. Na transfers its 1 outer electron to Cl. Na becomes a positive ion (Na⁺) with a full outer shell (octet from lower level), and Cl becomes a negative ion (Cl⁻) completing its octet. Opposite charges attract, forming a stable ionic compound (NaCl)."
+                context: "Synthesizing Table Salt from a Reactive Metal and a Toxic Gas",
+                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300 text-center">Na<sup>+</sup> Cl<sup>-</sup> <br><span class="text-sm font-normal text-green-800">Sodium Chloride</span></div>',
+                challenge: "Now try combining Magnesium (Mg) with Chlorine (Cl). Magnesium has 2 valence electrons. Clear the reactants, then find the correct ratio to form a stable compound."
             },
             {
+                id: 'KF',
                 reactants: { K: 1, F: 1 },
-                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">K<sup>+</sup> F<sup>-</sup> (Potassium Fluoride)</div>',
-                explanation: "<strong>Synthesis Reaction (Ionic Bond):</strong> Potassium (K) transfers its 1 valence electron to Fluorine (F), which has 7. Both achieve stable octet configurations, creating K⁺ and F⁻ ions that bond."
+                context: "Forming Potassium Fluoride",
+                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300 text-center">K<sup>+</sup> F<sup>-</sup> <br><span class="text-sm font-normal text-green-800">Potassium Fluoride</span></div>',
+                challenge: "Now try combining Potassium (K) with Oxygen (O). Clear the reactants and find the ratio."
             },
             {
+                id: 'MgCl2',
+                reactants: { Mg: 1, Cl: 2 },
+                context: "Forming Magnesium Chloride (De-icing Salt)",
+                productsHtml: '<div class="text-2xl font-bold bg-orange-100 px-4 py-2 rounded border border-orange-300 text-center">Mg<sup>2+</sup> 2Cl<sup>-</sup> <br><span class="text-sm font-normal text-orange-800">Magnesium Chloride</span></div>',
+                challenge: "You balanced a Group 2 metal with a Group 17 nonmetal. Now try combining Aluminum (Al) with Chlorine (Cl)!"
+            },
+            {
+                id: 'H2O',
                 reactants: { H: 2, O: 1 },
-                productsHtml: '<div class="text-2xl font-bold bg-blue-100 px-4 py-2 rounded border border-blue-300">H<sub>2</sub>O (Water)</div>',
-                explanation: "<strong>Synthesis Reaction (Covalent Bond):</strong> Oxygen (Group 16) has 6 valence electrons and needs 2 more to complete its octet. Hydrogen has 1 valence electron. Two Hydrogen atoms share their electrons with one Oxygen atom, forming two single covalent bonds (H₂O)."
+                context: "Forming Water (Covalent Bonding)",
+                productsHtml: '<div class="text-2xl font-bold bg-blue-100 px-4 py-2 rounded border border-blue-300 text-center">H<sub>2</sub>O <br><span class="text-sm font-normal text-blue-800">Water</span></div>',
+                challenge: "Try replacing Oxygen with Carbon to see how many Hydrogens are needed."
             },
             {
+                id: 'CO2',
                 reactants: { C: 1, O: 2 },
-                productsHtml: '<div class="text-2xl font-bold bg-gray-100 px-4 py-2 rounded border border-gray-300">CO<sub>2</sub> (Carbon Dioxide)</div>',
-                explanation: "<strong>Combustion/Synthesis (Covalent Bond):</strong> Carbon has 4 valence electrons and Oxygen has 6. Carbon shares 2 electrons with each Oxygen atom, forming two double covalent bonds. All atoms achieve a stable octet."
+                context: "Forming Carbon Dioxide (Greenhouse Gas)",
+                productsHtml: '<div class="text-2xl font-bold bg-gray-100 px-4 py-2 rounded border border-gray-300 text-center">CO<sub>2</sub> <br><span class="text-sm font-normal text-gray-800">Carbon Dioxide</span></div>',
+                challenge: ""
             },
             {
+                id: 'CH4',
                 reactants: { C: 1, H: 4 },
-                productsHtml: '<div class="text-2xl font-bold bg-gray-100 px-4 py-2 rounded border border-gray-300">CH<sub>4</sub> (Methane)</div>',
-                explanation: "<strong>Synthesis (Covalent Bond):</strong> Carbon has 4 valence electrons and needs 4 more. Hydrogen has 1. Four Hydrogen atoms each share their electron with Carbon, creating four single covalent bonds (Methane)."
+                context: "Forming Methane (Natural Gas)",
+                productsHtml: '<div class="text-2xl font-bold bg-gray-100 px-4 py-2 rounded border border-gray-300 text-center">CH<sub>4</sub> <br><span class="text-sm font-normal text-gray-800">Methane</span></div>',
+                challenge: "Now try forming Carbon Dioxide by combining Carbon with Oxygen."
             },
             {
+                id: 'Na2O',
                 reactants: { Na: 2, O: 1 },
-                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">Na<sub>2</sub>O (Sodium Oxide)</div>',
-                explanation: "<strong>Synthesis (Ionic Bond):</strong> Oxygen has 6 valence electrons and needs 2 to complete its octet. Since Sodium only has 1 valence electron to give, it requires two Sodium atoms to satisfy one Oxygen atom."
+                context: "Forming Sodium Oxide",
+                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300 text-center">Na<sub>2</sub>O <br><span class="text-sm font-normal text-green-800">Sodium Oxide</span></div>',
+                challenge: ""
+            },
+            {
+                id: 'AlCl3',
+                reactants: { Al: 1, Cl: 3 },
+                context: "Forming Aluminum Chloride",
+                productsHtml: '<div class="text-2xl font-bold bg-yellow-100 px-4 py-2 rounded border border-yellow-300 text-center">Al<sup>3+</sup> 3Cl<sup>-</sup> <br><span class="text-sm font-normal text-yellow-800">Aluminum Chloride</span></div>',
+                challenge: "Excellent! You accounted for Aluminum's 3 valence electrons."
+            },
+            {
+                id: 'Al2O3',
+                reactants: { Al: 2, O: 3 },
+                context: "Forming Aluminum Oxide (Corundum/Ruby)",
+                productsHtml: '<div class="text-2xl font-bold bg-yellow-100 px-4 py-2 rounded border border-yellow-300 text-center">Al<sub>2</sub>O<sub>3</sub> <br><span class="text-sm font-normal text-yellow-800">Aluminum Oxide</span></div>',
+                challenge: "Wow, you found the complex ratio for Aluminum Oxide!"
             }
         ];
 
@@ -255,11 +316,13 @@
             }
         }
 
+        let activeReactionId = null;
+
         function resetReaction() {
             reactionArrow.classList.add('hidden');
             productsArea.classList.add('hidden');
             productsArea.innerHTML = '';
-            explanationText.innerHTML = 'Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.';
+            // We DO NOT hide explanationPanel here. We let the user see their previous challenge text while they build the next molecule.
         }
 
         function predictOutcome() {
@@ -299,16 +362,36 @@
             // Show UI elements
             reactionArrow.classList.remove('hidden');
             productsArea.classList.remove('hidden');
+            initialInstructions.classList.add('hidden');
+            explanationPanel.classList.remove('hidden');
 
             if (match) {
-                productsArea.innerHTML = match.productsHtml;
-                explanationText.innerHTML = match.explanation;
+                activeReactionId = match.id;
+
+                productsArea.innerHTML = `
+                    <div class="w-full text-center text-sm font-bold text-slate-500 mb-2">${match.context}</div>
+                    ${match.productsHtml}
+                `;
+
+                // If it's a new reaction and not a challenge of the previous, update prompts
+                explanationPrompt.innerHTML = `Based on your observations of the outermost (valence) electrons of these atoms, construct an explanation for why they bonded in this specific ratio. What pattern do you notice?`;
+
+                if (match.challenge) {
+                    challengeContainer.classList.remove('hidden');
+                    challengeText.innerHTML = match.challenge;
+                } else {
+                    challengeContainer.classList.add('hidden');
+                }
+
             } else {
+                activeReactionId = null;
                 // Determine total valence to see if an octet is even possible (simplified heuristic)
                 const totalValence = state.reactants.reduce((sum, r) => sum + parseInt(r.valence), 0);
 
-                productsArea.innerHTML = '<div class="text-xl text-red-600 font-semibold bg-red-50 p-3 rounded">No Reaction / Unstable Combination</div>';
-                explanationText.innerHTML = `<strong>Outcome:</strong> Based on the outermost electron states, this combination of atoms does not easily form a stable, simple compound that satisfies the octet rule (or duet for Hydrogen) for all atoms involved. Try combining metals (Groups 1/2) with non-metals (Groups 16/17), or combining specific non-metals (like C, H, O) in the right ratios. (Total valence electrons provided: ${totalValence})`;
+                productsArea.innerHTML = '<div class="text-xl text-red-600 font-semibold bg-red-50 p-3 rounded text-center w-full">No Reaction / Unstable Combination</div>';
+
+                explanationPrompt.innerHTML = `Based on the outermost electron states, this combination of atoms does not easily form a stable, simple compound that satisfies the octet rule (or duet for Hydrogen) for all atoms involved.<br><br><strong>Why do you think this combination failed to react or form a stable compound?</strong> (Total valence electrons provided: ${totalValence})`;
+                challengeContainer.classList.add('hidden');
             }
         }
 
