@@ -29,20 +29,20 @@
     }
     </script>
 
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .slider-custom { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #475569; outline: none; }
-        .slider-custom::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #38bdf8; cursor: pointer; transition: background .15s ease-in-out; }
+        .slider-custom { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+        .slider-custom::-webkit-slider-runnable-track { width: 100%; height: 6px; border-radius: 3px; background: #475569; }
+        .slider-custom::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #38bdf8; margin-top: -6px; }
         .slider-custom::-webkit-slider-thumb:hover { background: #7dd3fc; }
         .slider-custom:disabled::-webkit-slider-thumb { background: #64748b; cursor: not-allowed; }
-        #earthCanvas { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #1e40af, #082f49); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2), inset -20px -20px 40px rgba(0,0,0,0.8); }
-        .aerosol-overlay { position: absolute; border-radius: 50%; pointer-events: none; mix-blend-mode: screen; }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
-<body class="min-h-screen flex flex-col items-center p-4">
+<body class="min-h-screen flex flex-col items-center p-4 bg-slate-900 text-slate-50 overflow-x-hidden">
 
     <header class="text-center mb-6 w-full max-w-6xl">
         <h1 class="text-3xl md:text-4xl font-bold text-sky-300 mb-2">Tambora 1816: Year Without a Summer</h1>
@@ -52,7 +52,7 @@
     <main class="w-full max-w-6xl flex flex-col lg:flex-row gap-6">
 
         <!-- Controls Panel -->
-        <section class="glass-panel p-6 flex-1 lg:max-w-md flex flex-col gap-6">
+        <section class="bg-slate-800/70 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-6 flex-1 lg:max-w-md flex flex-col gap-6">
             <div>
                 <h2 class="text-xl font-semibold text-white mb-4 border-b border-slate-600 pb-2">Eruption Parameters</h2>
                 <p class="text-sm text-slate-400 mb-4">Set the conditions for the volcanic eruption to observe its effect on Earth's energy budget over a 5-year period.</p>
@@ -98,12 +98,12 @@
         <section class="flex-[2] flex flex-col gap-6">
 
             <!-- Earth View & Live Stats -->
-            <div class="glass-panel p-6 flex flex-col md:flex-row gap-6 items-center justify-center">
+            <div class="bg-slate-800/70 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-6 items-center justify-center">
 
                 <!-- Earth Canvas Wrapper -->
                 <div class="relative w-64 h-64 md:w-80 md:h-80 shrink-0">
-                    <canvas id="earthCanvas" width="320" height="320" class="w-full h-full"></canvas>
-                    <div id="aerosolOverlay" class="aerosol-overlay inset-0 w-full h-full" style="background: radial-gradient(circle, rgba(200,200,200,0) 0%, rgba(200,200,200,0) 100%);"></div>
+                    <canvas id="earthCanvas" width="320" height="320" class="w-full h-full rounded-full bg-[radial-gradient(circle_at_30%_30%,#1e40af,#082f49)] shadow-[0_0_20px_rgba(56,189,248,0.2),inset_-20px_-20px_40px_rgba(0,0,0,0.8)]"></canvas>
+                    <div id="aerosolOverlay" class="absolute inset-0 w-full h-full rounded-full pointer-events-none mix-blend-screen" style="background: radial-gradient(circle, rgba(200,200,200,0) 0%, rgba(200,200,200,0) 100%);"></div>
 
                     <!-- Sun / Energy indicators -->
                     <div class="absolute -right-16 top-1/2 -translate-y-1/2 text-yellow-300 flex flex-col items-center">
@@ -141,7 +141,7 @@
             </div>
 
             <!-- Charts -->
-            <div class="glass-panel p-4 h-64 relative">
+            <div class="bg-slate-800/70 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-4 h-64 relative">
                 <canvas id="climateChart"></canvas>
             </div>
 

@@ -29,35 +29,21 @@
     }
     </script>
 
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
-        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        canvas { background-color: #020617; border-radius: 0.5rem; border: 1px solid #334155; }
-
-        .control-range { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #475569; outline: none; }
-        .control-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fb923c; cursor: pointer; }
+        .control-range { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+        .control-range::-webkit-slider-runnable-track { width: 100%; height: 6px; border-radius: 3px; background: #475569; }
+        .control-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fb923c; margin-top: -6px; }
         .control-range::-webkit-slider-thumb:hover { background: #fdba74; }
         .control-range:disabled::-webkit-slider-thumb { background: #64748b; cursor: not-allowed; }
-
-        /* Explosion animation */
-        @keyframes explode {
-            0% { transform: scale(0.1); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-        .explosion {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: radial-gradient(circle, #fbbf24 0%, #ef4444 50%, rgba(255,0,0,0) 100%);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: explode 0.8s ease-out forwards;
-            display: none;
-        }
+        @keyframes explode { 0% { transform: scale(0.1) translate(-50%, -50%); opacity: 1; } 100% { transform: scale(3) translate(-50%, -50%); opacity: 0; } }
+        .explosion { animation: explode 0.8s ease-out forwards; }
     </style>
+
+
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-4">
+<body class="h-screen flex flex-col items-center justify-center p-4 bg-[radial-gradient(white,rgba(255,255,255,.2)_2px,transparent_2px),radial-gradient(white,rgba(255,255,255,.15)_1px,transparent_1px),radial-gradient(white,rgba(255,255,255,.1)_2px,transparent_2px)] bg-[size:550px_550px,350px_350px,250px_250px] bg-[position:0_0,40px_60px,130px_270px]">
 
     <header class="text-center mb-4 w-full z-10">
         <h1 class="text-3xl md:text-4xl font-bold text-orange-400 mb-1 drop-shadow-md">Planetary Defense: Asteroid Deflection</h1>
@@ -68,7 +54,7 @@
 
         <!-- Simulation Canvas -->
         <section class="flex-[3] relative flex items-center justify-center">
-            <canvas id="orbitCanvas" width="800" height="600" class="w-full h-full object-contain"></canvas>
+            <canvas id="orbitCanvas" width="800" height="600" class="w-full h-full object-contain bg-slate-950 rounded-lg border border-slate-700"></canvas>
 
             <!-- Dynamic UI Overlay -->
             <div id="statusOverlay" class="absolute top-4 left-4 bg-slate-900/80 border border-slate-700 p-3 rounded font-mono text-sm shadow-lg pointer-events-none transition-colors duration-300">
@@ -88,11 +74,11 @@
             </div>
 
             <!-- Explosion Div -->
-            <div id="explosionEffect" class="explosion transform -translate-x-1/2 -translate-y-1/2"></div>
+            <div id="explosionEffect" class="absolute w-[50px] h-[50px] bg-[radial-gradient(circle,#fbbf24_0%,#ef4444_50%,rgba(255,0,0,0)_100%)] rounded-full pointer-events-none hidden explosion"></div>
         </section>
 
         <!-- Control Panel -->
-        <section class="glass-panel p-6 flex-1 lg:max-w-sm flex flex-col gap-5 overflow-y-auto">
+        <section class="bg-slate-800/85 backdrop-blur-md border border-white/10 rounded-xl shadow-lg p-6 flex-1 lg:max-w-sm flex flex-col gap-5 overflow-y-auto">
 
             <div>
                 <h2 class="text-xl font-semibold text-white mb-2 border-b border-slate-600 pb-2">Mission Control</h2>
@@ -145,16 +131,7 @@
     </main>
 
     <!-- Background Stars (CSS only for body) -->
-    <style>
-        body {
-            background-image:
-                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 2px),
-                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 1px),
-                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 2px);
-            background-size: 550px 550px, 350px 350px, 250px 250px;
-            background-position: 0 0, 40px 60px, 130px 270px;
-        }
-    </style>
+
 
     <script>
         // Constants
@@ -250,6 +227,7 @@
         function updateAccel() {
             const r2 = asteroid.x*asteroid.x + asteroid.y*asteroid.y;
             const r = Math.sqrt(r2);
+            if (r < 0.01) return; // Prevent singularity
             const aMag = -(G * M_SUN) / r2;
             asteroid.ax = aMag * (asteroid.x / r);
             asteroid.ay = aMag * (asteroid.y / r);
@@ -300,13 +278,13 @@
             }
 
             // Check success (missed closely and moving away, or safely far)
-            if (timeYears > 2.0 && !collisionOccurred) {
+            const dotProduct = dx * asteroid.vx + dy * asteroid.vy;
+            // If distance is large enough or moving away
+            if (timeYears > 1.2 && !collisionOccurred && dotProduct > 0 && distToEarth > EARTH_RADIUS_AU * 2) {
                 // Determine minimum distance passed
                 els.trajStatus.textContent = "EARTH SAVED!";
                 els.trajStatus.className = "text-green-400 font-bold";
                 els.statusOverlay.style.borderColor = "#10b981"; // green
-
-                // Allow it to keep running, but we marked success
             }
         }
 
