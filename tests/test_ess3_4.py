@@ -1,7 +1,6 @@
 import pytest
 from playwright.sync_api import Page
 import os
-import time
 
 def test_hs_ess3_4_simulation(page: Page):
     # Construct the path to the HTML file
@@ -64,11 +63,8 @@ def test_hs_ess3_4_simulation(page: Page):
     assert run_btn.is_enabled()
     page.evaluate("runSimulation()")
 
-    # Wait for the 10 year loop to finish (10 * 200ms = 2s)
-    page.wait_for_timeout(2500)
-
-    # Assert run button text changed
-    assert "Simulation Complete" in run_btn.inner_text()
+    # Wait for the simulation to complete by checking for the button text change
+    page.wait_for_selector('#run-btn:has-text("Simulation Complete")', timeout=3000)
 
     # Assert that metrics changed from their starting state (poll=100%, biod=40)
     # With filtration and wetlands, pollution should drop from 100%

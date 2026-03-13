@@ -69,7 +69,7 @@
             <div class="mb-4">
                 <div class="flex justify-between items-end mb-1">
                     <label for="wetlands" class="font-medium text-sm">Constructed Wetlands</label>
-                    <span id="wetlands-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                    <span id="wetlands-val" class="text-sm font-semibold text-blue-600" aria-live="polite">Level 0</span>
                 </div>
                 <input type="range" id="wetlands" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
                 <div class="flex justify-between text-xs text-gray-500 mt-1">
@@ -81,7 +81,7 @@
             <div class="mb-4">
                 <div class="flex justify-between items-end mb-1">
                     <label for="filtration" class="font-medium text-sm">Advanced Wastewater Filtration</label>
-                    <span id="filtration-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                    <span id="filtration-val" class="text-sm font-semibold text-blue-600" aria-live="polite">Level 0</span>
                 </div>
                 <input type="range" id="filtration" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
                 <div class="flex justify-between text-xs text-gray-500 mt-1">
@@ -93,7 +93,7 @@
             <div class="mb-4">
                 <div class="flex justify-between items-end mb-1">
                     <label for="green-infra" class="font-medium text-sm">Urban Green Infrastructure</label>
-                    <span id="green-infra-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                    <span id="green-infra-val" class="text-sm font-semibold text-blue-600" aria-live="polite">Level 0</span>
                 </div>
                 <input type="range" id="green-infra" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
                 <div class="flex justify-between text-xs text-gray-500 mt-1">
@@ -105,7 +105,7 @@
             <div class="mb-4">
                 <div class="flex justify-between items-end mb-1">
                     <label for="ag-buffers" class="font-medium text-sm">Agricultural Riparian Buffers</label>
-                    <span id="ag-buffers-val" class="text-sm font-semibold text-blue-600">Level 0</span>
+                    <span id="ag-buffers-val" class="text-sm font-semibold text-blue-600" aria-live="polite">Level 0</span>
                 </div>
                 <input type="range" id="ag-buffers" class="w-full slider-thumb h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="3" value="0">
                 <div class="flex justify-between text-xs text-gray-500 mt-1">
@@ -193,6 +193,25 @@
     </footer>
 
     <script>
+(function() {
+        const SIM_CONSTANTS = {
+            NATURAL_POLLUTION_INCREASE: 2.0,
+            POLLUTION_REDUCTION_FILTRATION_FACTOR: 5.0,
+            POLLUTION_REDUCTION_WETLANDS_FACTOR: 3.5,
+            POLLUTION_REDUCTION_GREEN_INFRA_FACTOR: 1.5,
+            POLLUTION_REDUCTION_AG_BUFFERS_FACTOR: 4.0,
+            BIODIV_INCREASE_WETLANDS_FACTOR: 4.0,
+            BIODIV_INCREASE_GREEN_INFRA_FACTOR: 1.0,
+            BIODIV_INCREASE_AG_BUFFERS_FACTOR: 2.0,
+            BIODIV_PENALTY_HIGH_POLLUTION: 2.0,
+            POLLUTION_THRESHOLD_HIGH: 80,
+            POLLUTION_BASE_LINE: 50,
+            POLLUTION_FLOOR: 10,
+            POLLUTION_CEILING: 150,
+            BIODIV_FLOOR: 0,
+            BIODIV_CEILING: 100
+        };
+
         // Simulation State
         const state = {
             budgetTotal: 10.0,
@@ -311,12 +330,9 @@
 
         // Calculate current cost
         function calculateCost() {
-            let total = 0;
-            total += state.refinements.wetlands * state.costs.wetlands;
-            total += state.refinements.filtration * state.costs.filtration;
-            total += state.refinements.greenInfra * state.costs.greenInfra;
-            total += state.refinements.agBuffers * state.costs.agBuffers;
-            return total;
+            return Object.keys(state.refinements).reduce((total, key) => {
+                return total + (state.refinements[key] * state.costs[key]);
+            }, 0);
         }
 
         // Update UI based on sliders
@@ -430,6 +446,9 @@
         window.updateSimulation = function() {
             updateUI();
         };
+        window.runSimulation = function() {
+            runSimulation();
+        };
 
         // Run Simulation Loop
         function runSimulation() {
@@ -451,14 +470,19 @@
             const a = state.refinements.agBuffers;
 
             // Pollution reduction formula
-            // Base pollution wants to increase by 2% per year without intervention
-            const naturalIncrease = 2.0;
+            const naturalIncrease = SIM_CONSTANTS.NATURAL_POLLUTION_INCREASE;
 
             // Reduction modifiers
-            const pReduction = (f * 5.0) + (w * 3.5) + (g * 1.5) + (a * 4.0);
+            const pReduction = (f * SIM_CONSTANTS.POLLUTION_REDUCTION_FILTRATION_FACTOR) +
+                               (w * SIM_CONSTANTS.POLLUTION_REDUCTION_WETLANDS_FACTOR) +
+                               (g * SIM_CONSTANTS.POLLUTION_REDUCTION_GREEN_INFRA_FACTOR) +
+                               (a * SIM_CONSTANTS.POLLUTION_REDUCTION_AG_BUFFERS_FACTOR);
 
             // Biodiversity modifier
-            const bIncrease = (w * 4.0) + (g * 1.0) + (a * 2.0) - (state.data.pollution[0] > 80 ? 2.0 : 0);
+            const bIncrease = (w * SIM_CONSTANTS.BIODIV_INCREASE_WETLANDS_FACTOR) +
+                              (g * SIM_CONSTANTS.BIODIV_INCREASE_GREEN_INFRA_FACTOR) +
+                              (a * SIM_CONSTANTS.BIODIV_INCREASE_AG_BUFFERS_FACTOR) -
+                              (state.data.pollution[0] > SIM_CONSTANTS.POLLUTION_THRESHOLD_HIGH ? SIM_CONSTANTS.BIODIV_PENALTY_HIGH_POLLUTION : 0);
 
             const interval = setInterval(() => {
                 currentYear++;
@@ -468,14 +492,14 @@
 
                 // Calculate new values
                 let newPol = lastPol + naturalIncrease - pReduction;
-                if (newPol < 10) newPol = 10; // Floor
-                if (newPol > 150) newPol = 150; // Ceiling
+                if (newPol < SIM_CONSTANTS.POLLUTION_FLOOR) newPol = SIM_CONSTANTS.POLLUTION_FLOOR; // Floor
+                if (newPol > SIM_CONSTANTS.POLLUTION_CEILING) newPol = SIM_CONSTANTS.POLLUTION_CEILING; // Ceiling
 
                 // Biodiversity tied to pollution and habitat creation
-                let bioImpactFromPol = (newPol - 50) * -0.2; // High pollution hurts, low pollution helps
+                let bioImpactFromPol = (newPol - SIM_CONSTANTS.POLLUTION_BASE_LINE) * -0.2; // High pollution hurts, low pollution helps
                 let newBio = lastBio + bIncrease + bioImpactFromPol;
-                if (newBio < 0) newBio = 0;
-                if (newBio > 100) newBio = 100;
+                if (newBio < SIM_CONSTANTS.BIODIV_FLOOR) newBio = SIM_CONSTANTS.BIODIV_FLOOR;
+                if (newBio > SIM_CONSTANTS.BIODIV_CEILING) newBio = SIM_CONSTANTS.BIODIV_CEILING;
 
                 // Add noise
                 newPol += (Math.random() * 4 - 2);
@@ -524,6 +548,7 @@
         initData();
         updateUI();
 
-    </script>
+    })();
+</script>
 </body>
 </html>
