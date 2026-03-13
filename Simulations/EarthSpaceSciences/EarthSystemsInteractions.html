@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth Systems Interactions Simulator</title>
+    <meta name="description" content="An interactive simulation for HS-ESS3-6 exploring how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time.">
+    <meta name="keywords" content="NGSS, HS-ESS3-6, Earth Systems, Climate Change, Carbon Cycle, Ocean Acidification, Simulation">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Earth Systems Interactions Simulator">
+    <meta property="og:description" content="Explore how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Earth Systems Interactions Simulator",
+      "description": "An interactive simulation for HS-ESS3-6 exploring how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "Next Generation Science Standards",
+        "targetName": "HS-ESS3-6"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            border-radius: 12px;
+        }
+        canvas {
+            user-select: none;
+        }
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #4A90E2;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-8">
+
+    <header class="mb-6 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Earth Systems Interactions Simulator</h1>
+        <p class="text-gray-600 max-w-2xl mx-auto">Investigate how human activities modify the relationships between Earth's Atmosphere, Hydrosphere, and Biosphere over time. (NGSS HS-ESS3-6)</p>
+    </header>
+
+    <main class="flex-grow flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto w-full">
+
+        <!-- Control Panel -->
+        <section class="glass-panel p-6 lg:w-1/3 flex flex-col gap-6 h-fit">
+            <div>
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Human Activities (Inputs)</h2>
+
+                <div class="mb-5">
+                    <label for="fossilEmissions" class="block text-sm font-medium text-gray-700 mb-1">
+                        Fossil Fuel Emissions: <span id="fossilVal" class="font-bold text-red-600">10</span> GtC/yr
+                    </label>
+                    <input type="range" id="fossilEmissions" min="0" max="30" step="0.5" value="10">
+                    <p class="text-xs text-gray-500 mt-1">Gigatonnes of Carbon per year added to the atmosphere.</p>
+                </div>
+
+                <div class="mb-5">
+                    <label for="deforestationRate" class="block text-sm font-medium text-gray-700 mb-1">
+                        Deforestation Rate: <span id="deforestVal" class="font-bold text-orange-600">1.5</span> GtC/yr
+                    </label>
+                    <input type="range" id="deforestationRate" min="0" max="5" step="0.1" value="1.5">
+                    <p class="text-xs text-gray-500 mt-1">Carbon released via land-use change & reduced biomass sink.</p>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Simulation Controls</h2>
+                <div class="flex gap-3">
+                    <button id="btnRun" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors">
+                        Run Simulation (100 Years)
+                    </button>
+                    <button id="btnReset" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors">
+                        Reset
+                    </button>
+                </div>
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg text-sm text-blue-800">
+                    <strong>Investigative Task:</strong>
+                    <ul class="list-disc ml-4 mt-2 space-y-1">
+                        <li>Observe the baseline relationships (Year 0) between the systems.</li>
+                        <li>Adjust human inputs and run the simulation.</li>
+                        <li>How does increasing atmospheric CO₂ affect Ocean pH (Hydrosphere) and Land Biomass (Biosphere)?</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visualization Panel -->
+        <section class="lg:w-2/3 flex flex-col gap-6">
+
+            <!-- System States Dashboard -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-panel p-4 text-center border-t-4 border-blue-400">
+                    <h3 class="text-lg font-semibold text-gray-700">Atmosphere (CO₂)</h3>
+                    <div class="text-3xl font-bold text-blue-600 my-2" id="displayCO2">415 ppm</div>
+                    <div class="text-sm text-gray-500">Current Concentration</div>
+                </div>
+                <div class="glass-panel p-4 text-center border-t-4 border-teal-400">
+                    <h3 class="text-lg font-semibold text-gray-700">Hydrosphere (Ocean pH)</h3>
+                    <div class="text-3xl font-bold text-teal-600 my-2" id="displayPH">8.10</div>
+                    <div class="text-sm text-gray-500">Surface Acidity</div>
+                </div>
+                <div class="glass-panel p-4 text-center border-t-4 border-green-400">
+                    <h3 class="text-lg font-semibold text-gray-700">Biosphere (Biomass)</h3>
+                    <div class="text-3xl font-bold text-green-600 my-2" id="displayBiomass">100 %</div>
+                    <div class="text-sm text-gray-500">Relative Land Biomass</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="glass-panel p-4 flex-grow relative min-h-[400px]">
+                <canvas id="systemsChart"></canvas>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // DOM Elements (Cached outside loops)
+        const elFossil = document.getElementById('fossilEmissions');
+        const elFossilVal = document.getElementById('fossilVal');
+        const elDeforest = document.getElementById('deforestationRate');
+        const elDeforestVal = document.getElementById('deforestVal');
+
+        const elDisplayCO2 = document.getElementById('displayCO2');
+        const elDisplayPH = document.getElementById('displayPH');
+        const elDisplayBiomass = document.getElementById('displayBiomass');
+
+        const btnRun = document.getElementById('btnRun');
+        const btnReset = document.getElementById('btnReset');
+
+        // Simulation State (Exposed for Playwright testing)
+        window.simulationState = {
+            year: 0,
+            co2_ppm: 415.0, // Initial roughly modern value
+            ocean_pH: 8.10,
+            biomass_pct: 100.0,
+            history: {
+                years: [0],
+                co2: [415.0],
+                ph: [8.10],
+                biomass: [100.0]
+            },
+            isRunning: false
+        };
+
+        // Constants & Parameters for the simplified mathematical model
+        const ppm_per_GtC = 0.47; // Conversion factor: 1 GtC = ~0.47 ppm CO2
+        const ocean_base_absorption = 2.5; // GtC/yr natural absorption baseline
+        const land_base_absorption = 3.0;  // GtC/yr natural absorption baseline
+
+        // Chart.js Instance
+        let systemsChart;
+
+        function initChart() {
+            if (typeof Chart === 'undefined') return;
+            const ctx = document.getElementById('systemsChart').getContext('2d');
+
+            systemsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: window.simulationState.history.years,
+                    datasets: [
+                        {
+                            label: 'Atmospheric CO₂ (ppm)',
+                            data: window.simulationState.history.co2,
+                            borderColor: '#3B82F6', // blue-500
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            yAxisID: 'y-co2',
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Ocean pH',
+                            data: window.simulationState.history.ph,
+                            borderColor: '#14B8A6', // teal-500
+                            backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                            yAxisID: 'y-ph',
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Relative Land Biomass (%)',
+                            data: window.simulationState.history.biomass,
+                            borderColor: '#22C55E', // green-500
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            yAxisID: 'y-biomass',
+                            tension: 0.1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Earth Systems Relationships over Time',
+                            font: { size: 16 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Simulation Year' }
+                        },
+                        'y-co2': {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'CO₂ (ppm)' },
+                            min: 280,
+                            suggestedMax: 1000
+                        },
+                        'y-ph': {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Ocean pH' },
+                            min: 7.5,
+                            max: 8.3,
+                            grid: { drawOnChartArea: false } // only draw grid lines for one axis
+                        },
+                        'y-biomass': {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Biomass (%)' },
+                            min: 50,
+                            max: 150,
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateUIValues() {
+            elFossilVal.innerText = elFossil.value;
+            elDeforestVal.innerText = elDeforest.value;
+
+            elDisplayCO2.innerText = window.simulationState.co2_ppm.toFixed(0) + ' ppm';
+            elDisplayPH.innerText = window.simulationState.ocean_pH.toFixed(2);
+            elDisplayBiomass.innerText = window.simulationState.biomass_pct.toFixed(1) + ' %';
+        }
+
+        // Event Listeners for Sliders (Update labels immediately)
+        elFossil.addEventListener('input', () => {
+            elFossilVal.innerText = elFossil.value;
+            // Dispatch event for Playwright
+            elFossil.dispatchEvent(new Event('change'));
+        });
+
+        elDeforest.addEventListener('input', () => {
+            elDeforestVal.innerText = elDeforest.value;
+            // Dispatch event for Playwright
+            elDeforest.dispatchEvent(new Event('change'));
+        });
+
+        // The Core Mathematical Model (Exposed)
+        window.stepSimulation = function() {
+            const inputs = {
+                fossil_emissions: parseFloat(elFossil.value),
+                deforestation: parseFloat(elDeforest.value)
+            };
+
+            const state = window.simulationState;
+
+            // 1. Calculate Atmospheric Changes
+            // Total Carbon added = Fossil + Deforestation
+            const total_carbon_added = inputs.fossil_emissions + inputs.deforestation;
+
+            // Ocean uptake is roughly proportional to excess atmospheric CO2 above pre-industrial (280ppm)
+            // Simplified: ocean absorbs more as CO2 rises, but ocean acidification reduces capacity slightly (buffer factor).
+            // We'll use a simple linear proportionality for this grade level model.
+            let excess_co2 = state.co2_ppm - 280;
+            if (excess_co2 < 0) excess_co2 = 0;
+
+            let ocean_uptake = ocean_base_absorption + (excess_co2 * 0.015);
+            // Cap uptake
+            if (ocean_uptake > 6.0) ocean_uptake = 6.0;
+
+            // Land uptake (Biosphere): CO2 fertilization effect increases uptake, but deforestation reduces total capacity
+            // Biomass percentage acts as a modifier on total land area available for uptake.
+            let co2_fertilization = excess_co2 * 0.01;
+            let land_uptake = (land_base_absorption + co2_fertilization) * (state.biomass_pct / 100);
+
+            // Net carbon to atmosphere
+            const net_carbon_atmosphere = total_carbon_added - ocean_uptake - land_uptake;
+
+            // Update Atmosphere (CO2 ppm)
+            state.co2_ppm += (net_carbon_atmosphere * ppm_per_GtC);
+            if (state.co2_ppm < 200) state.co2_ppm = 200; // Floor
+
+            // 2. Calculate Hydrosphere Changes (Ocean Acidification)
+            // Increased CO2 leads to lower pH (more acidic).
+            // Simplified relationship: pH drops roughly 0.1 for every 100ppm increase above 280.
+            // Baseline pH ~8.2 at 280ppm.
+            const target_pH = 8.2 - ((state.co2_ppm - 280) / 1000);
+            // Apply a slight lag/smoothing for realism in the simulation step
+            state.ocean_pH += (target_pH - state.ocean_pH) * 0.1;
+
+            // 3. Calculate Biosphere Changes (Land Biomass)
+            // Biomass increases slightly due to CO2 fertilization (increased photosynthesis),
+            // but decreases directly due to deforestation rate.
+            // Growth rate relative to current biomass and CO2 level.
+            let growth_rate = 0.05 * (state.co2_ppm / 400); // 5% base growth modified by CO2
+            let loss_rate = (inputs.deforestation / 10); // arbitrary scaling for visual effect
+
+            state.biomass_pct += growth_rate - loss_rate;
+            if (state.biomass_pct < 0) state.biomass_pct = 0;
+
+            state.year++;
+        };
+
+        // Main Simulation Loop handler
+        window.runSimulation = function(yearsToRun) {
+            if (window.simulationState.isRunning) return;
+            window.simulationState.isRunning = true;
+
+            btnRun.disabled = true;
+            btnRun.classList.add('opacity-50', 'cursor-not-allowed');
+
+            let currentStep = 0;
+            const targetYear = window.simulationState.year + yearsToRun;
+
+            function loop() {
+                if (currentStep < yearsToRun) {
+                    window.stepSimulation();
+
+                    // Record history
+                    const s = window.simulationState;
+                    s.history.years.push(s.year);
+                    s.history.co2.push(s.co2_ppm);
+                    s.history.ph.push(s.ocean_pH);
+                    s.history.biomass.push(s.biomass_pct);
+
+                    updateUIValues();
+                    if (systemsChart) systemsChart.update('none'); // Update without animation for speed
+
+                    currentStep++;
+                    // Use setTimeout to yield to main thread, allowing UI to update and feel "running"
+                    setTimeout(loop, 20);
+                } else {
+                    window.simulationState.isRunning = false;
+                    btnRun.disabled = false;
+                    btnRun.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            loop();
+        };
+
+        // Exposed helper for Playwright to instantly run without async delays
+        window.runSimulationInstant = function(yearsToRun) {
+             for(let i=0; i<yearsToRun; i++){
+                 window.stepSimulation();
+                 const s = window.simulationState;
+                 s.history.years.push(s.year);
+                 s.history.co2.push(s.co2_ppm);
+                 s.history.ph.push(s.ocean_pH);
+                 s.history.biomass.push(s.biomass_pct);
+             }
+             updateUIValues();
+             if (systemsChart) systemsChart.update('none');
+        };
+
+        window.resetSimulation = function() {
+            window.simulationState = {
+                year: 0,
+                co2_ppm: 415.0,
+                ocean_pH: 8.10,
+                biomass_pct: 100.0,
+                history: {
+                    years: [0],
+                    co2: [415.0],
+                    ph: [8.10],
+                    biomass: [100.0]
+                },
+                isRunning: false
+            };
+
+            // Reset sliders to defaults
+            elFossil.value = 10;
+            elDeforest.value = 1.5;
+
+            updateUIValues();
+
+            // Reset Chart Data
+            if (systemsChart) systemsChart.data.labels = window.simulationState.history.years;
+            if (systemsChart) systemsChart.data.datasets[0].data = window.simulationState.history.co2;
+            if (systemsChart) systemsChart.data.datasets[1].data = window.simulationState.history.ph;
+            if (systemsChart) systemsChart.data.datasets[2].data = window.simulationState.history.biomass;
+            if (systemsChart) systemsChart.update();
+        };
+
+        // Attach Button Listeners
+        btnRun.addEventListener('click', () => {
+            window.runSimulation(100);
+        });
+
+        btnReset.addEventListener('click', () => {
+            window.resetSimulation();
+        });
+
+        // Initialize
+        initChart();
+        updateUIValues();
+
+    </script>
+</body>
+</html>
