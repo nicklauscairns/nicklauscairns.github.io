@@ -14,35 +14,44 @@ def generate_sitemap():
     # Find all HTML files in Simulations directory
     html_files = glob.glob('./Simulations/**/*.html', recursive=True)
 
-    # Include root index.html
-    html_files.append('./index.html')
+    # Include root README.md
+    readme_files = glob.glob('./**/README.md', recursive=True)
 
     # Include NGSS markdown files
     ngss_files = glob.glob('./NGSS/*.md')
 
     # Sort for consistency
     html_files.sort()
+    readme_files.sort()
     ngss_files.sort()
 
     # Create the root element
     urlset = ET.Element('urlset')
     urlset.set('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9')
 
-    # Add root URL
-    root_url = ET.SubElement(urlset, 'url')
-    root_loc = ET.SubElement(root_url, 'loc')
-    root_loc.text = base_url
-
     # Add each HTML file
     for filepath in html_files:
         # Normalize path
         normalized_path = filepath.replace('./', '').replace('\\', '/')
 
-        # Truncate index.html from URL (but keep trailing slash for directories)
-        if normalized_path == 'index.html':
+        # Create full URL
+        full_url = f"{base_url}{normalized_path}"
+
+        # Create XML elements
+        url_elem = ET.SubElement(urlset, 'url')
+        loc_elem = ET.SubElement(url_elem, 'loc')
+        loc_elem.text = full_url
+
+    # Add README files
+    for filepath in readme_files:
+        # Normalize path
+        normalized_path = filepath.replace('./', '').replace('\\', '/')
+
+        # Truncate README.md from URL (but keep trailing slash for directories)
+        if normalized_path == 'README.md':
             normalized_path = ''
-        elif normalized_path.endswith('/index.html'):
-            normalized_path = normalized_path.replace('index.html', '')
+        elif normalized_path.endswith('/README.md'):
+            normalized_path = normalized_path.replace('README.md', '')
 
         # Create full URL
         full_url = f"{base_url}{normalized_path}"
