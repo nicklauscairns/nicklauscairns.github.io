@@ -33,7 +33,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" integrity="sha512-v0M2/DmVGGDP4uM5xVjVSOcMkkz+9hrL9elYlSgM5LInUIDmsLu33jNnYA/Yx+iKfsMyjsOxFsc07gKDTFwhDQ==" crossorigin="anonymous"></script>
 
     <style>
         body {
@@ -176,25 +176,32 @@
         const btnRun = document.getElementById('btnRun');
         const btnReset = document.getElementById('btnReset');
 
+        function getInitialState() {
+            return {
+                year: 0,
+                co2_ppm: 415.0, // Initial roughly modern value
+                ocean_pH: 8.10,
+                biomass_pct: 100.0,
+                history: {
+                    years: [0],
+                    co2: [415.0],
+                    ph: [8.10],
+                    biomass: [100.0]
+                },
+                isRunning: false
+            };
+        }
+
         // Simulation State (Exposed for Playwright testing)
-        window.simulationState = {
-            year: 0,
-            co2_ppm: 415.0, // Initial roughly modern value
-            ocean_pH: 8.10,
-            biomass_pct: 100.0,
-            history: {
-                years: [0],
-                co2: [415.0],
-                ph: [8.10],
-                biomass: [100.0]
-            },
-            isRunning: false
-        };
+        window.simulationState = getInitialState();
 
         // Constants & Parameters for the simplified mathematical model
         const ppm_per_GtC = 0.47; // Conversion factor: 1 GtC = ~0.47 ppm CO2
         const ocean_base_absorption = 2.5; // GtC/yr natural absorption baseline
         const land_base_absorption = 3.0;  // GtC/yr natural absorption baseline
+        const OCEAN_UPTAKE_SENSITIVITY = 0.015;
+        const MAX_OCEAN_UPTAKE = 6.0;
+        const PRE_INDUSTRIAL_CO2_PPM = 280;
 
         // Chart.js Instance
         let systemsChart;
@@ -336,12 +343,12 @@
             // Ocean uptake is roughly proportional to excess atmospheric CO2 above pre-industrial (280ppm)
             // Simplified: ocean absorbs more as CO2 rises, but ocean acidification reduces capacity slightly (buffer factor).
             // We'll use a simple linear proportionality for this grade level model.
-            let excess_co2 = state.co2_ppm - 280;
+            let excess_co2 = state.co2_ppm - PRE_INDUSTRIAL_CO2_PPM;
             if (excess_co2 < 0) excess_co2 = 0;
 
-            let ocean_uptake = ocean_base_absorption + (excess_co2 * 0.015);
+            let ocean_uptake = ocean_base_absorption + (excess_co2 * OCEAN_UPTAKE_SENSITIVITY);
             // Cap uptake
-            if (ocean_uptake > 6.0) ocean_uptake = 6.0;
+            if (ocean_uptake > MAX_OCEAN_UPTAKE) ocean_uptake = MAX_OCEAN_UPTAKE;
 
             // Land uptake (Biosphere): CO2 fertilization effect increases uptake, but deforestation reduces total capacity
             // Biomass percentage acts as a modifier on total land area available for uptake.
@@ -359,7 +366,7 @@
             // Increased CO2 leads to lower pH (more acidic).
             // Simplified relationship: pH drops roughly 0.1 for every 100ppm increase above 280.
             // Baseline pH ~8.2 at 280ppm.
-            const target_pH = 8.2 - ((state.co2_ppm - 280) / 1000);
+            const target_pH = 8.2 - ((state.co2_ppm - PRE_INDUSTRIAL_CO2_PPM) / 1000);
             // Apply a slight lag/smoothing for realism in the simulation step
             state.ocean_pH += (target_pH - state.ocean_pH) * 0.1;
 
@@ -429,19 +436,7 @@
         };
 
         window.resetSimulation = function() {
-            window.simulationState = {
-                year: 0,
-                co2_ppm: 415.0,
-                ocean_pH: 8.10,
-                biomass_pct: 100.0,
-                history: {
-                    years: [0],
-                    co2: [415.0],
-                    ph: [8.10],
-                    biomass: [100.0]
-                },
-                isRunning: false
-            };
+            window.simulationState = getInitialState();
 
             // Reset sliders to defaults
             elFossil.value = 10;
@@ -450,11 +445,13 @@
             updateUIValues();
 
             // Reset Chart Data
-            if (systemsChart) systemsChart.data.labels = window.simulationState.history.years;
-            if (systemsChart) systemsChart.data.datasets[0].data = window.simulationState.history.co2;
-            if (systemsChart) systemsChart.data.datasets[1].data = window.simulationState.history.ph;
-            if (systemsChart) systemsChart.data.datasets[2].data = window.simulationState.history.biomass;
-            if (systemsChart) systemsChart.update();
+            if (systemsChart) {
+                systemsChart.data.labels = window.simulationState.history.years;
+                systemsChart.data.datasets[0].data = window.simulationState.history.co2;
+                systemsChart.data.datasets[1].data = window.simulationState.history.ph;
+                systemsChart.data.datasets[2].data = window.simulationState.history.biomass;
+                systemsChart.update();
+            }
         };
 
         // Attach Button Listeners

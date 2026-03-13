@@ -48,23 +48,18 @@ def test_simulation_state_updates(simulation_page: Page):
     assert new_state['ocean_pH'] < 8.10
 
 def test_slider_inputs_affect_model(simulation_page: Page):
+    def run_with_emissions(emissions: str, years: int):
+        simulation_page.fill("#fossilEmissions", emissions)
+        simulation_page.locator("#fossilEmissions").dispatch_event("input")
+        simulation_page.evaluate(f"window.runSimulationInstant({years})")
+        return simulation_page.evaluate("window.simulationState")
+
     # Increase emissions significantly
-    simulation_page.fill("#fossilEmissions", "30")
-    simulation_page.evaluate("document.getElementById('fossilEmissions').dispatchEvent(new Event('input'))")
-
-    simulation_page.evaluate("window.runSimulationInstant(50)")
-
-    state_high_emissions = simulation_page.evaluate("window.simulationState")
+    state_high_emissions = run_with_emissions("30", 50)
 
     # Reset and run with zero emissions
     simulation_page.evaluate("window.resetSimulation()")
-
-    simulation_page.fill("#fossilEmissions", "0")
-    simulation_page.evaluate("document.getElementById('fossilEmissions').dispatchEvent(new Event('input'))")
-
-    simulation_page.evaluate("window.runSimulationInstant(50)")
-
-    state_zero_emissions = simulation_page.evaluate("window.simulationState")
+    state_zero_emissions = run_with_emissions("0", 50)
 
     # Verify higher emissions lead to higher atmospheric CO2
     assert state_high_emissions['co2_ppm'] > state_zero_emissions['co2_ppm']
