@@ -57,6 +57,7 @@
         input[type=range] { width: 100%; accent-color: #3b82f6; }
 
         #info-overlay { position: absolute; top: 1rem; right: 1rem; z-index: 10; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid #334155; padding: 1rem; border-radius: 0.5rem; max-width: 300px; color: #cbd5e1; font-size: 0.875rem; }
+        .slice-container { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid #334155; padding: 1rem; border-radius: 0.5rem; position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); z-index: 10; }
     </style>
 </head>
 <body>
@@ -101,7 +102,7 @@
         </ul>
     </div>
 
-    <div id="slice-container" style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid #334155; padding: 1rem; border-radius: 0.5rem; position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); z-index: 10;">
+    <div id="slice-container" class="slice-container" style="display: none;">
         <h3 class="font-bold text-white mb-2 text-center text-sm">2D Slice (Source 1 to Source 2)</h3>
         <canvas id="slice-canvas" width="400" height="150"></canvas>
     </div>
@@ -186,6 +187,27 @@
                 }
             }
 
+            return totalZ;
+        }
+
+        function calculateWaveHeightWithPrecomputed(x, y, precomputedSources) {
+            let totalZ = 0;
+            for (let s = 0; s < precomputedSources.length; s++) {
+                const src = precomputedSources[s];
+                const dx = x - src.x;
+                const dy = y - src.y;
+                const d = Math.sqrt(dx*dx + dy*dy);
+
+                totalZ += src.amplitude * Math.sin(src.k * d - src.omega_t + src.phase);
+
+                if (SimState.wallEnabled) {
+                    const reflectedX = 2 * SimState.wallPositionX - src.x;
+                    const dxRef = x - reflectedX;
+                    const dRef = Math.sqrt(dxRef*dxRef + dy*dy);
+                    const reflectedPhase = src.phase + Math.PI;
+                    totalZ += src.amplitude * Math.sin(src.k * dRef - src.omega_t + reflectedPhase);
+                }
+            }
             return totalZ;
         }
 
@@ -428,13 +450,13 @@
         updateSourceIndicators();
 
         // --- 2D Slice Setup ---
+        const sliceContainer = document.getElementById('slice-container');
         const sliceCanvas = document.getElementById('slice-canvas');
         const sliceCtx = sliceCanvas.getContext('2d');
         const sliceLineMaterial = new THREE.LineDashedMaterial({
             color: 0xffffff,
             dashSize: 0.3,
-            gapSize: 0.2,
-            linewidth: 2
+            gapSize: 0.2
         });
         const sliceLineGeometry = new THREE.BufferGeometry();
         // Placeholder positions for 2 points (x, y, z)
@@ -485,27 +507,8 @@
                 for (let j = 0; j <= segments; j++) {
                     const x = (j / segments) * planeSize - planeSize / 2;
 
-                    let totalZ = 0;
-                    // Inline wave height calculation for maximum performance
-                    for (let s = 0; s < precomputedSources.length; s++) {
-                        const src = precomputedSources[s];
-                        const dx = x - src.x;
-                        const dy = y - src.y;
-                        const d = Math.sqrt(dx*dx + dy*dy);
-
-                        totalZ += src.amplitude * Math.sin(src.k * d - src.omega_t + src.phase);
-
-                        if (SimState.wallEnabled) {
-                            const reflectedX = 2 * SimState.wallPositionX - src.x;
-                            const dxRef = x - reflectedX;
-                            const dRef = Math.sqrt(dxRef*dxRef + dy*dy);
-                            const reflectedPhase = src.phase + Math.PI;
-                            totalZ += src.amplitude * Math.sin(src.k * dRef - src.omega_t + reflectedPhase);
-                        }
-                    }
-
-                    // The Z coordinate is at index vertexIndex + 2
-                    positions[vertexIndex + 2] = totalZ;
+                    // Calculate wave height for maximum performance using precomputed sources
+                    positions[vertexIndex + 2] = calculateWaveHeightWithPrecomputed(x, y, precomputedSources);
                     vertexIndex += 3;
                 }
             }
@@ -516,21 +519,21 @@
             // Update Indicator heights
             SimState.sources.forEach(src => {
                 if (src.meshRef) {
-                    src.meshRef.position.z = calculateWaveHeight(src.x, src.y) + 0.5;
+                    src.meshRef.position.z = calculateWaveHeightWithPrecomputed(src.x, src.y, precomputedSources) + 0.5;
                 }
             });
 
             // --- Update 2D Slice ---
             if (SimState.sources.length >= 2) {
-                document.getElementById('slice-container').style.display = 'block';
+                sliceContainer.style.display = 'block';
                 sliceLine.visible = true;
 
                 const src1 = SimState.sources[0];
                 const src2 = SimState.sources[1];
 
                 // Update 3D Line
-                const z1 = calculateWaveHeight(src1.x, src1.y) + 0.5;
-                const z2 = calculateWaveHeight(src2.x, src2.y) + 0.5;
+                const z1 = calculateWaveHeightWithPrecomputed(src1.x, src1.y, precomputedSources) + 0.5;
+                const z2 = calculateWaveHeightWithPrecomputed(src2.x, src2.y, precomputedSources) + 0.5;
 
                 slicePositions[0] = src1.x; slicePositions[1] = src1.y; slicePositions[2] = z1;
                 slicePositions[3] = src2.x; slicePositions[4] = src2.y; slicePositions[5] = z2;
@@ -556,24 +559,8 @@
                     const x_sample = src1.x + (src2.x - src1.x) * t_interp;
                     const y_sample = src1.y + (src2.y - src1.y) * t_interp;
 
-                    let totalZ = 0;
                     // Compute wave height efficiently for the slice
-                    for (let s = 0; s < precomputedSources.length; s++) {
-                        const src = precomputedSources[s];
-                        const dx = x_sample - src.x;
-                        const dy = y_sample - src.y;
-                        const d = Math.sqrt(dx*dx + dy*dy);
-
-                        totalZ += src.amplitude * Math.sin(src.k * d - src.omega_t + src.phase);
-
-                        if (SimState.wallEnabled) {
-                            const reflectedX = 2 * SimState.wallPositionX - src.x;
-                            const dxRef = x_sample - reflectedX;
-                            const dRef = Math.sqrt(dxRef*dxRef + dy*dy);
-                            const reflectedPhase = src.phase + Math.PI;
-                            totalZ += src.amplitude * Math.sin(src.k * dRef - src.omega_t + reflectedPhase);
-                        }
-                    }
+                    const totalZ = calculateWaveHeightWithPrecomputed(x_sample, y_sample, precomputedSources);
 
                     const canvasX = (i / numPoints) * cw;
                     const canvasY = midY - (totalZ * scaleY);
@@ -589,8 +576,8 @@
                 sliceCtx.beginPath();
                 // We assume source 1 is at t=0 and source 2 is at t=1, which is true for the line segment
                 // We need to calculate height of src1 and src2 for marker placement
-                const z1_2d = calculateWaveHeight(src1.x, src1.y);
-                const z2_2d = calculateWaveHeight(src2.x, src2.y);
+                const z1_2d = calculateWaveHeightWithPrecomputed(src1.x, src1.y, precomputedSources);
+                const z2_2d = calculateWaveHeightWithPrecomputed(src2.x, src2.y, precomputedSources);
                 sliceCtx.arc(0, midY - (z1_2d * scaleY), 5, 0, Math.PI * 2);
                 sliceCtx.fill();
                 sliceCtx.beginPath();
@@ -598,7 +585,7 @@
                 sliceCtx.fill();
 
             } else {
-                document.getElementById('slice-container').style.display = 'none';
+                sliceContainer.style.display = 'none';
                 sliceLine.visible = false;
             }
 
