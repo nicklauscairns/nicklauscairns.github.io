@@ -7,15 +7,12 @@ async def main():
         browser = await p.chromium.launch()
         page = await browser.new_page()
 
-        filepath = os.path.abspath('Simulations/PhysicalSciences/ConservationOfMomentumSimulation.html')
+        filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Simulations', 'PhysicalSciences', 'ConservationOfMomentumSimulation.html'))
         url = f"file://{filepath}"
 
-        with open(filepath, 'r') as f:
-            content = f.read()
+        await page.route("**/*tailwindcss.com*", lambda route: route.abort())
 
-        content = content.replace('<script src="https://cdn.tailwindcss.com"></script>', '')
-
-        await page.set_content(content, wait_until="load")
+        await page.goto(url, wait_until="load")
 
         # Scenario 1: Elastic Collision (Default inputs)
         # m1=1.0, m2=1.5, v1=2.0, v2=-1.0, e=1.0

@@ -8,14 +8,12 @@ async def main():
         browser = await p.chromium.launch()
         page = await browser.new_page()
 
-        filepath = os.path.abspath('Simulations/PhysicalSciences/InteractiveBoatRiverCrossingSimulation.html')
+        filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Simulations', 'PhysicalSciences', 'InteractiveBoatRiverCrossingSimulation.html'))
+        url = f"file://{filepath}"
 
-        with open(filepath, 'r') as f:
-            content = f.read()
+        await page.route("**/*tailwindcss.com*", lambda route: route.abort())
 
-        content = content.replace('<script src="https://cdn.tailwindcss.com"></script>', '')
-
-        await page.set_content(content, wait_until="load")
+        await page.goto(url, wait_until="load")
 
         print("Testing pure `calculatePhysics` function...")
 

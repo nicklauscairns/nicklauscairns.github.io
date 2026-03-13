@@ -7,18 +7,13 @@ async def main():
         browser = await p.chromium.launch()
         page = await browser.new_page()
 
-        filepath = os.path.abspath('Simulations/PhysicalSciences/ConservationOfMomentumSimulation.html')
+        filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Simulations', 'PhysicalSciences', 'ConservationOfMomentumSimulation.html'))
         url = f"file://{filepath}"
         print(f"Loading {url}")
 
-        # Load the HTML
-        with open(filepath, 'r') as f:
-            content = f.read()
+        await page.route("**/*tailwindcss.com*", lambda route: route.abort())
 
-        # Strip tailwind to avoid timeout issues in playwright inside sandbox
-        content = content.replace('<script src="https://cdn.tailwindcss.com"></script>', '')
-
-        await page.set_content(content, wait_until="load")
+        await page.goto(url, wait_until="load")
 
         # Check if the canvas exists
         canvas = await page.query_selector('#sim-canvas')
