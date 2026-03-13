@@ -13,6 +13,7 @@
     <meta content="science, simulation, NGSS, Human Settlement &amp; Migration Simulator, education, interactive" name="keywords"/>
     <meta content="Interactive science simulation for Human Settlement &amp; Migration Simulator. Explore and learn with this engaging, NGSS-aligned high school educational tool." name="description"/>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
         body { background-color: #0f172a; color: #f1f5f9; }
         #mapCanvas {
@@ -133,6 +134,13 @@
                     &gt; Awaiting human settlement...<br/>
 </div>
 </div>
+<!-- Graph View -->
+<div class="lg:col-span-4 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl mb-6">
+    <h2 class="text-lg font-bold text-slate-200 mb-2">Population Data Logger</h2>
+    <div class="w-full h-48">
+        <canvas id="popChartCanvas"></canvas>
+    </div>
+</div>
 <!-- Simulation View -->
 <div class="lg:col-span-3 bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-xl relative">
 <div class="flex justify-between items-center mb-2">
@@ -177,6 +185,7 @@
 <script>
         // --- Setup Canvas and Constants ---
         const canvas = document.getElementById('mapCanvas');
+        const popChartCanvas = document.getElementById('popChartCanvas');
         const ctx = canvas.getContext('2d');
         const toggleBtn = document.getElementById('toggleBtn');
         const popDisplay = document.getElementById('popDisplay');
@@ -207,6 +216,96 @@
             currentScenario: 'default' // 'nile', 'dustbowl', 'refugee', 'default'
         };
 
+        // --- Chart.js Setup ---
+        let popChart;
+        let chartData = {
+            labels: [],
+            datasets: [{
+                label: 'Total Population',
+                data: [],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                pointRadius: 0
+            }]
+        };
+
+        let hazardAnnotations = []; // To hold vertical hazard markers
+
+        function initChart() {
+            if (popChart) popChart.destroy();
+            const ctxChart = popChartCanvas.getContext('2d');
+
+            // Register a custom plugin for drawing vertical hazard markers
+            const hazardLinePlugin = {
+                id: 'hazardLinePlugin',
+                afterDraw: (chart) => {
+                    if (hazardAnnotations.length === 0) return;
+                    const ctx = chart.ctx;
+                    const xAxis = chart.scales.x;
+                    const yAxis = chart.scales.y;
+
+                    ctx.save();
+                    hazardAnnotations.forEach(marker => {
+                        // Find the x position for the year
+                        let idx = chartData.labels.indexOf(marker.year);
+                        if (idx === -1) {
+                            // Interpolate or find closest
+                            for(let i=0; i<chartData.labels.length; i++) {
+                                if (chartData.labels[i] >= marker.year) {
+                                    idx = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (idx !== -1) {
+                            const x = xAxis.getPixelForValue(idx);
+                            ctx.beginPath();
+                            ctx.moveTo(x, yAxis.top);
+                            ctx.lineTo(x, yAxis.bottom);
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = marker.color;
+                            ctx.stroke();
+
+                            // Draw label
+                            ctx.fillStyle = marker.color;
+                            ctx.font = '10px Arial';
+                            ctx.fillText(marker.label, x + 5, yAxis.top + 10);
+                        }
+                    });
+                    ctx.restore();
+                }
+            };
+
+            popChart = new Chart(ctxChart, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false, // Turn off animation for performance
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Year', color: '#94a3b8' },
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: '#334155' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Population', color: '#94a3b8' },
+                            min: 0,
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: '#334155' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#f1f5f9' } }
+                    }
+                },
+                plugins: [hazardLinePlugin]
+            });
+        }
+
         // Expose to window for testing
         window.simState = state;
         window.getAgentCount = () => agents.length;
@@ -236,6 +335,12 @@
             state.activeHazard = null;
             state.hazardTimer = 0;
             state.currentScenario = type;
+
+            lastChartUpdate = 0; // Reset chart timer
+            chartData.labels = [];
+            chartData.datasets[0].data = [];
+            hazardAnnotations = [];
+            initChart();
 
             toggleBtn.textContent = 'Start Sim';
             toggleBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded font-bold text-sm transition-colors';
@@ -497,21 +602,30 @@
 
         // --- Interaction ---
         window.triggerHazard = function(type) {
+            let label = "";
+            let color = "";
+
             if (type === 'sealevel') {
                 state.seaLevelOffset += 10; // increase water level by 10 units
                 recomputeAllResources();
                 logMsg(`Sea level rose due to climate change. Coastal lands submerged.`, true);
                 showAlert("SEA LEVEL RISE", "bg-cyan-600/90");
+                hazardAnnotations.push({ year: Math.floor(state.year), label: 'Sea Level', color: '#06b6d4' });
                 return;
             }
 
             state.activeHazard = type;
-            state.hazardTimer = 5.0; // active for 5 simulation years to allow migration
 
             if (type === 'volcano') {
+                state.hazardTimer = 8.0; // Long recovery for ash/lava
+                label = 'Volcano';
+                color = '#ef4444';
                 logMsg(`Volcanic eruption! Mountain settlements destroyed.`, true);
                 showAlert("VOLCANIC ERUPTION", "bg-red-600/90");
             } else if (type === 'drought') {
+                state.hazardTimer = 12.0; // Very long recovery for ecosystem drought
+                label = 'Drought';
+                color = '#f59e0b';
                 logMsg(`Severe global drought. Water resources depleted.`, true);
                 showAlert("SEVERE DROUGHT", "bg-amber-600/90");
                 // Resources recomputed in loop for dustbowl or manually reduced here
@@ -522,9 +636,14 @@
                     }
                 }
             } else if (type === 'flood') {
+                state.hazardTimer = 3.0; // Fast recovery, water recedes quickly
+                label = 'Flood';
+                color = '#3b82f6';
                 logMsg(`Massive river flooding! Floodplain settlements destroyed.`, true);
                 showAlert("RIVER FLOOD", "bg-blue-600/90");
             }
+
+            hazardAnnotations.push({ year: Math.floor(state.year), label: label, color: color });
         };
 
         toggleBtn.addEventListener('click', () => {
@@ -615,12 +734,29 @@
         }
 
         let lastTimestamp = 0;
+        let lastChartUpdate = 0;
+
         function loop(timestamp) {
             if (state.isRunning) {
                 const dt = (timestamp - lastTimestamp) / 1000 || 0;
                 if (dt < 0.1) {
                     state.year += dt;
                     yearDisplay.textContent = Math.floor(state.year);
+
+                    // Update Chart Data periodically (e.g. once per sim year)
+                    if (state.year - lastChartUpdate >= 1) {
+                        chartData.labels.push(Math.floor(state.year));
+                        chartData.datasets[0].data.push(agents.length);
+
+                        // Keep chart from getting too long
+                        if (chartData.labels.length > 200) {
+                            chartData.labels.shift();
+                            chartData.datasets[0].data.shift();
+                        }
+
+                        popChart.update();
+                        lastChartUpdate = Math.floor(state.year);
+                    }
 
                     // Handle hazard timers
                     if (state.activeHazard) {
