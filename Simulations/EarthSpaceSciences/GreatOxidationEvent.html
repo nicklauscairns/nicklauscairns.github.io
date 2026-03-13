@@ -248,12 +248,19 @@
         };
 
         // DOM
+        // Cache DOM elements to prevent expensive queries during the animation loop
         const toggleBtn = document.getElementById('toggleBtn');
         const popSlider = document.getElementById('popSlider');
         const simView = document.getElementById('simView');
         const bioContainer = document.getElementById('biologyContainer');
         const bifLayer = document.getElementById('bifLayer');
         const ozoneLayer = document.getElementById('ozoneLayer');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const popVal = document.getElementById('popVal');
+        const ironVal = document.getElementById('ironVal');
+        const ironBar = document.getElementById('ironBar');
+        const o2Val = document.getElementById('o2Val');
+        const o2Bar = document.getElementById('o2Bar');
 
         let bacteriaElements = [];
         let eukaryoteElements = [];
@@ -283,7 +290,7 @@
         // UI Listeners
         popSlider.addEventListener('input', (e) => {
             const targetPop = parseInt(e.target.value);
-            document.getElementById('popVal').textContent = targetPop;
+            popVal.textContent = targetPop;
             window.simState.population = targetPop;
             updateBiologyDOM();
         });
@@ -354,7 +361,7 @@
                     // Advance Time
                     window.simState.time -= dt * 0.05; // 1 second real time = 50 million years
                     if (window.simState.time < 0) window.simState.time = 0;
-                    document.getElementById('timeDisplay').textContent = window.simState.time.toFixed(2);
+                    timeDisplay.textContent = window.simState.time.toFixed(2);
 
                     // Physics / Chemistry Logic
                     const o2ProductionRate = window.simState.population * 0.5 * dt;
@@ -379,11 +386,11 @@
                     }
 
                     // Update UI Bars
-                    document.getElementById('ironVal').textContent = window.simState.dissolvedIron.toFixed(1) + '%';
-                    document.getElementById('ironBar').style.width = window.simState.dissolvedIron + '%';
+                    ironVal.textContent = window.simState.dissolvedIron.toFixed(1) + '%';
+                    ironBar.style.width = window.simState.dissolvedIron + '%';
 
-                    document.getElementById('o2Val').textContent = window.simState.atmosphericO2.toFixed(1) + '%';
-                    document.getElementById('o2Bar').style.width = (window.simState.atmosphericO2 / 21.0 * 100) + '%';
+                    o2Val.textContent = window.simState.atmosphericO2.toFixed(1) + '%';
+                    o2Bar.style.width = (window.simState.atmosphericO2 / 21.0 * 100) + '%';
 
                     // Update Scene View
                     bifLayer.style.height = window.simState.bifHeight + 'px';
