@@ -7,9 +7,9 @@ on:
 jobs:
   repost-comment:
     runs-on: ubuntu-latest
-    # Updated to specifically target qodo-code-review[bot]
+    # Added deepsource-io[bot] to the list of allowed bots
     if: |
-      contains(fromJSON('["gemini-code-assist[bot]", "chatgpt-codex-connector[bot]", "coderabbitai[bot]", "qodo-code-review[bot]"]'), github.actor)
+      contains(fromJSON('["gemini-code-assist[bot]", "chatgpt-codex-connector[bot]", "coderabbitai[bot]", "qodo-code-review[bot]", "deepsource-io[bot]"]'), github.actor)
     steps:
       - name: Quote and bundle review comments
         uses: actions/github-script@v7
