@@ -49,7 +49,7 @@ def test_simulation_state_updates(simulation_page: Page):
 
 def test_slider_inputs_affect_model(simulation_page: Page):
     def run_with_emissions(emissions: str, years: int):
-        simulation_page.fill("#fossilEmissions", emissions)
+        simulation_page.evaluate(f"document.getElementById('fossilEmissions').value = '{emissions}';")
         simulation_page.locator("#fossilEmissions").dispatch_event("input")
         simulation_page.evaluate(f"window.runSimulationInstant({years})")
         return simulation_page.evaluate("window.simulationState")
