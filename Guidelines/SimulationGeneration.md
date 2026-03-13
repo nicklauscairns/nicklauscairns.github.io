@@ -30,7 +30,7 @@ Simulations should act as **Phenomena** (refer to `NGSS/PhenomenaNGSS.md`).
 *   **JavaScript Syntax Limitations:**
     *   When writing JavaScript strings inside manipulated HTML, prefer standard string concatenation (e.g., `'hsla(' + value + ')'`) over ES6 template literals (`` `hsla(${value})` ``) to prevent escaping conflicts and `SyntaxError`s caused by backticks and dollar signs.
     *   Use double quotes for string literals or properly escape single quotes if text contains apostrophes.
-    *   When using Python scripts to rewrite JS blocks, be cautious with multiline strings containing unescaped backslashes (e.g., `\n`) which can cause 'Invalid or unexpected token' syntax errors. Use properly escaped newlines or raw strings.
+    *   When using Python scripts to rewrite JS blocks, be cautious with multiline strings containing unescaped backslashes (e.g., in file paths like `C:\Users\Test`), which can cause 'Invalid or unexpected token' syntax errors. Use properly escaped newlines (e.g., `\\n`) or Python's raw strings.
 *   **No LaTeX:** Do not use `$$` or MathJax. Render math using standard HTML tags (`<sup>`, `<sub>`) and HTML entities (`&ge;`, `&Delta;`).
 *   **SEO & Metadata:** Include the standard `<head>` metadata, Open Graph tags, and Schema.org `LearningResource` JSON-LD to ensure the simulation is indexable.
 
