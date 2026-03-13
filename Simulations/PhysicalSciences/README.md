@@ -627,6 +627,8 @@ Use mathematical representations to support a claim regarding relationships amon
 
 - [From Sparks to Waves](FromSparksToWavesSimulation.html) - An interactive lightning and wave oscilloscope simulation exploring propagation and oscilloscope models. [2026-03-12 12:00:00]
 
+- [3D Wave Superposition & Interference](WaveSuperposition3D.html) - Interactive 3D simulation exploring wave superposition, constructive and destructive interference, and standing waves by dynamically placing sources and controlling wave parameters. [2026-03-13 14:25:14]
+
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-12 20:13:28</b></summary>
     <ul>
