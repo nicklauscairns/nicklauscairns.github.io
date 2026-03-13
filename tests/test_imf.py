@@ -10,14 +10,11 @@ def test_imf():
         file_path = f"file://{os.path.abspath('Simulations/PhysicalSciences/IntermolecularForces.html')}"
         page.goto(file_path, wait_until="networkidle")
 
-        # Bypass overlay
-        page.evaluate("document.getElementById('planningOverlay').style.display = 'none';")
-        time.sleep(0.5)
         # Verify initial state
         assert "Intermolecular Forces Investigation" in page.title()
 
         # Default is nonpolar
-
+        assert page.locator("#imfType").inner_text() == "London Dispersion"
 
         # Test temperature slider causing boiling
         page.evaluate("document.getElementById('tempSlider').value = 90")
@@ -34,8 +31,6 @@ def test_imf():
         time.sleep(0.5)
 
         assert page.locator("#imfType").inner_text() == "Hydrogen Bonding"
-        page.locator("#recordDataBtn").click()
-        time.sleep(0.1)
         assert page.locator("#bpValue").inner_text() == "100°C"
 
         print("Playwright test passed: IntermolecularForces logic functions correctly.")

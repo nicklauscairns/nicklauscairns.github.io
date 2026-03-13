@@ -299,16 +299,10 @@
 <h2>Control Panel</h2>
 <div class="control-group">
 <label>
-<span style="color: var(--vec-boat);">Engine Force (Thrust)</span>
-<span id="boatForceVal">400 N</span>
+<span style="color: var(--vec-boat);">Boat Speed (relative to water)</span>
+<span id="boatSpeedVal">4.0 m/s</span>
 </label>
-<input id="boatForceSlider" max="1000" min="100" step="10" type="range" value="400"/>
-<label style="margin-top: 10px;">
-<span style="color: var(--vec-boat);">Boat Mass</span>
-<span id="boatMassVal">100 kg</span>
-</label>
-<input id="boatMassSlider" max="500" min="50" step="10" type="range" value="100"/>
-<div style="font-size: 12px; margin-top: 5px; color: #666; font-family: monospace;">a = F/m = <span id="accelVal">4.0</span> m/s²</div>
+<input id="boatSpeedSlider" max="10" min="1" step="0.1" type="range" value="4.0"/>
 </div>
 <div class="control-group">
 <label>
@@ -431,19 +425,13 @@
     let riverObserverPos = { x: 100, y: canvas.height / 2 };
     
     // Inputs
-    let boatForce = 400; // N
-    let boatMass = 100; // kg
-    let v_boat = 0.0; // magnitude, m/s (Now calculated via acceleration)
-    const DRAG_COEFFICIENT = 25; // Simple linear drag to limit top speed
+    let v_boat = 4.0; // magnitude, m/s
     let theta_deg = 0; // angle in degrees, 0 is straight up
     let v_river = 2.0; // magnitude, rightward, m/s
     
     // DOM Elements
-    const boatForceSlider = document.getElementById('boatForceSlider');
-    const boatForceVal = document.getElementById('boatForceVal');
-    const boatMassSlider = document.getElementById('boatMassSlider');
-    const boatMassVal = document.getElementById('boatMassVal');
-    const accelVal = document.getElementById('accelVal');
+    const boatSpeedSlider = document.getElementById('boatSpeedSlider');
+    const boatSpeedVal = document.getElementById('boatSpeedVal');
     const boatAngleSlider = document.getElementById('boatAngleSlider');
     const boatAngleVal = document.getElementById('boatAngleVal');
     const riverSpeedSlider = document.getElementById('riverSpeedSlider');
@@ -469,16 +457,9 @@
     const distOut = document.getElementById('distOut');
 
     // --- Event Listeners ---
-    boatForceSlider.addEventListener('input', (e) => {
-        boatForce = parseFloat(e.target.value);
-        boatForceVal.textContent = boatForce + ' N';
-        accelVal.textContent = (boatForce / boatMass).toFixed(1);
-        if (!isPlaying && time === 0) drawFrame();
-    });
-    boatMassSlider.addEventListener('input', (e) => {
-        boatMass = parseFloat(e.target.value);
-        boatMassVal.textContent = boatMass + ' kg';
-        accelVal.textContent = (boatForce / boatMass).toFixed(1);
+    boatSpeedSlider.addEventListener('input', (e) => {
+        v_boat = parseFloat(e.target.value);
+        boatSpeedVal.textContent = v_boat.toFixed(1) + ' m/s';
         if (!isPlaying && time === 0) drawFrame();
     });
 
@@ -518,15 +499,12 @@
 
     resetParamsBtn.addEventListener('click', () => {
         // Reset variables to defaults
-        v_boat = 0.0;
-        boatForce = 400;
-        boatMass = 100;
+        v_boat = 4.0;
         theta_deg = 0;
         v_river = 2.0;
 
         // Reset UI sliders
-        boatForceSlider.value = boatForce;
-        boatMassSlider.value = boatMass;
+        boatSpeedSlider.value = v_boat;
         boatAngleSlider.value = theta_deg;
         riverSpeedSlider.value = v_river;
 

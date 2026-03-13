@@ -55,38 +55,6 @@
     },
     "learningResourceType": "Interactive Simulation"
 }
-
-        function checkUserExplanation() {
-            const userText = document.getElementById('userExplanation').value.toLowerCase();
-            const keywords = ['valence', 'octet', 'transfer', 'share', 'electron', 'shell', 'full'];
-            let matched = 0;
-            keywords.forEach(kw => {
-                if(userText.includes(kw)) matched++;
-            });
-
-            const feedback = document.getElementById('checkFeedback');
-            if(matched >= 2) {
-                feedback.innerText = "Good job! You used key scientific vocabulary.";
-                feedback.className = "text-sm font-bold mb-2 text-green-600";
-            } else {
-                feedback.innerText = "Try to use words like 'valence', 'octet', 'transfer', or 'share'.";
-                feedback.className = "text-sm font-bold mb-2 text-orange-600";
-            }
-
-            document.getElementById('officialExplanation').classList.remove('hidden');
-
-            // Trigger challenge if applicable
-            const res = document.getElementById('productsArea').innerText;
-            if(res.includes('NaCl')) {
-                document.getElementById('challengeModePanel').classList.remove('hidden');
-                document.getElementById('challengeMolecule').innerText = "MgCl₂";
-            } else if (res.includes('H₂O')) {
-                document.getElementById('challengeModePanel').classList.remove('hidden');
-                document.getElementById('challengeMolecule').innerText = "CO₂";
-            } else {
-                document.getElementById('challengeModePanel').classList.add('hidden');
-            }
-        }
     </script>
 
 <!-- Google tag (gtag.js) -->
@@ -156,32 +124,14 @@
 </div>
 <!-- Explanation Panel -->
 <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 class="font-bold text-blue-900 mb-2 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+<h3 class="font-bold text-blue-900 mb-2 flex items-center">
+<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                         Scientific Explanation
                     </h3>
-
-                    <div id="explanationInputSection" class="hidden">
-                        <p class="text-blue-800 text-sm mb-2 font-medium">Construct an Explanation: Based on the outermost electron states, why did this reaction occur?</p>
-                        <textarea id="userExplanation" class="w-full h-24 p-2 text-sm border border-blue-300 rounded mb-2" placeholder="Example: Na has 1 valence electron..."></textarea>
-                        <div id="checkFeedback" class="text-sm font-bold mb-2"></div>
-                        <button id="checkExpBtn" onclick="checkUserExplanation()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition mb-4 text-sm w-full">Check Explanation</button>
+<div class="text-blue-800 text-sm leading-relaxed" id="explanationText">
+                        Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.
                     </div>
-
-                    <div id="officialExplanationSection">
-                        <div class="text-blue-800 text-sm leading-relaxed" id="explanationText">
-                            Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.
-                        </div>
-                    </div>
-
-                    <div id="challengeModePanel" class="hidden mt-4 border-t border-blue-300 pt-3">
-                        <h4 class="font-bold text-orange-700 text-sm mb-1 flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            Challenge Mode!
-                        </h4>
-                        <p class="text-orange-900 text-xs mb-2">Now try predicting <span id="challengeMolecule" class="font-mono font-bold bg-white px-1 rounded"></span>. How does your explanation change for this ratio?</p>
-                    </div>
-                </div>
+</div>
 </div>
 </div>
 </div>
@@ -211,11 +161,6 @@
                 reactants: { K: 1, F: 1 },
                 productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">K<sup>+</sup> F<sup>-</sup> (Potassium Fluoride)</div>',
                 explanation: "<strong>Synthesis Reaction (Ionic Bond):</strong> Potassium (K) transfers its 1 valence electron to Fluorine (F), which has 7. Both achieve stable octet configurations, creating K⁺ and F⁻ ions that bond."
-            },
-            {
-                reactants: { Mg: 1, Cl: 2 },
-                productsHtml: '<div class="text-2xl font-bold bg-green-100 px-4 py-2 rounded border border-green-300">Mg<sup>2+</sup> Cl<sub>2</sub><sup>-</sup> (Magnesium Chloride)</div>',
-                explanation: "<strong>Synthesis Reaction (Ionic Bond):</strong> Magnesium (Mg) is an alkaline earth metal with 2 valence electrons. Chlorine (Cl) has 7. Mg transfers its 2 outer electrons, one to each of two Cl atoms. Mg becomes Mg²⁺ and each Cl becomes Cl⁻, forming MgCl₂."
             },
             {
                 reactants: { H: 2, O: 1 },
@@ -315,12 +260,6 @@
             productsArea.classList.add('hidden');
             productsArea.innerHTML = '';
             explanationText.innerHTML = 'Add reactants and click "Predict Outcome" to see how the valence electrons dictate the chemical reaction. Atoms tend to react in ways that give them a full outer electron shell (octet rule), determining the patterns of chemical properties we observe in the periodic table.';
-
-            if(document.getElementById('explanationInputSection')) {
-                document.getElementById('explanationInputSection').classList.add('hidden');
-                document.getElementById('officialExplanationSection').classList.remove('hidden');
-                document.getElementById('challengeModePanel').classList.add('hidden');
-            }
         }
 
         function predictOutcome() {
@@ -364,14 +303,6 @@
             if (match) {
                 productsArea.innerHTML = match.productsHtml;
                 explanationText.innerHTML = match.explanation;
-
-                // Show input section
-                document.getElementById('explanationInputSection').classList.remove('hidden');
-                document.getElementById('officialExplanationSection').classList.add('hidden');
-                document.getElementById('challengeModePanel').classList.add('hidden');
-                document.getElementById('checkFeedback').innerText = '';
-                document.getElementById('userExplanation').value = '';
-
             } else {
                 // Determine total valence to see if an octet is even possible (simplified heuristic)
                 const totalValence = state.reactants.reduce((sum, r) => sum + parseInt(r.valence), 0);
@@ -396,70 +327,6 @@
 
         reactBtn.addEventListener('click', predictOutcome);
 
-
-        function checkUserExplanation() {
-            const userText = document.getElementById('userExplanation').value.toLowerCase();
-            const keywords = ['valence', 'octet', 'transfer', 'share', 'electron', 'shell', 'full'];
-            let matched = 0;
-            keywords.forEach(kw => {
-                if(userText.includes(kw)) matched++;
-            });
-
-            const feedback = document.getElementById('checkFeedback');
-            if(matched >= 2) {
-                feedback.innerText = "Good job! You used key scientific vocabulary.";
-                feedback.className = "text-sm font-bold mb-2 text-green-600";
-            } else {
-                feedback.innerText = "Try to use words like 'valence', 'octet', 'transfer', or 'share'.";
-                feedback.className = "text-sm font-bold mb-2 text-orange-600";
-            }
-
-            document.getElementById('officialExplanation').classList.remove('hidden');
-
-            // Trigger challenge if applicable
-            const res = document.getElementById('productsArea').innerText;
-            if(res.includes('NaCl')) {
-                document.getElementById('challengeModePanel').classList.remove('hidden');
-                document.getElementById('challengeMolecule').innerText = "MgCl₂";
-            } else if (res.includes('H₂O')) {
-                document.getElementById('challengeModePanel').classList.remove('hidden');
-                document.getElementById('challengeMolecule').innerText = "CO₂";
-            } else {
-                document.getElementById('challengeModePanel').classList.add('hidden');
-            }
-        }
-
-        function checkUserExplanation() {
-            const userText = document.getElementById('userExplanation').value.toLowerCase();
-            const keywords = ['valence', 'octet', 'transfer', 'share', 'electron', 'shell', 'full'];
-            let matched = 0;
-            keywords.forEach(kw => {
-                if(userText.includes(kw)) matched++;
-            });
-
-            const feedback = document.getElementById('checkFeedback');
-            if(matched >= 2) {
-                feedback.innerText = "Good job! You used key scientific vocabulary.";
-                feedback.className = "text-sm font-bold mb-2 text-green-600";
-            } else {
-                feedback.innerText = "Try to use words like 'valence', 'octet', 'transfer', or 'share'.";
-                feedback.className = "text-sm font-bold mb-2 text-orange-600";
-            }
-
-            document.getElementById('officialExplanationSection').classList.remove('hidden');
-
-            // Trigger challenge if applicable
-            const res = document.getElementById('productsArea').innerText;
-            if(res.includes('NaCl')) {
-                document.getElementById('challengeModePanel').classList.remove('hidden');
-                document.getElementById('challengeMolecule').innerText = "MgCl₂";
-            } else if (res.includes('H₂O')) {
-                document.getElementById('challengeModePanel').classList.remove('hidden');
-                document.getElementById('challengeMolecule').innerText = "CO₂";
-            } else {
-                document.getElementById('challengeModePanel').classList.add('hidden');
-            }
-        }
     </script>
 </body>
 </html>

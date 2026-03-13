@@ -154,7 +154,6 @@
 </div>
 <!-- Animation Area -->
 <div class="flex-grow flex flex-col justify-center border-2 border-dashed border-slate-200 rounded-lg p-4 bg-slate-50 relative overflow-hidden">
-<canvas id="bondCanvas" width="500" height="200" class="absolute inset-0 w-full h-full pointer-events-none z-50"></canvas>
 <!-- Energy System Background Indicator -->
 <div class="absolute inset-0 bg-gradient-to-t from-red-100 to-transparent opacity-0 transition-opacity duration-1000 pointer-events-none" id="systemEnergyBg"></div>
 <div class="grid grid-cols-2 gap-4 w-full relative z-10">
@@ -576,69 +575,6 @@
         downloadLink.click();
         document.body.removeChild(downloadLink);
     }
-
-        // Particle Animation Logic
-        const bondCanvas = document.getElementById('bondCanvas');
-        const bondCtx = bondCanvas.getContext('2d');
-        let atoms = [];
-        let animFrame;
-
-        function resizeCanvas() {
-            const rect = bondCanvas.parentElement.getBoundingClientRect();
-            bondCanvas.width = rect.width;
-            bondCanvas.height = rect.height;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        setTimeout(resizeCanvas, 100);
-
-        function spawnFloatingAtoms(sourceEl, targetOpacityEl, duration) {
-            if(!bondCanvas) return;
-            resizeCanvas();
-            bondCtx.clearRect(0,0, bondCanvas.width, bondCanvas.height);
-            atoms = [];
-
-            // Generate some random floating colored balls representing the broken bonds
-            for(let i=0; i<15; i++) {
-                atoms.push({
-                    x: bondCanvas.width * 0.25 + (Math.random() * 50 - 25), // Start roughly at reactants
-                    y: bondCanvas.height * 0.5 + (Math.random() * 50 - 25),
-                    vx: (Math.random() - 0.5) * 5 + 2, // Drift right
-                    vy: (Math.random() - 0.5) * 5,
-                    color: ['#ef4444', '#3b82f6', '#10b981', '#64748b'][Math.floor(Math.random()*4)],
-                    radius: Math.random() * 6 + 4
-                });
-            }
-
-            let start = Date.now();
-            function animate() {
-                let now = Date.now();
-                let progress = (now - start) / duration;
-
-                bondCtx.clearRect(0,0, bondCanvas.width, bondCanvas.height);
-
-                if (progress >= 1) {
-                    cancelAnimationFrame(animFrame);
-                    return;
-                }
-
-                atoms.forEach(a => {
-                    a.x += a.vx;
-                    a.y += a.vy;
-                    // Bounce
-                    if(a.x < 0 || a.x > bondCanvas.width) a.vx *= -1;
-                    if(a.y < 0 || a.y > bondCanvas.height) a.vy *= -1;
-
-                    bondCtx.beginPath();
-                    bondCtx.arc(a.x, a.y, a.radius, 0, Math.PI*2);
-                    bondCtx.fillStyle = a.color;
-                    bondCtx.globalAlpha = 1 - progress; // Fade out as they form
-                    bondCtx.fill();
-                });
-
-                animFrame = requestAnimationFrame(animate);
-            }
-            animate();
-        }
-</script>
+    </script>
 </body>
 </html>
