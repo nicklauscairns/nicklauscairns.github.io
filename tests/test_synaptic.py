@@ -6,7 +6,7 @@ def test_synaptic_links(page: Page):
 
     page.route("**/*tailwindcss.com*", lambda route: route.abort())
     page.goto(file_path)
-    page.wait_for_timeout(500)
+    page.wait_for_selector("#graphCanvas")
 
     # Output solution graph
     solution_graph = page.evaluate("window.getSolutionGraph()")

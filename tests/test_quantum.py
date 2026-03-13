@@ -12,7 +12,7 @@ def test_quantum_entanglement(page: Page):
     page.goto(file_path)
 
     # Allow scripts to initialize
-    page.wait_for_timeout(500)
+    page.wait_for_selector("#grid button")
 
     # Get nodes and partners
     nodes = page.evaluate("window.getNodes()")

@@ -82,6 +82,8 @@
         let moves = 0;
         let isSolved = false;
 
+        const NODE_CLASS = 'rounded-xl shadow-inner font-bold text-2xl md:text-3xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400';
+
         const gridEl = document.getElementById('grid');
         const moveCountEl = document.getElementById('moveCount');
         const resetBtn = document.getElementById('resetBtn');
@@ -127,7 +129,7 @@
             gridEl.innerHTML = '';
             for (let i = 0; i < GRID_SIZE; i++) {
                 const btn = document.createElement('button');
-                btn.className = 'node state-' + nodes[i] + ' rounded-xl shadow-inner font-bold text-2xl md:text-3xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400';
+                btn.className = 'node state-' + nodes[i] + ' ' + NODE_CLASS;
                 btn.textContent = nodes[i];
                 btn.dataset.index = i;
                 btn.onclick = () => handleNodeClick(i);
@@ -139,7 +141,7 @@
             for (let i = 0; i < GRID_SIZE; i++) {
                 const btn = gridEl.children[i];
                 // Update class
-                btn.className = 'node state-' + nodes[i] + ' rounded-xl shadow-inner font-bold text-2xl md:text-3xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400';
+                btn.className = 'node state-' + nodes[i] + ' ' + NODE_CLASS;
                 btn.textContent = nodes[i];
             }
             moveCountEl.textContent = moves;
@@ -153,7 +155,7 @@
             generatePartners();
             scramble();
             renderGrid();
-            updateUI();
+            moveCountEl.textContent = moves;
         }
 
         function handleNodeClick(index) {

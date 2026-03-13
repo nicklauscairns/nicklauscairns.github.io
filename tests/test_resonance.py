@@ -11,7 +11,7 @@ def test_resonance_cascade(page: Page):
     page.goto(file_path)
 
     # Wait for initialization
-    page.wait_for_timeout(500)
+    page.wait_for_selector("#grid button")
 
     # Get initial nodes
     nodes = page.evaluate("window.getNodes()")

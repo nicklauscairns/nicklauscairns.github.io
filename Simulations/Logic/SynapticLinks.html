@@ -141,13 +141,11 @@
 
             // Generate a random connected graph
             const edgeProb = 0.4;
-            let edgesAdded = 0;
 
             // Ensure connection
             for (let i = 0; i < NUM_NODES - 1; i++) {
                 solutionGraph[i][i+1] = true;
                 solutionGraph[i+1][i] = true;
-                edgesAdded++;
             }
 
             for (let i = 0; i < NUM_NODES; i++) {
@@ -155,7 +153,6 @@
                     if (Math.random() < edgeProb) {
                         solutionGraph[i][j] = true;
                         solutionGraph[j][i] = true;
-                        edgesAdded++;
                     }
                 }
             }

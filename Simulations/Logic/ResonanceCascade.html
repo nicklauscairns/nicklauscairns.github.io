@@ -95,6 +95,8 @@
         let moves = 0;
         let isSolved = false;
 
+        const NODE_CLASS = 'border-2 rounded-xl shadow-inner font-bold text-xl md:text-2xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-400';
+
         const gridEl = document.getElementById('grid');
         const moveCountEl = document.getElementById('moveCount');
         const resetBtn = document.getElementById('resetBtn');
@@ -113,26 +115,31 @@
                 }
             };
 
-            if (state === 0) {
-                // Orthogonal
-                addValid(row - 1, col); // Up
-                addValid(row + 1, col); // Down
-                addValid(row, col - 1); // Left
-                addValid(row, col + 1); // Right
-            } else if (state === 1) {
-                // Diagonal
-                addValid(row - 1, col - 1); // TL
-                addValid(row - 1, col + 1); // TR
-                addValid(row + 1, col - 1); // BL
-                addValid(row + 1, col + 1); // BR
-            } else if (state === 2) {
-                // Horizontal
-                addValid(row, col - 1); // Left
-                addValid(row, col + 1); // Right
-            } else if (state === 3) {
-                // Vertical
-                addValid(row - 1, col); // Up
-                addValid(row + 1, col); // Down
+            switch (state) {
+                case 0:
+                    // Orthogonal
+                    addValid(row - 1, col); // Up
+                    addValid(row + 1, col); // Down
+                    addValid(row, col - 1); // Left
+                    addValid(row, col + 1); // Right
+                    break;
+                case 1:
+                    // Diagonal
+                    addValid(row - 1, col - 1); // TL
+                    addValid(row - 1, col + 1); // TR
+                    addValid(row + 1, col - 1); // BL
+                    addValid(row + 1, col + 1); // BR
+                    break;
+                case 2:
+                    // Horizontal
+                    addValid(row, col - 1); // Left
+                    addValid(row, col + 1); // Right
+                    break;
+                case 3:
+                    // Vertical
+                    addValid(row - 1, col); // Up
+                    addValid(row + 1, col); // Down
+                    break;
             }
 
             return neighbors;
@@ -157,7 +164,7 @@
             gridEl.innerHTML = '';
             for (let i = 0; i < GRID_SIZE; i++) {
                 const btn = document.createElement('button');
-                btn.className = 'node state-' + nodes[i] + ' border-2 rounded-xl shadow-inner font-bold text-xl md:text-2xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-400';
+                btn.className = 'node state-' + nodes[i] + ' ' + NODE_CLASS;
                 btn.textContent = nodes[i];
                 btn.dataset.index = i;
                 btn.onclick = () => handleNodeClick(i);
@@ -168,7 +175,7 @@
         function updateUI() {
             for (let i = 0; i < GRID_SIZE; i++) {
                 const btn = gridEl.children[i];
-                btn.className = 'node state-' + nodes[i] + ' border-2 rounded-xl shadow-inner font-bold text-xl md:text-2xl flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-400';
+                btn.className = 'node state-' + nodes[i] + ' ' + NODE_CLASS;
                 btn.textContent = nodes[i];
             }
             moveCountEl.textContent = moves;
