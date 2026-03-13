@@ -527,3 +527,4 @@ Analyze geoscience data and the results from global climate models to make an ev
 ### HS-ESS3-6
 Use a computational representation to illustrate the relationships among Earth systems and how those relationships are being modified due to human activity.
 
+- [Earth Systems Interactions Simulator](EarthSystemsInteractions.html) - Explore how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time.
