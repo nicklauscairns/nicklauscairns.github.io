@@ -16,7 +16,13 @@ def test_spacecraft_reentry():
         page.evaluate("document.getElementById('angle').value = '10'; document.getElementById('angle').dispatchEvent(new Event('input'))")
         page.wait_for_timeout(500)
 
-        # 2. Run sim
+        # 2. Acknowledge limitations modal before running
+        page.evaluate("document.getElementById('open-modal-btn').click()")
+        page.wait_for_timeout(500)
+        page.evaluate("document.getElementById('close-modal-btn').click()")
+        page.wait_for_timeout(500)
+
+        # 3. Run sim
         page.evaluate("document.getElementById('run-simulation').click()")
         page.wait_for_timeout(2000) # Wait for simulation to finish
 

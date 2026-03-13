@@ -131,29 +131,29 @@
 <h3>HS-ETS1-4</h3>
 <p>Use a computer simulation to model the impact of proposed solutions to a complex real-world problem with numerous criteria and constraints on interactions within and between systems relevant to the problem.</p>
 <ul>
-<li><p><a href="SpacecraftReentrySimulation.html">Spacecraft Reentry Optimization Simulation</a> - An interactive simulation challenging users to design a reentry vehicle by balancing mass, shield diameter, angle, and material to survive atmospheric entry. [2026-03-12 12:00:00]</p>
+<li><p><a href="SpacecraftReentrySimulation.html">Spacecraft Reentry Optimization Simulation</a> - An interactive simulation challenging users to design a reentry vehicle by balancing mass, shield diameter, angle, and material to survive atmospheric entry against strict Mission Briefing constraints, while reflecting on model limitations. [2026-03-13 12:13:17]</p>
 <details>
-  <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 18:00:00</b></summary>
+  <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 12:13:17</b></summary>
   <ul>
     <li>
-      <b>Overview:</b> This serves as a captivating investigative phenomenon, simulating spacecraft reentry. It effectively tests students’ understanding of thermal dynamics, mass, and velocity during a critical mission phase (Criterion 4: Investigable Through Practices). While scientifically robust and flashy, it lacks everyday Cultural and Personal Relevance (Criterion 1) as aerospace engineering is highly specialized, but the physics (friction, heat) are universal.
+      <b>Overview:</b> This serves as a captivating investigative phenomenon, simulating spacecraft reentry. It effectively tests students’ understanding of thermal dynamics, mass, and velocity during a critical mission phase (Criterion 4: Investigable Through Practices). It challenges students to balance engineering constraints. While aerospace engineering is specialized, the universal physics principles (friction, heat) provide strong educational value.
     </li>
     <li>
-      <b>Dimensional Evaluation & Evidence Statements:</b> The simulation robustly supports the DCI (ETS1.B: Developing Possible Solutions) by utilizing a computer model to simulate a physical system. For the SEP (Using Mathematics and Computational Thinking), it demonstrates Observable Features 1.a.ii (identifying the system modeled), 1.a.iii (identifying variables that can be changed: mass, angle, diameter), 2.a.i (selecting inputs), and 2.a.ii (using the model to simulate effects). However, it does not explicitly prompt students to interpret results against *expected* results (3.a) or identify the simulation's limitations (3.d).
+      <b>Dimensional Evaluation & Evidence Statements:</b> The simulation robustly supports the DCI (ETS1.B: Developing Possible Solutions) by utilizing a computer model to simulate a physical system. For the SEP (Using Mathematics and Computational Thinking), it strongly demonstrates Observable Features 1.a.ii (identifying the system modeled), 1.a.iii (identifying variables that can be changed: mass, angle, diameter), 2.a.i (selecting inputs), and 2.a.ii (using the model to simulate effects). It effectively fulfills 3.a by forcing students to evaluate their telemetry against a target "Mission Briefing", and fulfills 3.d by requiring explicit acknowledgement of the simulation's mathematical limitations (e.g., uniform atmosphere, simplified drag) before launch.
     </li>
     <li>
       <b>AI Action Items for Improvement:</b>
       <ul>
-        <li><b>Improve SEP (Computational Modeling Analysis):</b> To address 3.a (comparing to expected results), provide a target "Mission Profile" before launch, such as a max safe temperature and max deceleration force. Students must write down their predictions and compare them to the actual flight data chart.</li>
-        <li><b>Fulfill Observable Feature 3.d (Simulation Limitations):</b> Add an "Assumptions & Limitations" info panel or tooltip. Require students to acknowledge (e.g., via a checkbox before launch) that this model assumes a uniform atmosphere, ignores ablation physics, and uses a simplified ballistic trajectory.</li>
+        <li><b>Improve CCC (Systems and System Models):</b> The simulation effectively communicates limitations and verifies expected results. However, it could be enhanced by visualizing the dynamic forces (e.g., drawing explicit vectors for gravity vs. drag on the capsule) during the descent to make the system interactions even more apparent.</li>
       </ul>
     </li>
     <li>
       <b>Implementation Checklist for AI Agent:</b>
       <ul>
-        <li>[ ] Add a "Mission Briefing" UI card outlining target safety limits (Max G-force: 15G, Max Temp: 2000K).</li>
-        <li>[ ] Add an "Assumptions & Limitations" info modal listing the physical simplifications used in the mathematical model.</li>
-        <li>[ ] Add a prompt after the simulation runs for students to select if their design "Met", "Exceeded", or "Failed" the mission criteria compared to expected results.</li>
+        <li>[x] Add a "Mission Briefing" UI card outlining target safety limits (Max G-force: 15.0 G, Max Temp: 2000&deg;C).</li>
+        <li>[x] Add an "Assumptions & Limitations" info modal listing the physical simplifications used in the mathematical model.</li>
+        <li>[x] Add a prompt after the simulation runs for students to evaluate if their design "Met" or "Failed" the mission criteria compared to expected results.</li>
+        <li>[ ] (Future) Add vector arrows indicating Gravity and Drag forces on the capsule during the animation.</li>
       </ul>
     </li>
   </ul>
