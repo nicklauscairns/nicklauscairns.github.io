@@ -1,24 +1,14 @@
 import asyncio
 import os
 from playwright.async_api import async_playwright
+from test_utils import setup_page
 
 async def main():
     async with async_playwright() as p:
         browser = await p.chromium.launch()
-        page = await browser.new_page()
 
-        filepath = os.path.abspath('Simulations/PhysicalSciences/ConservationOfMomentumSimulation.html')
-        url = f"file://{filepath}"
-        print(f"Loading {url}")
-
-        # Load the HTML
-        with open(filepath, 'r') as f:
-            content = f.read()
-
-        # Strip tailwind to avoid timeout issues in playwright inside sandbox
-        content = content.replace('<script src="https://cdn.tailwindcss.com"></script>', '')
-
-        await page.set_content(content, wait_until="load")
+        page = await setup_page(browser, 'PhysicalSciences/ConservationOfMomentumSimulation.html')
+        print("Loading Simulation")
 
         # Check if the canvas exists
         canvas = await page.query_selector('#sim-canvas')

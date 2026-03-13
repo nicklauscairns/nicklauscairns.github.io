@@ -2,20 +2,13 @@ import asyncio
 import os
 import math
 from playwright.async_api import async_playwright
+from test_utils import setup_page
 
 async def main():
     async with async_playwright() as p:
         browser = await p.chromium.launch()
-        page = await browser.new_page()
 
-        filepath = os.path.abspath('Simulations/PhysicalSciences/InteractiveBoatRiverCrossingSimulation.html')
-
-        with open(filepath, 'r') as f:
-            content = f.read()
-
-        content = content.replace('<script src="https://cdn.tailwindcss.com"></script>', '')
-
-        await page.set_content(content, wait_until="load")
+        page = await setup_page(browser, 'PhysicalSciences/InteractiveBoatRiverCrossingSimulation.html')
 
         print("Testing pure `calculatePhysics` function...")
 
