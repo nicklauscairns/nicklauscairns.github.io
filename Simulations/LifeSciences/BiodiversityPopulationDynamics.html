@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HS-LS2-2 Biodiversity and Population Dynamics Simulator</title>
+  <meta name="description" content="Explore how habitat area, pollution, climate stress, and invasive species affect biodiversity and population size across ecosystem scales." />
+  <meta name="keywords" content="NGSS, HS-LS2-2, biodiversity, population dynamics, ecosystem simulation" />
+  <meta property="og:title" content="HS-LS2-2 Biodiversity and Population Dynamics Simulator" />
+  <meta property="og:description" content="Use mathematical representations to support and revise explanations about biodiversity and population change." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://nicklauscairns.github.io/ev_sim_screenshot.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    "name": "HS-LS2-2 Biodiversity and Population Dynamics Simulator",
+    "description": "Interactive model of ecosystem population and biodiversity changes across scales.",
+    "educationalLevel": "High School",
+    "learningResourceType": "Simulation",
+    "educationalUse": "Instruction",
+    "about": "NGSS HS-LS2-2"
+  }
+  </script>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen">
+  <main class="max-w-7xl mx-auto p-4 md:p-8">
+    <h1 class="text-2xl md:text-4xl font-bold mb-2">Biodiversity and Population Dynamics Lab</h1>
+    <p class="mb-6 text-slate-700">Model how local changes scale up to ecosystem-level impacts. Build a claim from data, then revise it after an unexpected disturbance.</p>
+
+    <section class="grid lg:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow p-4">
+        <h2 class="font-semibold mb-3">Ecosystem Inputs</h2>
+        <label class="block text-sm font-medium">Habitat Area (km<sup>2</sup>): <span id="areaVal">500</span></label>
+        <input id="habitatArea" type="range" min="100" max="1000" value="500" class="w-full mb-3" />
+
+        <label class="block text-sm font-medium">Pollution Index: <span id="pollutionVal">20</span>%</label>
+        <input id="pollution" type="range" min="0" max="80" value="20" class="w-full mb-3" />
+
+        <label class="block text-sm font-medium">Climate Stress: <span id="climateVal">15</span>%</label>
+        <input id="climateStress" type="range" min="0" max="80" value="15" class="w-full mb-3" />
+
+        <label class="block text-sm font-medium">Invasive Species Pressure: <span id="invasiveVal">10</span>%</label>
+        <input id="invasive" type="range" min="0" max="80" value="10" class="w-full mb-4" />
+
+        <div class="flex gap-2">
+          <button id="runBtn" class="px-4 py-2 rounded bg-emerald-600 text-white hover:bg-emerald-700">Run 30-Year Model</button>
+          <button id="disturbanceBtn" class="px-4 py-2 rounded bg-amber-500 text-white hover:bg-amber-600">Trigger Disturbance</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-4 lg:col-span-2">
+        <h2 class="font-semibold mb-1">Mathematical Representation</h2>
+        <p class="text-sm text-slate-600 mb-2">Population model: N<sub>t+1</sub> = N<sub>t</sub> + rN<sub>t</sub>(1 - N<sub>t</sub>/K) - (P + C + I)N<sub>t</sub></p>
+        <p class="text-sm text-slate-600 mb-3">Biodiversity index (0-1): B = (Species richness / 100) × habitat quality factor</p>
+        <div class="w-full" style="max-height: 380px;">
+          <canvas id="ecoChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid md:grid-cols-3 gap-4">
+      <div class="bg-white rounded-xl shadow p-4">
+        <h3 class="font-semibold mb-2">Current Results</h3>
+        <p>Estimated Carrying Capacity (K): <span id="kOut" class="font-semibold"></span></p>
+        <p>Final Population: <span id="populationOut" class="font-semibold"></span></p>
+        <p>Final Biodiversity Index: <span id="biodiversityOut" class="font-semibold"></span></p>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4 md:col-span-2">
+        <h3 class="font-semibold mb-2">Explain and Revise</h3>
+        <label class="block text-sm mb-1">Initial explanation (before disturbance):</label>
+        <textarea id="claimBox" class="w-full border rounded p-2 mb-3 h-20" placeholder="Use evidence from the graph and numbers."></textarea>
+        <label class="block text-sm mb-1">Revised explanation (after disturbance evidence):</label>
+        <textarea id="reviseBox" class="w-full border rounded p-2 h-20" placeholder="How did your explanation change?"></textarea>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const inputs = {
+      habitatArea: document.getElementById('habitatArea'),
+      pollution: document.getElementById('pollution'),
+      climateStress: document.getElementById('climateStress'),
+      invasive: document.getElementById('invasive')
+    };
+
+    const labels = {
+      habitatArea: document.getElementById('areaVal'),
+      pollution: document.getElementById('pollutionVal'),
+      climateStress: document.getElementById('climateVal'),
+      invasive: document.getElementById('invasiveVal')
+    };
+
+    const outputs = {
+      kOut: document.getElementById('kOut'),
+      populationOut: document.getElementById('populationOut'),
+      biodiversityOut: document.getElementById('biodiversityOut')
+    };
+
+    let disturbanceFactor = 0;
+
+    function calculateK(area, pollution, climateStress, invasive) {
+      const baseK = area * 4;
+      const stressPenalty = 1 - ((pollution + climateStress + invasive) / 300);
+      return Math.max(100, Math.round(baseK * Math.max(0.2, stressPenalty)));
+    }
+
+    function runModel(params) {
+      const years = Array.from({ length: 31 }, (_, i) => i);
+      const K = calculateK(params.area, params.pollution, params.climate, params.invasive);
+      const r = 0.24;
+      const pressure = ((params.pollution + params.climate + params.invasive) / 1000) + disturbanceFactor;
+      let N = Math.max(120, Math.round(K * 0.35));
+      let richness = 65 - (params.pollution * 0.2 + params.climate * 0.15 + params.invasive * 0.2);
+
+      const population = [];
+      const biodiversity = [];
+
+      for (let i = 0; i < years.length; i++) {
+        population.push(Math.max(0, Math.round(N)));
+        const habitatQuality = Math.max(0.1, 1 - ((params.pollution + params.climate + params.invasive) / 240) - disturbanceFactor * 1.4);
+        const b = Math.max(0.02, Math.min(0.98, (richness / 100) * habitatQuality));
+        biodiversity.push(Number(b.toFixed(2)));
+
+        const dN = r * N * (1 - N / K) - pressure * N;
+        N = Math.max(0, N + dN);
+        richness = Math.max(2, richness - pressure * 3.4 + (area / 20000));
+      }
+
+      return { years, population, biodiversity, K };
+    }
+
+    window.runModel = runModel;
+    window.calculateK = calculateK;
+
+    Object.keys(inputs).forEach((key) => {
+      inputs[key].addEventListener('input', () => {
+        labels[key].textContent = inputs[key].value;
+      });
+    });
+
+    const chart = new Chart(document.getElementById('ecoChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { title: { display: true, text: 'Population Size' }, suggestedMax: 2000 },
+          y1: {
+            position: 'right',
+            min: 0,
+            max: 1,
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: 'Biodiversity Index' }
+          }
+        }
+      }
+    });
+
+    function refreshSimulation() {
+      const params = {
+        area: Number(inputs.habitatArea.value),
+        pollution: Number(inputs.pollution.value),
+        climate: Number(inputs.climateStress.value),
+        invasive: Number(inputs.invasive.value)
+      };
+
+      const result = runModel(params);
+      chart.data.labels = result.years;
+      chart.data.datasets = [
+        {
+          label: 'Population',
+          data: result.population,
+          yAxisID: 'y',
+          borderColor: '#047857',
+          tension: 0.25
+        },
+        {
+          label: 'Biodiversity Index',
+          data: result.biodiversity,
+          yAxisID: 'y1',
+          borderColor: '#1d4ed8',
+          tension: 0.25
+        }
+      ];
+      chart.options.scales.y.suggestedMax = Math.max(...result.population) * 1.1;
+      chart.update();
+
+      outputs.kOut.textContent = result.K;
+      outputs.populationOut.textContent = result.population[result.population.length - 1];
+      outputs.biodiversityOut.textContent = result.biodiversity[result.biodiversity.length - 1];
+    }
+
+    document.getElementById('runBtn').addEventListener('click', () => {
+      disturbanceFactor = 0;
+      refreshSimulation();
+    });
+
+    document.getElementById('disturbanceBtn').addEventListener('click', () => {
+      disturbanceFactor = 0.08;
+      refreshSimulation();
+    });
+
+    refreshSimulation();
+  </script>
+</body>
+</html>

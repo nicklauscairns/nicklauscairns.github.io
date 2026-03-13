@@ -251,6 +251,8 @@ Use mathematical and/or computational representations to support explanations of
 ### HS-LS2-2
 Use mathematical representations to support and revise explanations based on evidence about factors affecting biodiversity and populations in ecosystems of different scales.
 
+- [Biodiversity & Population Dynamics Lab](BiodiversityPopulationDynamics.html) - Explore how habitat size, pollution, climate stress, and invasive species affect biodiversity and population trends, then revise claims using disturbance evidence. [2026-03-13 13:15:00]
+
 ### HS-LS2-3
 Construct and revise an explanation based on evidence for the cycling of matter and flow of energy in aerobic and anaerobic conditions.
 
