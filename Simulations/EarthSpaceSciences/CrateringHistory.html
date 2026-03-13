@@ -367,7 +367,8 @@
 
             // 1. Generate new impacts
             // Using time-based steps so slider drag and play button behave similarly
-            const steps = Math.ceil(dt);
+            const maxStepsPerFrame = 500;
+            const steps = Math.min(Math.ceil(dt), maxStepsPerFrame);
             for(let i=0; i<steps; i++) {
                 const stepTime = oldTime + i;
                 const prob = getImpactProbability(stepTime);
@@ -647,6 +648,7 @@
             simState.activeCratersEarth = 0;
             simState.activeCratersMoon = 0;
             timeSlider.value = 0;
+            lastTimestamp = 0;
             updateUI();
             drawSurfaces();
             updateOverlays();
