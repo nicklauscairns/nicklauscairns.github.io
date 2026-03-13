@@ -1,7 +1,7 @@
 name: Repost Bot Comments with @jules
 
 on:
-  issue_comments:
+  issue_comment:
     types: [created]
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
             
             const quotedComment = `> ${comment.split('\n').join('\n> ')}\n\n—@${author}\n\n@jules`;
             
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
