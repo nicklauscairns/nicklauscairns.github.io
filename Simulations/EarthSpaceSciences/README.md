@@ -189,6 +189,8 @@ Evaluate evidence of the past and current movements of continental and oceanic c
 ### HS-ESS1-6
 Apply scientific reasoning and evidence from ancient Earth materials, meteorites, and other planetary surfaces to construct an account of Earth’s formation and early history.
 
+- [Cratering & Surface Age Explorer](CrateringHistory.html) - Investigate why Earth has so few visible impact craters compared to the Moon, despite forming at the same time 4.6 billion years ago.
+
 
 
 ### HS-ESS2-1
