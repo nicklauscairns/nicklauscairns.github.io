@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Defense: Asteroid Deflection</title>
+    <meta name="description" content="Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision.">
+    <meta name="keywords" content="NGSS, HS-ESS1-4, Earth Science, Orbit, Asteroid, Planetary Defense, Kepler, Newton">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Planetary Defense: Asteroid Deflection">
+    <meta property="og:description" content="Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Planetary Defense: Asteroid Deflection",
+      "description": "Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision.",
+      "learningResourceType": "Interactive Simulation",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "targetName": "HS-ESS1-4",
+        "educationalFramework": "Next Generation Science Standards"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        canvas { background-color: #020617; border-radius: 0.5rem; border: 1px solid #334155; }
+
+        .control-range { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #475569; outline: none; }
+        .control-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fb923c; cursor: pointer; }
+        .control-range::-webkit-slider-thumb:hover { background: #fdba74; }
+        .control-range:disabled::-webkit-slider-thumb { background: #64748b; cursor: not-allowed; }
+
+        /* Explosion animation */
+        @keyframes explode {
+            0% { transform: scale(0.1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        .explosion {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #fbbf24 0%, #ef4444 50%, rgba(255,0,0,0) 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: explode 0.8s ease-out forwards;
+            display: none;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col items-center justify-center p-4">
+
+    <header class="text-center mb-4 w-full z-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-orange-400 mb-1 drop-shadow-md">Planetary Defense: Asteroid Deflection</h1>
+        <p class="text-slate-300 text-sm md:text-base">HS-ESS1-4: Alter orbital trajectories to prevent an Earth collision.</p>
+    </header>
+
+    <main class="w-full max-w-7xl flex flex-col lg:flex-row gap-6 h-[80vh] relative z-10">
+
+        <!-- Simulation Canvas -->
+        <section class="flex-[3] relative flex items-center justify-center">
+            <canvas id="orbitCanvas" width="800" height="600" class="w-full h-full object-contain"></canvas>
+
+            <!-- Dynamic UI Overlay -->
+            <div id="statusOverlay" class="absolute top-4 left-4 bg-slate-900/80 border border-slate-700 p-3 rounded font-mono text-sm shadow-lg pointer-events-none transition-colors duration-300">
+                <div class="text-slate-400 mb-1 border-b border-slate-700 pb-1">ASTEROID STATUS</div>
+                <div class="flex justify-between w-48 mb-1"><span>Trajectory:</span> <span id="trajStatus" class="text-red-400 font-bold">COLLISION COURSE</span></div>
+                <div class="flex justify-between w-48 mb-1"><span>Time to Impact:</span> <span id="ttiDisplay">3.50 yrs</span></div>
+                <div class="flex justify-between w-48 mb-1"><span>Velocity:</span> <span id="velDisplay">30.0 km/s</span></div>
+                <div class="flex justify-between w-48"><span>Dist to Earth:</span> <span id="distDisplay">2.00 AU</span></div>
+            </div>
+
+            <!-- Kepler Stats -->
+            <div class="absolute bottom-4 right-4 bg-slate-900/80 border border-slate-700 p-3 rounded font-mono text-sm shadow-lg pointer-events-none">
+                <div class="text-slate-400 mb-1 border-b border-slate-700 pb-1">ORBITAL ELEMENTS</div>
+                <div class="flex justify-between w-40 mb-1"><span>Period (T):</span> <span id="periodDisplay">1.00 yr</span></div>
+                <div class="flex justify-between w-40 mb-1"><span>Semi-major (a):</span> <span id="semiDisplay">1.00 AU</span></div>
+                <div class="flex justify-between w-40"><span>Eccentricity (e):</span> <span id="eccDisplay">0.20</span></div>
+            </div>
+
+            <!-- Explosion Div -->
+            <div id="explosionEffect" class="explosion transform -translate-x-1/2 -translate-y-1/2"></div>
+        </section>
+
+        <!-- Control Panel -->
+        <section class="glass-panel p-6 flex-1 lg:max-w-sm flex flex-col gap-5 overflow-y-auto">
+
+            <div>
+                <h2 class="text-xl font-semibold text-white mb-2 border-b border-slate-600 pb-2">Mission Control</h2>
+                <p class="text-sm text-slate-300 mb-4">Launch a kinetic impactor (like DART) to alter the asteroid's velocity vector (Δv).</p>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
+                        <span>Impactor Δv Magnitude</span>
+                        <span id="dvMagVal" class="text-orange-400 font-bold">0.5 AU/yr</span>
+                    </label>
+                    <input type="range" id="dvMagSlider" class="control-range" min="0" max="2.0" step="0.1" value="0.5">
+                    <p class="text-[10px] text-slate-500 mt-1 leading-tight">Small changes applied early have massive effects over time.</p>
+                </div>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
+                        <span>Impact Direction (Angle)</span>
+                        <span id="dvAngVal" class="text-orange-400 font-bold">Prograde (0°)</span>
+                    </label>
+                    <input type="range" id="dvAngSlider" class="control-range" min="-180" max="180" step="15" value="0">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>Retrograde (-180°)</span>
+                        <span>Prograde (0°)</span>
+                    </div>
+                </div>
+
+                <button id="btnImpact" class="w-full py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded shadow-lg transition-colors flex justify-center items-center group relative overflow-hidden">
+                    <span class="relative z-10 tracking-wider">EXECUTE IMPACT</span>
+                    <div class="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                </button>
+            </div>
+
+            <div class="mt-auto border-t border-slate-700 pt-4">
+                <div class="flex justify-between mb-3">
+                    <button id="btnPlayPause" class="w-1/2 mr-2 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold rounded transition-colors">
+                        Pause
+                    </button>
+                    <button id="btnReset" class="w-1/2 ml-2 py-2 bg-slate-700 hover:bg-red-900/50 text-slate-300 hover:text-red-400 text-sm font-semibold rounded border border-transparent hover:border-red-800 transition-colors">
+                        Reset Scenario
+                    </button>
+                </div>
+
+                <div class="bg-slate-900 p-3 rounded text-xs text-slate-400">
+                    <strong class="text-slate-200">Orbital Physics Note:</strong>
+                    Hitting prograde (front) increases the semi-major axis (a) and period (T), widening the orbit. Hitting retrograde shrinks it. Which direction pushes it away from Earth's orbital path?
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Background Stars (CSS only for body) -->
+    <style>
+        body {
+            background-image:
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 1px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 2px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+    </style>
+
+    <script>
+        // Constants
+        const G = 4 * Math.PI * Math.PI; // AU^3 / (M_sun * yr^2) -> Standard for AU, years, Solar Mass
+        const M_SUN = 1.0;
+        const CANVAS_AU_SCALE = 180; // pixels per AU
+
+        const EARTH_ORBIT_RADIUS = 1.0; // AU
+        const EARTH_ORBIT_PERIOD = 1.0; // years
+        const EARTH_OMEGA = 2 * Math.PI / EARTH_ORBIT_PERIOD; // rad/yr
+        const EARTH_RADIUS_AU = 0.05; // visually exaggerated
+
+        // Elements
+        const canvas = document.getElementById('orbitCanvas');
+        const ctx = canvas.getContext('2d');
+        const els = {
+            dvMagSlider: document.getElementById('dvMagSlider'),
+            dvMagVal: document.getElementById('dvMagVal'),
+            dvAngSlider: document.getElementById('dvAngSlider'),
+            dvAngVal: document.getElementById('dvAngVal'),
+            btnImpact: document.getElementById('btnImpact'),
+            btnPlayPause: document.getElementById('btnPlayPause'),
+            btnReset: document.getElementById('btnReset'),
+            trajStatus: document.getElementById('trajStatus'),
+            statusOverlay: document.getElementById('statusOverlay'),
+            ttiDisplay: document.getElementById('ttiDisplay'),
+            velDisplay: document.getElementById('velDisplay'),
+            distDisplay: document.getElementById('distDisplay'),
+            periodDisplay: document.getElementById('periodDisplay'),
+            semiDisplay: document.getElementById('semiDisplay'),
+            eccDisplay: document.getElementById('eccDisplay'),
+            explosionEffect: document.getElementById('explosionEffect')
+        };
+
+        // State
+        let isRunning = true;
+        let timeYears = 0;
+        let dt = 0.001; // Integration step (years)
+        let framesPerRender = 10; // Speed up
+
+        let asteroid = { x:0, y:0, vx:0, vy:0, ax:0, ay:0, path: [], impacted: false };
+        let earth = { x:0, y:0, angle: 0 };
+
+        let collisionOccurred = false;
+        let impactExecuted = false;
+
+        // Resize Canvas
+        function resize() {
+            // Match container size
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Setup Scenario: Asteroid on collision course
+        function initScenario() {
+            timeYears = 0;
+            collisionOccurred = false;
+            impactExecuted = false;
+            isRunning = true;
+            els.btnPlayPause.textContent = "Pause";
+
+            earth.angle = Math.PI - (2 * Math.PI * 0.918);
+
+            asteroid.x = 2.0;
+            asteroid.y = 0.0;
+
+            const a_init = 1.5;
+            const v_mag = Math.sqrt(G * M_SUN * (2.0 / asteroid.x - 1.0 / a_init));
+
+            asteroid.vx = 0;
+            asteroid.vy = -v_mag;
+
+            asteroid.path = [];
+            asteroid.impacted = false;
+
+            updateAccel();
+
+            els.btnImpact.disabled = false;
+            els.btnImpact.classList.remove('opacity-50', 'cursor-not-allowed');
+            els.btnImpact.textContent = "EXECUTE IMPACT";
+
+            els.trajStatus.textContent = "COLLISION COURSE";
+            els.trajStatus.className = "text-red-400 font-bold animate-pulse";
+            els.statusOverlay.style.borderColor = "#ef4444";
+            els.explosionEffect.style.display = "none";
+
+            updateKeplerElements();
+        }
+
+        function updateAccel() {
+            const r2 = asteroid.x*asteroid.x + asteroid.y*asteroid.y;
+            const r = Math.sqrt(r2);
+            const aMag = -(G * M_SUN) / r2;
+            asteroid.ax = aMag * (asteroid.x / r);
+            asteroid.ay = aMag * (asteroid.y / r);
+        }
+
+        function stepPhysics() {
+            if (collisionOccurred) return;
+
+            // Velocity Verlet Integration for Asteroid
+            asteroid.x += asteroid.vx * dt + 0.5 * asteroid.ax * dt * dt;
+            asteroid.y += asteroid.vy * dt + 0.5 * asteroid.ay * dt * dt;
+
+            const ax_old = asteroid.ax;
+            const ay_old = asteroid.ay;
+
+            updateAccel();
+
+            asteroid.vx += 0.5 * (ax_old + asteroid.ax) * dt;
+            asteroid.vy += 0.5 * (ay_old + asteroid.ay) * dt;
+
+            // Update Earth position (circular orbit)
+            timeYears += dt;
+            earth.angle += EARTH_OMEGA * dt;
+            earth.x = Math.cos(earth.angle) * EARTH_ORBIT_RADIUS;
+            earth.y = Math.sin(earth.angle) * EARTH_ORBIT_RADIUS;
+
+            // Record path for trail
+            if (Math.random() < 0.1) { // Thin out path
+                asteroid.path.push({x: asteroid.x, y: asteroid.y});
+                if (asteroid.path.length > 500) asteroid.path.shift();
+            }
+
+            // Check Collision
+            const dx = asteroid.x - earth.x;
+            const dy = asteroid.y - earth.y;
+            const distToEarth = Math.sqrt(dx*dx + dy*dy);
+
+            // Simple collision check
+            if (distToEarth < EARTH_RADIUS_AU) {
+                collisionOccurred = true;
+                isRunning = false;
+                triggerExplosion();
+
+                els.trajStatus.textContent = "IMPACT DETECTED!";
+                els.trajStatus.className = "text-red-600 font-black animate-bounce";
+                els.statusOverlay.style.borderColor = "#dc2626";
+                els.statusOverlay.style.backgroundColor = "rgba(127, 29, 29, 0.9)";
+            }
+
+            // Check success (missed closely and moving away, or safely far)
+            if (timeYears > 2.0 && !collisionOccurred) {
+                // Determine minimum distance passed
+                els.trajStatus.textContent = "EARTH SAVED!";
+                els.trajStatus.className = "text-green-400 font-bold";
+                els.statusOverlay.style.borderColor = "#10b981"; // green
+
+                // Allow it to keep running, but we marked success
+            }
+        }
+
+        function triggerExplosion() {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const px = cx + earth.x * CANVAS_AU_SCALE;
+            const py = cy - earth.y * CANVAS_AU_SCALE;
+
+            const expl = els.explosionEffect;
+            expl.style.left = px + 'px';
+            expl.style.top = py + 'px';
+            expl.style.display = 'block';
+
+            // Reset animation
+            expl.style.animation = 'none';
+            expl.offsetHeight; /* trigger reflow */
+            expl.style.animation = null;
+        }
+
+        function calculateV(vx, vy) {
+            // Returns km/s (AU/yr to km/s is roughly 4.74)
+            return Math.sqrt(vx*vx + vy*vy) * 4.74;
+        }
+
+        function updateKeplerElements() {
+            // Calculate orbital elements from state vectors
+            // r, v magnitudes
+            const rMag = Math.sqrt(asteroid.x*asteroid.x + asteroid.y*asteroid.y);
+            const vMagSq = asteroid.vx*asteroid.vx + asteroid.vy*asteroid.vy;
+
+            // Specific orbital energy: E = v^2/2 - mu/r
+            const energy = (vMagSq / 2) - (G * M_SUN / rMag);
+
+            // Semi-major axis: a = -mu / (2E)
+            const a = -(G * M_SUN) / (2 * energy);
+
+            // Period: T = 2PI * sqrt(a^3 / mu)
+            let period = 0;
+            if (a > 0) {
+                period = 2 * Math.PI * Math.sqrt((a*a*a) / (G * M_SUN));
+            }
+
+            // Angular momentum vector h = r x v
+            const h = asteroid.x * asteroid.vy - asteroid.y * asteroid.vx;
+
+            // Eccentricity vector e = (v x h)/mu - r/|r|
+            const ex = (asteroid.vy * h) / (G * M_SUN) - (asteroid.x / rMag);
+            const ey = (-asteroid.vx * h) / (G * M_SUN) - (asteroid.y / rMag);
+            const ecc = Math.sqrt(ex*ex + ey*ey);
+
+            els.semiDisplay.textContent = a > 0 ? a.toFixed(2) + " AU" : "Hyperbolic";
+            els.periodDisplay.textContent = period > 0 ? period.toFixed(2) + " yr" : "N/A";
+            els.eccDisplay.textContent = ecc.toFixed(3);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // Draw Sun
+            ctx.beginPath();
+            ctx.arc(cx, cy, 15, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fef08a'; // yellow-200
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#facc15';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Draw Earth Orbit Path
+            ctx.beginPath();
+            ctx.arc(cx, cy, EARTH_ORBIT_RADIUS * CANVAS_AU_SCALE, 0, 2*Math.PI);
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)'; // sky-400 dim
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw Earth
+            const ex = cx + earth.x * CANVAS_AU_SCALE;
+            const ey = cy - earth.y * CANVAS_AU_SCALE;
+            ctx.beginPath();
+            ctx.arc(ex, ey, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#38bdf8'; // sky-400
+            ctx.fill();
+
+            // Draw Asteroid Path
+            if (asteroid.path.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(cx + asteroid.path[0].x * CANVAS_AU_SCALE, cy - asteroid.path[0].y * CANVAS_AU_SCALE);
+                for (let i = 1; i < asteroid.path.length; i++) {
+                    ctx.lineTo(cx + asteroid.path[i].x * CANVAS_AU_SCALE, cy - asteroid.path[i].y * CANVAS_AU_SCALE);
+                }
+                ctx.strokeStyle = asteroid.impacted ? '#fb923c' : '#94a3b8'; // Orange if hit, slate if not
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Draw Asteroid
+            if (!collisionOccurred) {
+                const ax = cx + asteroid.x * CANVAS_AU_SCALE;
+                const ay = cy - asteroid.y * CANVAS_AU_SCALE;
+                ctx.beginPath();
+                ctx.arc(ax, ay, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = '#94a3b8'; // slate-400
+                ctx.fill();
+
+                // Velocity vector
+                const vAngle = Math.atan2(asteroid.vy, asteroid.vx);
+                const vLen = 20;
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                // Note: screen y is inverted
+                ctx.lineTo(ax + Math.cos(vAngle) * vLen, ay - Math.sin(vAngle) * vLen);
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw proposed Delta V vector
+                if (!impactExecuted) {
+                    const dvMag = parseFloat(els.dvMagSlider.value); // Scale for visual
+                    const dvAngDeg = parseFloat(els.dvAngSlider.value);
+                    const dvAngRad = dvAngDeg * (Math.PI/180);
+
+                    // Angle relative to velocity vector
+                    const forceAngle = vAngle + dvAngRad;
+
+                    const fLen = dvMag * 20; // visual scale
+                    ctx.beginPath();
+                    ctx.moveTo(ax, ay);
+                    ctx.lineTo(ax + Math.cos(forceAngle) * fLen, ay - Math.sin(forceAngle) * fLen);
+                    ctx.strokeStyle = '#fb923c'; // orange-400
+                    ctx.lineWidth = 2;
+                    // Arrowhead
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function updateUI() {
+            if (collisionOccurred) return;
+
+            const dx = asteroid.x - earth.x;
+            const dy = asteroid.y - earth.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            els.distDisplay.textContent = dist.toFixed(3) + " AU";
+
+            els.ttiDisplay.textContent = timeYears.toFixed(2) + " yrs";
+            els.velDisplay.textContent = calculateV(asteroid.vx, asteroid.vy).toFixed(1) + " km/s";
+
+            if (timeYears % 0.1 < dt*framesPerRender) {
+                updateKeplerElements();
+            }
+        }
+
+        function animate() {
+            if (isRunning) {
+                for (let i = 0; i < framesPerRender; i++) {
+                    stepPhysics();
+                }
+                updateUI();
+            }
+            draw();
+            requestAnimationFrame(animate);
+        }
+
+        // Controls
+        els.dvMagSlider.addEventListener('input', (e) => {
+            els.dvMagVal.textContent = parseFloat(e.target.value).toFixed(1) + " AU/yr";
+        });
+
+        els.dvAngSlider.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            let text = `${val}°`;
+            if (val === 0) text = "Prograde (0°)";
+            if (val === 180 || val === -180) text = "Retrograde (180°)";
+            if (val === 90) text = "Outward (90°)";
+            if (val === -90) text = "Inward (-90°)";
+            els.dvAngVal.textContent = text;
+        });
+
+        els.btnImpact.addEventListener('click', () => {
+            if (impactExecuted || collisionOccurred) return;
+
+            const dvMag = parseFloat(els.dvMagSlider.value); // AU/yr
+            const dvAngRad = parseFloat(els.dvAngSlider.value) * (Math.PI/180);
+
+            const vAngle = Math.atan2(asteroid.vy, asteroid.vx);
+            const forceAngle = vAngle + dvAngRad;
+
+            // Apply delta-v
+            asteroid.vx += Math.cos(forceAngle) * dvMag;
+            asteroid.vy += Math.sin(forceAngle) * dvMag;
+
+            impactExecuted = true;
+            asteroid.impacted = true;
+            updateKeplerElements();
+
+            // Visual feedback on button
+            els.btnImpact.textContent = "IMPACT CONFIRMED";
+            els.btnImpact.classList.add('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
+            els.btnImpact.classList.remove('bg-orange-600', 'hover:bg-orange-500');
+            els.btnImpact.disabled = true;
+
+            // Flash screen
+            ctx.fillStyle = 'rgba(251, 146, 60, 0.3)'; // orange flash
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        els.btnPlayPause.addEventListener('click', () => {
+            isRunning = !isRunning;
+            els.btnPlayPause.textContent = isRunning ? "Pause" : "Play";
+        });
+
+        els.btnReset.addEventListener('click', initScenario);
+
+        // Expose for Playwright verification
+        window.getSimState = () => ({
+            time: timeYears,
+            dist: Math.sqrt((asteroid.x-earth.x)**2 + (asteroid.y-earth.y)**2),
+            collision: collisionOccurred
+        });
+        window.setDeltaV = (mag, angle) => {
+            els.dvMagSlider.value = mag;
+            els.dvAngSlider.value = angle;
+        };
+        window.executeImpact = () => els.btnImpact.click();
+
+        // Start
+        initScenario();
+        animate();
+
+    </script>
+</body>
+</html>
