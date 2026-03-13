@@ -14,7 +14,7 @@ def test_hs_ess3_2_energy_simulation(page: Page):
     page.goto(file_path)
 
     # Allow simulation to initialize
-    page.wait_for_timeout(1000)
+    expect(page.locator("#comparisonChart")).to_be_visible()
 
     # Verify initial state metrics
     metrics_a = page.evaluate("window.currentMetricsA")
@@ -23,10 +23,9 @@ def test_hs_ess3_2_energy_simulation(page: Page):
 
     # Interact with Solution A: Change Energy Source to Nuclear and Scale
     page.select_option("#a-energy-type", "nuclear")
-    page.fill("#a-energy-scale", "120")
-    page.evaluate("document.getElementById('a-energy-scale').dispatchEvent(new Event('input'))")
+    page.locator("#a-energy-scale").evaluate("el => { el.value = '120'; el.dispatchEvent(new Event('input')); }")
 
-    page.wait_for_timeout(500)
+    expect(page.locator("#comparisonChart")).to_be_visible()
 
     # Verify updated state metrics
     new_metrics_a = page.evaluate("window.currentMetricsA")
@@ -34,10 +33,9 @@ def test_hs_ess3_2_energy_simulation(page: Page):
     assert new_metrics_a["ecoCost"] != metrics_a["ecoCost"]
 
     # Interact with Mitigation
-    page.fill("#a-mitigation", "100")
-    page.evaluate("document.getElementById('a-mitigation').dispatchEvent(new Event('input'))")
+    page.locator("#a-mitigation").evaluate("el => { el.value = '100'; el.dispatchEvent(new Event('input')); }")
 
-    page.wait_for_timeout(500)
+    expect(page.locator("#comparisonChart")).to_be_visible()
 
     mitigated_metrics_a = page.evaluate("window.currentMetricsA")
     assert mitigated_metrics_a["envImpact"] < new_metrics_a["envImpact"]
@@ -50,9 +48,6 @@ def test_hs_ess3_2_energy_simulation(page: Page):
     page.fill("#eval-evidence", "Solution B is better because it uses renewable solar energy and underground mining which meets the targets with lower long term impacts.")
     page.fill("#eval-strengths", "While Solution B has a higher initial economic cost, its environmental impact is significantly lower than Solution A.")
     page.fill("#eval-argument", "Therefore, based on the need to balance societal energy demands with environmental constraints, Solution B provides the best cost-benefit ratio.")
-
-    # Trigger the evaluation check
-    page.evaluate("window.checkEvaluation()")
 
     # Verify success message is visible
     expect(page.locator("#eval-success")).to_be_visible()

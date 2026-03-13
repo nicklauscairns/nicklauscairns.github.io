@@ -42,8 +42,8 @@
                 <h2 class="text-xl font-bold text-indigo-700">Design Solution A</h2>
 
                 <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">Energy Source</label>
-                    <select id="a-energy-type" class="w-full p-2 border border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 bg-white" onchange="updateSimulation()">
+                    <label for="a-energy-type" class="block text-sm font-semibold text-slate-700">Energy Source</label>
+                    <select id="a-energy-type" class="w-full p-2 border border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                         <option value="coal">Coal Power Plant</option>
                         <option value="gas">Natural Gas Expansion</option>
                         <option value="solar">Solar Farm Array</option>
@@ -52,48 +52,48 @@
                 </div>
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="a-energy-scale" class="flex justify-between text-sm text-slate-600">
                         <span>Energy Scale (Target: 100)</span>
                         <span id="a-energy-scale-val" class="font-bold">100</span>
                     </label>
-                    <input type="range" id="a-energy-scale" min="0" max="150" value="100" class="w-full accent-indigo-600" oninput="updateSimulation()">
+                    <input type="range" id="a-energy-scale" min="0" max="150" value="100" class="w-full accent-indigo-600">
                 </div>
 
                 <hr class="border-slate-200">
 
                 <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">Mineral Extraction Method</label>
-                    <select id="a-mining-type" class="w-full p-2 border border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 bg-white" onchange="updateSimulation()">
+                    <label for="a-mining-type" class="block text-sm font-semibold text-slate-700">Mineral Extraction Method</label>
+                    <select id="a-mining-type" class="w-full p-2 border border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                         <option value="open_pit">Open-Pit Mining</option>
                         <option value="underground">Deep Underground Mining</option>
                     </select>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="a-mining-scale" class="flex justify-between text-sm text-slate-600">
                         <span>Mining Scale (Target: 100)</span>
                         <span id="a-mining-scale-val" class="font-bold">100</span>
                     </label>
-                    <input type="range" id="a-mining-scale" min="0" max="150" value="100" class="w-full accent-indigo-600" oninput="updateSimulation()">
+                    <input type="range" id="a-mining-scale" min="0" max="150" value="100" class="w-full accent-indigo-600">
                 </div>
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="a-recycling-scale" class="flex justify-between text-sm text-slate-600">
                         <span>Mineral Recycling Output</span>
                         <span id="a-recycling-scale-val" class="font-bold">0</span>
                     </label>
-                    <input type="range" id="a-recycling-scale" min="0" max="80" value="0" class="w-full accent-indigo-600" oninput="updateSimulation()">
+                    <input type="range" id="a-recycling-scale" min="0" max="80" value="0" class="w-full accent-indigo-600">
                     <p class="text-xs text-slate-500">Recycling supplements mineral needs with lower impact but higher cost.</p>
                 </div>
 
                 <hr class="border-slate-200">
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="a-mitigation" class="flex justify-between text-sm text-slate-600">
                         <span>Mitigation & Safety Investment</span>
                         <span id="a-mitigation-val" class="font-bold">0%</span>
                     </label>
-                    <input type="range" id="a-mitigation" min="0" max="100" value="0" class="w-full accent-indigo-600" oninput="updateSimulation()">
+                    <input type="range" id="a-mitigation" min="0" max="100" value="0" class="w-full accent-indigo-600">
                     <p class="text-xs text-slate-500">Reduces environmental & social risks at an economic cost.</p>
                 </div>
             </div>
@@ -112,8 +112,8 @@
                 <h2 class="text-xl font-bold text-emerald-700">Design Solution B</h2>
 
                 <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">Energy Source</label>
-                    <select id="b-energy-type" class="w-full p-2 border border-slate-300 rounded focus:ring-emerald-500 focus:border-emerald-500 bg-white" onchange="updateSimulation()">
+                    <label for="b-energy-type" class="block text-sm font-semibold text-slate-700">Energy Source</label>
+                    <select id="b-energy-type" class="w-full p-2 border border-slate-300 rounded focus:ring-emerald-500 focus:border-emerald-500 bg-white">
                         <option value="solar" selected>Solar Farm Array</option>
                         <option value="coal">Coal Power Plant</option>
                         <option value="gas">Natural Gas Expansion</option>
@@ -122,48 +122,48 @@
                 </div>
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="b-energy-scale" class="flex justify-between text-sm text-slate-600">
                         <span>Energy Scale (Target: 100)</span>
                         <span id="b-energy-scale-val" class="font-bold">150</span>
                     </label>
-                    <input type="range" id="b-energy-scale" min="0" max="150" value="150" class="w-full accent-emerald-600" oninput="updateSimulation()">
+                    <input type="range" id="b-energy-scale" min="0" max="150" value="150" class="w-full accent-emerald-600">
                 </div>
 
                 <hr class="border-slate-200">
 
                 <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">Mineral Extraction Method</label>
-                    <select id="b-mining-type" class="w-full p-2 border border-slate-300 rounded focus:ring-emerald-500 focus:border-emerald-500 bg-white" onchange="updateSimulation()">
+                    <label for="b-mining-type" class="block text-sm font-semibold text-slate-700">Mineral Extraction Method</label>
+                    <select id="b-mining-type" class="w-full p-2 border border-slate-300 rounded focus:ring-emerald-500 focus:border-emerald-500 bg-white">
                         <option value="underground" selected>Deep Underground Mining</option>
                         <option value="open_pit">Open-Pit Mining</option>
                     </select>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="b-mining-scale" class="flex justify-between text-sm text-slate-600">
                         <span>Mining Scale (Target: 100)</span>
                         <span id="b-mining-scale-val" class="font-bold">60</span>
                     </label>
-                    <input type="range" id="b-mining-scale" min="0" max="150" value="60" class="w-full accent-emerald-600" oninput="updateSimulation()">
+                    <input type="range" id="b-mining-scale" min="0" max="150" value="60" class="w-full accent-emerald-600">
                 </div>
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="b-recycling-scale" class="flex justify-between text-sm text-slate-600">
                         <span>Mineral Recycling Output</span>
                         <span id="b-recycling-scale-val" class="font-bold">40</span>
                     </label>
-                    <input type="range" id="b-recycling-scale" min="0" max="80" value="40" class="w-full accent-emerald-600" oninput="updateSimulation()">
+                    <input type="range" id="b-recycling-scale" min="0" max="80" value="40" class="w-full accent-emerald-600">
                     <p class="text-xs text-slate-500">Recycling supplements mineral needs with lower impact but higher cost.</p>
                 </div>
 
                 <hr class="border-slate-200">
 
                 <div class="space-y-1">
-                    <label class="flex justify-between text-sm text-slate-600">
+                    <label for="b-mitigation" class="flex justify-between text-sm text-slate-600">
                         <span>Mitigation & Safety Investment</span>
                         <span id="b-mitigation-val" class="font-bold">50%</span>
                     </label>
-                    <input type="range" id="b-mitigation" min="0" max="100" value="50" class="w-full accent-emerald-600" oninput="updateSimulation()">
+                    <input type="range" id="b-mitigation" min="0" max="100" value="50" class="w-full accent-emerald-600">
                     <p class="text-xs text-slate-500">Reduces environmental & social risks at an economic cost.</p>
                 </div>
             </div>
@@ -178,29 +178,29 @@
                     <label class="block font-semibold text-slate-800 mb-2">1. Which design solution provides the most preferred cost-benefit ratio?</label>
                     <div class="flex space-x-6">
                         <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="preferred-solution" value="A" class="form-radio text-indigo-600" onchange="checkEvaluation()">
+                            <input type="radio" name="preferred-solution" value="A" class="form-radio text-indigo-600">
                             <span>Solution A</span>
                         </label>
                         <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="preferred-solution" value="B" class="form-radio text-emerald-600" onchange="checkEvaluation()">
+                            <input type="radio" name="preferred-solution" value="B" class="form-radio text-emerald-600">
                             <span>Solution B</span>
                         </label>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-800 mb-1">2. Identify evidence for your chosen solution (Consider societal needs, extraction costs, feasibility of recycling).</label>
-                    <textarea id="eval-evidence" class="w-full p-3 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 h-24" placeholder="Solution X meets the 100 MWh target by using..." oninput="checkEvaluation()"></textarea>
+                    <label for="eval-evidence" class="block font-semibold text-slate-800 mb-1">2. Identify evidence for your chosen solution (Consider societal needs, extraction costs, feasibility of recycling).</label>
+                    <textarea id="eval-evidence" class="w-full p-3 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 h-24" placeholder="Solution X meets the 100 MWh target by using..."></textarea>
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-800 mb-1">3. Evaluate the relative strengths and constraints (cost, safety, reliability, environmental/cultural effects) of both designs.</label>
-                    <textarea id="eval-strengths" class="w-full p-3 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 h-24" placeholder="While Solution A has a lower economic cost, its environmental constraints are..." oninput="checkEvaluation()"></textarea>
+                    <label for="eval-strengths" class="block font-semibold text-slate-800 mb-1">3. Evaluate the relative strengths and constraints (cost, safety, reliability, environmental/cultural effects) of both designs.</label>
+                    <textarea id="eval-strengths" class="w-full p-3 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 h-24" placeholder="While Solution A has a lower economic cost, its environmental constraints are..."></textarea>
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-800 mb-1">4. Provide a logical argument synthesizing your evidence to support your final design choice.</label>
-                    <textarea id="eval-argument" class="w-full p-3 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 h-24" placeholder="Based on the evidence, Solution X is superior because..." oninput="checkEvaluation()"></textarea>
+                    <label for="eval-argument" class="block font-semibold text-slate-800 mb-1">4. Provide a logical argument synthesizing your evidence to support your final design choice.</label>
+                    <textarea id="eval-argument" class="w-full p-3 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 h-24" placeholder="Based on the evidence, Solution X is superior because..."></textarea>
                 </div>
 
                 <div id="eval-success" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -378,11 +378,35 @@
                 document.getElementById('eval-success').classList.add('hidden');
             }
         };
-
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            // Add event listeners for Simulation A
+            ['a-energy-type', 'a-mining-type'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateSimulation);
+            });
+            ['a-energy-scale', 'a-mining-scale', 'a-recycling-scale', 'a-mitigation'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateSimulation);
+            });
+
+            // Add event listeners for Simulation B
+            ['b-energy-type', 'b-mining-type'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateSimulation);
+            });
+            ['b-energy-scale', 'b-mining-scale', 'b-recycling-scale', 'b-mitigation'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateSimulation);
+            });
+
+            // Add event listeners for Evaluation Section
+            document.querySelectorAll('input[name="preferred-solution"]').forEach(radio => {
+                radio.addEventListener('change', checkEvaluation);
+            });
+            ['eval-evidence', 'eval-strengths', 'eval-argument'].forEach(id => {
+                document.getElementById(id).addEventListener('input', checkEvaluation);
+            });
+
             window.updateSimulation();
         });
+
     </script>
 </body>
 </html>
