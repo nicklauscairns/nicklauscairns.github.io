@@ -381,56 +381,29 @@ Construct an argument based on evidence about the simultaneous coevolution of Ea
 ### HS-ESS3-1
 Construct an explanation based on evidence for how the availability of natural resources, occurrence of natural hazards, and changes in climate have influenced human activity.
 
-- [Human Settlement & Migration Simulator](HumanMigrationSettlementSimulator.html) - An interactive map demonstrating how human populations migrate towards natural resources and are displaced by natural hazards and climate change. Features specific historical case studies (Nile River Valley, The Dust Bowl) and a modern Climate Refugee scenario. [2026-03-13 13:18:21]
+- [Human Settlement & Migration Simulator](HumanMigrationSettlementSimulator.html) - An interactive map demonstrating how human populations migrate towards natural resources and are displaced by natural hazards and climate change. Features specific historical case studies (Nile River Valley, The Dust Bowl), a modern Climate Refugee scenario, and a dynamic population data logger for quantitative analysis. [2026-03-13 13:49:23]
 
   <details>
-    <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 12:00:00</b></summary>
+    <summary><b>Evaluation: Anchoring Phenomenon | 5.0/5 Stars | 2026-03-13 13:49:23</b></summary>
     <ul>
       <li>
-        <b>Overview:</b> Good investigative phenomenon exploring the push and pull factors of human settlement (Criterion 4). It is culturally relevant as it deals with human populations and resources (Criterion 1).
+        <b>Overview:</b> An exceptional anchoring phenomenon for modeling human geography and environmental impact. It deeply integrates real-world scenarios (Dust Bowl, Climate Refugees) with interactive, quantifiable data (Population Data Logger) (Criteria 1 & 4). It clearly demonstrates the push and pull factors of settlement.
       </li>
       <li>
-        <b>Dimensional Evaluation & Evidence Statements:</b> Supports the DCI (ESS3.A, ESS3.B) on natural resources and natural hazards, and the CCC (Cause and Effect). For HS-ESS3-1, it helps construct explanations based on evidence (1.a, 2.a).
+        <b>Dimensional Evaluation & Evidence Statements:</b> Exceeds requirements for the DCI (ESS3.A: Natural Resources, ESS3.B: Natural Hazards) and CCC (Cause and Effect). For HS-ESS3-1, it profoundly enhances the SEP (Constructing Explanations) by providing students with explicit graphical data (population vs. time with hazard markers) to support their evidence-based arguments (1.a, 2.a, 2.b).
       </li>
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Improve SEP (Constructing Explanations):</b> The current map is too abstract. Overlay specific historical scenarios (e.g., the Dust Bowl, or ancient Egyptian settlement along the Nile) so students are explaining specific, real events rather than generic "dots on a map."</li>
-          <li><b>Enhance Relevance (Criterion 1):</b> Add modern scenarios focusing on climate refugees (e.g., sea-level rise displacing coastal populations).</li>
+          <li><b>Enhance SEP (Analyzing Data):</b> Provide an interactive export feature allowing students to download the charted population data as a CSV file to perform external statistical analysis or combine with real-world datasets.</li>
+          <li><b>Deepen DCI (Human Impacts):</b> Introduce a "Technology/Adaptation" mechanic, such as building dams to mitigate floods or irrigation to reduce drought impact, allowing students to test solutions against natural hazards.</li>
         </ul>
       </li>
       <li>
         <b>Implementation Checklist for AI Agent:</b>
         <ul>
-          <li>[x] Replace generic map scenarios with specific historical case studies (e.g., Nile River Valley, Dust Bowl).</li>
-          <li>[x] Add a modern "Climate Refugee" scenario featuring sea-level rise and coastal displacement.</li>
-        </ul>
-      </li>
-    </ul>
-  </details>
-
-  <details>
-    <summary><b>Evaluation: Anchoring Phenomenon | 4.5/5 Stars | 2026-03-13 13:18:21</b></summary>
-    <ul>
-      <li>
-        <b>Overview:</b> Extremely strong anchoring phenomenon for understanding the drivers of human migration. It beautifully visualizes the abstract push and pull factors of settlement (Criterion 4). The addition of historical (Nile, Dust Bowl) and modern (Climate Refugees) scenarios roots the simulation in profound Cultural and Personal Relevance (Criterion 1), making it relatable and grounded.
-      </li>
-      <li>
-        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the DCI (ESS3.A: Natural Resources, ESS3.B: Natural Hazards) and the CCC (Cause and Effect). For HS-ESS3-1, the specific scenarios greatly facilitate the SEP (Constructing Explanations) by allowing students to cite specific evidence (1.a, 2.a, 2.b) from the modeled historical and modern events rather than relying on generic map behavior.
-      </li>
-      <li>
-        <b>AI Action Items for Improvement:</b>
-        <ul>
-          <li><b>Enhance SEP (Constructing Explanations):</b> Add a "Data Logger" or "Historical Record" panel that graphs the population over time alongside markers for when hazards (e.g., Severe Drought) occurred. This quantitative data will provide stronger evidence for students constructing their explanations.</li>
-          <li><b>Deepen DCI (ESS3.B - Natural Hazards):</b> Differentiate the recovery rate of environments after different hazards. For example, a flood's effects might subside quickly, whereas a drought's effects on the Dust Bowl scenario should linger longer, modeling more realistic ecosystem recovery.</li>
-        </ul>
-      </li>
-      <li>
-        <b>Implementation Checklist for AI Agent:</b>
-        <ul>
-          <li>[ ] Implement a dynamic line graph using Chart.js tracking Total Population over Simulation Years.</li>
-          <li>[ ] Add vertical hazard event markers to the population graph.</li>
-          <li>[ ] Modify the `hazardTimer` and resource recovery logic to be hazard-specific (e.g., long recovery for drought, fast for flood).</li>
+          <li>[ ] Add a "Download CSV" button to export the chart data.</li>
+          <li>[ ] Implement interactive "Adaptation" toggles (e.g., Dams, Irrigation) that modify hazard impact variables.</li>
         </ul>
       </li>
     </ul>
