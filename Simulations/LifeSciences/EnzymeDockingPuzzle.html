@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enzyme "Lock and Key" Puzzle</title>
+    <meta name="description" content="Explore enzyme-substrate specificity by docking a molecule into an active site.">
+    <meta name="keywords" content="NGSS, HS-LS1-1, Enzyme, Substrate, Protein, 3Dmol.js, Science Simulation">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Enzyme Lock and Key Puzzle">
+    <meta property="og:description" content="Explore enzyme-substrate specificity by docking a molecule into an active site.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Enzyme Lock and Key Puzzle",
+      "description": "Explore enzyme-substrate specificity by docking a molecule into an active site.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-LS1-1",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ls1-1-molecules-organisms-structures-and-processes"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 3Dmol.js -->
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; }
+        #viewer-container { flex-grow: 1; position: relative; width: 100%; height: 100%; }
+
+        #ui-overlay { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); width: 90%; max-width: 700px; z-index: 10; display: flex; flex-direction: column; gap: 1rem; }
+
+        .slider-label { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.25rem; color: #cbd5e1; font-weight: 500;}
+        input[type=range] { -webkit-appearance: none; width: 100%; background: #334155; height: 6px; border-radius: 3px; outline: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #facc15; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; transition: opacity 0.5s; pointer-events: none; opacity: 0; }
+        .loading-overlay.active { opacity: 1; pointer-events: auto; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .success-overlay { position: absolute; inset: 0; background: rgba(34, 197, 94, 0.2); pointer-events: none; z-index: 5; opacity: 0; transition: opacity 1s; display: flex; align-items: center; justify-content: center; }
+        .success-overlay.active { opacity: 1; }
+        .success-msg { font-size: 3rem; font-weight: 900; color: #4ade80; text-shadow: 0 0 20px rgba(34,197,94,0.5); transform: translateY(50px) scale(0.9); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; }
+        .success-overlay.active .success-msg { transform: translateY(0) scale(1); opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="absolute top-4 left-4 z-10 glass-panel p-4 max-w-sm pointer-events-none">
+        <h1 class="text-2xl font-bold text-white mb-1 drop-shadow-md">Enzyme Docking Puzzle</h1>
+        <p class="text-xs text-slate-300">NGSS HS-LS1-1: Specificity & Function</p>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="absolute top-4 right-4 z-10 glass-panel p-4 max-w-xs">
+        <h2 class="text-sm font-bold text-blue-300 mb-2">The Active Site</h2>
+        <p class="text-[11px] text-slate-300 mb-2 leading-relaxed">
+            Enzymes are massive proteins that act as biological catalysts. Their function depends entirely on their 3D structure.
+        </p>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+            The white surface is the enzyme's <span class="font-bold text-white">Active Site</span>. Your goal is to maneuver the small molecule (Substrate) perfectly into the pocket where it fits like a "lock and key."
+        </p>
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="success" class="success-overlay">
+        <div class="success-msg">REACTION TRIGGERED!</div>
+    </div>
+
+    <!-- 3Dmol Viewer Container -->
+    <div id="viewer-container"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-overlay active">
+        <div class="spinner"></div>
+        <p class="text-lg font-medium text-slate-200">Generating Active Site...</p>
+        <p class="text-sm text-slate-400 mt-2">Fetching HIV Protease (1HTG)</p>
+    </div>
+
+    <!-- Controls Overlay -->
+    <div id="ui-overlay" class="glass-panel p-4 shadow-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- Translation -->
+            <div class="space-y-3 bg-slate-800/50 p-3 rounded border border-slate-700">
+                <h3 class="text-xs font-bold text-slate-200 border-b border-slate-700 pb-1">Move Substrate (Translation)</h3>
+                <div>
+                    <div class="slider-label"><span>X Axis (Left/Right)</span></div>
+                    <input type="range" id="trans-x" min="-10" max="10" step="0.5" value="-10">
+                </div>
+                <div>
+                    <div class="slider-label"><span>Y Axis (Up/Down)</span></div>
+                    <input type="range" id="trans-y" min="-10" max="10" step="0.5" value="5">
+                </div>
+                <div>
+                    <div class="slider-label"><span>Z Axis (In/Out)</span></div>
+                    <input type="range" id="trans-z" min="-10" max="10" step="0.5" value="-5">
+                </div>
+            </div>
+
+            <!-- Rotation -->
+            <div class="space-y-3 bg-slate-800/50 p-3 rounded border border-slate-700">
+                <h3 class="text-xs font-bold text-slate-200 border-b border-slate-700 pb-1">Rotate Substrate</h3>
+                <div>
+                    <div class="slider-label"><span>Pitch (X-Axis)</span></div>
+                    <input type="range" id="rot-x" min="0" max="360" step="5" value="0">
+                </div>
+                <div>
+                    <div class="slider-label"><span>Yaw (Y-Axis)</span></div>
+                    <input type="range" id="rot-y" min="0" max="360" step="5" value="0">
+                </div>
+                <div>
+                    <div class="slider-label"><span>Roll (Z-Axis)</span></div>
+                    <input type="range" id="rot-z" min="0" max="360" step="5" value="0">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-2 text-center">
+            <span id="distance-meter" class="text-xs font-mono font-bold text-slate-400 bg-slate-900 px-3 py-1 rounded">Distance to active site: Calculating...</span>
+        </div>
+    </div>
+
+    <script>
+        let viewer;
+        let enzymeModel, substrateModel;
+
+        // The exact target coordinates of the active site pocket (approximated for 1HTG)
+        // In 1HTG, the inhibitor (THK) is roughly at [0, 0, 0] or slightly offset.
+        const targetPos = { x: -0.5, y: -0.5, z: 0.5 };
+        const targetRot = { x: 0, y: 0, z: 0 };
+        const toleranceDist = 2.0; // Angstroms
+
+        // Simulation State
+        window.simulationState = {
+            loaded: false,
+            docked: false,
+            substratePos: { x: -10, y: 5, z: -5 },
+            substrateRot: { x: 0, y: 0, z: 0 }
+        };
+
+        // We will store the original coordinates of the substrate to apply transformations
+        let origSubstrateAtoms = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initViewer();
+            setupControls();
+        });
+
+        function initViewer() {
+            let container = document.getElementById('viewer-container');
+            viewer = $3Dmol.createViewer(container, {
+                backgroundColor: '0x0f172a',
+                antialias: true
+            });
+
+            // HIV Protease bound to an inhibitor (1HTG).
+            // This represents a perfect lock-and-key enzyme.
+            let pdbUri = 'https://files.rcsb.org/download/1HTG.pdb';
+
+            fetch(pdbUri)
+                .then(response => response.text())
+                .then(data => {
+                    // Extract just the protein (Enzyme)
+                    enzymeModel = viewer.addModel(data, "pdb");
+
+                    // We extract the inhibitor 'THK' as a separate model to manipulate it.
+                    // Actually, to make it completely independent, we add the data twice,
+                    // and then hide the respective parts.
+                    substrateModel = viewer.addModel(data, "pdb");
+
+                    // Style Enzyme (Chain A and B, usually, but here we just hide the ligand)
+                    viewer.setStyle({model: enzymeModel, resn: 'THK', invert: true}, {
+                        surface: {opacity: 0.8, color: 'white'},
+                        cartoon: {color: 'spectrum', opacity: 0.3}
+                    });
+                    // Hide ligand in enzyme model
+                    viewer.setStyle({model: enzymeModel, resn: 'THK'}, {hidden: true});
+
+                    // Style Substrate (Only the ligand THK)
+                    viewer.setStyle({model: substrateModel, resn: 'THK', invert: true}, {hidden: true});
+                    viewer.setStyle({model: substrateModel, resn: 'THK'}, {
+                        stick: {radius: 0.3, colorscheme: 'Jmol'},
+                        sphere: {radius: 0.5, colorscheme: 'Jmol'}
+                    });
+
+                    // Save original substrate coordinates
+                    let sAtoms = substrateModel.selectedAtoms({resn: 'THK'});
+                    origSubstrateAtoms = sAtoms.map(a => ({x: a.x, y: a.y, z: a.z}));
+
+                    // We find the center of mass of the original ligand to act as the "target"
+                    let cx=0, cy=0, cz=0;
+                    for(let a of origSubstrateAtoms) { cx+=a.x; cy+=a.y; cz+=a.z; }
+                    targetPos.x = cx/sAtoms.length;
+                    targetPos.y = cy/sAtoms.length;
+                    targetPos.z = cz/sAtoms.length;
+
+                    // Center camera on the active site
+                    viewer.zoomTo({model: enzymeModel});
+                    viewer.zoom(1.5);
+
+                    // Apply initial offset to the substrate so it starts "outside"
+                    updateSubstratePosition();
+
+                    document.getElementById('loading').classList.remove('active');
+                    window.simulationState.loaded = true;
+
+                    // Start rendering loop
+                    requestAnimationFrame(renderLoop);
+                })
+                .catch(error => {
+                    console.error('Error loading:', error);
+                    document.querySelector('.loading-overlay p:last-child').innerText = "Failed to load from RCSB. Please check connection.";
+                });
+        }
+
+        function setupControls() {
+            const inputs = ['trans-x', 'trans-y', 'trans-z', 'rot-x', 'rot-y', 'rot-z'];
+
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    if(window.simulationState.docked) return; // Freeze if won
+
+                    let val = parseFloat(e.target.value);
+                    if (id.startsWith('trans')) {
+                        let axis = id.split('-')[1];
+                        // Target pos acts as the origin [0,0,0] for our sliders
+                        window.simulationState.substratePos[axis] = targetPos[axis] + val;
+                    } else if (id.startsWith('rot')) {
+                        let axis = id.split('-')[1];
+                        // Convert degrees to radians
+                        window.simulationState.substrateRot[axis] = val * (Math.PI / 180);
+                    }
+
+                    updateSubstratePosition();
+                    checkDocking();
+                });
+            });
+        }
+
+        function updateSubstratePosition() {
+            if(!substrateModel) return;
+
+            let sAtoms = substrateModel.selectedAtoms({resn: 'THK'});
+            let pos = window.simulationState.substratePos;
+            let rot = window.simulationState.substrateRot;
+
+            // We need to apply rotation around the substrate's center of mass, then translate it
+
+            // 1. Rotation Matrices
+            let cx = Math.cos(rot.x), sx = Math.sin(rot.x);
+            let cy = Math.cos(rot.y), sy = Math.sin(rot.y);
+            let cz = Math.cos(rot.z), sz = Math.sin(rot.z);
+
+            for(let i=0; i<sAtoms.length; i++) {
+                let a = sAtoms[i];
+                let orig = origSubstrateAtoms[i];
+
+                // Shift relative to target (center of mass)
+                let x = orig.x - targetPos.x;
+                let y = orig.y - targetPos.y;
+                let z = orig.z - targetPos.z;
+
+                // Rotate Z
+                let x1 = x * cz - y * sz;
+                let y1 = x * sz + y * cz;
+                let z1 = z;
+
+                // Rotate Y
+                let x2 = x1 * cy + z1 * sy;
+                let y2 = y1;
+                let z2 = -x1 * sy + z1 * cy;
+
+                // Rotate X
+                let x3 = x2;
+                let y3 = y2 * cx - z2 * sx;
+                let z3 = y2 * sx + z2 * cx;
+
+                // Translate to new slider position
+                a.x = x3 + pos.x;
+                a.y = y3 + pos.y;
+                a.z = z3 + pos.z;
+            }
+
+            // To force update without destroying styles, sometimes setting style again is needed in 3dmol
+            viewer.setStyle({model: substrateModel, resn: 'THK', invert: true}, {hidden: true});
+            viewer.setStyle({model: substrateModel, resn: 'THK'}, {
+                stick: {radius: 0.3, colorscheme: 'yellowCarbon'},
+                sphere: {radius: 0.5, colorscheme: 'yellowCarbon'}
+            });
+        }
+
+        function checkDocking() {
+            let pos = window.simulationState.substratePos;
+
+            // Calculate Euclidean distance from current center to target center
+            let dx = pos.x - targetPos.x;
+            let dy = pos.y - targetPos.y;
+            let dz = pos.z - targetPos.z;
+            let dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+            document.getElementById('distance-meter').innerText = `Distance to active site: ${dist.toFixed(1)} Å`;
+
+            // Change color based on proximity
+            if (dist < 4) document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-yellow-300 bg-slate-900 px-3 py-1 rounded border border-yellow-500";
+            else document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-slate-400 bg-slate-900 px-3 py-1 rounded";
+
+            // If close enough and rotation is somewhat aligned (for simplicity, we mostly check distance and a little rotation)
+            // Let's assume if distance < 1.0, it's docked regardless of exact rotation for gameplay ease.
+            if (dist < 1.0 && !window.simulationState.docked) {
+                window.simulationState.docked = true;
+
+                // Flash green
+                document.getElementById('success').classList.add('active');
+                document.getElementById('distance-meter').innerText = `DOCKED! REACTION COMPLETE.`;
+                document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-green-300 bg-green-900 px-3 py-1 rounded border border-green-500";
+
+                // Disable sliders
+                document.querySelectorAll('input[type=range]').forEach(el => el.disabled = true);
+            }
+        }
+
+        function renderLoop() {
+            if (viewer) {
+                // If not docked, slowly spin the whole camera to show 3D nature
+                if (!window.simulationState.docked) {
+                    viewer.rotate(0.2, "y");
+                }
+                viewer.render();
+            }
+            requestAnimationFrame(renderLoop);
+        }
+
+        window.addEventListener('resize', () => {
+            if (viewer) viewer.resize();
+        });
+    </script>
+</body>
+</html>

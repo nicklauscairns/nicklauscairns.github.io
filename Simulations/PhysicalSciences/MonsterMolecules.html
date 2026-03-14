@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Molecules Showcase</title>
+    <meta name="description" content="Explore bizarre, extreme, and gigantic molecules to understand how periodic table patterns dictate bonding geometry.">
+    <meta name="keywords" content="NGSS, HS-PS1-1, Chemistry, Molecules, Bonding, 3Dmol.js, Science Simulation">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Monster Molecules Showcase">
+    <meta property="og:description" content="Explore bizarre, extreme, and gigantic molecules to understand how periodic table patterns dictate bonding geometry.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Monster Molecules Showcase",
+      "description": "Explore bizarre, extreme, and gigantic molecules to understand how periodic table patterns dictate bonding geometry.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-PS1-1",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ps1-1-matter-and-its-interactions"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 3Dmol.js -->
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; }
+        #viewer-container { flex-grow: 1; position: relative; width: 100%; height: 100%; }
+
+        #ui-overlay { position: absolute; top: 1rem; right: 1rem; width: 350px; z-index: 10; max-height: calc(100vh - 2rem); overflow-y: auto; }
+        #ui-overlay::-webkit-scrollbar { width: 6px; }
+        #ui-overlay::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        #ui-overlay::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .mol-card { border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem; cursor: pointer; transition: all 0.2s; background: rgba(15, 23, 42, 0.5); }
+        .mol-card:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .mol-card.active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; transition: opacity 0.5s; pointer-events: none; opacity: 0; }
+        .loading-overlay.active { opacity: 1; pointer-events: auto; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="absolute top-4 left-4 z-10 glass-panel p-4 max-w-sm pointer-events-none">
+        <h1 class="text-2xl font-bold text-white mb-1">Monster Molecules</h1>
+        <p class="text-sm text-slate-300">NGSS HS-PS1-1: Patterns & Bonding</p>
+    </div>
+
+    <!-- 3Dmol Viewer Container -->
+    <div id="viewer-container"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-overlay active">
+        <div class="spinner"></div>
+        <p class="text-lg font-medium text-slate-200">Synthesizing Molecule...</p>
+        <p id="loading-text" class="text-sm text-slate-400 mt-2">Connecting to PubChem</p>
+    </div>
+
+    <!-- UI Overlay -->
+    <div id="ui-overlay" class="glass-panel p-4 shadow-2xl flex flex-col">
+
+        <h2 class="text-lg font-bold text-white mb-2">Select a "Monster"</h2>
+        <p class="text-xs text-slate-300 mb-4">Carbon (Group 14) has 4 valence electrons, allowing it to form 4 bonds. Explore how this pattern creates extreme geometries.</p>
+
+        <!-- Molecule Selection List -->
+        <div id="mol-list" class="flex-grow space-y-2 mb-4">
+
+            <div class="mol-card active" onclick="loadMolecule('cubane')">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-blue-300">Cubane (C8H8)</span>
+                    <span class="text-[10px] bg-slate-700 px-1 rounded">High Strain</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Carbon atoms forced into rigid 90-degree angles, creating massive "strain energy" that makes it highly explosive.</p>
+            </div>
+
+            <div class="mol-card" onclick="loadMolecule('buckyball')">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-amber-300">Buckyball (C60)</span>
+                    <span class="text-[10px] bg-slate-700 px-1 rounded">Nanomaterial</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Sixty carbon atoms forming a hollow sphere resembling a soccer ball. Extremely stable due to alternating double bonds.</p>
+            </div>
+
+            <div class="mol-card" onclick="loadMolecule('maitotoxin')">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-green-300">Maitotoxin</span>
+                    <span class="text-[10px] bg-slate-700 px-1 rounded">Giant Non-Polymer</span>
+                </div>
+                <p class="text-[10px] text-slate-400">The largest known non-protein molecule (C164H256O68S2Na2). A massive chain of fused oxygen-containing rings.</p>
+            </div>
+
+            <div class="mol-card" onclick="loadMolecule('dodecahedrane')">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-purple-300">Dodecahedrane</span>
+                    <span class="text-[10px] bg-slate-700 px-1 rounded">Platonic Solid</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Carbon bonded into a perfect dodecahedron (C20H20). Synthesizing this took 23 complex chemical steps.</p>
+            </div>
+
+        </div>
+
+        <!-- NGSS Investigation -->
+        <div class="border-t border-slate-700 pt-4">
+            <h2 class="text-sm font-bold text-white mb-2">Pattern Prediction (HS-PS1-1)</h2>
+            <div class="bg-slate-800 p-3 rounded border border-slate-600">
+                <p class="text-xs text-slate-200 mb-2">Look at the Carbon atoms (grey/black spheres) in any of these molecules. Based on its position in Group 14, how many total bonds does each Carbon form?</p>
+                <div class="flex space-x-2">
+                    <button onclick="checkBond(2)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">2 Bonds</button>
+                    <button onclick="checkBond(3)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">3 Bonds</button>
+                    <button onclick="checkBond(4)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">4 Bonds</button>
+                </div>
+                <div id="bond-feedback" class="text-xs mt-2 hidden text-center font-bold"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let viewer;
+
+        // PubChem CIDs for the molecules.
+        // 3Dmol can fetch directly using the pubchem prefix, but to ensure 3D structures
+        // we use the direct SDF endpoint if necessary. We'll try direct URLs to avoid 404s.
+        const molecules = {
+            'cubane': { cid: '123121', name: 'Cubane', zoom: 1.5 },
+            'buckyball': { cid: '12359', name: 'Buckminsterfullerene', zoom: 1.2 },
+            'maitotoxin': { cid: '5282218', name: 'Maitotoxin', zoom: 1.0 }, // Maitotoxin is huge
+            'dodecahedrane': { cid: '136081', name: 'Dodecahedrane', zoom: 1.5 }
+        };
+
+        window.simulationState = {
+            currentMolecule: 'cubane',
+            loaded: false
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initViewer();
+            loadMolecule('cubane');
+        });
+
+        function initViewer() {
+            let container = document.getElementById('viewer-container');
+            viewer = $3Dmol.createViewer(container, {
+                backgroundColor: '0x0f172a',
+                antialias: true
+            });
+        }
+
+        window.loadMolecule = function(molKey) {
+            if (!viewer) return;
+
+            // Update UI selection
+            document.querySelectorAll('.mol-card').forEach(card => card.classList.remove('active'));
+            // Find card that calls this molKey
+            document.querySelector(`[onclick="loadMolecule('${molKey}')"]`).classList.add('active');
+
+            window.simulationState.currentMolecule = molKey;
+            window.simulationState.loaded = false;
+
+            let loadingUI = document.getElementById('loading');
+            loadingUI.classList.add('active');
+            document.getElementById('loading-text').innerText = `Fetching ${molecules[molKey].name}...`;
+
+            viewer.clear();
+
+            // Direct PubChem SDF fetch. Adding ?record_type=3d ensures 3d coordinates if available.
+            let url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${molecules[molKey].cid}/SDF?record_type=3d`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        // Fallback to 2D if 3D doesn't exist (though all these should have 3D)
+                        return fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${molecules[molKey].cid}/SDF`);
+                    }
+                    return response.text();
+                })
+                .then(sdfData => {
+                    viewer.addModel(sdfData, "sdf");
+
+                    // Style: Sticks and Balls
+                    viewer.setStyle({}, {
+                        stick: {radius: 0.15, colorscheme: 'Jmol'},
+                        sphere: {radius: 0.4, colorscheme: 'Jmol'}
+                    });
+
+                    viewer.zoomTo();
+                    // Slight custom zoom adjustment based on molecule size
+                    viewer.zoom(molecules[molKey].zoom);
+
+                    viewer.render();
+
+                    loadingUI.classList.remove('active');
+                    window.simulationState.loaded = true;
+
+                    // Start slow rotation
+                    animate();
+                })
+                .catch(error => {
+                    console.error("Error loading molecule:", error);
+                    document.getElementById('loading-text').innerText = "Error loading. Check connection.";
+                    document.getElementById('loading-text').classList.add("text-red-400");
+                });
+        }
+
+        function animate() {
+            if (!viewer) return;
+            viewer.rotate(0.3, "y");
+            viewer.rotate(0.1, "x");
+            viewer.render();
+            requestAnimationFrame(animate);
+        }
+
+        window.checkBond = function(guess) {
+            let feedback = document.getElementById('bond-feedback');
+            feedback.classList.remove('hidden', 'text-green-400', 'text-red-400');
+
+            if (guess === 4) {
+                feedback.innerText = "Correct! Carbon has 4 valence electrons, so it always forms 4 bonds to become stable. This repeating pattern allows it to build these massive structures!";
+                feedback.classList.add('text-green-400');
+            } else {
+                feedback.innerText = `Not quite. Count the bonds connected to a single grey carbon atom in the model.`;
+                feedback.classList.add('text-red-400');
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (viewer) viewer.resize();
+        });
+    </script>
+</body>
+</html>

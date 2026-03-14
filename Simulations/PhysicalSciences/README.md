@@ -6,6 +6,7 @@
 Use the periodic table as a model to predict the relative properties of elements based on the patterns of electrons in the outermost energy level of atoms.
 
 - [Alkali Metals Phenomenon](AlkaliMetalsPhenomenon.html) - Observe the reaction patterns and atomic structures of different elements. [2026-03-12 12:00:00]
+- [Monster Molecules Showcase](MonsterMolecules.html) - Explore bizarre, extreme, and gigantic molecules to understand how periodic table patterns (like Carbon's valence electrons) dictate bonding geometry. [2024-05-24 11:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 17:47:30</b></summary>
@@ -72,6 +73,7 @@ Construct and revise an explanation for the outcome of a simple chemical reactio
 Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
 
 - [Intermolecular Forces Investigation](IntermolecularForces.html) - Observe boiling points and surface tension to infer the strength of London Dispersion, Dipole-Dipole, and Hydrogen Bonding forces. [2026-03-12 12:00:00]
+- [Crystal Lattice Flythrough](CrystalFlythrough.html) - Explore the bulk 3D structures of covalent and ionic lattices to infer the strength of electrical forces holding them together. [2024-05-24 11:30:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 20:13:28</b></summary>
