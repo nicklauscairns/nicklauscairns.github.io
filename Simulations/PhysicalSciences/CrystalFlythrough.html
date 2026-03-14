@@ -152,10 +152,6 @@
         const crystals = {
             'nacl': {
                 name: 'Sodium Chloride',
-                // Na-Cl first-neighbor distance = a/2 = 5.6402/2 = 2.82 Å; cutoff just above that
-                maxBondDist: 2.9,
-                // Only draw Na-Cl bonds (not Na-Na or Cl-Cl, which would be second neighbors)
-                allowedPairs: [['Na', 'Cl']],
                 // Simplified CIF for Halite (NaCl)
                 data: `data_halite
 _chemical_name_mineral 'Halite'
@@ -176,8 +172,6 @@ Cl 0.50000 0.50000 0.50000`
             },
             'diamond': {
                 name: 'Diamond',
-                // C-C first-neighbor distance = a*sqrt(3)/4 = 3.5667*1.732/4 ≈ 1.545 Å; cutoff just above
-                maxBondDist: 1.6,
                 data: `data_diamond
 _chemical_name_mineral 'Diamond'
 _cell_length_a 3.5667
@@ -196,7 +190,6 @@ C 0.00000 0.00000 0.00000`
             },
             'graphite': {
                 name: 'Graphite',
-                maxBondDist: 1.5,
                 data: `data_graphite
 _chemical_name_mineral 'Graphite'
 _cell_length_a 2.4612
@@ -278,88 +271,12 @@ C2 0.33333 0.66667 0.25000`
 
         function renderCrystal() {
             let loadingUI = document.getElementById('loading');
-            renderCrystal();
-        }
-
-        /**
-         * Pure helper: computes bond pairs from a list of atoms without touching the viewer or DOM.
-         * @param {Array} atoms - array of atom objects with {x, y, z, elem} properties
-         * @param {number} maxDist - maximum bond distance in Ångströms
-         * @param {Object} [options]
-         * @param {Array<Array<string>>} [options.allowedPairs] - if provided, only pairs whose element
-         *   symbols (case-insensitive) match one of the listed [elemA, elemB] tuples are returned.
-         *   Order within a tuple does not matter (Na-Cl matches ['Cl','Na']).
-         * @returns {Array<{a1: Object, a2: Object}>} array of bonded atom pairs
-         */
-        window.getBondPairs = function(atoms, maxDist, options = {}) {
-            const { allowedPairs } = options;
-            const MIN_BOND_DIST_SQ = 0.1;
-            const maxDistSq = maxDist * maxDist;
-
-            // Normalise allowedPairs to Sets of sorted lowercase strings for fast lookup
-            let pairSets = null;
-            if (allowedPairs && allowedPairs.length > 0) {
-                pairSets = new Set(
-                    allowedPairs.map(([a, b]) => [a.toLowerCase(), b.toLowerCase()].sort().join('-'))
-                );
-            }
-
-            // Spatial grid to reduce O(N²) to approximately O(N)
-            const cellSize = maxDist;
-            const grid = new Map();
-            atoms.forEach((atom, index) => {
-                const key = `${Math.floor(atom.x/cellSize)},${Math.floor(atom.y/cellSize)},${Math.floor(atom.z/cellSize)}`;
-                if (!grid.has(key)) grid.set(key, []);
-                grid.get(key).push({ atom, index });
-            });
-
-            const bondPairs = [];
-            const seen = new Set();
-            const bondKey = (i, j) => i < j ? `${i}-${j}` : `${j}-${i}`;
-
-            atoms.forEach((a1, i) => {
-                const cx = Math.floor(a1.x/cellSize);
-                const cy = Math.floor(a1.y/cellSize);
-                const cz = Math.floor(a1.z/cellSize);
-
-                for (let dx = -1; dx <= 1; dx++) {
-                    for (let dy = -1; dy <= 1; dy++) {
-                        for (let dz = -1; dz <= 1; dz++) {
-                            const cellAtoms = grid.get(`${cx+dx},${cy+dy},${cz+dz}`);
-                            if (!cellAtoms) continue;
-
-                            cellAtoms.forEach(({ atom: a2, index: j }) => {
-                                if (i === j) return;
-                                const key = bondKey(i, j);
-                                if (seen.has(key)) return;
-
-                                // Element-pair filter
-                                if (pairSets) {
-                                    const pairKey = [
-                                        (a1.elem || '').toLowerCase(),
-                                        (a2.elem || '').toLowerCase()
-                                    ].sort().join('-');
-                                    if (!pairSets.has(pairKey)) return;
-                                }
-
-                                const dx2 = a1.x - a2.x, dy2 = a1.y - a2.y, dz2 = a1.z - a2.z;
-                                const distSq = dx2*dx2 + dy2*dy2 + dz2*dz2;
-                                if (distSq > MIN_BOND_DIST_SQ && distSq <= maxDistSq) {
-                                    bondPairs.push({ a1, a2 });
-                                    seen.add(key);
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-
-            return bondPairs;
-        };
-
-        function renderCrystal() {
-            let loadingUI = document.getElementById('loading');
             loadingUI.classList.add('active');
+
+            // Small timeout to allow UI to render the loading screen before blocking JS thread
+            setTimeout(() => {
+                viewer.clear();
+
                 let scale = window.simulationState.scale;
                 let data = crystals[window.simulationState.currentCrystal].data;
 
@@ -368,68 +285,86 @@ C2 0.33333 0.66667 0.25000`
                 // Actually, 3Dmol's addModel for CIF with supercell is undocumented but works via 'supercell' option sometimes,
                 // Alternatively, we use `replicateUnitCell`. Let's use `replicateUnitCell` if available, or just parse CIF
                 // with options.
-                viewer.clear();
 
-                let scale = window.simulationState.scale;
-                let crystalKey = window.simulationState.currentCrystal;
-                let data = crystals[crystalKey].data;
-
-                // Add model using CIF format. We pass options to generate the supercell
-                // options: {doAssembly: true, normalize: true, supercell: [x,y,z]}
+                // Create the supercell by replicating the unit cell after loading the model.
+                let m = viewer.addModel(data, "cif");
+                if (typeof viewer.replicateUnitCell === 'function') {
+                    viewer.replicateUnitCell(scale, scale, scale, m);
+                } else {
+                    console.warn("replicateUnitCell is not available in the current 3Dmol.js build.");
                     // Fallback to unit cell only
                     scale = 1;
                     document.getElementById('supercell-slider').value = 1;
                     document.getElementById('scale-badge').innerText = `1x1x1 (Unit Cell) - Scaling Unavailable`;
                 }
 
-                viewer.removeAllLabels();
-                viewer.removeAllShapes(); // Remove unit cell box or previous bonds before redrawing
-
-                // Style: We will draw bonds manually as cylinders, so we only need spheres
+                // Style: Sticks and Balls
                 viewer.setStyle({}, {
+                    stick: {radius: 0.15, colorscheme: 'Jmol'},
                     sphere: {radius: 0.4, colorscheme: 'Jmol'}
                 });
 
                 // Optional: Draw the unit cell outline if scale == 1
                 if (scale === 1) {
                     viewer.addUnitCell(m, {box:{color:'white'}, a:{hidden:true}, b:{hidden:true}, c:{hidden:true}});
+                } else {
+                    viewer.removeAllLabels();
+                    viewer.removeAllShapes(); // Remove unit cell box
                 }
-
-                // Manually draw bonds since 3Dmol.js default bond calculation might fail for these CIFs
-                let atoms = m.selectedAtoms({});
-                let maxDist = crystals[window.simulationState.currentCrystal].maxBondDist || 3.5;
-                let maxDistSq = maxDist * maxDist;
-
-                for (let i = 0; i < atoms.length; i++) {
-                    for (let j = i + 1; j < atoms.length; j++) {
-                        let a1 = atoms[i];
-                }
-
-                // Manually draw bonds since 3Dmol.js default bond calculation might fail for these CIFs
-                const DEFAULT_MAX_BOND_DIST = 3.5;
-                const BOND_RADIUS = 0.1;
-                const BOND_COLOR = 'white';
-
-                const crystalConfig = crystals[crystalKey];
-                const maxDist = crystalConfig.maxBondDist || DEFAULT_MAX_BOND_DIST;
-                const atoms = m.selectedAtoms({});
-
-                const bondPairs = window.getBondPairs(atoms, maxDist, {
-                    allowedPairs: crystalConfig.allowedPairs
-                });
-
-                bondPairs.forEach(({ a1, a2 }) => {
-                    viewer.addCylinder({
-                        start: a1,
-                        end: a2,
-                        radius: BOND_RADIUS,
-                        color: BOND_COLOR,
-                        fromCap: true,
-                        toCap: true
-                    });
-                });
 
                 viewer.zoomTo();
+                viewer.render();
+
+                loadingUI.classList.remove('active');
+                window.simulationState.loaded = true;
+            }, 50);
+        }
+
+        let flyAnimationId = null;
+
+        function flyLoop() {
+            if (!isFlying || !viewer) return;
+            viewer.translate(0, 0, 1);
+            viewer.rotate(0.5, "y");
+            viewer.rotate(0.2, "x");
+            viewer.render();
+            flyAnimationId = requestAnimationFrame(flyLoop);
+        }
+
+        window.flythrough = function() {
+            let btn = document.getElementById('fly-btn');
+            if (isFlying) {
+                isFlying = false;
+                if (flyAnimationId) cancelAnimationFrame(flyAnimationId);
+                btn.innerText = "🚀 Start Flythrough";
+                btn.classList.replace('bg-red-600', 'bg-indigo-600');
+                btn.classList.replace('hover:bg-red-500', 'hover:bg-indigo-500');
+                viewer.zoomTo();
+            } else {
+                // Must be bulk to fly through
+                if (window.simulationState.scale < 3) {
+                    document.getElementById('supercell-slider').value = 3;
+                    document.getElementById('supercell-slider').dispatchEvent(new Event('input'));
+                }
+
+                isFlying = true;
+                btn.innerText = "🛑 Stop Flythrough";
+                btn.classList.replace('bg-indigo-600', 'bg-red-600');
+                btn.classList.replace('hover:bg-indigo-500', 'hover:bg-red-500');
+
+                // Zoom in close
+                viewer.zoom(5);
+
+                // Set up a camera translation loop
+                flyAnimationId = requestAnimationFrame(flyLoop);
+            }
+        }
+
+        window.checkAnswer = function() {
+            let guess = document.getElementById('quiz-1').value;
+            let feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'text-green-400', 'text-red-400');
+
             if (guess === 'correct') {
                 feedback.innerText = "Correct! The continuous 3D network of covalent or ionic bonds means immense energy is needed to break them apart, resulting in macroscopic properties like extreme hardness and high melting points.";
                 feedback.classList.add('text-green-400');
