@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puerto Rico Trench Gravity Anomaly - NGSS HS-ESS2-1</title>
+    <meta name="description" content="An interactive simulation of the Puerto Rico Trench gravity anomaly, modeling the subduction of the North American plate under the Caribbean plate and the resulting gravitational variations.">
+    <meta property="og:title" content="Puerto Rico Trench Gravity Anomaly - NGSS HS-ESS2-1">
+    <meta property="og:description" content="An interactive simulation of the Puerto Rico Trench gravity anomaly, modeling the subduction of the North American plate under the Caribbean plate and the resulting gravitational variations.">
+    <meta property="og:type" content="website">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Puerto Rico Trench Gravity Anomaly",
+      "description": "An interactive simulation of the Puerto Rico Trench gravity anomaly, modeling the subduction of the North American plate under the Caribbean plate and the resulting gravitational variations.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-ESS2-1",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ess2-1-earths-systems"
+      }
+    }
+    </script>
+    <script src="https://cdn.tailwindcss.com/3.4.1" integrity="sha384-SOMLQz+nKv/ORIYXo3J3NrWJ33oBgGvkHlV9t8i70QVLq8ZtST9Np1gDsVUkk4xN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" integrity="sha384-e6cc9LaIG7xZ3XD5B+jtr1NhTWPQGQdRCh6xiZ+ZFUtWCpg4ycv3Sh+SkZoopvUY" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-700 p-4 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-400">Puerto Rico Trench Gravity Anomaly</h1>
+                <p class="text-sm text-slate-400">NGSS HS-ESS2-1: Earth's Internal & Surface Processes</p>
+            </div>
+            <div class="bg-blue-900/50 text-blue-200 px-3 py-1 rounded-full text-xs font-semibold border border-blue-700/50">
+                Subduction Zone Model
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="flex-grow p-4 md:p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Sidebar: Controls -->
+        <aside class="lg:col-span-1 space-y-6">
+            <!-- Simulation Controls -->
+            <div class="bg-slate-800 rounded-xl p-5 border border-slate-700 shadow-lg">
+                <h2 class="text-lg font-semibold mb-4 text-white flex items-center border-b border-slate-700 pb-2">
+                    <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    Tectonic Parameters
+                </h2>
+
+                <div class="space-y-5">
+                    <!-- Subduction Angle Slider -->
+                    <div>
+                        <div class="slider-label">
+                            <span>Subduction Angle (θ)</span>
+                            <span id="angleValue" class="font-mono text-blue-300">45°</span>
+                        </div>
+                        <input type="range" id="angleSlider" min="15" max="75" value="45" class="w-full">
+                        <p class="text-xs text-slate-500 mt-1">Dip angle of the subducting North American plate.</p>
+                    </div>
+
+                    <!-- Crustal Density Slider -->
+                    <div>
+                        <div class="slider-label">
+                            <span>Oceanic Crust Density (ρ<sub>c</sub>)</span>
+                            <span id="crustDensityValue" class="font-mono text-blue-300">2.9 g/cm³</span>
+                        </div>
+                        <input type="range" id="crustDensitySlider" min="2.5" max="3.3" step="0.1" value="2.9" class="w-full">
+                        <p class="text-xs text-slate-500 mt-1">Density of the subducting oceanic crust.</p>
+                    </div>
+
+                    <!-- Mantle Density Slider -->
+                    <div>
+                        <div class="slider-label">
+                            <span>Asthenosphere Density (ρ<sub>m</sub>)</span>
+                            <span id="mantleDensityValue" class="font-mono text-blue-300">3.3 g/cm³</span>
+                        </div>
+                        <input type="range" id="mantleDensitySlider" min="3.0" max="3.6" step="0.1" value="3.3" class="w-full">
+                        <p class="text-xs text-slate-500 mt-1">Density of the surrounding mantle material.</p>
+                    </div>
+
+                    <!-- Trench Depth Slider -->
+                    <div>
+                        <div class="slider-label">
+                            <span>Trench Depth (z)</span>
+                            <span id="trenchDepthValue" class="font-mono text-blue-300">8.4 km</span>
+                        </div>
+                        <input type="range" id="trenchDepthSlider" min="4.0" max="10.0" step="0.1" value="8.4" class="w-full">
+                        <p class="text-xs text-slate-500 mt-1">Maximum depth of the oceanic trench.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mystery Variables / Investigative Tools -->
+            <div class="bg-slate-800 rounded-xl p-5 border border-slate-700 shadow-lg">
+                <h2 class="text-lg font-semibold mb-4 text-purple-400 flex items-center border-b border-slate-700 pb-2">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Investigative Phenomena
+                </h2>
+
+                <div class="space-y-4">
+                    <p class="text-sm text-slate-300 mb-2">The Puerto Rico Trench exhibits the largest negative free-air gravity anomaly on Earth (-380 mGal). Can your model reproduce this extreme value?</p>
+
+                    <label class="flex items-center space-x-3 cursor-pointer p-3 bg-slate-700/50 rounded-lg hover:bg-slate-700 transition-colors">
+                        <input type="checkbox" id="mysteryMassToggle" class="form-checkbox h-5 w-5 text-purple-600 rounded bg-slate-900 border-slate-600 focus:ring-purple-500 focus:ring-offset-slate-800">
+                        <div>
+                            <span class="text-sm font-medium text-white block">Enable Carbonate Platform</span>
+                            <span class="text-xs text-slate-400">Adds low-density sedimentary mass</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center space-x-3 cursor-pointer p-3 bg-slate-700/50 rounded-lg hover:bg-slate-700 transition-colors">
+                        <input type="checkbox" id="crustalThinningToggle" class="form-checkbox h-5 w-5 text-purple-600 rounded bg-slate-900 border-slate-600 focus:ring-purple-500 focus:ring-offset-slate-800">
+                        <div>
+                            <span class="text-sm font-medium text-white block">Enable Crustal Thinning</span>
+                            <span class="text-xs text-slate-400">Simulates extreme tectonic extension</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button id="resetBtn" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors font-medium text-sm">
+                Reset Simulation
+            </button>
+        </aside>
+
+        <!-- Right Side: Visualizations -->
+        <section class="lg:col-span-2 space-y-6">
+
+            <!-- 3D Cross Section View -->
+            <div class="bg-slate-800 rounded-xl p-1 border border-slate-700 shadow-lg flex flex-col">
+                <div class="p-3 border-b border-slate-700 flex justify-between items-center">
+                    <h2 class="text-sm font-semibold text-slate-200">3D Tectonic Cross-Section</h2>
+                    <span class="text-xs text-slate-500">North American Plate subducting beneath Caribbean Plate</span>
+                </div>
+                <div id="threejs-container" class="canvas-container rounded-t-none rounded-b-lg"></div>
+            </div>
+
+            <!-- 2D Gravity Anomaly Chart -->
+            <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 shadow-lg">
+                <h2 class="text-sm font-semibold text-slate-200 mb-2">Simulated Free-Air Gravity Anomaly (Δg)</h2>
+                <div class="chart-container">
+                    <canvas id="gravityChart"></canvas>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-4 text-sm bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                    <div>
+                        <span class="text-slate-400 block text-xs uppercase tracking-wider">Calculated Minimum Anomaly</span>
+                        <span id="minAnomalyDisplay" class="text-blue-400 font-mono text-lg font-bold">0 mGal</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-xs uppercase tracking-wider">Target Anomaly (PR Trench)</span>
+                        <span class="text-purple-400 font-mono text-lg font-bold">-380 mGal</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Context / Information Panel -->
+    <footer class="bg-slate-900 border-t border-slate-700 mt-auto p-6">
+        <div class="max-w-7xl mx-auto text-sm text-slate-400 space-y-2">
+            <h3 class="font-semibold text-slate-300">About the Puerto Rico Trench Anomaly</h3>
+            <p>Gravity anomalies are calculated by subtracting the expected theoretical gravity at a location from the actual measured gravity. The free-air anomaly over the Puerto Rico Trench is the most negative on Earth, reaching approximately -380 milligals (mGal).</p>
+            <p>This massive mass deficit is primarily caused by the deep trench displacing dense crust and mantle with lower-density seawater, combined with the complex dynamics of the obliquely subducting North American plate pulling the crust downward, preventing it from achieving isostatic equilibrium.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        const defaultState = {
+            angle: 45,
+            crustDensity: 2.9,
+            mantleDensity: 3.3,
+            trenchDepth: 8.4,
+            carbonatePlatform: false,
+            crustalThinning: false
+        };
+        const state = { ...defaultState };
+
+        // DOM Elements
+        const elements = {
+            angleSlider: document.getElementById('angleSlider'),
+            angleValue: document.getElementById('angleValue'),
+            crustDensitySlider: document.getElementById('crustDensitySlider'),
+            crustDensityValue: document.getElementById('crustDensityValue'),
+            mantleDensitySlider: document.getElementById('mantleDensitySlider'),
+            mantleDensityValue: document.getElementById('mantleDensityValue'),
+            trenchDepthSlider: document.getElementById('trenchDepthSlider'),
+            trenchDepthValue: document.getElementById('trenchDepthValue'),
+            mysteryMassToggle: document.getElementById('mysteryMassToggle'),
+            crustalThinningToggle: document.getElementById('crustalThinningToggle'),
+            resetBtn: document.getElementById('resetBtn'),
+            container: document.getElementById('threejs-container')
+        };
+
+        // --- Three.js Setup ---
+        let scene, camera, renderer;
+        let oceanMesh, crustMesh, mantleMesh, subductingSlabMesh, caribbeanPlateMesh;
+        const width = elements.container.clientWidth;
+        const height = elements.container.clientHeight;
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1e293b);
+
+            // Orthographic camera for cross-section view
+            const aspect = width / height;
+            const viewSize = 60;
+            camera = new THREE.OrthographicCamera(
+                -viewSize * aspect / 2, viewSize * aspect / 2,
+                viewSize / 2, -viewSize / 2,
+                1, 1000
+            );
+            camera.position.set(0, 0, 100);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            elements.container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            dirLight.position.set(0, 10, 20);
+            scene.add(dirLight);
+
+            createMeshes();
+            update3DModel();
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        function createMeshes() {
+            // Materials
+            const oceanMat = new THREE.MeshBasicMaterial({ color: 0x1e40af, transparent: true, opacity: 0.6 });
+            const crustMat = new THREE.MeshLambertMaterial({ color: 0x64748b });
+            const mantleMat = new THREE.MeshLambertMaterial({ color: 0x991b1b });
+            const caribbeanMat = new THREE.MeshLambertMaterial({ color: 0x475569 });
+
+            // Mantle (Background Base)
+            const mantleGeo = new THREE.PlaneGeometry(200, 100);
+            mantleMesh = new THREE.Mesh(mantleGeo, mantleMat);
+            mantleMesh.position.z = -5;
+            scene.add(mantleMesh);
+
+            // Ocean
+            const oceanGeo = new THREE.PlaneGeometry(200, 20);
+            oceanMesh = new THREE.Mesh(oceanGeo, oceanMat);
+            oceanMesh.position.set(0, 10, 0);
+            scene.add(oceanMesh);
+
+            // North American Plate (Subducting Slab) - Custom Geometry to allow bending
+            // We use a plane geometry with multiple segments
+            const slabGeo = new THREE.PlaneGeometry(100, 5, 20, 1);
+            subductingSlabMesh = new THREE.Mesh(slabGeo, crustMat);
+            scene.add(subductingSlabMesh);
+
+            // Caribbean Plate (Overriding Plate)
+            const carbGeo = new THREE.PlaneGeometry(60, 5);
+            caribbeanPlateMesh = new THREE.Mesh(carbGeo, caribbeanMat);
+            caribbeanPlateMesh.position.set(30, 0, 0);
+            scene.add(caribbeanPlateMesh);
+
+            // Text labels
+            addLabel("North American Plate", -30, 5);
+            addLabel("Caribbean Plate", 30, 5);
+            addLabel("Trench", 0, 12);
+        }
+
+        function addLabel(text, x, y) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(0,0,0,0)';
+            ctx.fillRect(0, 0, 256, 64);
+            ctx.font = '24px sans-serif';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, 128, 40);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+            const geo = new THREE.PlaneGeometry(20, 5);
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, y, 1);
+            scene.add(mesh);
+        }
+
+        function update3DModel() {
+            // Update Ocean Depth (Trench)
+            oceanMesh.scale.y = 1 + (state.trenchDepth - 4) * 0.2;
+            oceanMesh.position.y = 5 + (oceanMesh.scale.y * 10) / 2 - 5; // keep surface roughly level
+
+            // Update Subducting Slab
+            const angleRad = state.angle * Math.PI / 180;
+            const positions = subductingSlabMesh.geometry.attributes.position;
+
+            // Subduction hinge is roughly at x=0
+            for (let i = 0; i < positions.count; i++) {
+                const x = positions.getX(i);
+                // Reset Y and Z based on base geometry before applying bend
+                // Base geometry is plane 100 wide, from x=-50 to x=50
+                let newY = 0;
+
+                if (x > 0) {
+                    // Bend down
+                    newY = -Math.tan(angleRad) * x;
+                } else if (x > -10) {
+                    // Transition zone (the trench bend)
+                    const normalizedX = (x + 10) / 10; // 0 to 1
+                    // Smooth quadratic interpolation
+                    newY = -Math.tan(angleRad) * 10 * Math.pow(normalizedX, 2);
+                }
+
+                positions.setY(i, newY);
+            }
+            subductingSlabMesh.geometry.attributes.position.needsUpdate = true;
+            subductingSlabMesh.geometry.computeVertexNormals();
+
+            // Position slab
+            subductingSlabMesh.position.x = -50;
+
+            // Update Colors based on density
+            const crustColor = new THREE.Color().setHSL(0.6, 0.2, 0.5 - (state.crustDensity - 2.5) * 0.3);
+            subductingSlabMesh.material.color = crustColor;
+
+            const mantleColor = new THREE.Color().setHSL(0.0, 0.8, 0.6 - (state.mantleDensity - 3.0) * 0.4);
+            mantleMesh.material.color = mantleColor;
+
+            // Visual representations of phenomena
+            if (state.crustalThinning) {
+                subductingSlabMesh.scale.y = 0.5;
+            } else {
+                subductingSlabMesh.scale.y = 1.0;
+            }
+        }
+
+        // --- Resize Handler ---
+        window.addEventListener('resize', () => {
+            if(!camera || !renderer) return;
+            const w = elements.container.clientWidth;
+            const h = elements.container.clientHeight;
+            const aspect = w / h;
+            const viewSize = 60;
+
+            camera.left = -viewSize * aspect / 2;
+            camera.right = viewSize * aspect / 2;
+            camera.top = viewSize / 2;
+            camera.bottom = -viewSize / 2;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(w, h);
+        });
+
+        // --- Gravity Anomaly Calculation & Chart.js ---
+        let gravityChart;
+
+        // Gravity Model Constants
+        const GRAVITY_CONST_G = 6.6743e-11; // Gravitational constant
+        const WATER_DENSITY = 1.03; // g/cm³
+        const TRENCH_WIDTH_KM = 40; // Approximate width of trench effect
+        const SLAB_START_X_KM = -20; // Where the slab begins descending
+        const SLAB_DEPTH_OFFSET_KM = 10; // Initial depth of slab
+        const SLAB_DENSITY_CONTRAST_COLD = 0.05 * 1000; // +0.05 g/cm³ denser than mantle, converted to kg/m³
+        const CARBONATE_EFFECT_MAX_MGAL = -60; // Max negative anomaly from carbonate platform
+
+        function calculateGravityProfile() {
+            // Simplified 1D gravity anomaly profile across the trench (Bouguer/Free-Air approximation)
+            // x represents distance across the trench (km), from -100 (ocean) to 100 (island arc)
+            const profile = [];
+            const labels = [];
+
+            const crustDensity = parseFloat(state.crustDensity);
+            const mantleDensity = parseFloat(state.mantleDensity);
+            const subductionAngle = state.angle * Math.PI / 180;
+            const trenchDepth = parseFloat(state.trenchDepth);
+
+            // Density contrasts
+            const deltaRhoWaterCrust = (WATER_DENSITY - crustDensity) * 1000; // kg/m³
+
+            let minAnomaly = 0;
+
+            for (let x = -100; x <= 100; x += 5) {
+                labels.push(x.toString());
+
+                // 1. Trench Effect (Mass Deficit due to deep water instead of rock)
+                let trenchEffect = 0;
+                if (Math.abs(x) < TRENCH_WIDTH_KM) {
+                    const extraDepth = trenchDepth - 4; // km below normal ocean floor
+                    const distanceFactor = 1 - Math.abs(x) / TRENCH_WIDTH_KM;
+                    trenchEffect = 2 * Math.PI * GRAVITY_CONST_G * deltaRhoWaterCrust * (extraDepth * 1000) * 1e5 * distanceFactor; // mGal
+                }
+
+                // 2. Subducting Slab Effect
+                let slabEffect = 0;
+                if (x > SLAB_START_X_KM) {
+                    const slabDepth = SLAB_DEPTH_OFFSET_KM + Math.tan(subductionAngle) * (x - SLAB_START_X_KM); // km
+                    const slabThickness = state.crustalThinning ? 3 : 7; // km
+
+                    if (slabDepth > 0) {
+                        // Use distance r rather than slabDepth for the 2D line mass decay equation
+                        const r = Math.sqrt(Math.pow(x - (x+10), 2) + Math.pow(slabDepth, 2)); // rough distance to slab center
+                        slabEffect = (2 * GRAVITY_CONST_G * SLAB_DENSITY_CONTRAST_COLD * slabThickness * 1000 * 10000 / r) * 1e5; // mGal
+                    }
+                }
+
+                if (state.crustalThinning) {
+                    trenchEffect *= 1.2; // amplify mass deficit effect generally due to thinner crust
+                }
+
+                // 3. Carbonate Platform Effect (Mystery Variable)
+                let carbonateEffect = 0;
+                if (state.carbonatePlatform && x > 20 && x < 80) {
+                    carbonateEffect = CARBONATE_EFFECT_MAX_MGAL * Math.sin(Math.PI * (x - 20) / 60);
+                }
+
+                // Total Anomaly
+                let totalAnomaly = trenchEffect + slabEffect + carbonateEffect;
+
+                if (totalAnomaly < minAnomaly) {
+                    minAnomaly = totalAnomaly;
+                }
+
+                profile.push(totalAnomaly);
+            }
+
+            return { labels, data: profile, minAnomaly };
+        }
+
+        function updateDOMWithAnomaly(minAnomaly) {
+            const minAnomalyDisplay = document.getElementById('minAnomalyDisplay');
+            minAnomalyDisplay.innerText = Math.round(minAnomaly) + ' mGal';
+
+            if (minAnomaly <= -370 && minAnomaly >= -390) {
+                minAnomalyDisplay.classList.add('text-green-400');
+                minAnomalyDisplay.classList.remove('text-blue-400');
+            } else {
+                minAnomalyDisplay.classList.remove('text-green-400');
+                minAnomalyDisplay.classList.add('text-blue-400');
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('gravityChart').getContext('2d');
+            const profileData = calculateGravityProfile();
+            updateDOMWithAnomaly(profileData.minAnomaly);
+
+            gravityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: profileData.labels,
+                    datasets: [{
+                        label: 'Free-Air Anomaly (Δg)',
+                        data: profileData.data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 300 // fast animation for sliders
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Distance Across Trench (km)',
+                                color: '#94a3b8'
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Gravity Anomaly (mGal)',
+                                color: '#94a3b8'
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: { color: '#94a3b8' },
+                            suggestedMin: -450,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Δg: ${Math.round(context.raw)} mGal`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateSimulation() {
+            // Update 3D visualization
+            update3DModel();
+
+            // Update Chart & DOM
+            const profileData = calculateGravityProfile();
+            if (gravityChart) {
+                gravityChart.data.labels = profileData.labels;
+                gravityChart.data.datasets[0].data = profileData.data;
+                gravityChart.update();
+            }
+            updateDOMWithAnomaly(profileData.minAnomaly);
+        }
+
+        // --- Event Listeners ---
+        elements.angleSlider.addEventListener('input', (e) => {
+            state.angle = parseInt(e.target.value);
+            elements.angleValue.innerText = `${state.angle}°`;
+            updateSimulation();
+        });
+
+        elements.crustDensitySlider.addEventListener('input', (e) => {
+            state.crustDensity = parseFloat(e.target.value);
+            elements.crustDensityValue.innerText = `${state.crustDensity.toFixed(1)} g/cm³`;
+            updateSimulation();
+        });
+
+        elements.mantleDensitySlider.addEventListener('input', (e) => {
+            state.mantleDensity = parseFloat(e.target.value);
+            elements.mantleDensityValue.innerText = `${state.mantleDensity.toFixed(1)} g/cm³`;
+            updateSimulation();
+        });
+
+        elements.trenchDepthSlider.addEventListener('input', (e) => {
+            state.trenchDepth = parseFloat(e.target.value);
+            elements.trenchDepthValue.innerText = `${state.trenchDepth.toFixed(1)} km`;
+            updateSimulation();
+        });
+
+        elements.mysteryMassToggle.addEventListener('change', (e) => {
+            state.carbonatePlatform = e.target.checked;
+            updateSimulation();
+        });
+
+        elements.crustalThinningToggle.addEventListener('change', (e) => {
+            state.crustalThinning = e.target.checked;
+            updateSimulation();
+        });
+
+        elements.resetBtn.addEventListener('click', () => {
+            // Reset state
+            Object.assign(state, defaultState);
+
+            // Reset UI
+            elements.angleSlider.value = state.angle;
+            elements.angleValue.innerText = `${state.angle}°`;
+
+            elements.crustDensitySlider.value = state.crustDensity;
+            elements.crustDensityValue.innerText = `${state.crustDensity.toFixed(1)} g/cm³`;
+
+            elements.mantleDensitySlider.value = state.mantleDensity;
+            elements.mantleDensityValue.innerText = `${state.mantleDensity.toFixed(1)} g/cm³`;
+
+            elements.trenchDepthSlider.value = state.trenchDepth;
+            elements.trenchDepthValue.innerText = `${state.trenchDepth.toFixed(1)} km`;
+
+            elements.mysteryMassToggle.checked = false;
+            elements.crustalThinningToggle.checked = false;
+
+            updateSimulation();
+        });
+
+        // --- Initialization ---
+        initThreeJS();
+        initChart();
+
+        // --- Expose for testing ---
+        window.simulationState = state;
+        window.simulationElements = elements;
+        window.updateSimulation = updateSimulation;
+    </script>
+</body>
+</html>
