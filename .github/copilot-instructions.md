@@ -1,7 +1,7 @@
-# GitHub Copilot / Automated Agent Policy for this repository
+# GitHub Copilot Policy for this repository
 
 Purpose
-- This file documents repository-level instructions for GitHub Copilot and any automated assistant or bot that reads repository guidance. Its goal is to ensure no pull requests are created automatically.
+- This file documents repository-level instructions for GitHub Copilot. Its goal is to ensure no pull requests are created automatically.
 
 Policy (short)
 - Do NOT create, open, or propose pull requests in this repository unless a human explicitly asks for one.
