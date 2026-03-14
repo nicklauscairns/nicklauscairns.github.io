@@ -1,3 +1,13 @@
+name: Repost Bot Comments with @jules
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  repost-comment:
+    runs-on: ubuntu-latest
+    # Note: moved the actor check into the script for easier debugging
     steps:
       - name: Debug actor & review author
         uses: actions/github-script@v7
@@ -16,11 +26,11 @@
           script: |
             const reviewId = context.payload.review && context.payload.review.id;
             const issueNumber = context.payload.pull_request && context.payload.pull_request.number;
-            const actor = context.actor;                           // the actor that triggered the workflow
-            const reviewUser = context.payload.review && context.payload.review.user && context.payload.review.user.login; // who created the review
+            const actor = context.actor;
+            const reviewUser = context.payload.review && context.payload.review.user && context.payload.review.user.login;
             console.log("actor:", actor, "reviewUser:", reviewUser);
 
-            // Allowed bot names -- add more variants if you see different strings in the logs
+            // Allowed bot names -- adjust after you inspect the debug logs
             const allowed = [
               "gemini-code-assist[bot]",
               "chatgpt-codex-connector[bot]",
@@ -55,6 +65,7 @@
             });
 
             let digest = '';
+
             if (reviewBody.trim()) {
               digest += `**Review Summary:**\n> ${reviewBody.split('\n').join('\n> ')}\n\n`;
             }
