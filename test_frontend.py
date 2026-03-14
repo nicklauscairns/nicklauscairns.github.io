@@ -9,7 +9,16 @@ async def main():
 
         # Intercept network requests to allow local file access
         # Also need jsdelivr for OrbitControls.js
-        await page.route("**/*", lambda route: route.continue_() if route.request.url.startswith("file://") or route.request.url.startswith("https://cdnjs.cloudflare.com/ajax/libs/three.js/") or route.request.url.startswith("https://cdn.tailwindcss.com") or route.request.url.startswith("https://cdn.jsdelivr.net") else route.abort())
+        allowed_prefixes = (
+            "file://",
+            "https://cdnjs.cloudflare.com/ajax/libs/three.js/",
+            "https://cdn.tailwindcss.com",
+            "https://cdn.jsdelivr.net"
+        )
+        await page.route(
+            "**/*",
+            lambda route: route.continue_() if route.request.url.startswith(allowed_prefixes) else route.abort()
+        )
 
         file_path = os.path.abspath("Simulations/PhysicalSciences/WaveSuperposition3D.html")
         print(f"Loading {file_path}...")
@@ -19,7 +28,7 @@ async def main():
         await page.goto(f"file://{file_path}", wait_until="networkidle")
 
         # Wait a bit to ensure Three.js initializes
-        await page.wait_for_timeout(2000)
+        await page.wait_for_function("() => window.SimState && window.SimState.sources.length > 0")
 
         await page.screenshot(path="screenshot_frontend_final2.png")
         print("Screenshot saved to screenshot_frontend_final2.png")
