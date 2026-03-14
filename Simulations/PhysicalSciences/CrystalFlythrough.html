@@ -152,6 +152,7 @@
         const crystals = {
             'nacl': {
                 name: 'Sodium Chloride',
+                maxBondDist: 5.0,
                 // Simplified CIF for Halite (NaCl)
                 data: `data_halite
 _chemical_name_mineral 'Halite'
@@ -172,6 +173,7 @@ Cl 0.50000 0.50000 0.50000`
             },
             'diamond': {
                 name: 'Diamond',
+                maxBondDist: 3.6,
                 data: `data_diamond
 _chemical_name_mineral 'Diamond'
 _cell_length_a 3.5667
@@ -190,6 +192,7 @@ C 0.00000 0.00000 0.00000`
             },
             'graphite': {
                 name: 'Graphite',
+                maxBondDist: 1.5,
                 data: `data_graphite
 _chemical_name_mineral 'Graphite'
 _cell_length_a 2.4612
@@ -298,18 +301,44 @@ C2 0.33333 0.66667 0.25000`
                     document.getElementById('scale-badge').innerText = `1x1x1 (Unit Cell) - Scaling Unavailable`;
                 }
 
-                // Style: Sticks and Balls
+                viewer.removeAllLabels();
+                viewer.removeAllShapes(); // Remove unit cell box or previous bonds before redrawing
+
+                // Style: We will draw bonds manually as cylinders, so we only need spheres
                 viewer.setStyle({}, {
-                    stick: {radius: 0.15, colorscheme: 'Jmol'},
                     sphere: {radius: 0.4, colorscheme: 'Jmol'}
                 });
 
                 // Optional: Draw the unit cell outline if scale == 1
                 if (scale === 1) {
                     viewer.addUnitCell(m, {box:{color:'white'}, a:{hidden:true}, b:{hidden:true}, c:{hidden:true}});
-                } else {
-                    viewer.removeAllLabels();
-                    viewer.removeAllShapes(); // Remove unit cell box
+                }
+
+                // Manually draw bonds since 3Dmol.js default bond calculation might fail for these CIFs
+                let atoms = m.selectedAtoms({});
+                let maxDist = crystals[window.simulationState.currentCrystal].maxBondDist || 3.5;
+                let maxDistSq = maxDist * maxDist;
+
+                for (let i = 0; i < atoms.length; i++) {
+                    for (let j = i + 1; j < atoms.length; j++) {
+                        let a1 = atoms[i];
+                        let a2 = atoms[j];
+                        let dx = a1.x - a2.x;
+                        let dy = a1.y - a2.y;
+                        let dz = a1.z - a2.z;
+                        let distSq = dx*dx + dy*dy + dz*dz;
+
+                        if (distSq <= maxDistSq && distSq > 0.1) {
+                            viewer.addCylinder({
+                                start: {x: a1.x, y: a1.y, z: a1.z},
+                                end: {x: a2.x, y: a2.y, z: a2.z},
+                                radius: 0.1,
+                                color: 'white',
+                                fromCap: true,
+                                toCap: true
+                            });
+                        }
+                    }
                 }
 
                 viewer.zoomTo();
