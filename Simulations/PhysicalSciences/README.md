@@ -108,7 +108,7 @@ Construct and revise an explanation for the outcome of a simple chemical reactio
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Fulfill Observable Feature (Constructing Explanations):</b> Add a requirement for students to balance the chemical equation before the 3D product visualization is revealed.</li>
+          <li><b>Fulfill Observable Feature 2.a (Constructing Explanations):</b> Add a requirement for students to balance the chemical equation before the 3D product visualization is revealed.</li>
           <li><b>Improve 3D Interaction:</b> Allow users to measure bond angles and distances in the generated 3D products to verify VSEPR theory predictions.</li>
         </ul>
       </li>
@@ -749,7 +749,7 @@ Use mathematical representations to support a claim regarding relationships amon
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Fulfill Observable Feature (Mathematical Modeling):</b> Incorporate an explicit mathematical readout showing the equation for the resulting superposition wave based on the input parameters.</li>
+          <li><b>Fulfill Observable Feature 3.a (Mathematical Modeling):</b> Incorporate an explicit mathematical readout showing the equation for the resulting superposition wave based on the input parameters.</li>
           <li><b>Improve Relevance (Criterion 1):</b> Add presets that model real-world phenomena, such as noise-canceling headphones (destructive interference) or concert hall acoustics.</li>
         </ul>
       </li>

@@ -16,7 +16,7 @@ These simulations are game-ified logic puzzles to help develop problem-solving a
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Enhance Computational Thinking:</b> Add a "Move Counter" and "Minimum Possible Moves" display to encourage students to find the optimal recursive solution formula ($2^n - 1$).</li>
+          <li><b>Enhance Computational Thinking:</b> Add a "Move Counter" and "Minimum Possible Moves" display to encourage students to find the optimal recursive solution formula (2<sup>n</sup> - 1).</li>
           <li><b>Add Automation:</b> Include an "Auto-Solve" button that visually steps through the recursive algorithm, highlighting the logic at each step.</li>
         </ul>
       </li>

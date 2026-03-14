@@ -74,7 +74,7 @@ Construct an explanation based on evidence for how the structure of DNA determin
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Fulfill Observable Feature (Analyzing Data):</b> Include a graph showing the percentage of functional protein remaining as environmental stress increases.</li>
+          <li><b>Fulfill Observable Feature 3.a (Analyzing Data):</b> Include a graph showing the percentage of functional protein remaining as environmental stress increases.</li>
           <li><b>Improve Interactivity:</b> Allow students to test different types of proteins (e.g., enzymes vs structural proteins) to see varying denaturation thresholds.</li>
         </ul>
       </li>
@@ -347,7 +347,7 @@ Use mathematical representations to support and revise explanations based on evi
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Fulfill Observable Feature (Revising Explanations):</b> Ensure the data logger explicitly highlights population crashes or recoveries to help students revise their initial predictions.</li>
+          <li><b>Fulfill Observable Feature 3.b (Revising Explanations):</b> Ensure the data logger explicitly highlights population crashes or recoveries to help students revise their initial predictions.</li>
           <li><b>Improve Relevance (Criterion 1):</b> Connect the simulated stressors to specific real-world conservation challenges (e.g., habitat loss in the Amazon).</li>
         </ul>
       </li>

@@ -341,7 +341,7 @@ Use a model to describe how variations in the flow of energy into and out of Ear
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Fulfill Observable Feature (Analyzing Data):</b> Include historical temperature anomaly data alongside the simulated results so students can evaluate the model's accuracy.</li>
+          <li><b>Fulfill Observable Feature 3.a (Analyzing Data):</b> Include historical temperature anomaly data alongside the simulated results so students can evaluate the model's accuracy.</li>
           <li><b>Improve CCC (Cause and Effect):</b> Add a feature highlighting the specific chain of events from SO2 injection to aerosol formation to albedo change to temperature drop.</li>
         </ul>
       </li>
@@ -586,7 +586,7 @@ Evaluate or refine a technological solution that reduces impacts of human activi
       <li>
         <b>AI Action Items for Improvement:</b>
         <ul>
-          <li><b>Fulfill Observable Feature (Refining Solutions):</b> Implement a strict "budget" system where mitigation strategies cost money, forcing students to optimize their design to achieve target water quality without overspending.</li>
+          <li><b>Fulfill Observable Feature 3.a (Refining Solutions):</b> Implement a strict "budget" system where mitigation strategies cost money, forcing students to optimize their design to achieve target water quality without overspending.</li>
           <li><b>Improve Feedback Loop:</b> Provide detailed feedback on exactly *why* a specific pollutant (e.g., nitrates vs heavy metals) wasn't mitigated by the chosen strategy.</li>
         </ul>
       </li>
@@ -639,7 +639,7 @@ Use a computational representation to illustrate the relationships among Earth s
 - [Earth Systems Interactions Simulator](EarthSystemsInteractions.html) - Explore how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time. [2026-03-14 04:45:29]
 
   <details>
-    <summary><b>Evaluation: Anchoring Phenomenon | 5.0/5 Stars | 2026-03-14 04:45:29</b></summary>
+    <summary><b>Evaluation: Anchor Phenomenon | 5.0/5 Stars | 2026-03-14 04:45:29</b></summary>
     <ul>
       <li>
         <b>Overview:</b> Outstanding anchoring phenomenon modeling complex interconnected systems. Strongly meets Criterion 4 (Investigable) by allowing manipulation of human activities and observing rippling effects across the atmosphere, biosphere, hydrosphere, and geosphere.
