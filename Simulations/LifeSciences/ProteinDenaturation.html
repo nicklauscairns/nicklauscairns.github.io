@@ -185,7 +185,7 @@
                     console.error('Error loading PDB:', error);
                     const loadingEl = document.getElementById('loading');
                     loadingEl.innerHTML = '<p class="text-red-500 font-bold mb-2">Error Loading Visualization</p><p class="text-sm text-slate-300"></p>';
-                    loadingEl.querySelector('.text-slate-300').textContent = error.message;
+                    loadingEl.querySelector('.text-slate-300')?.textContent = error.message;
                 });
         }
 

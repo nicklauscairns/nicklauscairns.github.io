@@ -247,7 +247,7 @@
                         <p class="text-sm text-slate-300"></p>
                         <p class="text-xs text-slate-400 mt-4">Please check your internet connection and reload.</p>
                     `;
-                    loadingEl.querySelector('.text-slate-300').textContent = error.message;
+                    loadingEl.querySelector('.text-slate-300')?.textContent = error.message;
                 });
         }
 
