@@ -138,11 +138,13 @@
     </div>
 
     <script>
+        const LIGAND_RESIDUE_NAME = 'G37';
+
         let viewer;
         let enzymeModel, substrateModel;
 
         // The exact target coordinates of the active site pocket (approximated for 1HTG)
-        // In 1HTG, the inhibitor (THK) is roughly at [0, 0, 0] or slightly offset.
+        // In 1HTG, the inhibitor (G37) is roughly at [0, 0, 0] or slightly offset.
         const targetPos = { x: -0.5, y: -0.5, z: 0.5 };
 
         // Simulation State
@@ -181,20 +183,27 @@
                     // We use the same model reference for the substrate, manipulating it via selection
                     substrateModel = enzymeModel;
 
-                    // Style Enzyme (Chain A and B, invert THK selection)
-                    viewer.setStyle({resn: 'THK', invert: true}, {
-                        surface: {opacity: 0.8, color: 'white'},
+                    // Style Enzyme (Chain A and B, invert ' + LIGAND_RESIDUE_NAME + ' selection)
+                    viewer.setStyle({resn: LIGAND_RESIDUE_NAME, invert: true}, {
                         cartoon: {color: 'spectrum', opacity: 0.3}
                     });
 
-                    // Style Substrate (Only the ligand THK)
-                    viewer.setStyle({resn: 'THK'}, {
+                    // Add surface explicitly using viewer.addSurface
+                    viewer.addSurface($3Dmol.SurfaceType.VDW, {opacity: 0.8, color: 'white'}, {resn: LIGAND_RESIDUE_NAME, invert: true});
+
+                    // Style Substrate (Only the ligand ' + LIGAND_RESIDUE_NAME + ')
+                    viewer.setStyle({resn: LIGAND_RESIDUE_NAME}, {
                         stick: {radius: 0.3, colorscheme: 'yellowCarbon'},
                         sphere: {radius: 0.5, colorscheme: 'yellowCarbon'}
                     });
 
                     // Save original substrate coordinates
-                    let sAtoms = enzymeModel.selectedAtoms({resn: 'THK'});
+                    let sAtoms = enzymeModel.selectedAtoms({resn: LIGAND_RESIDUE_NAME});
+                    if (sAtoms.length === 0) {
+                        console.error('Ligand not found in PDB file.');
+                        document.querySelector('.loading-overlay p:last-child').innerText = 'Failed to find ligand.';
+                        return;
+                    }
                     origSubstrateAtoms = sAtoms.map(a => ({x: a.x, y: a.y, z: a.z}));
 
                     // We find the center of mass of the original ligand to act as the "target"
@@ -256,7 +265,7 @@
         function updateSubstratePosition() {
             if(!substrateModel) return;
 
-            let sAtoms = substrateModel.selectedAtoms({resn: 'THK'});
+            let sAtoms = substrateModel.selectedAtoms({resn: LIGAND_RESIDUE_NAME});
             let pos = window.simulationState.substratePos;
             let rot = window.simulationState.substrateRot;
 
