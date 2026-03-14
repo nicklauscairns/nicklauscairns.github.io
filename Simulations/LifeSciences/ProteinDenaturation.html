@@ -275,6 +275,7 @@
 
         // Animation loop to simulate kinetic energy and structure breaking
         let lastTime = 0;
+        let lastStyleApplied = 0;
         function animateProtein(time) {
             requestAnimationFrame(animateProtein);
 
@@ -334,8 +335,12 @@
             // Note: setStyle implicitly triggers a rebuild. If we are in cartoon mode, changing coordinates
             // dynamically doesn't immediately update the ribbon spline without re-styling.
             if (denat < 0.3) {
-                viewer.setStyle({}, {hidden: true}); // Trigger clear
-                applyProteinStyle(denat); // Reapply current style based on new coordinates
+                // Only reapply style every 500ms to reduce massive CPU overhead from Spline rebuilding
+                if (time - lastStyleApplied > 500) {
+                    viewer.setStyle({}, {hidden: true}); // Trigger clear
+                    applyProteinStyle(denat); // Reapply current style based on new coordinates
+                    lastStyleApplied = time;
+                }
             }
 
             viewer.render();

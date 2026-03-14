@@ -197,6 +197,9 @@
                     return response.text();
                 })
                 .then(sdfData => {
+                    // Guard against stale fetch responses replacing a newly selected molecule
+                    if (window.simulationState.currentMolecule !== molKey) return;
+
                     viewer.addModel(sdfData, "sdf");
 
                     // Style: Sticks and Balls

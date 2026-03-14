@@ -175,31 +175,26 @@
             fetch(pdbUri)
                 .then(response => response.text())
                 .then(data => {
-                    // Extract just the protein (Enzyme)
+                    // Load the PDB only once into enzymeModel
                     enzymeModel = viewer.addModel(data, "pdb");
 
-                    // We extract the inhibitor 'THK' as a separate model to manipulate it.
-                    // Actually, to make it completely independent, we add the data twice,
-                    // and then hide the respective parts.
-                    substrateModel = viewer.addModel(data, "pdb");
+                    // We use the same model reference for the substrate, manipulating it via selection
+                    substrateModel = enzymeModel;
 
-                    // Style Enzyme (Chain A and B, usually, but here we just hide the ligand)
-                    viewer.setStyle({model: enzymeModel, resn: 'THK', invert: true}, {
+                    // Style Enzyme (Chain A and B, invert THK selection)
+                    viewer.setStyle({resn: 'THK', invert: true}, {
                         surface: {opacity: 0.8, color: 'white'},
                         cartoon: {color: 'spectrum', opacity: 0.3}
                     });
-                    // Hide ligand in enzyme model
-                    viewer.setStyle({model: enzymeModel, resn: 'THK'}, {hidden: true});
 
                     // Style Substrate (Only the ligand THK)
-                    viewer.setStyle({model: substrateModel, resn: 'THK', invert: true}, {hidden: true});
-                    viewer.setStyle({model: substrateModel, resn: 'THK'}, {
-                        stick: {radius: 0.3, colorscheme: 'Jmol'},
-                        sphere: {radius: 0.5, colorscheme: 'Jmol'}
+                    viewer.setStyle({resn: 'THK'}, {
+                        stick: {radius: 0.3, colorscheme: 'yellowCarbon'},
+                        sphere: {radius: 0.5, colorscheme: 'yellowCarbon'}
                     });
 
                     // Save original substrate coordinates
-                    let sAtoms = substrateModel.selectedAtoms({resn: 'THK'});
+                    let sAtoms = enzymeModel.selectedAtoms({resn: 'THK'});
                     origSubstrateAtoms = sAtoms.map(a => ({x: a.x, y: a.y, z: a.z}));
 
                     // We find the center of mass of the original ligand to act as the "target"
@@ -308,6 +303,9 @@
 
         function checkDocking() {
             let pos = window.simulationState.substratePos;
+            let rot = window.simulationState.substrateRot;
+            const targetRot = { x: 0, y: 0, z: 0 };
+            const toleranceRot = 0.5; // radians (~28 degrees)
 
             // Calculate Euclidean distance from current center to target center
             let dx = pos.x - targetPos.x;
@@ -315,15 +313,27 @@
             let dz = pos.z - targetPos.z;
             let dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
 
+            // Check rotation alignment
+            const rotAligned = ['x', 'y', 'z'].every(axis => {
+                const delta = rot[axis] - targetRot[axis];
+                return Math.abs(Math.atan2(Math.sin(delta), Math.cos(delta))) < toleranceRot;
+            });
+
             document.getElementById('distance-meter').innerText = `Distance to active site: ${dist.toFixed(1)} Å`;
 
             // Change color based on proximity
-            if (dist < 4) document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-yellow-300 bg-slate-900 px-3 py-1 rounded border border-yellow-500";
-            else document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-slate-400 bg-slate-900 px-3 py-1 rounded";
+            if (dist < 4) {
+                if (dist < 1.0 && !rotAligned) {
+                    document.getElementById('distance-meter').innerText = `Distance good. Adjust rotation!`;
+                    document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-orange-300 bg-slate-900 px-3 py-1 rounded border border-orange-500";
+                } else {
+                    document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-yellow-300 bg-slate-900 px-3 py-1 rounded border border-yellow-500";
+                }
+            } else {
+                document.getElementById('distance-meter').className = "text-xs font-mono font-bold text-slate-400 bg-slate-900 px-3 py-1 rounded";
+            }
 
-            // If close enough and rotation is somewhat aligned (for simplicity, we mostly check distance and a little rotation)
-            // Let's assume if distance < 1.0, it's docked regardless of exact rotation for gameplay ease.
-            if (dist < 1.0 && !window.simulationState.docked) {
+            if (dist < 1.0 && rotAligned && !window.simulationState.docked) {
                 window.simulationState.docked = true;
 
                 // Flash green

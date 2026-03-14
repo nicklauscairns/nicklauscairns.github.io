@@ -312,11 +312,22 @@ C2 0.33333 0.66667 0.25000`
             }, 50);
         }
 
+        let flyAnimationId = null;
+
+        function flyLoop() {
+            if (!isFlying || !viewer) return;
+            viewer.translate(0, 0, 1);
+            viewer.rotate(0.5, "y");
+            viewer.rotate(0.2, "x");
+            viewer.render();
+            flyAnimationId = requestAnimationFrame(flyLoop);
+        }
+
         window.flythrough = function() {
             let btn = document.getElementById('fly-btn');
             if (isFlying) {
                 isFlying = false;
-                clearInterval(flyInterval);
+                if (flyAnimationId) cancelAnimationFrame(flyAnimationId);
                 btn.innerText = "🚀 Start Flythrough";
                 btn.classList.replace('bg-red-600', 'bg-indigo-600');
                 btn.classList.replace('hover:bg-red-500', 'hover:bg-indigo-500');
@@ -337,13 +348,7 @@ C2 0.33333 0.66667 0.25000`
                 viewer.zoom(5);
 
                 // Set up a camera translation loop
-                flyInterval = setInterval(() => {
-                    if(!viewer) return;
-                    viewer.translate(0, 0, 1); // move forward
-                    viewer.rotate(0.5, "y");
-                    viewer.rotate(0.2, "x");
-                    viewer.render();
-                }, 30);
+                flyAnimationId = requestAnimationFrame(flyLoop);
             }
         }
 
