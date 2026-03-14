@@ -288,7 +288,15 @@ C2 0.33333 0.66667 0.25000`
 
                 // Create the supercell by replicating the unit cell after loading the model.
                 let m = viewer.addModel(data, "cif");
-                viewer.replicateUnitCell(scale, scale, scale, m);
+                if (typeof viewer.replicateUnitCell === 'function') {
+                    viewer.replicateUnitCell(scale, scale, scale, m);
+                } else {
+                    console.warn("replicateUnitCell is not available in the current 3Dmol.js build.");
+                    // Fallback to unit cell only
+                    scale = 1;
+                    document.getElementById('supercell-slider').value = 1;
+                    document.getElementById('scale-badge').innerText = `1x1x1 (Unit Cell) - Scaling Unavailable`;
+                }
 
                 // Style: Sticks and Balls
                 viewer.setStyle({}, {
