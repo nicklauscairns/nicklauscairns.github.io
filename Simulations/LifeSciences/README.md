@@ -33,6 +33,10 @@ Construct an explanation based on evidence for how the structure of DNA determin
     </ul>
   </details>
 
+- [Virus Capsid Explorer](VirusCapsidExplorer.html) - Interactive 3D visualization of a viral capsid structure and its internal genetic material. [2024-05-24 10:00:00]
+- [Protein Unfolding & Denaturation](ProteinDenaturation.html) - Simulates how extreme temperatures and pH changes cause a protein (hemoglobin) to lose its 3D structure and function. [2024-05-24 10:30:00]
+- [Enzyme "Lock and Key" Puzzle](EnzymeDockingPuzzle.html) - Explore enzyme-substrate specificity by interactively docking a molecule into a highly specific 3D active site. [2024-05-24 12:00:00]
+
 ### HS-LS1-2
 Develop and use a model to illustrate the hierarchical organization of interacting systems that provide specific functions within multicellular organisms.
 
@@ -128,13 +132,6 @@ Use a model to illustrate the role of cellular division (mitosis) and differenti
 Use a model to illustrate how photosynthesis transforms light energy into stored chemical energy.
 
 - [Photosynthesis Rate Lab](Photosynthesis.html) - An interactive lab to investigate how environmental factors (Light, Temperature, CO2, Wavelength) affect the rate of photosynthesis. [2026-03-12 12:00:00]
-
-### HS-LS1-1
-Construct an explanation based on evidence for how the structure of DNA determines the structure of proteins which carry out the essential functions of life through systems of specialized cells.
-
-- [Virus Capsid Explorer](VirusCapsidExplorer.html) - Interactive 3D visualization of a viral capsid structure and its internal genetic material. [2024-05-24 10:00:00]
-- [Protein Unfolding & Denaturation](ProteinDenaturation.html) - Simulates how extreme temperatures and pH changes cause a protein (hemoglobin) to lose its 3D structure and function. [2024-05-24 10:30:00]
-- [Enzyme "Lock and Key" Puzzle](EnzymeDockingPuzzle.html) - Explore enzyme-substrate specificity by interactively docking a molecule into a highly specific 3D active site. [2024-05-24 12:00:00]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 18:00:00</b></summary>

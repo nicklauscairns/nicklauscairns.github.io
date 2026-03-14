@@ -215,8 +215,14 @@
                     viewer.zoomTo({model: enzymeModel});
                     viewer.zoom(1.5);
 
+                    // Re-base initial position to match slider defaults relative to the computed targetPos
+                    window.simulationState.substratePos.x = targetPos.x + parseFloat(document.getElementById('trans-x').value);
+                    window.simulationState.substratePos.y = targetPos.y + parseFloat(document.getElementById('trans-y').value);
+                    window.simulationState.substratePos.z = targetPos.z + parseFloat(document.getElementById('trans-z').value);
+
                     // Apply initial offset to the substrate so it starts "outside"
                     updateSubstratePosition();
+                    checkDocking();
 
                     document.getElementById('loading').classList.remove('active');
                     window.simulationState.loaded = true;

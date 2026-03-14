@@ -10,9 +10,13 @@ def page(context):
     page.route("**/*", lambda route: route.continue_() if route.request.url.startswith("file://") or "3Dmol" in route.request.url or "tailwindcss" in route.request.url or "rcsb.org" in route.request.url else route.abort())
     return page
 
+def get_file_path():
+    path1 = os.path.abspath('Simulations/LifeSciences/ProteinDenaturation.html')
+    path2 = os.path.abspath('Simulations/LifeScience/ProteinDenaturation.html')
+    return f"file://{path1 if os.path.exists(path1) else path2}"
+
 def test_protein_denaturation_loads(page: Page):
-    file_path = f"file://{os.path.abspath('Simulations/LifeSciences/ProteinDenaturation.html')}"
-    page.goto(file_path)
+    page.goto(get_file_path())
 
     expect(page).to_have_title("Protein Unfolding & Denaturation")
 
@@ -27,8 +31,7 @@ def test_protein_denaturation_loads(page: Page):
     assert status == "functional"
 
 def test_protein_denaturation_temperature_slider(page: Page):
-    file_path = f"file://{os.path.abspath('Simulations/LifeSciences/ProteinDenaturation.html')}"
-    page.goto(file_path)
+    page.goto(get_file_path())
     page.evaluate("document.getElementById('loading').style.display = 'none';")
 
     # Increase temperature to 80C
@@ -47,8 +50,7 @@ def test_protein_denaturation_temperature_slider(page: Page):
     expect(badge).to_contain_text("Denatured")
 
 def test_protein_denaturation_ph_slider(page: Page):
-    file_path = f"file://{os.path.abspath('Simulations/LifeSciences/ProteinDenaturation.html')}"
-    page.goto(file_path)
+    page.goto(get_file_path())
     page.evaluate("document.getElementById('loading').style.display = 'none';")
 
     # Decrease pH to 2 (Highly Acidic)
@@ -64,8 +66,7 @@ def test_protein_denaturation_ph_slider(page: Page):
     assert status == "denatured", "Extreme pH should denature the protein"
 
 def test_protein_denaturation_ngss_quiz(page: Page):
-    file_path = f"file://{os.path.abspath('Simulations/LifeSciences/ProteinDenaturation.html')}"
-    page.goto(file_path)
+    page.goto(get_file_path())
     page.evaluate("document.getElementById('loading').style.display = 'none';")
 
     # Fill out quiz correctly

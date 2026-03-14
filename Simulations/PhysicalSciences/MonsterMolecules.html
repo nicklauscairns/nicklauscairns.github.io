@@ -188,7 +188,11 @@
                 .then(response => {
                     if (!response.ok) {
                         // Fallback to 2D if 3D doesn't exist (though all these should have 3D)
-                        return fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${molecules[molKey].cid}/SDF`);
+                        return fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${molecules[molKey].cid}/SDF`)
+                            .then(r => {
+                                if (!r.ok) throw new Error("Failed to load molecule from both 3D and 2D endpoints.");
+                                return r.text();
+                            });
                     }
                     return response.text();
                 })

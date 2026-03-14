@@ -5,17 +5,22 @@ from playwright.sync_api import Page, expect
 
 @pytest.fixture
 def page(context):
+    # Tests WebGL, requires --use-gl=egl at launch
     page = context.new_page()
-    page.route("**/*", lambda route: route.continue_() if route.request.url.startswith("file://") or "3Dmol" in route.request.url or "tailwindcss" in route.request.url else route.abort())
+    page.route("**/*", lambda route: route.continue_() if route.request.url.startswith("file://") or "3Dmol" in route.request.url else route.abort())
     return page
 
 def bypass_loading(page):
     page.evaluate("document.getElementById('loading').classList.remove('active')")
     page.evaluate("window.simulationState.loaded = true")
 
+def get_file_path():
+    path1 = os.path.abspath('Simulations/PhysicalSciences/CrystalFlythrough.html')
+    path2 = os.path.abspath('Simulations/PhysicalScience/CrystalFlythrough.html')
+    return f"file://{path1 if os.path.exists(path1) else path2}"
+
 def test_crystal_flythrough_loads(page: Page):
-    file_path = f"file://{os.path.abspath('Simulations/PhysicalSciences/CrystalFlythrough.html')}"
-    page.goto(file_path)
+    page.goto(get_file_path())
 
     expect(page).to_have_title("Crystal Lattice Flythrough")
 
@@ -28,8 +33,7 @@ def test_crystal_flythrough_loads(page: Page):
     assert scale == 1, "Default scale should be 1"
 
 def test_crystal_flythrough_supercell(page: Page):
-    file_path = f"file://{os.path.abspath('Simulations/PhysicalSciences/CrystalFlythrough.html')}"
-    page.goto(file_path)
+    page.goto(get_file_path())
     bypass_loading(page)
 
     # Change to a 3x3x3 bulk lattice
@@ -44,8 +48,7 @@ def test_crystal_flythrough_supercell(page: Page):
     assert scale == 3, "Supercell scale should be 3"
 
 def test_crystal_flythrough_ngss_inference(page: Page):
-    file_path = f"file://{os.path.abspath('Simulations/PhysicalSciences/CrystalFlythrough.html')}"
-    page.goto(file_path)
+    page.goto(get_file_path())
     bypass_loading(page)
 
     # Incorrect guess
