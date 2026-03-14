@@ -161,8 +161,22 @@
     </div>
 
     <script>
+        // --- Configuration ---
+        const SIM_CONFIG = {
+            minCarryingCapacity: 1000,
+            maxFlushingRate: 0.4,
+            minPopulation: 10,
+            mangroveRecoveryRate: 0.05,
+            bayMouthRecoveryRate: 0.1,
+            hurricaneDuration: 50,
+            hurricaneMangroveDamage: 70,
+            hurricaneBayMouthDamage: 60,
+            minMangroveHealth: 10,
+            maxBayMouthWidth: 100
+        };
+
         // --- State and Logic ---
-        const simulationState = {
+        const initialSimulationState = {
             population: 10000, // Initial population
             maxPossibleK: 100000, // Absolute maximum carrying capacity
             currentK: 100000,
@@ -176,6 +190,8 @@
             hurricaneActive: false,
             hurricaneTimer: 0
         };
+
+        const simulationState = { ...initialSimulationState };
 
         // UI Elements
         const popDisplay = document.getElementById('popDisplay');
@@ -205,11 +221,11 @@
             simulationState.currentK = (simulationState.mangroveHealth / 100) * simulationState.maxPossibleK;
 
             // Ensure K doesn't drop to absolute zero to allow recovery
-            if (simulationState.currentK < 1000) simulationState.currentK = 1000;
+            if (simulationState.currentK < SIM_CONFIG.minCarryingCapacity) simulationState.currentK = SIM_CONFIG.minCarryingCapacity;
 
             // 2. Calculate Flushing Rate (F) based on Bay Mouth Width
             // A wider mouth means more tidal exchange, flushing dinoflagellates out to sea.
-            simulationState.flushingRate = (simulationState.bayMouthWidth / 100) * 0.4; // Max flush rate 0.4
+            simulationState.flushingRate = (simulationState.bayMouthWidth / 100) * SIM_CONFIG.maxFlushingRate;
 
             // 3. Logistic Growth Equation with Flushing modification
             // dP/dt = r * P * (1 - P/K) - F * P
@@ -224,7 +240,7 @@
             simulationState.population += dPdt;
 
             // Boundary checks
-            if (simulationState.population < 10) simulationState.population = 10; // Prevent extinction for simulation purposes
+            if (simulationState.population < SIM_CONFIG.minPopulation) simulationState.population = SIM_CONFIG.minPopulation; // Prevent extinction for simulation purposes
 
             // Hurricane logic
             if (simulationState.hurricaneActive) {
@@ -236,13 +252,13 @@
                 }
             } else {
                 // Natural recovery of mangroves if left alone
-                if (simulationState.mangroveHealth < parseInt(mangroveSlider.value)) {
-                    simulationState.mangroveHealth += 0.05;
+                if (simulationState.mangroveHealth < parseInt(mangroveSlider.value, 10)) {
+                    simulationState.mangroveHealth += SIM_CONFIG.mangroveRecoveryRate;
                     updateSlidersUI();
                 }
                 // Natural recovery of bay mouth (sandbar rebuilding)
-                if (simulationState.bayMouthWidth > parseInt(bayMouthSlider.value) && !simulationState.hurricaneActive) {
-                    simulationState.bayMouthWidth -= 0.1;
+                if (simulationState.bayMouthWidth > parseInt(bayMouthSlider.value, 10) && !simulationState.hurricaneActive) {
+                    simulationState.bayMouthWidth -= SIM_CONFIG.bayMouthRecoveryRate;
                     updateSlidersUI();
                 }
             }
@@ -470,9 +486,9 @@
         // --- Interaction Listeners ---
         function attachListeners() {
             function updateStateFromInputs() {
-                simulationState.mangroveHealth = parseInt(mangroveSlider.value);
-                simulationState.bayMouthWidth = parseInt(bayMouthSlider.value);
-                simulationState.lightPollution = parseInt(lightPollutionSlider.value);
+                simulationState.mangroveHealth = parseInt(mangroveSlider.value, 10);
+                simulationState.bayMouthWidth = parseInt(bayMouthSlider.value, 10);
+                simulationState.lightPollution = parseInt(lightPollutionSlider.value, 10);
 
                 mangroveVal.textContent = mangroveSlider.value + '%';
                 // Convert bay mouth value to descriptive text for user
@@ -499,16 +515,11 @@
             });
 
             resetBtn.addEventListener('click', () => {
-                simulationState.population = 10000;
-                simulationState.timeStep = 0;
-                simulationState.mangroveHealth = 100;
-                simulationState.bayMouthWidth = 20;
-                simulationState.lightPollution = 10;
-                simulationState.hurricaneActive = false;
+                Object.assign(simulationState, initialSimulationState);
 
-                mangroveSlider.value = 100;
-                bayMouthSlider.value = 20;
-                lightPollutionSlider.value = 10;
+                mangroveSlider.value = simulationState.mangroveHealth;
+                bayMouthSlider.value = simulationState.bayMouthWidth;
+                lightPollutionSlider.value = simulationState.lightPollution;
                 updateStateFromInputs();
 
                 if (myChart) {
@@ -573,11 +584,11 @@
             // 3. Huge rainfall dilutes salinity, dropping intrinsic growth rate (abstracted into flushing for simplicity)
 
             simulationState.hurricaneActive = true;
-            simulationState.hurricaneTimer = 50; // duration of active destruction
+            simulationState.hurricaneTimer = SIM_CONFIG.hurricaneDuration; // duration of active destruction
 
             // Apply immediate damage
-            simulationState.mangroveHealth = Math.max(10, simulationState.mangroveHealth - 70);
-            simulationState.bayMouthWidth = Math.min(100, simulationState.bayMouthWidth + 60);
+            simulationState.mangroveHealth = Math.max(SIM_CONFIG.minMangroveHealth, simulationState.mangroveHealth - SIM_CONFIG.hurricaneMangroveDamage);
+            simulationState.bayMouthWidth = Math.min(SIM_CONFIG.maxBayMouthWidth, simulationState.bayMouthWidth + SIM_CONFIG.hurricaneBayMouthDamage);
 
             updateSlidersUI();
 
