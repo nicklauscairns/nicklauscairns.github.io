@@ -152,7 +152,8 @@
         const crystals = {
             'nacl': {
                 name: 'Sodium Chloride',
-                maxBondDist: 5.0,
+                maxBondDist: 2.9, // First neighbor Na-Cl shell is ~2.82
+                allowedPairs: ['Na-Cl', 'Cl-Na'],
                 // Simplified CIF for Halite (NaCl)
                 data: `data_halite
 _chemical_name_mineral 'Halite'
@@ -173,7 +174,7 @@ Cl 0.50000 0.50000 0.50000`
             },
             'diamond': {
                 name: 'Diamond',
-                maxBondDist: 3.6,
+                maxBondDist: 1.6, // First neighbor C-C is ~1.54
                 data: `data_diamond
 _chemical_name_mineral 'Diamond'
 _cell_length_a 3.5667
@@ -192,7 +193,7 @@ C 0.00000 0.00000 0.00000`
             },
             'graphite': {
                 name: 'Graphite',
-                maxBondDist: 1.5,
+                maxBondDist: 1.5, // First neighbor C-C is ~1.42 in plane
                 data: `data_graphite
 _chemical_name_mineral 'Graphite'
 _cell_length_a 2.4612
@@ -277,6 +278,71 @@ C2 0.33333 0.66667 0.25000`
             renderCrystal();
         }
 
+        window.getBondPairs = function(atoms, maxDist, allowedPairs) {
+            const maxDistSq = maxDist * maxDist;
+            const MIN_BOND_DIST_SQ = 0.1;
+
+            const cellSize = maxDist;
+            const grid = new Map();
+
+            const getGridKey = (x, y, z) => {
+                return `${Math.floor(x/cellSize)},${Math.floor(y/cellSize)},${Math.floor(z/cellSize)}`;
+            };
+
+            atoms.forEach((atom, index) => {
+                const key = getGridKey(atom.x, atom.y, atom.z);
+                if (!grid.has(key)) grid.set(key, []);
+                grid.get(key).push({ atom, index });
+            });
+
+            const drawnBonds = new Set();
+            const bondPairs = [];
+            const getBondKey = (i, j) => i < j ? `${i}-${j}` : `${j}-${i}`;
+
+            atoms.forEach((a1, i) => {
+                const cx = Math.floor(a1.x/cellSize);
+                const cy = Math.floor(a1.y/cellSize);
+                const cz = Math.floor(a1.z/cellSize);
+
+                // Check neighbors in adjacent cells
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dz = -1; dz <= 1; dz++) {
+                            const key = `${cx+dx},${cy+dy},${cz+dz}`;
+                            const cellAtoms = grid.get(key);
+
+                            if (cellAtoms) {
+                                cellAtoms.forEach(({ atom: a2, index: j }) => {
+                                    if (i === j) return;
+                                    const bondKey = getBondKey(i, j);
+                                    if (drawnBonds.has(bondKey)) return;
+
+                                    if (allowedPairs) {
+                                        const pairStr1 = `${a1.elem}-${a2.elem}`;
+                                        const pairStr2 = `${a2.elem}-${a1.elem}`;
+                                        if (!allowedPairs.includes(pairStr1) && !allowedPairs.includes(pairStr2)) {
+                                            return;
+                                        }
+                                    }
+
+                                    const xDiff = a1.x - a2.x;
+                                    const yDiff = a1.y - a2.y;
+                                    const zDiff = a1.z - a2.z;
+                                    const distSq = xDiff*xDiff + yDiff*yDiff + zDiff*zDiff;
+
+                                    if (distSq <= maxDistSq && distSq > MIN_BOND_DIST_SQ) {
+                                        bondPairs.push([a1, a2]);
+                                        drawnBonds.add(bondKey);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+            return bondPairs;
+        };
+
         function renderCrystal() {
             let loadingUI = document.getElementById('loading');
             loadingUI.classList.add('active');
@@ -328,69 +394,24 @@ C2 0.33333 0.66667 0.25000`
                 let atoms = m.selectedAtoms({});
 
                 const DEFAULT_MAX_BOND_DIST = 3.5;
-                const MIN_BOND_DIST_SQ = 0.1;
                 const BOND_RADIUS = 0.1;
                 const BOND_COLOR = 'white';
 
-                let maxDist = crystals[window.simulationState.currentCrystal].maxBondDist || DEFAULT_MAX_BOND_DIST;
-                let maxDistSq = maxDist * maxDist;
+                let crystalConfig = crystals[window.simulationState.currentCrystal];
+                let maxDist = crystalConfig.maxBondDist || DEFAULT_MAX_BOND_DIST;
+                let allowedPairs = crystalConfig.allowedPairs;
 
-                // Spatial partitioning (Grid) to reduce O(N^2) complexity
-                const cellSize = maxDist;
-                const grid = new Map();
+                let bondPairs = window.getBondPairs(atoms, maxDist, allowedPairs);
 
-                const getGridKey = (x, y, z) => {
-                    return `${Math.floor(x/cellSize)},${Math.floor(y/cellSize)},${Math.floor(z/cellSize)}`;
-                };
-
-                atoms.forEach((atom, index) => {
-                    const key = getGridKey(atom.x, atom.y, atom.z);
-                    if (!grid.has(key)) grid.set(key, []);
-                    grid.get(key).push({ atom, index });
-                });
-
-                const drawnBonds = new Set();
-                const getBondKey = (i, j) => i < j ? `${i}-${j}` : `${j}-${i}`;
-
-                atoms.forEach((a1, i) => {
-                    const cx = Math.floor(a1.x/cellSize);
-                    const cy = Math.floor(a1.y/cellSize);
-                    const cz = Math.floor(a1.z/cellSize);
-
-                    // Check neighbors in adjacent cells
-                    for (let dx = -1; dx <= 1; dx++) {
-                        for (let dy = -1; dy <= 1; dy++) {
-                            for (let dz = -1; dz <= 1; dz++) {
-                                const key = `${cx+dx},${cy+dy},${cz+dz}`;
-                                const cellAtoms = grid.get(key);
-
-                                if (cellAtoms) {
-                                    cellAtoms.forEach(({ atom: a2, index: j }) => {
-                                        if (i === j) return;
-                                        const bondKey = getBondKey(i, j);
-                                        if (drawnBonds.has(bondKey)) return;
-
-                                        const xDiff = a1.x - a2.x;
-                                        const yDiff = a1.y - a2.y;
-                                        const zDiff = a1.z - a2.z;
-                                        const distSq = xDiff*xDiff + yDiff*yDiff + zDiff*zDiff;
-
-                                        if (distSq <= maxDistSq && distSq > MIN_BOND_DIST_SQ) {
-                                            viewer.addCylinder({
-                                                start: a1,
-                                                end: a2,
-                                                radius: BOND_RADIUS,
-                                                color: BOND_COLOR,
-                                                fromCap: true,
-                                                toCap: true
-                                            });
-                                            drawnBonds.add(bondKey);
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    }
+                bondPairs.forEach(pair => {
+                    viewer.addCylinder({
+                        start: pair[0],
+                        end: pair[1],
+                        radius: BOND_RADIUS,
+                        color: BOND_COLOR,
+                        fromCap: true,
+                        toCap: true
+                    });
                 });
 
                 viewer.zoomTo();
