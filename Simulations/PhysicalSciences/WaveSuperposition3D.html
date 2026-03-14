@@ -116,6 +116,7 @@
         const SimState = {
             time: 0,
             isRunning: true,
+            needsUpdate: true, // Flag to trigger redraws when paused but params change
             waveSpeed: 5.0,
             wallEnabled: false,
             wallPositionX: 10, // Right edge
@@ -333,21 +334,25 @@
             SimState.isRunning = !SimState.isRunning;
             playPauseBtn.innerText = SimState.isRunning ? "Pause Simulation" : "Play Simulation";
             playPauseBtn.className = SimState.isRunning ? "btn bg-green-600 hover:bg-green-500" : "btn bg-yellow-600 hover:bg-yellow-500";
+            if (!SimState.isRunning) SimState.needsUpdate = true; // Ensure one last draw
         });
 
         document.getElementById('reset-time-btn').addEventListener('click', () => {
             SimState.time = 0;
+            SimState.needsUpdate = true;
         });
 
         document.getElementById('wave-speed').addEventListener('input', (e) => {
             SimState.waveSpeed = parseFloat(e.target.value);
             document.getElementById('speed-val').innerText = SimState.waveSpeed.toFixed(1) + ' m/s';
             updateAllWavelengthDisplays();
+            SimState.needsUpdate = true;
         });
 
         document.getElementById('reflecting-wall').addEventListener('change', (e) => {
             SimState.wallEnabled = e.target.checked;
             wallMesh.visible = SimState.wallEnabled;
+            SimState.needsUpdate = true;
         });
 
         document.getElementById('add-source-btn').addEventListener('click', () => {
@@ -423,23 +428,27 @@
                     src.frequency = parseFloat(e.target.value);
                     document.getElementById(`freq-val-${src.id}`).innerText = src.frequency.toFixed(1) + ' Hz';
                     updateWavelengthDisplay(src.id);
+                    SimState.needsUpdate = true;
                 });
 
                 document.getElementById(`amp-${src.id}`).addEventListener('input', (e) => {
                     src.amplitude = parseFloat(e.target.value);
                     document.getElementById(`amp-val-${src.id}`).innerText = src.amplitude.toFixed(1) + ' m';
+                    SimState.needsUpdate = true;
                 });
 
                 document.getElementById(`posx-${src.id}`).addEventListener('input', (e) => {
                     src.x = parseFloat(e.target.value);
                     document.getElementById(`posx-val-${src.id}`).innerText = src.x.toFixed(1);
                     if (src.meshRef) src.meshRef.position.x = src.x;
+                    SimState.needsUpdate = true;
                 });
 
                 document.getElementById(`posy-${src.id}`).addEventListener('input', (e) => {
                     src.y = parseFloat(e.target.value);
                     document.getElementById(`posy-val-${src.id}`).innerText = src.y.toFixed(1);
                     if (src.meshRef) src.meshRef.position.y = src.y;
+                    SimState.needsUpdate = true;
                 });
             });
         }
@@ -447,6 +456,7 @@
         window.removeSourceAndIndicator = function(id) {
             removeSource(id);
             updateSourceIndicators();
+            SimState.needsUpdate = true;
         }
 
         function updateWavelengthDisplay(id) {
@@ -484,6 +494,11 @@
         sliceLine.computeLineDistances();
         scene.add(sliceLine);
 
+        // Pre-allocate arrays for 2D slice optimization to prevent GC churn
+        const numSlicePoints = 100;
+        const slicePointsX = new Float32Array(numSlicePoints + 1);
+        const slicePointsY = new Float32Array(numSlicePoints + 1);
+
         // --- Animation Loop ---
         const clock = new THREE.Clock();
 
@@ -493,9 +508,18 @@
             requestAnimationFrame(animate);
 
             const delta = clock.getDelta();
+
+            // Only update geometry and perform heavy calculations if time is running OR a parameter just changed
+            if (!SimState.isRunning && !SimState.needsUpdate) {
+                controls.update();
+                renderer.render(scene, camera);
+                return; // Skip heavy mesh updates
+            }
+
             if (SimState.isRunning) {
                 SimState.time += delta;
             }
+            SimState.needsUpdate = false; // Reset flag after handling
 
             const t = SimState.time;
             const v = SimState.waveSpeed;
@@ -599,27 +623,27 @@
                 if(SimState.wallEnabled) maxAmpSlice *= 2;
                 const dynamicScaleY = Math.min(30, (sliceCanvas.height / 2.5) / Math.max(1, maxAmpSlice));
 
-                const numPoints = 100;
                 const cw = sliceCanvas.width;
                 const ch = sliceCanvas.height;
                 const midY = ch / 2;
 
-                const points = [];
-                for (let i = 0; i <= numPoints; i++) {
-                    const t_interp = i / numPoints;
+                // Populate pre-allocated typed arrays instead of creating new objects
+                for (let i = 0; i <= numSlicePoints; i++) {
+                    const t_interp = i / numSlicePoints;
                     const x_sample = src1.x + (src2.x - src1.x) * t_interp;
                     const y_sample = src1.y + (src2.y - src1.y) * t_interp;
                     const totalZ = calculateWaveHeightWithPrecomputed(x_sample, y_sample, precomputedSources);
-                    const canvasX = (i / numPoints) * cw;
-                    const canvasY = midY - (totalZ * dynamicScaleY);
-                    points.push({ x: canvasX, y: canvasY });
+                    slicePointsX[i] = (i / numSlicePoints) * cw;
+                    slicePointsY[i] = midY - (totalZ * dynamicScaleY);
                 }
 
                 // Draw fill
                 sliceCtx.beginPath();
                 sliceCtx.fillStyle = 'rgba(59, 130, 246, 0.3)'; // Semi-transparent blue fill
                 sliceCtx.moveTo(0, ch);
-                points.forEach(p => sliceCtx.lineTo(p.x, p.y));
+                for (let i = 0; i <= numSlicePoints; i++) {
+                    sliceCtx.lineTo(slicePointsX[i], slicePointsY[i]);
+                }
                 sliceCtx.lineTo(cw, ch);
                 sliceCtx.closePath();
                 sliceCtx.fill();
@@ -628,10 +652,10 @@
                 sliceCtx.beginPath();
                 sliceCtx.strokeStyle = '#60a5fa'; // Blue-400
                 sliceCtx.lineWidth = 2;
-                points.forEach((p, i) => {
-                    if (i === 0) sliceCtx.moveTo(p.x, p.y);
-                    else sliceCtx.lineTo(p.x, p.y);
-                });
+                for (let i = 0; i <= numSlicePoints; i++) {
+                    if (i === 0) sliceCtx.moveTo(slicePointsX[i], slicePointsY[i]);
+                    else sliceCtx.lineTo(slicePointsX[i], slicePointsY[i]);
+                }
                 sliceCtx.stroke();
 
                 // Draw source markers on 2D canvas
