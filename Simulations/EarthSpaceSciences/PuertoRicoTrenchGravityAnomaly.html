@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puerto Rico Trench Gravity Anomaly - NGSS HS-ESS2-1</title>
     <meta name="description" content="An interactive simulation of the Puerto Rico Trench gravity anomaly, modeling the subduction of the North American plate under the Caribbean plate and the resulting gravitational variations.">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1" integrity="sha384-SOMLQz+nKv/ORIYXo3J3NrWJ33oBgGvkHlV9t8i70QVLq8ZtST9Np1gDsVUkk4xN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" integrity="sha384-e6cc9LaIG7xZ3XD5B+jtr1NhTWPQGQdRCh6xiZ+ZFUtWCpg4ycv3Sh+SkZoopvUY" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
     <style>
         body {
             background-color: #0f172a;
@@ -207,7 +207,7 @@
 
     <script>
         // --- State Management ---
-        const state = {
+        const defaultState = {
             angle: 45,
             crustDensity: 2.9,
             mantleDensity: 3.3,
@@ -215,6 +215,7 @@
             carbonatePlatform: false,
             crustalThinning: false
         };
+        const state = { ...defaultState };
 
         // DOM Elements
         const elements = {
@@ -401,23 +402,28 @@
         // --- Gravity Anomaly Calculation & Chart.js ---
         let gravityChart;
 
+        // Gravity Model Constants
+        const GRAVITY_CONST_G = 6.6743e-11; // Gravitational constant
+        const WATER_DENSITY = 1.03; // g/cm³
+        const TRENCH_WIDTH_KM = 40; // Approximate width of trench effect
+        const SLAB_START_X_KM = -20; // Where the slab begins descending
+        const SLAB_DEPTH_OFFSET_KM = 10; // Initial depth of slab
+        const SLAB_DENSITY_CONTRAST_COLD = 0.05 * 1000; // +0.05 g/cm³ denser than mantle, converted to kg/m³
+        const CARBONATE_EFFECT_MAX_MGAL = -60; // Max negative anomaly from carbonate platform
+
         function calculateGravityProfile() {
             // Simplified 1D gravity anomaly profile across the trench (Bouguer/Free-Air approximation)
             // x represents distance across the trench (km), from -100 (ocean) to 100 (island arc)
             const profile = [];
             const labels = [];
 
-            // Baseline constants
-            const G = 6.6743e-11; // Gravitational constant
-            const waterDensity = 1.03; // g/cm³
             const crustDensity = parseFloat(state.crustDensity);
             const mantleDensity = parseFloat(state.mantleDensity);
             const subductionAngle = state.angle * Math.PI / 180;
             const trenchDepth = parseFloat(state.trenchDepth);
 
             // Density contrasts
-            const deltaRhoWaterCrust = (waterDensity - crustDensity) * 1000; // kg/m³
-            const deltaRhoCrustMantle = (crustDensity - mantleDensity) * 1000; // kg/m³
+            const deltaRhoWaterCrust = (WATER_DENSITY - crustDensity) * 1000; // kg/m³
 
             let minAnomaly = 0;
 
@@ -425,61 +431,35 @@
                 labels.push(x.toString());
 
                 // 1. Trench Effect (Mass Deficit due to deep water instead of rock)
-                // Simplified as an infinite horizontal slab or cylinder effect
-                // Negative anomaly directly over the trench
                 let trenchEffect = 0;
-                // Trench is modeled as a V-shape centered near x=0
-                const trenchWidth = 40; // km
-                if (Math.abs(x) < trenchWidth) {
-                    // Depth of water below normal ocean floor (approx 4km)
-                    const extraDepth = trenchDepth - 4; // km
-                    // Simplified gravitational attraction of the missing mass
-                    // g = 2 * pi * G * deltaRho * h (Bouguer slab approximation)
-                    // We apply a spatial decay
-                    const distanceFactor = 1 - Math.abs(x) / trenchWidth;
-                    trenchEffect = 2 * Math.PI * G * deltaRhoWaterCrust * (extraDepth * 1000) * 1e5 * distanceFactor; // mGal
+                if (Math.abs(x) < TRENCH_WIDTH_KM) {
+                    const extraDepth = trenchDepth - 4; // km below normal ocean floor
+                    const distanceFactor = 1 - Math.abs(x) / TRENCH_WIDTH_KM;
+                    trenchEffect = 2 * Math.PI * GRAVITY_CONST_G * deltaRhoWaterCrust * (extraDepth * 1000) * 1e5 * distanceFactor; // mGal
                 }
 
                 // 2. Subducting Slab Effect
-                // The cold, dense slab entering the mantle creates a positive anomaly
-                // Simplified: positive anomaly offset towards the subduction direction (positive x)
                 let slabEffect = 0;
-                if (x > -20) {
-                    // Approximate depth to center of slab
-                    const slabDepth = 10 + Math.tan(subductionAngle) * (x + 20); // km
+                if (x > SLAB_START_X_KM) {
+                    const slabDepth = SLAB_DEPTH_OFFSET_KM + Math.tan(subductionAngle) * (x - SLAB_START_X_KM); // km
                     const slabThickness = state.crustalThinning ? 3 : 7; // km
 
-                    // The slab is crust material in mantle space, so delta is crust - mantle (negative)
-                    // But actually, cold subducting slabs are denser than surrounding mantle, creating a positive thermal anomaly
-                    // For this HS simulation, we use the crust-mantle contrast directly, which gives a negative anomaly if crust < mantle
-                    // However, actual slabs have positive anomalies. Let's model the density contrast of a cold slab.
-                    // Assuming cold slab is +0.05 g/cm3 denser than ambient mantle
-                    const coldSlabDeltaRho = 0.05 * 1000;
-
-                    // Simple line mass approximation for the slab
-                    // g = 2 * G * lambda / r
                     if (slabDepth > 0) {
-                        const r = Math.sqrt(Math.pow(x - (x+10), 2) + Math.pow(slabDepth, 2)); // rough distance
-                        // Simplified slab effect equation scaled for visualization
-                        slabEffect = (2 * G * coldSlabDeltaRho * slabThickness * 1000 * 10000 / slabDepth) * 1e5; // mGal
+                        slabEffect = (2 * GRAVITY_CONST_G * SLAB_DENSITY_CONTRAST_COLD * slabThickness * 1000 * 10000 / slabDepth) * 1e5; // mGal
 
-                        // If crustal thinning is on, the negative effect of the trench is amplified because there's less mass
                         if(state.crustalThinning) trenchEffect *= 1.2;
                     }
                 }
 
                 // 3. Carbonate Platform Effect (Mystery Variable)
-                // Puerto Rico has large carbonate platforms to the south which are low density
                 let carbonateEffect = 0;
                 if (state.carbonatePlatform && x > 20 && x < 80) {
-                    // Huge block of low-density sedimentary rock
-                    carbonateEffect = -60 * Math.sin(Math.PI * (x - 20) / 60); // Max -60 mGal
+                    carbonateEffect = CARBONATE_EFFECT_MAX_MGAL * Math.sin(Math.PI * (x - 20) / 60);
                 }
 
                 // Total Anomaly
                 let totalAnomaly = trenchEffect + slabEffect + carbonateEffect;
 
-                // Adjust base anomaly to roughly match background ocean
                 if (totalAnomaly < minAnomaly) {
                     minAnomaly = totalAnomaly;
                 }
@@ -487,23 +467,26 @@
                 profile.push(totalAnomaly);
             }
 
-            document.getElementById('minAnomalyDisplay').innerText = Math.round(minAnomaly) + ' mGal';
+            return { labels, data: profile, minAnomaly };
+        }
 
-            // Check if they found the extreme anomaly
+        function updateDOMWithAnomaly(minAnomaly) {
+            const minAnomalyDisplay = document.getElementById('minAnomalyDisplay');
+            minAnomalyDisplay.innerText = Math.round(minAnomaly) + ' mGal';
+
             if (minAnomaly <= -370 && minAnomaly >= -390) {
-                document.getElementById('minAnomalyDisplay').classList.add('text-green-400');
-                document.getElementById('minAnomalyDisplay').classList.remove('text-blue-400');
+                minAnomalyDisplay.classList.add('text-green-400');
+                minAnomalyDisplay.classList.remove('text-blue-400');
             } else {
-                document.getElementById('minAnomalyDisplay').classList.remove('text-green-400');
-                document.getElementById('minAnomalyDisplay').classList.add('text-blue-400');
+                minAnomalyDisplay.classList.remove('text-green-400');
+                minAnomalyDisplay.classList.add('text-blue-400');
             }
-
-            return { labels, data: profile };
         }
 
         function initChart() {
             const ctx = document.getElementById('gravityChart').getContext('2d');
             const profileData = calculateGravityProfile();
+            updateDOMWithAnomaly(profileData.minAnomaly);
 
             gravityChart = new Chart(ctx, {
                 type: 'line',
@@ -574,13 +557,14 @@
             // Update 3D visualization
             update3DModel();
 
-            // Update Chart
+            // Update Chart & DOM
             const profileData = calculateGravityProfile();
             if (gravityChart) {
                 gravityChart.data.labels = profileData.labels;
                 gravityChart.data.datasets[0].data = profileData.data;
                 gravityChart.update();
             }
+            updateDOMWithAnomaly(profileData.minAnomaly);
         }
 
         // --- Event Listeners ---
@@ -591,20 +575,20 @@
         });
 
         elements.crustDensitySlider.addEventListener('input', (e) => {
-            state.crustDensity = parseFloat(e.target.value).toFixed(1);
-            elements.crustDensityValue.innerText = `${state.crustDensity} g/cm³`;
+            state.crustDensity = parseFloat(e.target.value);
+            elements.crustDensityValue.innerText = `${state.crustDensity.toFixed(1)} g/cm³`;
             updateSimulation();
         });
 
         elements.mantleDensitySlider.addEventListener('input', (e) => {
-            state.mantleDensity = parseFloat(e.target.value).toFixed(1);
-            elements.mantleDensityValue.innerText = `${state.mantleDensity} g/cm³`;
+            state.mantleDensity = parseFloat(e.target.value);
+            elements.mantleDensityValue.innerText = `${state.mantleDensity.toFixed(1)} g/cm³`;
             updateSimulation();
         });
 
         elements.trenchDepthSlider.addEventListener('input', (e) => {
-            state.trenchDepth = parseFloat(e.target.value).toFixed(1);
-            elements.trenchDepthValue.innerText = `${state.trenchDepth} km`;
+            state.trenchDepth = parseFloat(e.target.value);
+            elements.trenchDepthValue.innerText = `${state.trenchDepth.toFixed(1)} km`;
             updateSimulation();
         });
 
@@ -620,25 +604,20 @@
 
         elements.resetBtn.addEventListener('click', () => {
             // Reset state
-            state.angle = 45;
-            state.crustDensity = 2.9;
-            state.mantleDensity = 3.3;
-            state.trenchDepth = 8.4;
-            state.carbonatePlatform = false;
-            state.crustalThinning = false;
+            Object.assign(state, defaultState);
 
             // Reset UI
             elements.angleSlider.value = state.angle;
             elements.angleValue.innerText = `${state.angle}°`;
 
             elements.crustDensitySlider.value = state.crustDensity;
-            elements.crustDensityValue.innerText = `${state.crustDensity} g/cm³`;
+            elements.crustDensityValue.innerText = `${state.crustDensity.toFixed(1)} g/cm³`;
 
             elements.mantleDensitySlider.value = state.mantleDensity;
-            elements.mantleDensityValue.innerText = `${state.mantleDensity} g/cm³`;
+            elements.mantleDensityValue.innerText = `${state.mantleDensity.toFixed(1)} g/cm³`;
 
             elements.trenchDepthSlider.value = state.trenchDepth;
-            elements.trenchDepthValue.innerText = `${state.trenchDepth} km`;
+            elements.trenchDepthValue.innerText = `${state.trenchDepth.toFixed(1)} km`;
 
             elements.mysteryMassToggle.checked = false;
             elements.crustalThinningToggle.checked = false;

@@ -9,12 +9,9 @@ def test_puertorico_gravity_anomaly_renders(page: Page):
     # Check title
     expect(page).to_have_title("Puerto Rico Trench Gravity Anomaly - NGSS HS-ESS2-1")
 
-    # Wait for Three.js and Chart.js to initialize
-    page.wait_for_timeout(1000)
-
     # Check if canvas elements exist
-    assert page.locator('#threejs-container canvas').count() == 1
-    assert page.locator('#gravityChart').count() == 1
+    expect(page.locator('#threejs-container canvas')).to_be_visible()
+    expect(page.locator('#gravityChart')).to_be_visible()
 
 def test_puertorico_gravity_anomaly_controls(page: Page):
     file_path = f"file://{os.path.abspath('Simulations/EarthSpaceSciences/PuertoRicoTrenchGravityAnomaly.html')}"
@@ -44,9 +41,10 @@ def test_puertorico_gravity_anomaly_controls(page: Page):
     page.check("#crustalThinningToggle")
     page.evaluate("document.getElementById('crustalThinningToggle').dispatchEvent(new Event('change'))")
 
-    page.wait_for_timeout(500)
-
     # Verify state updated
+    expect(page.locator('#angleValue')).to_have_text('60°')
+    expect(page.locator('#trenchDepthValue')).to_have_text('9.5 km')
+
     new_state = page.evaluate("window.simulationState")
     assert new_state['angle'] == 60
     assert float(new_state['trenchDepth']) == 9.5
@@ -67,11 +65,12 @@ def test_puertorico_gravity_anomaly_reset(page: Page):
     page.check("#mysteryMassToggle")
     page.evaluate("document.getElementById('mysteryMassToggle').dispatchEvent(new Event('change'))")
 
-    page.wait_for_timeout(500)
+    expect(page.locator('#angleValue')).to_have_text('30°')
 
     # Click reset
     page.click("#resetBtn")
-    page.wait_for_timeout(500)
+
+    expect(page.locator('#angleValue')).to_have_text('45°')
 
     # Verify reset to initial state
     reset_state = page.evaluate("window.simulationState")
