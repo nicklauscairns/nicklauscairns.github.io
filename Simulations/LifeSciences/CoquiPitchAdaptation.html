@@ -241,11 +241,6 @@
             }
 
             updatePhenotype() {
-                // Calculate local temperature based on zone and global anomaly
-                let localTemp = this.elevationZone === 'base'
-                    ? config.baseTempInitial + simulationState.globalAnomaly
-                    : config.peakTempInitial + simulationState.globalAnomaly;
-
                 // Natural variance within the population
                 let variance = (Math.random() - 0.5) * 2.0;
 
@@ -372,13 +367,7 @@
             drawMountainBackground();
 
             for (let frog of simulationState.frogs) {
-                // If not playing automatically, still update phenotype if slider is manually dragged
-                if (!simulationState.isPlaying) {
-                    frog.updatePhenotype();
-                } else {
-                    // Gradual update during playback
-                    frog.updatePhenotype();
-                }
+                frog.updatePhenotype();
                 frog.draw();
             }
 
@@ -460,6 +449,7 @@
                     updateAnomalyFromUI();
                     simulationState.dataLog = { years: [], avgSizeBase: [], avgSizePeak: [], avgPitchBase: [], avgPitchPeak: [] };
                     if (window.resetChart) window.resetChart();
+                    initSimulation();
                 }
 
                 simulationState.targetYear = Math.min(2050, simulationState.year + 10);
