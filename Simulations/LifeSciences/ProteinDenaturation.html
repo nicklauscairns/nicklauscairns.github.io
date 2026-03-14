@@ -189,7 +189,7 @@
 
         // Apply visual styles based on denaturation level (0 = normal, 1 = fully destroyed)
         function applyProteinStyle(denatLevel) {
-            viewer.removeAllSurface();
+            viewer.removeAllSurfaces();
             viewer.setStyle({}, {hidden: true});
 
             // As protein denatures, we transition from nice cartoon ribbons to chaotic backbone traces or spheres
