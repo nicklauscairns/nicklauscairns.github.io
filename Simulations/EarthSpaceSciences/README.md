@@ -263,6 +263,34 @@ Develop a model to illustrate how Earth’s internal and surface processes opera
     </ul>
   </details>
 
+- [Puerto Rico Trench Gravity Anomaly](PuertoRicoTrenchGravityAnomaly.html) - Model the subduction of the North American plate under the Caribbean plate to investigate the massive free-air gravity anomaly of the Puerto Rico Trench. [2026-03-14 19:43:34]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-14 19:43:34</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Highly specific and engaging investigative phenomenon. Meets Criterion 1 (Relevance) through its focus on Puerto Rico, and Criterion 5 (Challenges Assumptions) by introducing "mystery variables" like crustal thinning and carbonate platforms to explain extreme gravitational deficits.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the DCI (ESS2.B) on plate tectonics and ocean-floor features, and the SEP (Developing and Using Models). For HS-ESS2-1, it demonstrates the relationship between internal processes (subduction, density) and surface measurements (gravity anomalies).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Data Analysis:</b> Add a feature to overlay actual satellite gravity data points alongside the simulated curve to allow students to evaluate the accuracy of their model.</li>
+          <li><b>Improve Interactivity:</b> Implement draggable control points on the 3D crust mesh to manually warp the subduction angle at different depths rather than using a single slider.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Overlay real-world satellite gravity data on the Chart.js graph.</li>
+          <li>[ ] Implement draggable control points for the subducting slab in Three.js.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 ### HS-ESS2-2
 Analyze geoscience data to make the claim that one change to Earth's surface can create feedbacks that cause changes to other Earth systems.
 
