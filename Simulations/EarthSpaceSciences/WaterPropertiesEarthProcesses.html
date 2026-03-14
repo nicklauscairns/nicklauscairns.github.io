@@ -210,13 +210,18 @@
 
         // --- GLOBAL LOOP ---
         let lastTime = 0;
+        // Cache DOM elements to avoid querying inside animation loop
+        const tabFrost = document.getElementById('tab-frost');
+        const tabDissolve = document.getElementById('tab-dissolve');
+        const tabStream = document.getElementById('tab-stream');
+
         function loop(timestamp) {
             const dt = (timestamp - lastTime) / 1000 || 0;
             if (dt < 0.1) {
                 // Only update active tab to save processing
-                if (!document.getElementById('tab-frost').classList.contains('hidden')) updateFrost(dt);
-                if (!document.getElementById('tab-dissolve').classList.contains('hidden')) updateChem(dt);
-                if (!document.getElementById('tab-stream').classList.contains('hidden')) updateStream(dt);
+                if (!tabFrost.classList.contains('hidden')) updateFrost(dt);
+                if (!tabDissolve.classList.contains('hidden')) updateChem(dt);
+                if (!tabStream.classList.contains('hidden')) updateStream(dt);
             }
             lastTime = timestamp;
             requestAnimationFrame(loop);
