@@ -101,6 +101,32 @@ Use mathematical or computational representations to predict the motion of orbit
 
 - [Planetary Defense: Asteroid Deflection](PlanetaryDefense.html) - Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision. [2026-03-14 04:45:29]
 
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-14 04:45:29</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Highly engaging investigative phenomenon applying orbital mechanics to a high-stakes scenario. Meets Criterion 1 (Relevance) through the existential threat of asteroid impact and Criterion 4 (Investigable) through interactive trajectory modification.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (ESS1.B) regarding Earth and the solar system and DCI (PS2.A) on forces and motion. Supports SEP (Using Mathematics and Computational Thinking).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Computational Modeling):</b> Explicitly show the change in orbital parameters (e.g., semi-major axis, eccentricity) before and after the kinetic impact.</li>
+          <li><b>Include Realistic Constraints:</b> Introduce a "budget" or "launch window" constraint to force students to optimize the timing and mass of their kinetic impactor.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Display orbital parameters (semi-major axis, eccentricity) in real-time.</li>
+          <li>[ ] Add budget/launch window constraints to the mission parameters.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 - [Orbital Motion & Kepler's Laws Simulation](OrbitalMotion2.html) - An interactive simulation exploring Newton's Law of Universal Gravitation and Kepler's Laws by adjusting planetary parameters.
 
   <details>
@@ -302,6 +328,32 @@ Develop a model based on evidence of Earth’s interior to describe the cycling 
 Use a model to describe how variations in the flow of energy into and out of Earth’s systems result in changes in climate.
 
 - [Tambora 1816: Year Without a Summer](Tambora1816.html) - Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly. [2026-03-14 05:04:50]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-14 05:04:50</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon linking geological events to global climate changes. Meets Criterion 4 (Investigable) by modeling the effects of stratospheric aerosols on Earth's energy budget.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (ESS2.D) regarding weather and climate and DCI (ESS2.A) on Earth materials and systems. Supports SEP (Developing and Using Models).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature 3.a (Analyzing Data):</b> Include historical temperature anomaly data alongside the simulated results so students can evaluate the model's accuracy.</li>
+          <li><b>Improve CCC (Cause and Effect):</b> Add a feature highlighting the specific chain of events from SO2 injection to aerosol formation to albedo change to temperature drop.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Overlay historical temperature anomaly data onto the simulation graphs.</li>
+          <li>[ ] Create a step-by-step visual flowchart illustrating the cause-and-effect mechanism.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 - [Greenhouse Effect & Earth's Energy Budget Simulation](GreenhouseEffect.html) - An interactive simulation exploring how greenhouse gases affect Earth's energy budget and global temperature.
 
   <details>
@@ -458,6 +510,32 @@ Evaluate competing design solutions for developing, managing, and utilizing ener
 
 - [Energy & Mineral Resources Cost-Benefit Analysis](EnergyResourcesCostBenefit.html) - Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios. [2026-03-14 04:45:29]
 
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-14 04:45:29</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Strong investigative phenomenon for evaluating resource management strategies. Meets Criterion 4 (Investigable) by challenging students to balance cost, energy output, and environmental impact.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports DCI (ESS3.A) regarding natural resources and DCI (ETS1.B) on developing possible solutions. Supports SEP (Engaging in Argument from Evidence).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Evaluating Solutions):</b> Require students to explicitly define their prioritized criteria (e.g., "low cost" vs "low emissions") before beginning the analysis, and evaluate their final solution against those specific criteria.</li>
+          <li><b>Improve Data Visualization:</b> Use a radar chart to visually compare the trade-offs (Cost, Energy, Environment, Social) of different resource portfolios.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a pre-simulation step to define prioritized criteria.</li>
+          <li>[ ] Implement a radar chart for multi-variable trade-off visualization.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 
 
 ### HS-ESS3-3
@@ -496,6 +574,32 @@ Evaluate or refine a technological solution that reduces impacts of human activi
 
 - [Urban Watershed Mitigation Design](TechnologicalSolutionEvaluation.html) - Evaluate and refine technological solutions to reduce agricultural and urban runoff impacts on a local watershed. [2026-03-13 21:16:17]
 
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 21:16:17</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon for testing technological solutions to human impacts. Meets Criterion 1 (Relevance) through local water quality issues and Criterion 4 (Investigable) by allowing iterative design of mitigation strategies (e.g., green roofs, retention ponds).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (ESS3.C) regarding human impacts on Earth systems and DCI (ETS1.B). Supports SEP (Designing Solutions).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature 3.a (Refining Solutions):</b> Implement a strict "budget" system where mitigation strategies cost money, forcing students to optimize their design to achieve target water quality without overspending.</li>
+          <li><b>Improve Feedback Loop:</b> Provide detailed feedback on exactly *why* a specific pollutant (e.g., nitrates vs heavy metals) wasn't mitigated by the chosen strategy.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement a budget system for deploying mitigation strategies.</li>
+          <li>[ ] Add specific feedback regarding pollutant-specific mitigation failures.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 
 
 ### HS-ESS3-5
@@ -533,3 +637,29 @@ Analyze geoscience data and the results from global climate models to make an ev
 Use a computational representation to illustrate the relationships among Earth systems and how those relationships are being modified due to human activity.
 
 - [Earth Systems Interactions Simulator](EarthSystemsInteractions.html) - Explore how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time. [2026-03-14 04:45:29]
+
+  <details>
+    <summary><b>Evaluation: Anchor Phenomenon | 5.0/5 Stars | 2026-03-14 04:45:29</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Outstanding anchoring phenomenon modeling complex interconnected systems. Strongly meets Criterion 4 (Investigable) by allowing manipulation of human activities and observing rippling effects across the atmosphere, biosphere, hydrosphere, and geosphere.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Comprehensively supports DCI (ESS2.A, ESS3.C) and CCC (Systems and System Models, Stability and Change). Thoroughly supports SEP (Using Mathematics and Computational Thinking).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance CCC (Systems Thinking):</b> Visually map the feedback loops (e.g., ice-albedo feedback) directly on the interface when they are triggered by human activity inputs.</li>
+          <li><b>Improve Data Export:</b> Allow students to export the multi-system variable data over time for independent graphing and analysis.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement visual indicators/lines for active feedback loops between systems.</li>
+          <li>[ ] Add a "Download CSV" feature for the simulated systems data.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>

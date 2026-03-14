@@ -38,6 +38,32 @@ Use the periodic table as a model to predict the relative properties of elements
 
 - [Monster Molecules Showcase](MonsterMolecules.html) - Explore bizarre, extreme, and gigantic molecules to understand how periodic table patterns (like Carbon's valence electrons) dictate bonding geometry. [2024-05-24 11:00:00]
 
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2024-05-24 11:00:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Engaging investigative phenomenon for exploring extreme molecular structures. Meets Criterion 4 (Investigable) by visualizing complex bonding geometries.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports DCI (PS1.A) regarding the structure and properties of matter and periodic trends.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Developing and Using Models):</b> Allow students to interactively highlight and label specific functional groups or bonding patterns within the giant molecules.</li>
+          <li><b>Connect to Periodic Trends:</b> Explicitly link the observed geometries to the valence electron configurations of the constituent atoms via informational popups.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement interactive highlighting for functional groups/bonding patterns.</li>
+          <li>[ ] Add informational popups linking geometry to valence electron configurations.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 ### HS-PS1-2
 Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.
 
@@ -69,6 +95,32 @@ Construct and revise an explanation for the outcome of a simple chemical reactio
   </details>
 
 - [Chemical Reaction Outcomes Predictor (Experimental 3D)](ChemicalReactionsOutcomesExperimental.html) - An experimental version of the Chemical Reactions Predictor featuring interactive 3D molecular visualizations of the products using 3Dmol.js. [2026-03-13 13:32:44]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 13:32:44</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Strong investigative phenomenon bridging 2D prediction with 3D visualization. Meets Criterion 4 (Investigable) by allowing interactive outcome prediction and verification.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (PS1.B) regarding chemical reactions and the conservation of matter. Supports SEP (Constructing Explanations).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature 2.a (Constructing Explanations):</b> Add a requirement for students to balance the chemical equation before the 3D product visualization is revealed.</li>
+          <li><b>Improve 3D Interaction:</b> Allow users to measure bond angles and distances in the generated 3D products to verify VSEPR theory predictions.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add an equation balancing prerequisite step before revealing 3D products.</li>
+          <li>[ ] Implement bond angle/distance measurement tools in the 3D viewer.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-3
 Plan and conduct an investigation to gather evidence to compare the structure of substances at the bulk scale to infer the strength of electrical forces between particles.
@@ -104,6 +156,32 @@ Plan and conduct an investigation to gather evidence to compare the structure of
   </details>
 
 - [Crystal Lattice Flythrough](CrystalFlythrough.html) - Explore the bulk 3D structures of covalent and ionic lattices to infer the strength of electrical forces holding them together. [2024-05-24 11:30:00]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2024-05-24 11:30:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Visually engaging investigative phenomenon for exploring macroscopic lattice structures. Meets Criterion 4 (Investigable) through interactive 3D navigation.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports DCI (PS1.A) regarding bulk properties of matter arising from microscopic electrical forces.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Analyzing and Interpreting Data):</b> Add an overlay that calculates and displays the theoretical electrostatic force (Coulomb's Law) between adjacent ions as the user flies near them.</li>
+          <li><b>Include Metallic Lattices:</b> Expand the simulation to include metallic bonding (electron sea model) for comparison with ionic and covalent networks.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add an electrostatic force calculation overlay based on ion proximity.</li>
+          <li>[ ] Add metallic lattice structures to the flythrough options.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS1-4
 Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy.
@@ -658,6 +736,32 @@ Use mathematical representations to support a claim regarding relationships amon
   </details>
 
 - [3D Wave Superposition & Interference](WaveSuperposition3D.html) - Interactive 3D simulation exploring wave superposition, constructive and destructive interference, and standing waves by dynamically placing sources and controlling wave parameters. Enhanced with dynamic height-based color contrast mapping, Play/Pause/Reset time controls, and an upgraded 2D slice chart visualization. [2026-03-14 06:11:58]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-14 06:11:58</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon for complex wave behaviors. Meets Criterion 4 (Investigable) by providing a robust sandbox for placing sources and observing interference patterns.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (PS4.A) regarding wave properties and superposition. Supports SEP (Using Mathematics and Computational Thinking).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature 3.a (Mathematical Modeling):</b> Incorporate an explicit mathematical readout showing the equation for the resulting superposition wave based on the input parameters.</li>
+          <li><b>Improve Relevance (Criterion 1):</b> Add presets that model real-world phenomena, such as noise-canceling headphones (destructive interference) or concert hall acoustics.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Display the mathematical equation for the resulting superposition wave.</li>
+          <li>[ ] Add real-world application presets (e.g., noise cancellation).</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-PS4-2
 Evaluate questions about the advantages of using a digital transmission and storage of information.
