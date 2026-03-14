@@ -183,7 +183,9 @@
                 })
                 .catch(error => {
                     console.error('Error loading PDB:', error);
-                    document.getElementById('loading').innerHTML = `<p class="text-red-500 font-bold mb-2">Error Loading Visualization</p><p class="text-sm text-slate-300">${error.message}</p>`;
+                    const loadingEl = document.getElementById('loading');
+                    loadingEl.innerHTML = '<p class="text-red-500 font-bold mb-2">Error Loading Visualization</p><p class="text-sm text-slate-300"></p>';
+                    loadingEl.querySelector('.text-slate-300')?.textContent = error.message;
                 });
         }
 
