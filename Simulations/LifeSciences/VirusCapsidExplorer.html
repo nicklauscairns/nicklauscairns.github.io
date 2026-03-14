@@ -82,8 +82,8 @@
 
         <!-- Tabs -->
         <div class="flex border-b border-slate-700 mb-4">
-            <div class="tab-btn active w-1/2 text-center" onclick="switchTab('explore')">Explore Structure</div>
-            <div class="tab-btn w-1/2 text-center" onclick="switchTab('investigate')">Investigate (NGSS)</div>
+            <div class="tab-btn active w-1/2 text-center" data-tab-id="explore" onclick="switchTab(this)">Explore Structure</div>
+            <div class="tab-btn w-1/2 text-center" data-tab-id="investigate" onclick="switchTab(this)">Investigate (NGSS)</div>
         </div>
 
         <!-- Explore Tab -->
@@ -326,12 +326,18 @@
         };
 
         // Tab Switching Logic
-        window.switchTab = function(tabId) {
+        window.switchTab = function(clickedTab) {
+            // Fallback for playwright test compatibility if passed a string directly
+            if (typeof clickedTab === 'string') {
+                clickedTab = document.querySelector(`[data-tab-id="${clickedTab}"]`);
+            }
+            if (!clickedTab) return;
+
+            const tabId = clickedTab.dataset.tabId;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
 
-            // Find the clicked button by matching onclick attribute
-            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            clickedTab.classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
         };
 

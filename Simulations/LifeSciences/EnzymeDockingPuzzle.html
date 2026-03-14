@@ -144,8 +144,6 @@
         // The exact target coordinates of the active site pocket (approximated for 1HTG)
         // In 1HTG, the inhibitor (THK) is roughly at [0, 0, 0] or slightly offset.
         const targetPos = { x: -0.5, y: -0.5, z: 0.5 };
-        const targetRot = { x: 0, y: 0, z: 0 };
-        const toleranceDist = 2.0; // Angstroms
 
         // Simulation State
         window.simulationState = {
@@ -304,12 +302,8 @@
                 a.z = z3 + pos.z;
             }
 
-            // To force update without destroying styles, sometimes setting style again is needed in 3dmol
-            viewer.setStyle({model: substrateModel, resn: 'THK', invert: true}, {hidden: true});
-            viewer.setStyle({model: substrateModel, resn: 'THK'}, {
-                stick: {radius: 0.3, colorscheme: 'yellowCarbon'},
-                sphere: {radius: 0.5, colorscheme: 'yellowCarbon'}
-            });
+            // Atoms have been updated directly, no need to restyle them fully.
+            // renderLoop will handle the visual update.
         }
 
         function checkDocking() {

@@ -333,9 +333,10 @@
             // Tell 3Dmol to update the internal representations
             // Note: setStyle implicitly triggers a rebuild. If we are in cartoon mode, changing coordinates
             // dynamically doesn't immediately update the ribbon spline without re-styling.
-            // Since we switch to lines/spheres at high denaturation, it looks chaotic enough.
-            viewer.setStyle({}, {hidden: true}); // Trigger clear
-            applyProteinStyle(denat); // Reapply current style based on new coordinates
+            if (denat < 0.3) {
+                viewer.setStyle({}, {hidden: true}); // Trigger clear
+                applyProteinStyle(denat); // Reapply current style based on new coordinates
+            }
 
             viewer.render();
         }

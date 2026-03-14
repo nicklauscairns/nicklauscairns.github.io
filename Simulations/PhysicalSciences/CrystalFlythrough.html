@@ -91,17 +91,17 @@
         <div class="side-panel glass-panel p-4 flex flex-col space-y-2 max-h-[40vh] overflow-y-auto">
             <h2 class="text-sm font-bold text-white mb-1 border-b border-slate-700 pb-1">Select Substance</h2>
 
-            <button class="mol-btn active flex flex-col" onclick="loadCrystal('nacl')">
+            <button class="mol-btn active flex flex-col" data-crystal="nacl" onclick="loadCrystal(this)">
                 <span class="font-bold text-sm text-blue-300">Sodium Chloride (NaCl)</span>
                 <span class="text-[10px] text-slate-400">Ionic Lattice • Melting Pt: 801&deg;C</span>
             </button>
 
-            <button class="mol-btn flex flex-col" onclick="loadCrystal('diamond')">
+            <button class="mol-btn flex flex-col" data-crystal="diamond" onclick="loadCrystal(this)">
                 <span class="font-bold text-sm text-slate-200">Diamond (C)</span>
                 <span class="text-[10px] text-slate-400">Covalent Network • Melting Pt: 4000&deg;C+</span>
             </button>
 
-            <button class="mol-btn flex flex-col" onclick="loadCrystal('graphite')">
+            <button class="mol-btn flex flex-col" data-crystal="graphite" onclick="loadCrystal(this)">
                 <span class="font-bold text-sm text-slate-400">Graphite (C)</span>
                 <span class="text-[10px] text-slate-400">2D Network (Sheets) • Sublimes</span>
             </button>
@@ -241,11 +241,20 @@ C2 0.33333 0.66667 0.25000`
             });
         }
 
-        window.loadCrystal = function(crystalKey) {
+        window.loadCrystal = function(clickedButton) {
             if (!viewer) return;
 
+            let crystalKey;
+            // Fallback for playwright test compatibility
+            if (typeof clickedButton === 'string') {
+                crystalKey = clickedButton;
+                clickedButton = document.querySelector(`[data-crystal="${crystalKey}"]`);
+            } else {
+                crystalKey = clickedButton.dataset.crystal;
+            }
+
             document.querySelectorAll('.mol-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[onclick="loadCrystal('${crystalKey}')"]`).classList.add('active');
+            if (clickedButton) clickedButton.classList.add('active');
 
             window.simulationState.currentCrystal = crystalKey;
 
