@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puerto Rico Trench Gravity Anomaly - NGSS HS-ESS2-1</title>
     <meta name="description" content="An interactive simulation of the Puerto Rico Trench gravity anomaly, modeling the subduction of the North American plate under the Caribbean plate and the resulting gravitational variations.">
+    <meta property="og:title" content="Puerto Rico Trench Gravity Anomaly - NGSS HS-ESS2-1">
+    <meta property="og:description" content="An interactive simulation of the Puerto Rico Trench gravity anomaly, modeling the subduction of the North American plate under the Caribbean plate and the resulting gravitational variations.">
+    <meta property="og:type" content="website">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Puerto Rico Trench Gravity Anomaly",
+      "description": "An interactive simulation of the Puerto Rico Trench gravity anomaly, modeling the subduction of the North American plate under the Caribbean plate and the resulting gravitational variations.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-ESS2-1",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ess2-1-earths-systems"
+      }
+    }
+    </script>
     <script src="https://cdn.tailwindcss.com/3.4.1" integrity="sha384-SOMLQz+nKv/ORIYXo3J3NrWJ33oBgGvkHlV9t8i70QVLq8ZtST9Np1gDsVUkk4xN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" integrity="sha384-e6cc9LaIG7xZ3XD5B+jtr1NhTWPQGQdRCh6xiZ+ZFUtWCpg4ycv3Sh+SkZoopvUY" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
@@ -445,10 +463,14 @@
                     const slabThickness = state.crustalThinning ? 3 : 7; // km
 
                     if (slabDepth > 0) {
-                        slabEffect = (2 * GRAVITY_CONST_G * SLAB_DENSITY_CONTRAST_COLD * slabThickness * 1000 * 10000 / slabDepth) * 1e5; // mGal
-
-                        if(state.crustalThinning) trenchEffect *= 1.2;
+                        // Use distance r rather than slabDepth for the 2D line mass decay equation
+                        const r = Math.sqrt(Math.pow(x - (x+10), 2) + Math.pow(slabDepth, 2)); // rough distance to slab center
+                        slabEffect = (2 * GRAVITY_CONST_G * SLAB_DENSITY_CONTRAST_COLD * slabThickness * 1000 * 10000 / r) * 1e5; // mGal
                     }
+                }
+
+                if (state.crustalThinning) {
+                    trenchEffect *= 1.2; // amplify mass deficit effect generally due to thinner crust
                 }
 
                 // 3. Carbonate Platform Effect (Mystery Variable)
@@ -531,8 +553,8 @@
                                 color: 'rgba(148, 163, 184, 0.1)'
                             },
                             ticks: { color: '#94a3b8' },
-                            min: -450,
-                            max: 100
+                            suggestedMin: -450,
+                            suggestedMax: 100
                         }
                     },
                     plugins: {

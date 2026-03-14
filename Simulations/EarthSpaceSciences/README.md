@@ -263,7 +263,7 @@ Develop a model to illustrate how Earth’s internal and surface processes opera
     </ul>
   </details>
 
-- [Puerto Rico Trench Gravity Anomaly](PuertoRicoTrenchGravityAnomaly.html) - Model the subduction of the North American plate under the Caribbean plate to investigate the massive free-air gravity anomaly of the Puerto Rico Trench. [2026-03-14 19:43:34]
+- [Puerto Rico Trench Gravity Anomaly](PuertoRicoTrenchGravityAnomaly.html) - Model the subduction of the North American plate under the Caribbean plate to investigate the massive free-air gravity anomaly of the Puerto Rico Trench.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-14 19:43:34</b></summary>
