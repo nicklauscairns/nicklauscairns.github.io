@@ -37,6 +37,7 @@ jobs:
               "coderabbitai[bot]",
               "qodo-code-review[bot]",
               "copilot",
+              "Copilot",
               "copilot[bot]",
               "github-copilot",
               "github-copilot[bot]",
