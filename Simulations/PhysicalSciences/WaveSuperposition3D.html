@@ -43,10 +43,7 @@
         #ui-container { position: absolute; top: 0; left: 0; z-index: 10; width: 350px; height: 100vh; overflow-y: auto; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border-right: 1px solid #334155; padding: 1.5rem; }
         .slider-label { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.25rem; color: #cbd5e1; }
         .control-group { background: rgba(30, 41, 59, 0.7); border: 1px solid #475569; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; }
-        .btn { background-color: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 600; text-align: center; cursor: pointer; transition: background-color 0.2s; width: 100%; }
-        .btn:hover { background-color: #2563eb; }
-        .btn-danger { background-color: #ef4444; }
-        .btn-danger:hover { background-color: #dc2626; }
+        .btn { color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 600; text-align: center; cursor: pointer; transition: background-color 0.2s; width: 100%; }
 
         /* Custom scrollbar for UI */
         ::-webkit-scrollbar { width: 8px; }
@@ -67,6 +64,11 @@
     <div id="ui-container">
         <h1 class="text-xl font-bold text-white mb-2">Wave Superposition</h1>
         <p class="text-sm text-slate-400 mb-6">Explore interference and standing waves. <br> <b>v = f &lambda;</b></p>
+        <div class="flex space-x-2 mb-4">
+            <button id="play-pause-btn" class="btn bg-green-600 hover:bg-green-500">Pause Simulation</button>
+            <button id="reset-time-btn" class="btn bg-slate-600 hover:bg-slate-500">Reset Time</button>
+        </div>
+
 
         <div class="control-group">
             <h2 class="text-lg font-semibold text-white mb-3">Global Medium Properties</h2>
@@ -85,7 +87,7 @@
             <p class="text-xs text-slate-400 mt-2">The wall bounces waves back, creating virtual image sources to form standing waves.</p>
         </div>
 
-        <button id="add-source-btn" class="btn mb-4">+ Add Wave Source</button>
+        <button id="add-source-btn" class="btn bg-blue-500 hover:bg-blue-600 mb-4">+ Add Wave Source</button>
 
         <div id="sources-container">
             <!-- Source controls will be injected here -->
@@ -114,6 +116,7 @@
         const SimState = {
             time: 0,
             isRunning: true,
+            needsUpdate: true, // Flag to trigger redraws when paused but params change
             waveSpeed: 5.0,
             wallEnabled: false,
             wallPositionX: 10, // Right edge
@@ -249,17 +252,21 @@
 
         // Water Plane
         const planeSize = 20; // -10 to 10
-        const segments = 80; // Reduced resolution for better performance on lower-end devices
+        const segments = 100; // Increased resolution for better visual quality
         const geometry = new THREE.PlaneGeometry(planeSize, planeSize, segments, segments);
 
         // Ensure geometry is dynamic
         geometry.attributes.position.setUsage(THREE.DynamicDrawUsage);
+        geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array((segments + 1) * (segments + 1) * 3), 3));
+        geometry.attributes.color.setUsage(THREE.DynamicDrawUsage);
+
 
         const material = new THREE.MeshPhongMaterial({
-            color: 0x1e3a8a,
-            emissive: 0x0f172a,
-            specular: 0x60a5fa,
-            shininess: 60,
+            color: 0xffffff,
+            vertexColors: true,
+            emissive: 0x000000,
+            specular: 0x88ccff,
+            shininess: 80,
             wireframe: false,
             side: THREE.DoubleSide,
             flatShading: false
@@ -269,7 +276,7 @@
         scene.add(waterMesh);
 
         // Wireframe overlay (optional, looks cool)
-        const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.1 });
+        const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.05 });
         const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
         scene.add(wireframeMesh);
 
@@ -321,15 +328,31 @@
 
         // --- UI Interactions ---
 
+
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        playPauseBtn.addEventListener('click', () => {
+            SimState.isRunning = !SimState.isRunning;
+            playPauseBtn.innerText = SimState.isRunning ? "Pause Simulation" : "Play Simulation";
+            playPauseBtn.className = SimState.isRunning ? "btn bg-green-600 hover:bg-green-500" : "btn bg-yellow-600 hover:bg-yellow-500";
+            if (!SimState.isRunning) SimState.needsUpdate = true; // Ensure one last draw
+        });
+
+        document.getElementById('reset-time-btn').addEventListener('click', () => {
+            SimState.time = 0;
+            SimState.needsUpdate = true;
+        });
+
         document.getElementById('wave-speed').addEventListener('input', (e) => {
             SimState.waveSpeed = parseFloat(e.target.value);
             document.getElementById('speed-val').innerText = SimState.waveSpeed.toFixed(1) + ' m/s';
             updateAllWavelengthDisplays();
+            SimState.needsUpdate = true;
         });
 
         document.getElementById('reflecting-wall').addEventListener('change', (e) => {
             SimState.wallEnabled = e.target.checked;
             wallMesh.visible = SimState.wallEnabled;
+            SimState.needsUpdate = true;
         });
 
         document.getElementById('add-source-btn').addEventListener('click', () => {
@@ -405,23 +428,27 @@
                     src.frequency = parseFloat(e.target.value);
                     document.getElementById(`freq-val-${src.id}`).innerText = src.frequency.toFixed(1) + ' Hz';
                     updateWavelengthDisplay(src.id);
+                    SimState.needsUpdate = true;
                 });
 
                 document.getElementById(`amp-${src.id}`).addEventListener('input', (e) => {
                     src.amplitude = parseFloat(e.target.value);
                     document.getElementById(`amp-val-${src.id}`).innerText = src.amplitude.toFixed(1) + ' m';
+                    SimState.needsUpdate = true;
                 });
 
                 document.getElementById(`posx-${src.id}`).addEventListener('input', (e) => {
                     src.x = parseFloat(e.target.value);
                     document.getElementById(`posx-val-${src.id}`).innerText = src.x.toFixed(1);
                     if (src.meshRef) src.meshRef.position.x = src.x;
+                    SimState.needsUpdate = true;
                 });
 
                 document.getElementById(`posy-${src.id}`).addEventListener('input', (e) => {
                     src.y = parseFloat(e.target.value);
                     document.getElementById(`posy-val-${src.id}`).innerText = src.y.toFixed(1);
                     if (src.meshRef) src.meshRef.position.y = src.y;
+                    SimState.needsUpdate = true;
                 });
             });
         }
@@ -429,6 +456,7 @@
         window.removeSourceAndIndicator = function(id) {
             removeSource(id);
             updateSourceIndicators();
+            SimState.needsUpdate = true;
         }
 
         function updateWavelengthDisplay(id) {
@@ -466,6 +494,11 @@
         sliceLine.computeLineDistances();
         scene.add(sliceLine);
 
+        // Pre-allocate arrays for 2D slice optimization to prevent GC churn
+        const numSlicePoints = 100;
+        const slicePointsX = new Float32Array(numSlicePoints + 1);
+        const slicePointsY = new Float32Array(numSlicePoints + 1);
+
         // --- Animation Loop ---
         const clock = new THREE.Clock();
 
@@ -475,9 +508,18 @@
             requestAnimationFrame(animate);
 
             const delta = clock.getDelta();
+
+            // Only update geometry and perform heavy calculations if time is running OR a parameter just changed
+            if (!SimState.isRunning && !SimState.needsUpdate) {
+                controls.update();
+                renderer.render(scene, camera);
+                return; // Skip heavy mesh updates
+            }
+
             if (SimState.isRunning) {
                 SimState.time += delta;
             }
+            SimState.needsUpdate = false; // Reset flag after handling
 
             const t = SimState.time;
             const v = SimState.waveSpeed;
@@ -500,20 +542,53 @@
 
             // Update Water Mesh Vertices
             const positions = geometry.attributes.position.array;
+            const colors = geometry.attributes.color.array;
             let vertexIndex = 0;
+            let colorIndex = 0;
+
+            let maxAmp = SimState.sources.reduce((sum, source) => sum + source.amplitude, 0);
+            if(SimState.wallEnabled) maxAmp *= 2;
+            const heightScale = Math.max(1.0, maxAmp * 0.8);
 
             for (let i = 0; i <= segments; i++) {
                 const y = planeSize / 2 - (i / segments) * planeSize;
                 for (let j = 0; j <= segments; j++) {
                     const x = (j / segments) * planeSize - planeSize / 2;
 
-                    // Calculate wave height for maximum performance using precomputed sources
-                    positions[vertexIndex + 2] = calculateWaveHeightWithPrecomputed(x, y, precomputedSources);
+                    const z = calculateWaveHeightWithPrecomputed(x, y, precomputedSources);
+                    positions[vertexIndex + 2] = z;
+
+                    // Diverging colormap for high contrast
+                    // Crests (z > 0): Blue to Cyan/White
+                    // Troughs (z < 0): Blue to Dark Navy/Purple
+                    let r, g, b;
+                    const normalizedZ = z / heightScale;
+
+                    if (normalizedZ > 0) {
+                        const intensity = Math.min(1, normalizedZ);
+                        // Blue (0, 0.3, 0.8) to White/Cyan
+                        r = 0.0 + intensity * 0.8;
+                        g = 0.3 + intensity * 0.7;
+                        b = 0.8 + intensity * 0.2;
+                    } else {
+                        const intensity = Math.min(1, -normalizedZ);
+                        // Blue (0, 0.3, 0.8) to Dark Navy (0.05, 0.0, 0.2)
+                        r = 0.0 + intensity * 0.05;
+                        g = 0.3 * (1 - intensity);
+                        b = 0.8 * (1 - intensity) + 0.2 * intensity;
+                    }
+
+                    colors[colorIndex] = r;
+                    colors[colorIndex + 1] = g;
+                    colors[colorIndex + 2] = b;
+
                     vertexIndex += 3;
+                    colorIndex += 3;
                 }
             }
 
             geometry.attributes.position.needsUpdate = true;
+            geometry.attributes.color.needsUpdate = true;
             geometry.computeVertexNormals(); // Crucial for lighting to reflect properly on waves
 
             // Update Indicator heights
@@ -544,46 +619,59 @@
                 // Draw 2D Graph
                 sliceCtx.clearRect(0, 0, sliceCanvas.width, sliceCanvas.height);
 
-                const numPoints = 100;
+                let maxAmpSlice = SimState.sources.reduce((sum, source) => sum + source.amplitude, 0);
+                if(SimState.wallEnabled) maxAmpSlice *= 2;
+                const dynamicScaleY = Math.min(30, (sliceCanvas.height / 2.5) / Math.max(1, maxAmpSlice));
+
                 const cw = sliceCanvas.width;
                 const ch = sliceCanvas.height;
                 const midY = ch / 2;
-                const scaleY = 15; // Vertical scaling for wave amplitude
 
-                sliceCtx.beginPath();
-                sliceCtx.strokeStyle = '#3b82f6'; // Blue-500
-                sliceCtx.lineWidth = 2;
-
-                for (let i = 0; i <= numPoints; i++) {
-                    const t_interp = i / numPoints;
+                // Populate pre-allocated typed arrays instead of creating new objects
+                for (let i = 0; i <= numSlicePoints; i++) {
+                    const t_interp = i / numSlicePoints;
                     const x_sample = src1.x + (src2.x - src1.x) * t_interp;
                     const y_sample = src1.y + (src2.y - src1.y) * t_interp;
-
-                    // Compute wave height efficiently for the slice
                     const totalZ = calculateWaveHeightWithPrecomputed(x_sample, y_sample, precomputedSources);
-
-                    const canvasX = (i / numPoints) * cw;
-                    const canvasY = midY - (totalZ * scaleY);
-
-                    if (i === 0) sliceCtx.moveTo(canvasX, canvasY);
-                    else sliceCtx.lineTo(canvasX, canvasY);
+                    slicePointsX[i] = (i / numSlicePoints) * cw;
+                    slicePointsY[i] = midY - (totalZ * dynamicScaleY);
                 }
 
+                // Draw fill
+                sliceCtx.beginPath();
+                sliceCtx.fillStyle = 'rgba(59, 130, 246, 0.3)'; // Semi-transparent blue fill
+                sliceCtx.moveTo(0, ch);
+                for (let i = 0; i <= numSlicePoints; i++) {
+                    sliceCtx.lineTo(slicePointsX[i], slicePointsY[i]);
+                }
+                sliceCtx.lineTo(cw, ch);
+                sliceCtx.closePath();
+                sliceCtx.fill();
+
+                // Draw stroke on top
+                sliceCtx.beginPath();
+                sliceCtx.strokeStyle = '#60a5fa'; // Blue-400
+                sliceCtx.lineWidth = 2;
+                for (let i = 0; i <= numSlicePoints; i++) {
+                    if (i === 0) sliceCtx.moveTo(slicePointsX[i], slicePointsY[i]);
+                    else sliceCtx.lineTo(slicePointsX[i], slicePointsY[i]);
+                }
                 sliceCtx.stroke();
 
                 // Draw source markers on 2D canvas
                 sliceCtx.fillStyle = '#fef08a'; // Yellow
-                sliceCtx.beginPath();
-                // We assume source 1 is at t=0 and source 2 is at t=1, which is true for the line segment
-                // We need to calculate height of src1 and src2 for marker placement
                 const z1_2d = calculateWaveHeightWithPrecomputed(src1.x, src1.y, precomputedSources);
                 const z2_2d = calculateWaveHeightWithPrecomputed(src2.x, src2.y, precomputedSources);
-                sliceCtx.arc(0, midY - (z1_2d * scaleY), 5, 0, Math.PI * 2);
-                sliceCtx.fill();
-                sliceCtx.beginPath();
-                sliceCtx.arc(cw, midY - (z2_2d * scaleY), 5, 0, Math.PI * 2);
-                sliceCtx.fill();
 
+                sliceCtx.beginPath();
+                sliceCtx.arc(0, midY - (z1_2d * dynamicScaleY), 6, 0, Math.PI * 2);
+                sliceCtx.fill();
+                sliceCtx.stroke();
+
+                sliceCtx.beginPath();
+                sliceCtx.arc(cw, midY - (z2_2d * dynamicScaleY), 6, 0, Math.PI * 2);
+                sliceCtx.fill();
+                sliceCtx.stroke();
             } else {
                 sliceContainer.style.display = 'none';
                 sliceLine.visible = false;

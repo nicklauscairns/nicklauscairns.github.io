@@ -657,7 +657,7 @@ Use mathematical representations to support a claim regarding relationships amon
     </ul>
   </details>
 
-- [3D Wave Superposition & Interference](WaveSuperposition3D.html) - Interactive 3D simulation exploring wave superposition, constructive and destructive interference, and standing waves by dynamically placing sources and controlling wave parameters. [2026-03-13 14:25:14]
+- [3D Wave Superposition & Interference](WaveSuperposition3D.html) - Interactive 3D simulation exploring wave superposition, constructive and destructive interference, and standing waves by dynamically placing sources and controlling wave parameters. Enhanced with dynamic height-based color contrast mapping, Play/Pause/Reset time controls, and an upgraded 2D slice chart visualization. [2026-03-14 06:11:58]
 
 ### HS-PS4-2
 Evaluate questions about the advantages of using a digital transmission and storage of information.
