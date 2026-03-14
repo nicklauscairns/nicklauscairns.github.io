@@ -37,6 +37,9 @@
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/OrbitalMotion2.html</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/PlanetaryDefense.html</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/RadiometricDatingExplorer.html</loc>
   </url>
   <url>
@@ -47,6 +50,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/StellarPhenomenaSimulator.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/Tambora1816.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/TechnologicalSolutionEvaluation.html</loc>
@@ -76,6 +82,9 @@
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/BiodiversityPopulationDynamics.html</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/Simulations/LifeSciences/BioluminescentBayDynamics.html</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/CarbonCycle.html</loc>
   </url>
   <url>
@@ -92,6 +101,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/EnvironmentalChangeExtinction.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/LifeSciences/EnzymeDockingPuzzle.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/FourFactorsEvolution.html</loc>
@@ -136,10 +148,16 @@
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/PredatorPrey.html</loc>
   </url>
   <url>
+    <loc>https://nicklauscairns.com/Simulations/LifeSciences/ProteinDenaturation.html</loc>
+  </url>
+  <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/TraitDistribution.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/LifeSciences/TrophicEnergy.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/LifeSciences/VirusCapsidExplorer.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/Logic/LightsOut.html</loc>
@@ -176,6 +194,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/ConservationOfMomentumSimulation.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/CrystalFlythrough.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/DigitalTransmissionAdvantage.html</loc>
@@ -215,6 +236,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/MolecularStructuresMaterials.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/MonsterMolecules.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/NuclearProcesses.html</loc>
