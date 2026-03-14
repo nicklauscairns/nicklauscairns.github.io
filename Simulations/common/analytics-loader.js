@@ -1,15 +1,19 @@
 (function() {
+  if (window.__simAnalyticsInitialized) return;
+  window.__simAnalyticsInitialized = true;
+
   const GA_TRACKING_ID = 'G-DKDGNLCXQ1';
 
-  // Define dataLayer and gtag function
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', GA_TRACKING_ID);
+  window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', GA_TRACKING_ID);
 
-  // Create and inject the gtag.js script
-  var script = document.createElement('script');
-  script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_TRACKING_ID;
-  document.head.appendChild(script);
+  const src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
+  if (!document.querySelector(`script[src="${src}"]`)) {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = src;
+    document.head.appendChild(script);
+  }
 })();
