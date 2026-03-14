@@ -73,7 +73,7 @@
     <div id="loading" class="loading-overlay">
         <div class="spinner"></div>
         <p class="text-lg font-medium text-slate-200">Downloading & Constructing Viral Geometry...</p>
-        <p class="text-sm text-slate-400 mt-2">Fetching 1RB8 (Satellite Tobacco Mosaic Virus)</p>
+        <p class="text-sm text-slate-400 mt-2">Fetching 1A34 (Satellite Tobacco Mosaic Virus)</p>
         <p class="text-xs text-slate-500 mt-1">This may take a moment due to the massive size.</p>
     </div>
 
@@ -212,16 +212,16 @@
             // without extreme decimation.
 
             // Note: biological assembly 1 generates the full icosahedral capsid.
-            let pdbUri = 'https://files.rcsb.org/download/1RB8.pdb1';
+            let cifUri = 'https://files.rcsb.org/download/1A34.cif';
 
-            fetch(pdbUri)
+            fetch(cifUri)
                 .then(response => {
                     if (!response.ok) throw new Error("Network response was not ok");
                     return response.text();
                 })
                 .then(data => {
                     // Add model to viewer
-                    viewer.addModel(data, "pdb");
+                    viewer.addModel(data, "cif", {doAssembly: true});
 
                     // Apply initial styles
                     applyStyles();
@@ -255,9 +255,10 @@
             viewer.removeAllSurfaces();
             viewer.setStyle({}, {hidden: true}); // Hide everything first
 
-            // RNA is usually chain R, S, T, etc. or marked as nucleic in 1RB8
-            let rnaSelection = {nucleic: true};
-            let proteinSelection = {protein: true};
+            // Explicitly define residue names as 3Dmol.js native {protein: true} and {nucleic: true}
+            // frequently fail to parse the ATOM records of these massive viral assemblies.
+            let rnaSelection = {resn: ["A", "C", "G", "U", "DA", "DC", "DG", "DT", "U5P"]};
+            let proteinSelection = {resn: ["ARG", "GLU", "ILE", "VAL", "ASP", "LEU", "SER", "HIS", "ALA", "PHE", "CYS", "GLY", "MET", "LYS", "THR", "TRP", "PRO", "TYR", "GLN", "ASN"]};
 
             // Set RNA Style
             if (showRNA) {
