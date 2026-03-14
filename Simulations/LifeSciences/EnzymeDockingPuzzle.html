@@ -138,6 +138,8 @@
     </div>
 
     <script>
+        const LIGAND_RESIDUE_NAME = 'G37';
+
         let viewer;
         let enzymeModel, substrateModel;
 
@@ -181,22 +183,22 @@
                     // We use the same model reference for the substrate, manipulating it via selection
                     substrateModel = enzymeModel;
 
-                    // Style Enzyme (Chain A and B, invert G37 selection)
-                    viewer.setStyle({resn: 'G37', invert: true}, {
+                    // Style Enzyme (Chain A and B, invert ' + LIGAND_RESIDUE_NAME + ' selection)
+                    viewer.setStyle({resn: LIGAND_RESIDUE_NAME, invert: true}, {
                         cartoon: {color: 'spectrum', opacity: 0.3}
                     });
 
                     // Add surface explicitly using viewer.addSurface
-                    viewer.addSurface($3Dmol.SurfaceType.VDW, {opacity: 0.8, color: 'white'}, {resn: 'G37', invert: true});
+                    viewer.addSurface($3Dmol.SurfaceType.VDW, {opacity: 0.8, color: 'white'}, {resn: LIGAND_RESIDUE_NAME, invert: true});
 
-                    // Style Substrate (Only the ligand G37)
-                    viewer.setStyle({resn: 'G37'}, {
+                    // Style Substrate (Only the ligand ' + LIGAND_RESIDUE_NAME + ')
+                    viewer.setStyle({resn: LIGAND_RESIDUE_NAME}, {
                         stick: {radius: 0.3, colorscheme: 'yellowCarbon'},
                         sphere: {radius: 0.5, colorscheme: 'yellowCarbon'}
                     });
 
                     // Save original substrate coordinates
-                    let sAtoms = enzymeModel.selectedAtoms({resn: 'G37'});
+                    let sAtoms = enzymeModel.selectedAtoms({resn: LIGAND_RESIDUE_NAME});
                     origSubstrateAtoms = sAtoms.map(a => ({x: a.x, y: a.y, z: a.z}));
 
                     // We find the center of mass of the original ligand to act as the "target"
@@ -258,7 +260,7 @@
         function updateSubstratePosition() {
             if(!substrateModel) return;
 
-            let sAtoms = substrateModel.selectedAtoms({resn: 'G37'});
+            let sAtoms = substrateModel.selectedAtoms({resn: LIGAND_RESIDUE_NAME});
             let pos = window.simulationState.substratePos;
             let rot = window.simulationState.substrateRot;
 
