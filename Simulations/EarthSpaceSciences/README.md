@@ -5,7 +5,7 @@
 ### HS-ESS1-1
 Develop a model based on evidence to illustrate the life span of the sun and the role of nuclear fusion in the sun’s core to release energy in the form of radiation.
 
-- [Stellar Phenomena Simulator](StellarPhenomenaSimulator.html) - An interactive simulation exploring the stages of stellar life, from a stellar nursery to a star's ultimate fate. [2026-03-12 12:00:00]
+- [Stellar Phenomena Simulator](StellarPhenomenaSimulator.html) - An interactive simulation exploring the stages of stellar life, from a stellar nursery to a star's ultimate fate.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -36,7 +36,7 @@ Develop a model based on evidence to illustrate the life span of the sun and the
 ### HS-ESS1-2
 Construct an explanation of the Big Bang theory based on astronomical evidence of light spectra, motion of distant galaxies, and composition of matter in the universe.
 
-- [Big Bang Evidence Explorer](BigBangEvidenceExplorer.html) - An interactive exploration of the three key pieces of evidence supporting the Big Bang Theory: cosmic redshift, primordial composition, and the cosmic microwave background. [2026-03-12 12:00:00]
+- [Big Bang Evidence Explorer](BigBangEvidenceExplorer.html) - An interactive exploration of the three key pieces of evidence supporting the Big Bang Theory: cosmic redshift, primordial composition, and the cosmic microwave background.
 
   <details>
     <summary><b>Evaluation: Anchoring Phenomenon | 4.5/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -66,7 +66,7 @@ Construct an explanation of the Big Bang theory based on astronomical evidence o
 ### HS-ESS1-3
 Communicate scientific ideas about the way stars, over their life cycle, produce elements.
 
-- [Stellar Nucleosynthesis Explorer](StellarNucleosynthesis.html) - An interactive simulation demonstrating the life cycle of stars (low and high mass) and how they produce elements through nuclear fusion and supernovae, with real-time nucleon conservation tracking. [2026-03-13 14:43:55]
+- [Stellar Nucleosynthesis Explorer](StellarNucleosynthesis.html) - An interactive simulation demonstrating the life cycle of stars (low and high mass) and how they produce elements through nuclear fusion and supernovae, with real-time nucleon conservation tracking.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 14:43:55</b></summary>
@@ -101,7 +101,7 @@ Use mathematical or computational representations to predict the motion of orbit
 
 - [Planetary Defense: Asteroid Deflection](PlanetaryDefense.html) - Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision. [2026-03-14 04:45:29]
 
-- [Orbital Motion & Kepler's Laws Simulation](OrbitalMotion2.html) - An interactive simulation exploring Newton's Law of Universal Gravitation and Kepler's Laws by adjusting planetary parameters. [2026-03-12 12:00:00]
+- [Orbital Motion & Kepler's Laws Simulation](OrbitalMotion2.html) - An interactive simulation exploring Newton's Law of Universal Gravitation and Kepler's Laws by adjusting planetary parameters.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -129,7 +129,7 @@ Use mathematical or computational representations to predict the motion of orbit
     </ul>
   </details>
 
-- [Orbital Motion & Kepler's Third Law](OrbitalMotion.html) - An interactive simulation exploring how star mass, initial distance, and velocity affect a planet's orbit, and demonstrating Kepler's Third Law. [2026-03-12 12:00:00]
+- [Orbital Motion & Kepler's Third Law](OrbitalMotion.html) - An interactive simulation exploring how star mass, initial distance, and velocity affect a planet's orbit, and demonstrating Kepler's Third Law.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -160,7 +160,7 @@ Use mathematical or computational representations to predict the motion of orbit
 ### HS-ESS1-5
 Evaluate evidence of the past and current movements of continental and oceanic crust and the theory of plate tectonics to explain the ages of crustal rocks.
 
-- [Radiometric Dating Explorer](RadiometricDatingExplorer.html) - An interactive tool simulating radioactive decay to demonstrate how scientists determine the absolute ages of crustal rocks and meteorites. [2026-03-12 12:00:00]
+- [Radiometric Dating Explorer](RadiometricDatingExplorer.html) - An interactive tool simulating radioactive decay to demonstrate how scientists determine the absolute ages of crustal rocks and meteorites.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -191,7 +191,7 @@ Evaluate evidence of the past and current movements of continental and oceanic c
 ### HS-ESS1-6
 Apply scientific reasoning and evidence from ancient Earth materials, meteorites, and other planetary surfaces to construct an account of Earth’s formation and early history.
 
-- [Cratering & Surface Age Explorer](CrateringHistory.html) - Investigate why Earth has so few visible impact craters compared to the Moon, despite forming at the same time 4.6 billion years ago. [2026-03-14 04:45:29]
+- [Cratering & Surface Age Explorer](CrateringHistory.html) - Investigate why Earth has so few visible impact craters compared to the Moon, despite forming at the same time 4.6 billion years ago.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 5/5 Stars | 2026-03-13 20:22:40</b></summary>
@@ -209,7 +209,7 @@ Apply scientific reasoning and evidence from ancient Earth materials, meteorites
 ### HS-ESS2-1
 Develop a model to illustrate how Earth’s internal and surface processes operate at different spatial and temporal scales to form continental and ocean-floor features.
 
-- [Tectonic Landscape Modeler](TectonicLandscapeModeller.html) - An interactive simulation exploring how slow constructive forces (uplift) and destructive forces (weathering, mass wasting) shape Earth's surface over geologic time. [2026-03-12 12:00:00]
+- [Tectonic Landscape Modeler](TectonicLandscapeModeller.html) - An interactive simulation exploring how slow constructive forces (uplift) and destructive forces (weathering, mass wasting) shape Earth's surface over geologic time.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -240,7 +240,7 @@ Develop a model to illustrate how Earth’s internal and surface processes opera
 ### HS-ESS2-2
 Analyze geoscience data to make the claim that one change to Earth's surface can create feedbacks that cause changes to other Earth systems.
 
-- [Ice-Albedo Feedback Loop](IceAlbedoFeedback.html) - An interactive simulation demonstrating the positive feedback loop between rising global temperatures, melting sea ice, and decreasing surface albedo. [2026-03-12 12:00:00]
+- [Ice-Albedo Feedback Loop](IceAlbedoFeedback.html) - An interactive simulation demonstrating the positive feedback loop between rising global temperatures, melting sea ice, and decreasing surface albedo.
 
   <details>
     <summary><b>Evaluation: Anchoring Phenomenon | 4.5/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -270,7 +270,7 @@ Analyze geoscience data to make the claim that one change to Earth's surface can
 ### HS-ESS2-3
 Develop a model based on evidence of Earth’s interior to describe the cycling of matter by thermal convection.
 
-- [Mantle Convection Explorer](MantleConvectionExplorer.html) - An interactive simulation exploring how the outward flow of energy from Earth's core drives thermal convection in the mantle and the surface expression of plate tectonics. [2026-03-12 12:00:00]
+- [Mantle Convection Explorer](MantleConvectionExplorer.html) - An interactive simulation exploring how the outward flow of energy from Earth's core drives thermal convection in the mantle and the surface expression of plate tectonics.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 3.5/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -301,8 +301,8 @@ Develop a model based on evidence of Earth’s interior to describe the cycling 
 ### HS-ESS2-4
 Use a model to describe how variations in the flow of energy into and out of Earth’s systems result in changes in climate.
 
-- [Tambora 1816: Year Without a Summer](Tambora1816.html) - Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly. [2026-03-14 04:45:29]
-- [Greenhouse Effect & Earth's Energy Budget Simulation](GreenhouseEffect.html) - An interactive simulation exploring how greenhouse gases affect Earth's energy budget and global temperature. [2026-03-12 12:00:00]
+- [Tambora 1816: Year Without a Summer](Tambora1816.html) - Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly. [2026-03-14 05:04:50]
+- [Greenhouse Effect & Earth's Energy Budget Simulation](GreenhouseEffect.html) - An interactive simulation exploring how greenhouse gases affect Earth's energy budget and global temperature.
 
   <details>
     <summary><b>Evaluation: Anchoring Phenomenon | 5.0/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -332,7 +332,7 @@ Use a model to describe how variations in the flow of energy into and out of Ear
 ### HS-ESS2-5
 Plan and conduct an investigation of the properties of water and its effects on Earth materials and surface processes.
 
-- [Water Properties & Earth Processes](WaterPropertiesEarthProcesses.html) - An interactive lab environment exploring frost wedging, chemical weathering, and stream transport. [2026-03-12 12:00:00]
+- [Water Properties & Earth Processes](WaterPropertiesEarthProcesses.html) - An interactive lab environment exploring frost wedging, chemical weathering, and stream transport.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -363,7 +363,7 @@ Plan and conduct an investigation of the properties of water and its effects on 
 ### HS-ESS2-6
 Develop a quantitative model to describe the cycling of carbon among the hydrosphere, atmosphere, geosphere, and biosphere.
 
-- [Global Carbon Cycle Model](GlobalCarbonCycleModel.html) - A quantitative box-model simulation demonstrating the conservation of mass and the flows of carbon between Earth's major reservoirs, highlighting human impacts. [2026-03-12 12:00:00]
+- [Global Carbon Cycle Model](GlobalCarbonCycleModel.html) - A quantitative box-model simulation demonstrating the conservation of mass and the flows of carbon between Earth's major reservoirs, highlighting human impacts.
 
   <details>
     <summary><b>Evaluation: Anchoring Phenomenon | 4.5/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -394,7 +394,7 @@ Develop a quantitative model to describe the cycling of carbon among the hydrosp
 ### HS-ESS2-7
 Construct an argument based on evidence about the simultaneous coevolution of Earth’s systems and life on Earth.
 
-- [The Great Oxidation Event](GreatOxidationEvent.html) - An interactive timeline model simulating how early photosynthetic life altered Earth's atmosphere, exhausted ocean chemical sinks, and paved the way for complex aerobic life. [2026-03-12 12:00:00]
+- [The Great Oxidation Event](GreatOxidationEvent.html) - An interactive timeline model simulating how early photosynthetic life altered Earth's atmosphere, exhausted ocean chemical sinks, and paved the way for complex aerobic life.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -425,7 +425,7 @@ Construct an argument based on evidence about the simultaneous coevolution of Ea
 ### HS-ESS3-1
 Construct an explanation based on evidence for how the availability of natural resources, occurrence of natural hazards, and changes in climate have influenced human activity.
 
-- [Human Settlement & Migration Simulator](HumanMigrationSettlementSimulator.html) - An interactive map demonstrating how human populations migrate towards natural resources and are displaced by natural hazards and climate change. Features specific historical case studies (Nile River Valley, The Dust Bowl), a modern Climate Refugee scenario, and a dynamic population data logger for quantitative analysis. [2026-03-13 13:49:23]
+- [Human Settlement & Migration Simulator](HumanMigrationSettlementSimulator.html) - An interactive map demonstrating how human populations migrate towards natural resources and are displaced by natural hazards and climate change. Features specific historical case studies (Nile River Valley, The Dust Bowl), a modern Climate Refugee scenario, and a dynamic population data logger for quantitative analysis.
 
   <details>
     <summary><b>Evaluation: Anchoring Phenomenon | 5.0/5 Stars | 2026-03-13 13:49:23</b></summary>
@@ -463,7 +463,7 @@ Evaluate competing design solutions for developing, managing, and utilizing ener
 ### HS-ESS3-3
 Create a computational simulation to illustrate the relationships among management of natural resources, the sustainability of human populations, and biodiversity.
 
-- [Sustainable Resource Management Simulator](ResourceManagementSimulator.html) - A computational simulation where users must balance human population growth against biodiversity loss and resource depletion. [2026-03-12 12:00:00]
+- [Sustainable Resource Management Simulator](ResourceManagementSimulator.html) - A computational simulation where users must balance human population growth against biodiversity loss and resource depletion.
 
   <details>
     <summary><b>Evaluation: Anchoring Phenomenon | 4.5/5 Stars | 2026-03-12 12:00:00</b></summary>
@@ -501,7 +501,7 @@ Evaluate or refine a technological solution that reduces impacts of human activi
 ### HS-ESS3-5
 Analyze geoscience data and the results from global climate models to make an evidence-based forecast of the current rate of global or regional climate change and associated future impacts to Earth systems.
 
-- [Global Climate Impacts & Mitigation Forecast](GlobalClimateImpacts.html) - A computational dashboard forecasting the future rate of climate change and its specific impacts on glacial ice and ocean pH. [2026-03-12 12:00:00]
+- [Global Climate Impacts & Mitigation Forecast](GlobalClimateImpacts.html) - A computational dashboard forecasting the future rate of climate change and its specific impacts on glacial ice and ocean pH.
 
   <details>
     <summary><b>Evaluation: Anchoring Phenomenon | 5.0/5 Stars | 2026-03-12 12:00:00</b></summary>
