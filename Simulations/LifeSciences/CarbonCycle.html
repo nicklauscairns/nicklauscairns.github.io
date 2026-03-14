@@ -121,11 +121,11 @@
 <div class="space-y-5">
 <!-- Photosynthesis vs Respiration -->
 <div>
-<label class="flex justify-between font-semibold text-sm text-green-700 mb-1">
+<label for="flux-bio" class="flex justify-between font-semibold text-sm text-green-700 mb-1">
 <span>Biosphere Balance</span>
 </label>
-<input class="w-full accent-green-500" id="flux-bio" max="5" min="-5" step="0.5" type="range" value="0"/>
-<div class="flex justify-between text-[10px] text-slate-500 mt-1">
+<input aria-describedby="desc-bio" class="w-full accent-green-500" id="flux-bio" max="5" min="-5" step="0.5" type="range" value="0"/>
+<div id="desc-bio" class="flex justify-between text-[10px] text-slate-500 mt-1">
 <span>← More Respiration</span>
 <span>Balanced (0)</span>
 <span>More Photosynthesis →</span>
@@ -133,12 +133,12 @@
 </div>
 <!-- Human Emissions -->
 <div>
-<label class="flex justify-between font-semibold text-sm text-orange-600 mb-1">
+<label for="flux-emissions" class="flex justify-between font-semibold text-sm text-orange-600 mb-1">
 <span>Fossil Fuel Combustion</span>
 <span class="font-mono bg-orange-100 px-1 rounded" id="val-emissions">10 GT/yr</span>
 </label>
-<input class="w-full accent-orange-500" id="flux-emissions" max="30" min="0" step="1" type="range" value="10"/>
-<div class="flex justify-between text-[10px] text-slate-500 mt-1">
+<input aria-describedby="desc-emissions" class="w-full accent-orange-500" id="flux-emissions" max="30" min="0" step="1" type="range" value="10"/>
+<div id="desc-emissions" class="flex justify-between text-[10px] text-slate-500 mt-1">
 <span>Zero</span>
 <span>Current</span>
 <span>Extreme</span>
@@ -146,12 +146,12 @@
 </div>
 <!-- Ocean Diffusion -->
 <div>
-<label class="flex justify-between font-semibold text-sm text-blue-600 mb-1">
+<label for="flux-ocean" class="flex justify-between font-semibold text-sm text-blue-600 mb-1">
 <span>Ocean Uptake</span>
 <span class="font-mono bg-blue-50 px-1 rounded" id="val-ocean">2 GT/yr</span>
 </label>
-<p class="text-[10px] text-slate-500 mb-2">The ocean naturally absorbs some excess CO₂.</p>
-<input class="w-full accent-blue-500" disabled="" id="flux-ocean" max="10" min="0" step="0.5" type="range" value="2"/>
+<p id="desc-ocean" class="text-[10px] text-slate-500 mb-2">The ocean naturally absorbs some excess CO₂.</p>
+<input aria-describedby="desc-ocean" class="w-full accent-blue-500" disabled="" id="flux-ocean" max="10" min="0" step="0.5" type="range" value="2"/>
 </div>
 </div>
 <div class="mt-6 flex gap-2">
