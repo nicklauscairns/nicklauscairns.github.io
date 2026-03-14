@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puerto Rican Karst Topography: Water & Bedrock Interactions</title>
+
+    <!-- SEO and Metadata -->
+    <meta name="description" content="An interactive simulation aligned to NGSS HS-ESS2-5 exploring the unique karst topography of Puerto Rico. Investigate how water acidity and rainfall dissolve limestone to form sinkholes, caves, and aquifers.">
+    <meta name="keywords" content="NGSS, HS-ESS2-5, Puerto Rico, Karst, Topography, Limestone, Sinkholes, Aquifer, Simulation, Earth Science, Water Properties">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Puerto Rican Karst Topography: Water & Bedrock Interactions">
+    <meta property="og:description" content="Interactive simulation investigating how water chemically weathers limestone to create the unique karst landforms of Puerto Rico.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org LearningResource JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "LearningResource",
+      "name": "Puerto Rican Karst Topography: Water & Bedrock Interactions",
+      "description": "An interactive simulation allowing students to explore how water chemically weathers limestone, forming the unique karst topography of Puerto Rico, including sinkholes and aquifers. Aligned with NGSS HS-ESS2-5.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "Next Generation Science Standards",
+        "targetName": "HS-ESS2-5",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ess2-5-earth-systems"
+      },
+      "learningResourceType": "Simulation",
+      "interactivityType": "active",
+      "typicalAgeRange": "14-18"
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+        }
+        canvas {
+            touch-action: none;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col overflow-hidden text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-emerald-700 text-white p-4 shadow-md z-10 shrink-0 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold">Puerto Rican Karst Topography</h1>
+            <p class="text-emerald-100 text-sm">HS-ESS2-5: Properties of Water & Earth Materials</p>
+        </div>
+        <button id="info-btn" class="bg-emerald-600 hover:bg-emerald-500 transition-colors px-4 py-2 rounded shadow text-sm font-semibold flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            Phenomenon Info
+        </button>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+
+        <!-- Controls Panel (Left) -->
+        <aside class="w-full md:w-80 bg-white border-r border-slate-200 p-6 overflow-y-auto shrink-0 flex flex-col gap-6 shadow-inner z-0">
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h2 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 11a1 1 0 100-2 1 1 0 000 2zm4 0a1 1 0 100-2 1 1 0 000 2zm-2 4a3 3 0 00-2.83-2H12.83A3 3 0 0010 15z" clip-rule="evenodd" />
+                    </svg>
+                    Investigative Variables
+                </h2>
+                <p class="text-xs text-blue-700 leading-tight">
+                    Adjust environmental factors to observe the chemical weathering (dissolution) of Puerto Rico's northern limestone belt over time.
+                </p>
+            </div>
+
+            <!-- Time Control -->
+            <div class="space-y-4">
+                <div class="flex gap-2 mb-2">
+                    <button id="btn-play" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded transition-colors flex items-center justify-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+                        Play
+                    </button>
+                    <button id="btn-reset" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded transition-colors">
+                        Reset
+                    </button>
+                </div>
+
+                <div class="bg-slate-100 p-3 rounded text-center">
+                    <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Simulated Time</span>
+                    <div id="time-display" class="text-2xl font-black text-slate-800 font-mono">0 Years</div>
+                </div>
+            </div>
+
+            <hr class="border-slate-200 border-dashed">
+
+            <!-- Variable: Rainfall -->
+            <div>
+                <div class="slider-label">
+                    <span>Annual Rainfall</span>
+                    <span id="val-rainfall" class="text-blue-600 font-mono">1500 mm</span>
+                </div>
+                <input type="range" id="slider-rainfall" min="500" max="4000" step="100" value="1500" class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                <p class="text-xs text-slate-500 mt-1">More water means more medium for chemical reactions and physical transport.</p>
+            </div>
+
+            <!-- Variable: Acidity -->
+            <div>
+                <div class="slider-label">
+                    <span>Rainwater Acidity (pH)</span>
+                    <span id="val-ph" class="text-red-600 font-mono">5.6 (Normal)</span>
+                </div>
+                <input type="range" id="slider-ph" min="4.0" max="7.0" step="0.1" value="5.6" class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer accent-red-600">
+                <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
+                    <span>Acidic (4.0)</span>
+                    <span>Neutral (7.0)</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">Atmospheric CO<sub>2</sub> naturally makes rain slightly acidic (carbonic acid), dissolving calcium carbonate (limestone).</p>
+            </div>
+
+            <!-- Variable: Limestone Porosity/Fractures -->
+            <div>
+                <div class="slider-label">
+                    <span>Limestone Fractures</span>
+                    <span id="val-fractures" class="text-amber-600 font-mono">Medium</span>
+                </div>
+                <input type="range" id="slider-fractures" min="1" max="5" step="1" value="3" class="w-full h-2 bg-amber-200 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                <p class="text-xs text-slate-500 mt-1">Existing cracks in the rock allow water to penetrate deeper, increasing the surface area for dissolution.</p>
+            </div>
+
+        </aside>
+
+        <!-- Visualization Panel (Right) -->
+        <section class="flex-1 flex flex-col bg-slate-50 relative">
+
+            <!-- 2D Canvas Area -->
+            <div class="flex-1 relative bg-sky-100 overflow-hidden border-b border-slate-300" id="canvas-container">
+                <!-- Sun/Clouds decoration could go here in CSS or drawn on canvas -->
+                <canvas id="karst-canvas" class="absolute inset-0 w-full h-full block"></canvas>
+
+                <!-- Overlay Legend -->
+                <div class="absolute top-4 left-4 bg-white/90 backdrop-blur p-3 rounded shadow-sm border border-slate-200 text-xs">
+                    <h3 class="font-bold text-slate-800 mb-2 border-b border-slate-200 pb-1">Cross-Section Legend</h3>
+                    <div class="flex items-center gap-2 mb-1"><div class="w-4 h-4 bg-[#8B5A2B] rounded-sm"></div> Surface Soil (Clay)</div>
+                    <div class="flex items-center gap-2 mb-1"><div class="w-4 h-4 bg-[#D3D3D3] rounded-sm border border-slate-400"></div> Limestone Bedrock</div>
+                    <div class="flex items-center gap-2 mb-1"><div class="w-4 h-4 bg-[#1E90FF] rounded-sm"></div> Groundwater Aquifer</div>
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 bg-[#4A4A4A] rounded-sm"></div> Caves / Sinkholes</div>
+                </div>
+            </div>
+
+            <!-- Data Graph Area -->
+            <div class="h-64 bg-white p-4 shrink-0 flex flex-col w-full relative">
+                <h3 class="text-sm font-bold text-slate-700 mb-2 text-center">Dissolution & Aquifer Storage Over Time</h3>
+                <div class="flex-1 relative w-full h-full">
+                    <canvas id="data-chart"></canvas>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-emerald-700 text-white p-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Puerto Rico's Karst Topography</h2>
+                <button id="close-modal" class="text-emerald-100 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto text-slate-700 space-y-4 text-sm leading-relaxed">
+                <p><strong>Phenomenon:</strong> Approximately 27.5% of Puerto Rico's surface is covered by a limestone region known as the karst belt, featuring some of the most spectacular landforms in the world, including <em>mogotes</em> (hummocks), extensive underground cave systems (like the Río Camuy Caves), and deep sinkholes (dolines).</p>
+
+                <h3 class="font-bold text-emerald-700 text-base border-b pb-1">The Science (HS-ESS2-5)</h3>
+                <p>This topography is formed through <strong>chemical weathering</strong>. When rain falls through the atmosphere and decaying organic matter in the soil, it absorbs carbon dioxide (CO<sub>2</sub>), forming a weak carbonic acid (H<sub>2</sub>CO<sub>3</sub>). </p>
+                <p>This acidic water percolates through fractures in the <strong>limestone bedrock (CaCO<sub>3</sub>)</strong>, slowly dissolving the rock over thousands of years and carrying the calcium and bicarbonate ions away in solution. This demonstrates water's unique property as a nearly universal solvent.</p>
+
+                <h3 class="font-bold text-emerald-700 text-base border-b pb-1">Simulation Instructions</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><strong>Rainfall:</strong> Increases the volume of water available to dissolve rock and fill the underground freshwater aquifer.</li>
+                    <li><strong>Acidity (pH):</strong> Lower pH means stronger acid, which exponentially increases the rate at which limestone dissolves. <em>(Note: Pure rain is slightly acidic at pH ~5.6, but acid rain can drop lower).</em></li>
+                    <li><strong>Fractures:</strong> More cracks in the rock allow water to channel downwards faster, creating vertical sinkholes rather than just surface erosion.</li>
+                </ul>
+            </div>
+            <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end">
+                <button id="close-modal-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded transition-colors">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic placeholder -->
+    <script>
+        // Modal Logic
+        const modal = document.getElementById('info-modal');
+        const openBtn = document.getElementById('info-btn');
+        const closeBtns = [document.getElementById('close-modal'), document.getElementById('close-modal-btn')];
+
+        openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+        closeBtns.forEach(btn => btn.addEventListener('click', () => modal.classList.add('hidden')));
+
+        // Show modal on first load
+        window.addEventListener('load', () => modal.classList.remove('hidden'));
+
+        // --- Canvas Rendering Logic ---
+
+        const canvas = document.getElementById('karst-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Canvas Setup & Resize
+        let cw, ch;
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            // Support high DPI displays
+            const dpr = window.devicePixelRatio || 1;
+            cw = container.clientWidth;
+            ch = container.clientHeight;
+
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            canvas.style.width = cw + 'px';
+            canvas.style.height = ch + 'px';
+
+            ctx.scale(dpr, dpr);
+            renderSimulation();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Grid setup for limestone dissolution cellular automata
+        const COLS = 120;
+        const ROWS = 60;
+        let cellW, cellH;
+        let grid = [];
+
+        // Constants for layers
+        const TYPE_AIR = 0;
+        const TYPE_SOIL = 1;
+        const TYPE_LIMESTONE = 2;
+        const TYPE_WATER = 3; // Aquifer or flowing water
+        const TYPE_CAVE = 4; // Dissolved limestone space
+
+        function initGrid() {
+            grid = new Array(COLS);
+
+            // Generate surface topology (mogotes / hummocks)
+            const surfaceHeights = new Array(COLS);
+            for (let x = 0; x < COLS; x++) {
+                // Combine sine waves to make uneven karst hummocks
+                let h = Math.sin(x * 0.1) * 3 + Math.sin(x * 0.03) * 5 + 15;
+                surfaceHeights[x] = Math.floor(h);
+            }
+
+            for (let x = 0; x < COLS; x++) {
+                grid[x] = new Array(ROWS);
+                for (let y = 0; y < ROWS; y++) {
+
+                    let type;
+
+                    if (y < surfaceHeights[x]) {
+                        type = TYPE_AIR;
+                    } else if (y < surfaceHeights[x] + 3) {
+                        type = TYPE_SOIL;
+                    } else {
+                        type = TYPE_LIMESTONE;
+                    }
+
+                    // Add initial fracture lines
+                    if (type === TYPE_LIMESTONE) {
+                        // Create vertical fractures based on random distribution
+                        if (x % 15 === 0 || x % 23 === 0) {
+                            // Occasional deep fracture
+                            if (Math.random() > 0.4 && y < ROWS - 10) {
+                                type = TYPE_CAVE; // Pre-existing minor crack
+                            }
+                        }
+                    }
+
+                    grid[x][y] = {
+                        type: type,
+                        acidity: 0, // Current acidity acting on cell
+                        waterContent: 0, // Amount of water in cell
+                        dissolveThreshold: 100 // Amount of acid/water needed to dissolve
+                    };
+                }
+            }
+
+            // Bottom layer acts as impermeable rock (aquitard) holding the aquifer
+            for (let x = 0; x < COLS; x++) {
+                grid[x][ROWS - 1].type = TYPE_SOIL; // Impenetrable base
+            }
+        }
+
+        function drawGrid() {
+            cellW = cw / COLS;
+            cellH = ch / ROWS;
+
+            ctx.clearRect(0, 0, cw, ch);
+
+            for (let x = 0; x < COLS; x++) {
+                for (let y = 0; y < ROWS; y++) {
+                    const cell = grid[x][y];
+
+                    let color = 'transparent';
+
+                    switch (cell.type) {
+                        case TYPE_AIR:
+                            // Draw rain droplets if active
+                            if (cell.waterContent > 0) {
+                                ctx.fillStyle = `rgba(100, 150, 255, ${Math.min(cell.waterContent, 1)})`;
+                                ctx.fillRect(x * cellW + cellW/2, y * cellH, cellW/4, cellH);
+                            }
+                            continue; // Skip drawing air block background
+                        case TYPE_SOIL:
+                            color = '#8B5A2B'; // Brown clay/soil
+                            break;
+                        case TYPE_LIMESTONE:
+                            // Variations in limestone color based on depth
+                            let brightness = 211 - (y * 1.5) + (x % 3 * 5);
+                            color = `rgb(${brightness}, ${brightness}, ${brightness})`;
+                            break;
+                        case TYPE_WATER:
+                            color = 'rgba(30, 144, 255, 0.7)'; // Aquifer water
+                            break;
+                        case TYPE_CAVE:
+                            color = '#2F4F4F'; // Dark slate gray for empty cave space
+                            break;
+                    }
+
+                    ctx.fillStyle = color;
+                    // Slightly overdraw to prevent grid lines due to anti-aliasing
+                    ctx.fillRect(Math.floor(x * cellW), Math.floor(y * cellH), Math.ceil(cellW), Math.ceil(cellH));
+
+                    // Draw flowing water in caves/fractures
+                    if (cell.type === TYPE_CAVE && cell.waterContent > 0) {
+                        ctx.fillStyle = `rgba(30, 144, 255, ${Math.min(cell.waterContent, 0.8)})`;
+                        ctx.fillRect(Math.floor(x * cellW), Math.floor(y * cellH), Math.ceil(cellW), Math.ceil(cellH));
+                    }
+                }
+            }
+        }
+
+        function renderSimulation() {
+            drawGrid();
+        }
+
+        // --- Simulation Logic ---
+        let isPlaying = false;
+        let simTime = 0;
+        let animationFrameId;
+
+        let initialLimestoneCount = 0;
+        let currentLimestoneCount = 0;
+        let aquiferVolume = 0;
+
+        // Settings
+        let pHRate = 5.6;
+        let rainRate = 1500; // mm/yr
+        let fractureLvl = 3;
+
+        // Data history for charts
+        let historyTime = [];
+        let historyDissolved = [];
+        let historyAquifer = [];
+        let dataChart = null;
+
+        function updateStats() {
+            let limestone = 0;
+            let waterCells = 0;
+            for (let x = 0; x < COLS; x++) {
+                for (let y = 0; y < ROWS; y++) {
+                    if (grid[x][y].type === TYPE_LIMESTONE) limestone++;
+                    if (grid[x][y].type === TYPE_WATER) waterCells++;
+                }
+            }
+            currentLimestoneCount = limestone;
+            if (initialLimestoneCount === 0) initialLimestoneCount = limestone;
+
+            aquiferVolume = waterCells;
+        }
+
+        function stepSimulation() {
+            if (!isPlaying) return;
+
+            simTime += 10; // 10 years per tick
+            document.getElementById('time-display').innerText = simTime + ' Years';
+
+            // 1. Rain falls on top row
+            const rainChance = rainRate / 4000; // normalized to max slider value
+            for (let x = 0; x < COLS; x++) {
+                if (Math.random() < rainChance) {
+                    // Find highest soil/rock cell
+                    for (let y = 0; y < ROWS; y++) {
+                        if (grid[x][y].type !== TYPE_AIR) {
+                            // If soil, percolate down instantly
+                            if (grid[x][y].type === TYPE_SOIL && y < ROWS - 1) {
+                                // Add water to cell below
+                                grid[x][y+1].waterContent = Math.min(1.0, grid[x][y+1].waterContent + 0.2);
+                                // The acidity gets stronger exponentially as pH drops
+                                // pH 7 = neutral, pH 5 = 100x more acidic than 7
+                                let acidFactor = Math.pow(10, 7 - pHRate) / 100;
+                                grid[x][y+1].acidity += acidFactor * 5;
+                            } else if (grid[x][y].type === TYPE_CAVE) {
+                                grid[x][y].waterContent = 1.0;
+                                grid[x][y].acidity += Math.pow(10, 7 - pHRate) / 100 * 5;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 2. Process Cellular Automata rules
+            // Need a temp grid for water movement to avoid directional bias
+            let nextWater = Array(COLS).fill(0).map(() => Array(ROWS).fill(0));
+            let nextAcid = Array(COLS).fill(0).map(() => Array(ROWS).fill(0));
+
+            for (let x = 0; x < COLS; x++) {
+                for (let y = ROWS - 1; y >= 0; y--) {
+                    const cell = grid[x][y];
+
+                    if (cell.waterContent > 0) {
+                        // Dissolution mechanics
+                        if (cell.type === TYPE_LIMESTONE) {
+                            cell.dissolveThreshold -= cell.acidity;
+
+                            if (cell.dissolveThreshold <= 0) {
+                                // Rock dissolves!
+                                cell.type = TYPE_CAVE;
+                                cell.dissolveThreshold = 0;
+                            }
+                        }
+
+                        // Movement mechanics
+                        let moved = false;
+
+                        // Try moving down
+                        if (y < ROWS - 1) {
+                            let below = grid[x][y+1];
+                            // Can move into cave or aquifer
+                            if (below.type === TYPE_CAVE || below.type === TYPE_WATER) {
+                                nextWater[x][y+1] += cell.waterContent;
+                                nextAcid[x][y+1] += cell.acidity;
+                                moved = true;
+                                if (below.type === TYPE_CAVE && nextWater[x][y+1] > 0.5) {
+                                    // Eventually fills up and becomes aquifer
+                                    if (y > ROWS / 2) { // Only form aquifers in deeper levels
+                                         below.type = TYPE_WATER;
+                                    }
+                                }
+                            } else if (below.type === TYPE_LIMESTONE) {
+                                // Percolate slowly into solid limestone
+                                nextWater[x][y+1] += cell.waterContent * 0.1;
+                                nextAcid[x][y+1] += cell.acidity * 0.1;
+
+                                // Keep the rest
+                                nextWater[x][y] += cell.waterContent * 0.9;
+                                nextAcid[x][y] += cell.acidity * 0.9;
+                                moved = true;
+                            }
+                        }
+
+                        // If blocked below, try lateral movement (fractures/caves)
+                        if (!moved) {
+                            let spreadSide = Math.random() > 0.5 ? 1 : -1;
+                            if (x + spreadSide >= 0 && x + spreadSide < COLS) {
+                                let side = grid[x+spreadSide][y];
+                                if (side.type === TYPE_CAVE || side.type === TYPE_WATER || side.type === TYPE_LIMESTONE) {
+                                     let transfer = cell.waterContent * 0.5;
+                                     let acidTransfer = cell.acidity * 0.5;
+                                     nextWater[x+spreadSide][y] += transfer;
+                                     nextAcid[x+spreadSide][y] += acidTransfer;
+
+                                     nextWater[x][y] += cell.waterContent - transfer;
+                                     nextAcid[x][y] += cell.acidity - acidTransfer;
+                                     moved = true;
+                                }
+                            }
+                        }
+
+                        if (!moved) {
+                            // Stay
+                            nextWater[x][y] += cell.waterContent;
+                            nextAcid[x][y] += cell.acidity;
+                        }
+                    }
+
+                    // Aquifer draining (base level flow out to sea)
+                    if (cell.type === TYPE_WATER) {
+                        // Slowly drain the bottom
+                        if (y > ROWS - 5 && x > 0 && x < COLS - 1) {
+                            if (Math.random() < 0.05) {
+                                cell.type = TYPE_CAVE;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. Apply next state
+            for (let x = 0; x < COLS; x++) {
+                for (let y = 0; y < ROWS; y++) {
+                    grid[x][y].waterContent = Math.min(1.0, nextWater[x][y]);
+                    grid[x][y].acidity = Math.min(100, nextAcid[x][y]);
+
+                    // Natural acid neutralization over time
+                    grid[x][y].acidity *= 0.8;
+
+                    // Evaporation / draining of caves
+                    if (grid[x][y].type === TYPE_CAVE) {
+                         grid[x][y].waterContent *= 0.9;
+                    }
+                }
+            }
+
+            updateStats();
+
+            // Record data for chart every 100 years
+            if (simTime % 100 === 0) {
+                historyTime.push(simTime);
+                let dissolvedPercent = ((initialLimestoneCount - currentLimestoneCount) / initialLimestoneCount) * 100;
+                historyDissolved.push(dissolvedPercent);
+                historyAquifer.push(aquiferVolume);
+
+                if (dataChart) {
+                    dataChart.update();
+                }
+            }
+
+            renderSimulation();
+
+            if (isPlaying) {
+                // Use setTimeout to control speed, requestAnimationFrame runs too fast
+                setTimeout(() => {
+                    animationFrameId = requestAnimationFrame(stepSimulation);
+                }, 50);
+            }
+        }
+
+        // --- Controls & Chart Integration ---
+
+        function initChart() {
+            const ctx = document.getElementById('data-chart').getContext('2d');
+            dataChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: historyTime,
+                    datasets: [
+                        {
+                            label: 'Dissolved Limestone (%)',
+                            borderColor: '#475569',
+                            backgroundColor: 'rgba(71, 85, 105, 0.1)',
+                            yAxisID: 'y',
+                            data: historyDissolved,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Aquifer Volume',
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            yAxisID: 'y1',
+                            data: historyAquifer,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Time (Years)' },
+                            ticks: { maxTicksLimit: 8 }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: '% Dissolved' },
+                            min: 0,
+                            max: 100
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Water Storage' },
+                            grid: { drawOnChartArea: false },
+                            min: 0
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function applyInitialFractures() {
+            fractureLvl = parseInt(document.getElementById('slider-fractures').value);
+            // Higher fracture level = more initial caves/cracks
+            for (let x = 0; x < COLS; x++) {
+                for (let y = 0; y < ROWS; y++) {
+                    if (grid[x][y].type === TYPE_LIMESTONE) {
+                        let threshold = 50 / fractureLvl;
+                        if (x % Math.max(2, Math.floor(threshold)) === 0) {
+                            if (Math.random() < 0.6 && y < ROWS - 5) {
+                                grid[x][y].type = TYPE_CAVE;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function resetSim() {
+            isPlaying = false;
+            cancelAnimationFrame(animationFrameId);
+            document.getElementById('btn-play').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg> Play`;
+            document.getElementById('btn-play').classList.replace('bg-red-600', 'bg-emerald-600');
+            document.getElementById('btn-play').classList.replace('hover:bg-red-700', 'hover:bg-emerald-700');
+
+            simTime = 0;
+            document.getElementById('time-display').innerText = '0 Years';
+
+            historyTime.length = 0;
+            historyDissolved.length = 0;
+            historyAquifer.length = 0;
+
+            initGrid();
+            applyInitialFractures();
+            updateStats();
+
+            historyTime.push(0);
+            historyDissolved.push(0);
+            historyAquifer.push(aquiferVolume);
+
+            if (dataChart) dataChart.update();
+            renderSimulation();
+        }
+
+        // Event Listeners
+        document.getElementById('btn-play').addEventListener('click', (e) => {
+            isPlaying = !isPlaying;
+            const btn = e.currentTarget;
+            if (isPlaying) {
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg> Pause`;
+                btn.classList.replace('bg-emerald-600', 'bg-red-600');
+                btn.classList.replace('hover:bg-emerald-700', 'hover:bg-red-700');
+                stepSimulation();
+            } else {
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg> Play`;
+                btn.classList.replace('bg-red-600', 'bg-emerald-600');
+                btn.classList.replace('hover:bg-red-700', 'hover:bg-emerald-700');
+            }
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', resetSim);
+
+        document.getElementById('slider-rainfall').addEventListener('input', (e) => {
+            rainRate = parseInt(e.target.value);
+            document.getElementById('val-rainfall').innerText = rainRate + ' mm';
+        });
+
+        document.getElementById('slider-ph').addEventListener('input', (e) => {
+            pHRate = parseFloat(e.target.value);
+            let label = pHRate.toFixed(1);
+            if (pHRate === 5.6) label += ' (Normal)';
+            else if (pHRate < 5.0) label += ' (Acidic)';
+            document.getElementById('val-ph').innerText = label;
+        });
+
+        document.getElementById('slider-fractures').addEventListener('input', (e) => {
+            let val = parseInt(e.target.value);
+            let label = 'Medium';
+            if (val <= 2) label = 'Low';
+            if (val >= 4) label = 'High';
+            document.getElementById('val-fractures').innerText = label;
+
+            // Only apply fractures if sim hasn't started
+            if (simTime === 0) {
+                initGrid();
+                applyInitialFractures();
+                renderSimulation();
+            }
+        });
+
+        // Initial setup
+        initGrid();
+        applyInitialFractures();
+        updateStats();
+        setTimeout(() => {
+            resizeCanvas();
+            initChart();
+        }, 100);
+
+    </script>
+</body>
+</html>
