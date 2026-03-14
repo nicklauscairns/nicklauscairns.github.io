@@ -199,6 +199,11 @@
 
                     // Save original substrate coordinates
                     let sAtoms = enzymeModel.selectedAtoms({resn: LIGAND_RESIDUE_NAME});
+                    if (sAtoms.length === 0) {
+                        console.error('Ligand not found in PDB file.');
+                        document.querySelector('.loading-overlay p:last-child').innerText = 'Failed to find ligand.';
+                        return;
+                    }
                     origSubstrateAtoms = sAtoms.map(a => ({x: a.x, y: a.y, z: a.z}));
 
                     // We find the center of mass of the original ligand to act as the "target"
