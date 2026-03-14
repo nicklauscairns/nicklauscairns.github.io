@@ -124,8 +124,8 @@
 <label for="flux-bio" class="flex justify-between font-semibold text-sm text-green-700 mb-1">
 <span>Biosphere Balance</span>
 </label>
-<input class="w-full accent-green-500" id="flux-bio" max="5" min="-5" step="0.5" type="range" value="0"/>
-<div class="flex justify-between text-[10px] text-slate-500 mt-1">
+<input aria-describedby="desc-bio" class="w-full accent-green-500" id="flux-bio" max="5" min="-5" step="0.5" type="range" value="0"/>
+<div id="desc-bio" class="flex justify-between text-[10px] text-slate-500 mt-1">
 <span>← More Respiration</span>
 <span>Balanced (0)</span>
 <span>More Photosynthesis →</span>
@@ -137,8 +137,8 @@
 <span>Fossil Fuel Combustion</span>
 <span class="font-mono bg-orange-100 px-1 rounded" id="val-emissions">10 GT/yr</span>
 </label>
-<input class="w-full accent-orange-500" id="flux-emissions" max="30" min="0" step="1" type="range" value="10"/>
-<div class="flex justify-between text-[10px] text-slate-500 mt-1">
+<input aria-describedby="desc-emissions" class="w-full accent-orange-500" id="flux-emissions" max="30" min="0" step="1" type="range" value="10"/>
+<div id="desc-emissions" class="flex justify-between text-[10px] text-slate-500 mt-1">
 <span>Zero</span>
 <span>Current</span>
 <span>Extreme</span>
