@@ -34,8 +34,86 @@ Construct an explanation based on evidence for how the structure of DNA determin
   </details>
 
 - [Virus Capsid Explorer](VirusCapsidExplorer.html) - Interactive 3D visualization of a viral capsid structure and its internal genetic material. [2024-05-24 10:00:00]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2024-05-24 10:00:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Good investigative phenomenon for understanding viral structures. Meets Criterion 4 (Investigable) by allowing interactive 3D exploration of the capsid and genetic material.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports DCI (LS1.A) regarding the structure and function of molecular systems.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Developing and Using Models):</b> Add interactive components to simulate the process of viral assembly or the release of genetic material.</li>
+          <li><b>Improve Relevance (Criterion 1):</b> Include specific real-world virus examples (e.g., SARS-CoV-2, HIV) to make the simulation more culturally relevant.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add interactive assembly/disassembly animations for the viral capsid.</li>
+          <li>[ ] Include structural presets for specific, well-known viruses.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 - [Protein Unfolding & Denaturation](ProteinDenaturation.html) - Simulates how extreme temperatures and pH changes cause a protein (hemoglobin) to lose its 3D structure and function. [2024-05-24 10:30:00]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2024-05-24 10:30:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Strong investigative phenomenon demonstrating protein denaturation. Meets Criterion 4 (Investigable) by allowing students to manipulate temperature and pH to observe structural changes.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (LS1.A) by linking environmental conditions to protein structure and function. Supports SEP (Planning and Carrying Out Investigations).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature (Analyzing Data):</b> Include a graph showing the percentage of functional protein remaining as environmental stress increases.</li>
+          <li><b>Improve Interactivity:</b> Allow students to test different types of proteins (e.g., enzymes vs structural proteins) to see varying denaturation thresholds.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add a real-time graph tracking protein functionality vs. temperature/pH.</li>
+          <li>[ ] Include multiple protein types with different stability profiles.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 - [Enzyme "Lock and Key" Puzzle](EnzymeDockingPuzzle.html) - Explore enzyme-substrate specificity by interactively docking a molecule into a highly specific 3D active site. [2024-05-24 12:00:00]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.0/5 Stars | 2024-05-24 12:00:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Engaging investigative phenomenon for exploring enzyme specificity. Meets Criterion 4 (Investigable) through interactive 3D docking challenges.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Supports DCI (LS1.A) regarding the role of enzymes and molecular shape in biological functions.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance SEP (Constructing Explanations):</b> After a successful or failed docking, prompt the user to explain *why* the shape and charge of the substrate must match the active site.</li>
+          <li><b>Incorporate Inhibitors:</b> Introduce competitive and non-competitive inhibitors as advanced puzzle elements to deepen understanding.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add an explanation prompt regarding shape/charge matching after docking attempts.</li>
+          <li>[ ] Introduce inhibitor molecules as puzzle challenges.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-LS1-2
 Develop and use a model to illustrate the hierarchical organization of interacting systems that provide specific functions within multicellular organisms.
@@ -256,6 +334,32 @@ Use mathematical and/or computational representations to support explanations of
 Use mathematical representations to support and revise explanations based on evidence about factors affecting biodiversity and populations in ecosystems of different scales.
 
 - [Biodiversity & Population Dynamics Lab](BiodiversityPopulationDynamics.html) - Explore how habitat size, pollution, climate stress, and invasive species affect biodiversity and population trends, then revise claims using disturbance evidence. [2026-03-13 13:15:00]
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-13 13:15:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon for exploring complex ecosystem dynamics. Meets Criterion 4 (Investigable) by allowing manipulation of multiple environmental stressors.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (LS2.C) regarding ecosystem dynamics, functioning, and resilience. Supports SEP (Using Mathematics and Computational Thinking).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature (Revising Explanations):</b> Ensure the data logger explicitly highlights population crashes or recoveries to help students revise their initial predictions.</li>
+          <li><b>Improve Relevance (Criterion 1):</b> Connect the simulated stressors to specific real-world conservation challenges (e.g., habitat loss in the Amazon).</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add explicit highlights for critical population events (crashes/recoveries) in the data log.</li>
+          <li>[ ] Include real-world case study context for each stressor type.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
 
 ### HS-LS2-3
 Construct and revise an explanation based on evidence for the cycling of matter and flow of energy in aerobic and anaerobic conditions.
