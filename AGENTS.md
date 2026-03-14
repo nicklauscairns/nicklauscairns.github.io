@@ -7,7 +7,7 @@ The overarching goal is to ensure every NGSS Performance Expectation listed in t
 As an AI agent working in this repository, you must adhere to the following best practices and guidelines to ensure code quality, accurate testing, SEO optimization, and pedagogical alignment.
 
 ## 1. Simulation Generation and Design
-*   **Single-File Architecture:** Simulations must be completely contained within a single standalone HTML file. Do not rely on external CSS/JS files (except trusted CDNs like Tailwind CSS or Chart.js).
+*   **Single-File Architecture:** Simulations must be completely contained within a single standalone HTML file. Do not rely on external CSS/JS files (except trusted CDNs like Tailwind CSS or Chart.js, and shared utility scripts for cross-cutting, non-simulation logic like analytics).
 *   **Styling:** Use Tailwind CSS for all styling. Ensure the UI is responsive, clean, and modern.
 *   **Graphics:** Use the HTML5 `<canvas>` element for complex, performant animations.
 *   **No LaTeX:** Do not use `$$` or MathJax. Render math using standard HTML tags (`<sup>`, `<sub>`) and HTML entities (`&ge;`, `&Delta;`).
