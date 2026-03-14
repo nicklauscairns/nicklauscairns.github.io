@@ -330,6 +330,8 @@ Use mathematical and/or computational representations to support explanations of
     </ul>
   </details>
 
+- [Bioluminescent Bay Ecosystem Dynamics](BioluminescentBayDynamics.html) - An interactive simulation of Puerto Rico's bioluminescent bay ecosystem, modeling the population dynamics and carrying capacity of the dinoflagellate Pyrodinium bahamense based on unique environmental factors.
+
 ### HS-LS2-2
 Use mathematical representations to support and revise explanations based on evidence about factors affecting biodiversity and populations in ecosystems of different scales.
 
