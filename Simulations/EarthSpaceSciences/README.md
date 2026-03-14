@@ -99,7 +99,7 @@ Communicate scientific ideas about the way stars, over their life cycle, produce
 ### HS-ESS1-4
 Use mathematical or computational representations to predict the motion of orbiting objects in the solar system.
 
-- [Planetary Defense: Asteroid Deflection](PlanetaryDefense.html) - Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision.
+- [Planetary Defense: Asteroid Deflection](PlanetaryDefense.html) - Use orbital mechanics and kinetic impactors to alter an asteroid's trajectory and save Earth from a catastrophic collision. [2026-03-14 04:45:29]
 
 - [Orbital Motion & Kepler's Laws Simulation](OrbitalMotion2.html) - An interactive simulation exploring Newton's Law of Universal Gravitation and Kepler's Laws by adjusting planetary parameters. [2026-03-12 12:00:00]
 
@@ -191,7 +191,7 @@ Evaluate evidence of the past and current movements of continental and oceanic c
 ### HS-ESS1-6
 Apply scientific reasoning and evidence from ancient Earth materials, meteorites, and other planetary surfaces to construct an account of Earth’s formation and early history.
 
-- [Cratering & Surface Age Explorer](CrateringHistory.html) - Investigate why Earth has so few visible impact craters compared to the Moon, despite forming at the same time 4.6 billion years ago.
+- [Cratering & Surface Age Explorer](CrateringHistory.html) - Investigate why Earth has so few visible impact craters compared to the Moon, despite forming at the same time 4.6 billion years ago. [2026-03-14 04:45:29]
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 5/5 Stars | 2026-03-13 20:22:40</b></summary>
@@ -301,7 +301,7 @@ Develop a model based on evidence of Earth’s interior to describe the cycling 
 ### HS-ESS2-4
 Use a model to describe how variations in the flow of energy into and out of Earth’s systems result in changes in climate.
 
-- [Tambora 1816: Year Without a Summer](Tambora1816.html) - Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly.
+- [Tambora 1816: Year Without a Summer](Tambora1816.html) - Investigate how stratospheric aerosols from a massive volcanic eruption affected Earth's energy budget and caused the 1816 global climate anomaly. [2026-03-14 04:45:29]
 - [Greenhouse Effect & Earth's Energy Budget Simulation](GreenhouseEffect.html) - An interactive simulation exploring how greenhouse gases affect Earth's energy budget and global temperature. [2026-03-12 12:00:00]
 
   <details>
@@ -456,7 +456,7 @@ Construct an explanation based on evidence for how the availability of natural r
 ### HS-ESS3-2
 Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.*
 
-- [Energy & Mineral Resources Cost-Benefit Analysis](EnergyResourcesCostBenefit.html) - Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.
+- [Energy & Mineral Resources Cost-Benefit Analysis](EnergyResourcesCostBenefit.html) - Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios. [2026-03-14 04:45:29]
 
 
 
@@ -532,4 +532,4 @@ Analyze geoscience data and the results from global climate models to make an ev
 ### HS-ESS3-6
 Use a computational representation to illustrate the relationships among Earth systems and how those relationships are being modified due to human activity.
 
-- [Earth Systems Interactions Simulator](EarthSystemsInteractions.html) - Explore how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time.
+- [Earth Systems Interactions Simulator](EarthSystemsInteractions.html) - Explore how human activities like fossil fuel emissions and deforestation impact Earth's interacting systems over time. [2026-03-14 04:45:29]
