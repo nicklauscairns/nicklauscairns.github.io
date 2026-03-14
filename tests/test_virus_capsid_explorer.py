@@ -28,7 +28,7 @@ def test_virus_capsid_explorer_ui_interactions(page: Page):
     page.evaluate("document.getElementById('loading').style.display = 'none';")
 
     # Test toggling the RNA checkbox
-    page.locator("#toggle-rna").uncheck()
+    page.locator("#toggle-rna").uncheck(force=True)
     # explicitly set property and dispatch
     page.evaluate("document.getElementById('toggle-rna').checked = false; document.getElementById('toggle-rna').dispatchEvent(new Event('change'))")
 
