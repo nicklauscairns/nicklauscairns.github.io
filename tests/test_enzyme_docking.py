@@ -1,6 +1,5 @@
 import os
 import pytest
-import time
 import re
 from playwright.sync_api import Page, expect
 
@@ -37,7 +36,7 @@ def test_enzyme_docking_translation(page: Page):
     pos = page.evaluate("window.simulationState.substratePos.x")
     # Substrate pos is targetPos + slider_value
     # target is roughly -0.5, slider is 0, so ~ -0.5
-    assert type(pos) == float or type(pos) == int
+    assert type(pos) is float or type(pos) is int
 
 def test_enzyme_docking_win_state(page: Page):
     file_path = f"file://{os.path.abspath('Simulations/LifeSciences/EnzymeDockingPuzzle.html')}"
