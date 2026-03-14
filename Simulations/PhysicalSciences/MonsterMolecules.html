@@ -160,7 +160,7 @@
             let container = document.getElementById('viewer-container');
             viewer = $3Dmol.createViewer(container, {
                 backgroundColor: '0x0f172a',
-                antialias: true
+                antialias: false
             });
         }
 
@@ -229,10 +229,8 @@
 
         function animate() {
             if (!viewer) return;
-            viewer.rotate(0.3, "y");
-            viewer.rotate(0.1, "x");
-            viewer.render();
-            requestAnimationFrame(animate);
+            // Using viewer.spin relies on 3Dmol.js internal optimization instead of a manual render loop.
+            viewer.spin("y", 0.5);
         }
 
         window.checkBond = function(guess) {
