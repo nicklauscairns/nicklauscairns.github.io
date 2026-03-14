@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coquí Frog Climate Adaptation - NGSS HS-LS4-4</title>
     <meta name="description" content="An interactive simulation demonstrating how rising global temperatures drive phenotypic adaptation in the Puerto Rican Coquí frog, leading to smaller body sizes and higher-pitched calls.">
+
+    <meta property="og:title" content="Coquí Frog Climate Adaptation - NGSS HS-LS4-4" />
+    <meta property="og:description" content="An interactive simulation demonstrating how rising global temperatures drive phenotypic adaptation in the Puerto Rican Coquí frog, leading to smaller body sizes and higher-pitched calls." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/LifeSciences/CoquiPitchAdaptation.html" />
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Coquí Frog Climate Adaptation - NGSS HS-LS4-4",
+        "description": "An interactive simulation demonstrating how rising global temperatures drive phenotypic adaptation in the Puerto Rican Coquí frog.",
+        "url": "https://nicklauscairns.com/Simulations/LifeSciences/CoquiPitchAdaptation.html",
+        "learningResourceType": "Interactive Simulation",
+        "educationalAlignment": {
+            "@type": "AlignmentObject",
+            "alignmentType": "educational framework",
+            "educationalFramework": "Next Generation Science Standards (NGSS)"
+        }
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -306,7 +328,6 @@
 
         function initSimulation() {
             resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
 
             simulationState.frogs = [];
             for (let i = 0; i < config.numFrogs; i++) {
@@ -480,6 +501,7 @@
 
         // Initialize
         window.onload = () => {
+            window.addEventListener('resize', resizeCanvas);
             initSimulation();
             requestAnimationFrame(updateSimulation);
             // Expose state globally for playwright tests
