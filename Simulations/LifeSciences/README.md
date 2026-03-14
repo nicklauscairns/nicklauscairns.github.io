@@ -766,8 +766,6 @@ Construct an explanation based on evidence for how natural selection leads to ad
     </ul>
   </details>
 
-- [Coquí Frog Climate Adaptation](CoquiPitchAdaptation.html) - An interactive simulation demonstrating how rising global temperatures drive phenotypic adaptation in the Puerto Rican Coquí frog, leading to smaller body sizes and higher-pitched calls.
-
 ### HS-LS4-5
 Evaluate the evidence supporting claims that changes in environmental conditions may result in: (1) increases in the number of individuals of some species, (2) the emergence of new species over time, and (3) the extinction of other species.
 
