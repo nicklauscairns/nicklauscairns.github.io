@@ -288,7 +288,8 @@ C2 0.33333 0.66667 0.25000`
 
                 // The correct way in 3Dmol to draw a supercell from CIF is passing duplicate/replicate opts.
                 // Or simply adding the model and calling addUnitCell. 3Dmol has built-in supercell generation in CIF parser:
-                let m = viewer.addModel(data, "cif", {supercell: [scale, scale, scale]});
+                let m = viewer.addModel(data, "cif");
+                viewer.replicateUnitCell(scale, scale, scale, m);
 
                 // Style: Sticks and Balls
                 viewer.setStyle({}, {
