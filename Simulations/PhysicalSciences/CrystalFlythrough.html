@@ -212,6 +212,8 @@ C2 0.33333 0.66667 0.25000`
             }
         };
 
+        let renderTimeout = null;
+
         window.simulationState = {
             currentCrystal: 'nacl',
             scale: 1,
@@ -226,10 +228,13 @@ C2 0.33333 0.66667 0.25000`
                 window.simulationState.scale = scale;
                 document.getElementById('scale-badge').innerText = `${scale}x${scale}x${scale} (Bulk)`;
 
-                // Real-time generation of supercell is slow, so we throttle or just do it on change
-                // For a smooth slider in testing, we use 'change', but for UI 'input' is nicer.
-                // We'll update it immediately.
-                renderCrystal();
+                // Debounce rendering to prevent UI freezing during slider drag
+                if (renderTimeout) {
+                    clearTimeout(renderTimeout);
+                }
+                renderTimeout = setTimeout(() => {
+                    renderCrystal();
+                }, 150);
             });
 
             // Initial load
@@ -276,8 +281,13 @@ C2 0.33333 0.66667 0.25000`
             let loadingUI = document.getElementById('loading');
             loadingUI.classList.add('active');
 
+            if (renderTimeout) {
+                clearTimeout(renderTimeout);
+                renderTimeout = null;
+            }
+
             // Small timeout to allow UI to render the loading screen before blocking JS thread
-            setTimeout(() => {
+            renderTimeout = setTimeout(() => {
                 viewer.clear();
 
                 let scale = window.simulationState.scale;
@@ -316,30 +326,72 @@ C2 0.33333 0.66667 0.25000`
 
                 // Manually draw bonds since 3Dmol.js default bond calculation might fail for these CIFs
                 let atoms = m.selectedAtoms({});
-                let maxDist = crystals[window.simulationState.currentCrystal].maxBondDist || 3.5;
+
+                const DEFAULT_MAX_BOND_DIST = 3.5;
+                const MIN_BOND_DIST_SQ = 0.1;
+                const BOND_RADIUS = 0.1;
+                const BOND_COLOR = 'white';
+
+                let maxDist = crystals[window.simulationState.currentCrystal].maxBondDist || DEFAULT_MAX_BOND_DIST;
                 let maxDistSq = maxDist * maxDist;
 
-                for (let i = 0; i < atoms.length; i++) {
-                    for (let j = i + 1; j < atoms.length; j++) {
-                        let a1 = atoms[i];
-                        let a2 = atoms[j];
-                        let dx = a1.x - a2.x;
-                        let dy = a1.y - a2.y;
-                        let dz = a1.z - a2.z;
-                        let distSq = dx*dx + dy*dy + dz*dz;
+                // Spatial partitioning (Grid) to reduce O(N^2) complexity
+                const cellSize = maxDist;
+                const grid = new Map();
 
-                        if (distSq <= maxDistSq && distSq > 0.1) {
-                            viewer.addCylinder({
-                                start: {x: a1.x, y: a1.y, z: a1.z},
-                                end: {x: a2.x, y: a2.y, z: a2.z},
-                                radius: 0.1,
-                                color: 'white',
-                                fromCap: true,
-                                toCap: true
-                            });
+                const getGridKey = (x, y, z) => {
+                    return `${Math.floor(x/cellSize)},${Math.floor(y/cellSize)},${Math.floor(z/cellSize)}`;
+                };
+
+                atoms.forEach((atom, index) => {
+                    const key = getGridKey(atom.x, atom.y, atom.z);
+                    if (!grid.has(key)) grid.set(key, []);
+                    grid.get(key).push({ atom, index });
+                });
+
+                const drawnBonds = new Set();
+                const getBondKey = (i, j) => i < j ? `${i}-${j}` : `${j}-${i}`;
+
+                atoms.forEach((a1, i) => {
+                    const cx = Math.floor(a1.x/cellSize);
+                    const cy = Math.floor(a1.y/cellSize);
+                    const cz = Math.floor(a1.z/cellSize);
+
+                    // Check neighbors in adjacent cells
+                    for (let dx = -1; dx <= 1; dx++) {
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dz = -1; dz <= 1; dz++) {
+                                const key = `${cx+dx},${cy+dy},${cz+dz}`;
+                                const cellAtoms = grid.get(key);
+
+                                if (cellAtoms) {
+                                    cellAtoms.forEach(({ atom: a2, index: j }) => {
+                                        if (i === j) return;
+                                        const bondKey = getBondKey(i, j);
+                                        if (drawnBonds.has(bondKey)) return;
+
+                                        const xDiff = a1.x - a2.x;
+                                        const yDiff = a1.y - a2.y;
+                                        const zDiff = a1.z - a2.z;
+                                        const distSq = xDiff*xDiff + yDiff*yDiff + zDiff*zDiff;
+
+                                        if (distSq <= maxDistSq && distSq > MIN_BOND_DIST_SQ) {
+                                            viewer.addCylinder({
+                                                start: a1,
+                                                end: a2,
+                                                radius: BOND_RADIUS,
+                                                color: BOND_COLOR,
+                                                fromCap: true,
+                                                toCap: true
+                                            });
+                                            drawnBonds.add(bondKey);
+                                        }
+                                    });
+                                }
+                            }
                         }
                     }
-                }
+                });
 
                 viewer.zoomTo();
                 viewer.render();
