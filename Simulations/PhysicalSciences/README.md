@@ -36,6 +36,8 @@ Use the periodic table as a model to predict the relative properties of elements
     </ul>
   </details>
 
+- [Monster Molecules Showcase](MonsterMolecules.html) - Explore bizarre, extreme, and gigantic molecules to understand how periodic table patterns (like Carbon's valence electrons) dictate bonding geometry. [2024-05-24 11:00:00]
+
 ### HS-PS1-2
 Construct and revise an explanation for the outcome of a simple chemical reaction based on the outermost electron states of atoms, trends in the periodic table, and knowledge of the patterns of chemical properties.
 
@@ -100,6 +102,8 @@ Plan and conduct an investigation to gather evidence to compare the structure of
       </li>
     </ul>
   </details>
+
+- [Crystal Lattice Flythrough](CrystalFlythrough.html) - Explore the bulk 3D structures of covalent and ionic lattices to infer the strength of electrical forces holding them together. [2024-05-24 11:30:00]
 
 ### HS-PS1-4
 Develop a model to illustrate that the release or absorption of energy from a chemical reaction system depends upon the changes in total bond energy.

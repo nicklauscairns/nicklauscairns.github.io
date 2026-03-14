@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virus Capsid Explorer</title>
+    <meta name="description" content="Explore the 3D structure of a viral capsid and its genetic material.">
+    <meta name="keywords" content="NGSS, HS-LS1-1, Virus, Capsid, DNA, RNA, 3Dmol.js, Science Simulation">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Virus Capsid Explorer">
+    <meta property="og:description" content="Interactive 3D visualization of viral structure and genetic material.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Virus Capsid Explorer",
+      "description": "Interactive 3D visualization of viral structure and genetic material.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-LS1-1",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ls1-1-molecules-organisms-structures-and-processes"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 3Dmol.js -->
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; }
+        #viewer-container { flex-grow: 1; position: relative; width: 100%; height: 100%; }
+        #ui-overlay { position: absolute; top: 1rem; right: 1rem; width: 350px; z-index: 10; max-height: calc(100vh - 2rem); overflow-y: auto; }
+        .slider-label { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.25rem; color: #cbd5e1; }
+        input[type=range] { width: 100%; accent-color: #3b82f6; }
+        .tab-btn { padding: 0.5rem 1rem; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; font-size: 0.875rem; font-weight: 500; color: #94a3b8; }
+        .tab-btn.active { border-bottom-color: #3b82f6; color: #60a5fa; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        /* Custom scrollbar for UI overlay */
+        #ui-overlay::-webkit-scrollbar { width: 6px; }
+        #ui-overlay::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        #ui-overlay::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; transition: opacity 0.5s; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- Header (Optional, minimalist) -->
+    <div class="absolute top-4 left-4 z-10 glass-panel p-4 max-w-md pointer-events-none">
+        <h1 class="text-2xl font-bold text-white mb-1">Virus Capsid Explorer</h1>
+        <p class="text-sm text-slate-300">NGSS HS-LS1-1: Structure & Function</p>
+    </div>
+
+    <!-- 3Dmol Viewer Container -->
+    <div id="viewer-container"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p class="text-lg font-medium text-slate-200">Downloading & Constructing Viral Geometry...</p>
+        <p class="text-sm text-slate-400 mt-2">Fetching 1RB8 (Satellite Tobacco Mosaic Virus)</p>
+        <p class="text-xs text-slate-500 mt-1">This may take a moment due to the massive size.</p>
+    </div>
+
+    <!-- Interactive UI Overlay -->
+    <div id="ui-overlay" class="glass-panel p-5 shadow-2xl">
+
+        <!-- Tabs -->
+        <div class="flex border-b border-slate-700 mb-4" role="tablist">
+            <button role="tab" aria-selected="true" class="tab-btn active w-1/2 text-center" data-tab-id="explore" onclick="switchTab(this)">Explore Structure</button>
+            <button role="tab" aria-selected="false" class="tab-btn w-1/2 text-center" data-tab-id="investigate" onclick="switchTab(this)">Investigate (NGSS)</button>
+        </div>
+
+        <!-- Explore Tab -->
+        <div id="tab-explore" class="content-section active space-y-5">
+            <div>
+                <h2 class="text-lg font-semibold text-white mb-2">Structure Toggles</h2>
+                <p class="text-xs text-slate-400 mb-3">Isolate specific macromolecules to see how they form the complex viral machine.</p>
+
+                <div class="space-y-3">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="toggle-capsid" checked class="form-checkbox h-4 w-4 text-blue-500 bg-slate-800 border-slate-600 rounded">
+                        <span class="text-sm text-slate-200">Viral Capsid (Proteins)</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="toggle-rna" checked class="form-checkbox h-4 w-4 text-pink-500 bg-slate-800 border-slate-600 rounded">
+                        <span class="text-sm text-slate-200">Viral Genome (RNA)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-700 pt-4">
+                <h2 class="text-lg font-semibold text-white mb-2">Visualization Style</h2>
+
+                <div class="mb-4">
+                    <div class="slider-label">
+                        <span>Opacity (Slicing)</span>
+                        <span id="opacity-val">100%</span>
+                    </div>
+                    <input type="range" id="capsid-opacity" min="0" max="1" step="0.1" value="1">
+                    <p class="text-xs text-slate-400 mt-1">Lower opacity to see the RNA core inside the protein shell.</p>
+                </div>
+
+                <div class="space-y-2 mt-4">
+                    <button onclick="setStyle('cartoon')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm transition-colors text-white font-medium border border-slate-600">Cartoon (Secondary Structure)</button>
+                    <button onclick="setStyle('surface')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm transition-colors text-white font-medium border border-slate-600">Molecular Surface</button>
+                    <button onclick="setStyle('sphere')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm transition-colors text-white font-medium border border-slate-600">Spacefilling (Atoms)</button>
+                </div>
+            </div>
+
+            <div class="bg-blue-900/30 border border-blue-500/30 p-3 rounded-lg mt-4">
+                <p class="text-xs text-blue-200">
+                    <span class="font-bold">Did you know?</span> The Satellite Tobacco Mosaic Virus is tiny. The outer shell is made of exactly 60 identical protein subunits that self-assemble perfectly around the RNA inside.
+                </p>
+            </div>
+        </div>
+
+        <!-- Investigate Tab -->
+        <div id="tab-investigate" class="content-section space-y-4">
+            <h2 class="text-lg font-semibold text-white border-b border-slate-700 pb-2">NGSS Evidence & Reasoning</h2>
+
+            <p class="text-sm text-slate-300">
+                A virus is technically not "alive" because it cannot reproduce on its own. It acts as a biological syringe, injecting instructions into a host cell.
+            </p>
+
+            <div class="space-y-4 mt-4">
+                <div class="bg-slate-800/80 p-3 rounded border border-slate-700">
+                    <p class="text-sm font-medium text-white mb-2">1. Locate the Instructions</p>
+                    <p class="text-xs text-slate-400 mb-2">Where are the instructions stored that tell a host cell how to build more virus particles?</p>
+                    <select id="quiz-1" class="w-full bg-slate-900 text-sm text-slate-200 p-2 rounded border border-slate-600 focus:outline-none focus:border-blue-500">
+                        <option value="">Select answer...</option>
+                        <option value="wrong1">In the host cell wall</option>
+                        <option value="correct">In the RNA/DNA genome inside the capsid</option>
+                        <option value="wrong2">In the outer protein spikes</option>
+                    </select>
+                </div>
+
+                <div class="bg-slate-800/80 p-3 rounded border border-slate-700">
+                    <p class="text-sm font-medium text-white mb-2">2. The Role of Proteins</p>
+                    <p class="text-xs text-slate-400 mb-2">Look at the outer shell (Capsid). What is the primary function of these specialized proteins?</p>
+                    <select id="quiz-2" class="w-full bg-slate-900 text-sm text-slate-200 p-2 rounded border border-slate-600 focus:outline-none focus:border-blue-500">
+                        <option value="">Select answer...</option>
+                        <option value="wrong1">To generate energy for the virus</option>
+                        <option value="wrong2">To store genetic information</option>
+                        <option value="correct">To protect the genome and deliver it to cells</option>
+                    </select>
+                </div>
+
+                <div class="bg-slate-800/80 p-3 rounded border border-slate-700">
+                    <p class="text-sm font-medium text-white mb-2">3. Structure Determines Function</p>
+                    <p class="text-xs text-slate-400 mb-2">If the genetic sequence (RNA) is mutated, how might that affect the virus?</p>
+                    <textarea id="reasoning-text" rows="3" class="w-full bg-slate-900 text-sm text-slate-200 p-2 rounded border border-slate-600 focus:outline-none focus:border-blue-500" placeholder="Construct your explanation here..."></textarea>
+                </div>
+
+                <button onclick="checkAnswers()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded text-sm transition-colors text-white font-bold shadow-lg">Check Understanding</button>
+                <div id="feedback" class="text-sm hidden text-center mt-2 font-medium"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global viewer instance
+        let viewer;
+        let currentStyle = 'cartoon';
+        let capsidOpacity = 1.0;
+        let showCapsid = true;
+        let showRNA = true;
+
+        // Expose state for Playwright testing
+        window.simulationState = {
+            loaded: false,
+            style: 'cartoon',
+            opacity: 1.0,
+            capsidVisible: true,
+            rnaVisible: true
+        };
+
+        // Initialize 3Dmol when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initViewer();
+            setupEventListeners();
+        });
+
+        function initViewer() {
+            let container = document.getElementById('viewer-container');
+
+            // Create viewer
+            viewer = $3Dmol.createViewer(container, {
+                backgroundColor: '0x0f172a',
+                antialias: true
+            });
+
+            // We are using 1RB8 (Satellite Tobacco Mosaic Virus) because it is a relatively
+            // small complete virus, ensuring it loads in browsers without crashing 3Dmol.
+            // Many human viruses (like HIV/Zika) are too massive for client-side rendering
+            // without extreme decimation.
+
+            // Note: biological assembly 1 generates the full icosahedral capsid.
+            let pdbUri = 'https://files.rcsb.org/download/1RB8.pdb1';
+
+            fetch(pdbUri)
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.text();
+                })
+                .then(data => {
+                    // Add model to viewer
+                    viewer.addModel(data, "pdb");
+
+                    // Apply initial styles
+                    applyStyles();
+
+                    viewer.zoomTo();
+                    viewer.render();
+
+                    // Start slow rotation
+                    viewer.spin("y", 0.5);
+
+                    // Hide loading screen
+                    document.getElementById('loading').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loading').style.display = 'none';
+                        window.simulationState.loaded = true;
+                    }, 500);
+                })
+                .catch(error => {
+                    console.error('Error loading PDB:', error);
+                    document.getElementById('loading').innerHTML = `
+                        <p class="text-red-500 font-bold mb-2">Error Loading Visualization</p>
+                        <p class="text-sm text-slate-300">${error.message}</p>
+                        <p class="text-xs text-slate-400 mt-4">Please check your internet connection and reload.</p>
+                    `;
+                });
+        }
+
+        function applyStyles() {
+            if (!viewer) return;
+
+            viewer.removeAllSurface();
+            viewer.setStyle({}, {hidden: true}); // Hide everything first
+
+            // RNA is usually chain R, S, T, etc. or marked as nucleic in 1RB8
+            let rnaSelection = {nucleic: true};
+            let proteinSelection = {protein: true};
+
+            // Set RNA Style
+            if (showRNA) {
+                viewer.setStyle(rnaSelection, {
+                    stick: {radius: 0.3, colorscheme: 'Jmol'}
+                });
+            }
+
+            // Set Protein Style
+            if (showCapsid) {
+                let pStyle = {};
+                if (currentStyle === 'cartoon') {
+                    pStyle = {cartoon: {color: 'spectrum', opacity: capsidOpacity}};
+                } else if (currentStyle === 'sphere') {
+                    pStyle = {sphere: {colorscheme: 'amino', opacity: capsidOpacity}};
+                } else if (currentStyle === 'surface') {
+                    viewer.addSurface($3Dmol.SurfaceType.VDW, {
+                        opacity: capsidOpacity,
+                        color: 'white',
+                    }, proteinSelection);
+                    // Hide underlying cartoon if surface is active
+                    pStyle = {hidden: true};
+                }
+
+                viewer.setStyle(proteinSelection, pStyle);
+            }
+
+            viewer.render();
+
+            // Update external state for testing
+            window.simulationState.style = currentStyle;
+            window.simulationState.opacity = capsidOpacity;
+            window.simulationState.capsidVisible = showCapsid;
+            window.simulationState.rnaVisible = showRNA;
+        }
+
+        // UI Event Listeners
+        function setupEventListeners() {
+            document.getElementById('toggle-capsid').addEventListener('change', (e) => {
+                showCapsid = e.target.checked;
+                // Update global state immediately for Playwright
+                window.simulationState.capsidVisible = showCapsid;
+                applyStyles();
+            });
+
+            document.getElementById('toggle-rna').addEventListener('change', (e) => {
+                showRNA = e.target.checked;
+                // Update global state immediately for Playwright
+                window.simulationState.rnaVisible = showRNA;
+                applyStyles();
+            });
+
+            document.getElementById('capsid-opacity').addEventListener('input', (e) => {
+                capsidOpacity = parseFloat(e.target.value);
+                document.getElementById('opacity-val').innerText = Math.round(capsidOpacity * 100) + '%';
+                // Update global state immediately for Playwright
+                window.simulationState.opacity = capsidOpacity;
+                applyStyles();
+            });
+        }
+
+        // Public function for buttons
+        window.setStyle = function(style) {
+            currentStyle = style;
+            applyStyles();
+        };
+
+        // Tab Switching Logic
+        window.switchTab = function(clickedTab) {
+            // Fallback for playwright test compatibility if passed a string directly
+            if (typeof clickedTab === 'string') {
+                clickedTab = document.querySelector(`[data-tab-id="${clickedTab}"]`);
+            }
+            if (!clickedTab) return;
+
+            const tabId = clickedTab.dataset.tabId;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+
+            clickedTab.classList.add('active');
+            clickedTab.setAttribute('aria-selected', 'true');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        };
+
+        // NGSS Quiz Logic
+        window.checkAnswers = function() {
+            let q1 = document.getElementById('quiz-1').value;
+            let q2 = document.getElementById('quiz-2').value;
+            let reasoning = document.getElementById('reasoning-text').value;
+            let feedback = document.getElementById('feedback');
+
+            feedback.classList.remove('hidden', 'text-green-400', 'text-red-400', 'text-yellow-400');
+
+            if (q1 === 'correct' && q2 === 'correct') {
+                if (reasoning.length < 20) {
+                    feedback.innerText = "Multiple choice correct! Now, add more detail to your explanation about mutations.";
+                    feedback.classList.add('text-yellow-400');
+                } else {
+                    feedback.innerText = "Excellent! You understand that RNA codes for the protective proteins, and changing the RNA changes the structure and function of the virus.";
+                    feedback.classList.add('text-green-400');
+                }
+            } else {
+                feedback.innerText = "Not quite. Review where instructions are kept and what a protective shell does, then try again.";
+                feedback.classList.add('text-red-400');
+            }
+        };
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            if (viewer) {
+                viewer.resize();
+            }
+        });
+    </script>
+</body>
+</html>

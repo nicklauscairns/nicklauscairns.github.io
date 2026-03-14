@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crystal Lattice Flythrough</title>
+    <meta name="description" content="Explore the bulk structure of substances to infer the strength of electrical forces between particles.">
+    <meta name="keywords" content="NGSS, HS-PS1-3, Chemistry, Crystal Lattice, Ionic Bonds, Covalent Bonds, 3Dmol.js, Science Simulation">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Crystal Lattice Flythrough">
+    <meta property="og:description" content="Explore the bulk structure of substances to infer the strength of electrical forces between particles.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Crystal Lattice Flythrough",
+      "description": "Explore the bulk structure of substances to infer the strength of electrical forces between particles.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-PS1-3",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ps1-3-matter-and-its-interactions"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 3Dmol.js -->
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; }
+        #viewer-container { flex-grow: 1; position: relative; width: 100%; height: 100%; }
+
+        #ui-overlay { position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); width: 90%; max-width: 900px; z-index: 10; display: flex; gap: 1rem; }
+        .side-panel { width: 350px; flex-shrink: 0; }
+        .main-panel { flex-grow: 1; display: flex; flex-direction: column; gap: 1rem; }
+
+        .mol-btn { padding: 0.5rem; text-align: left; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; cursor: pointer; transition: all 0.2s; background: rgba(15, 23, 42, 0.5); }
+        .mol-btn:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .mol-btn.active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); border-left: 4px solid #3b82f6; }
+
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; transition: opacity 0.5s; pointer-events: none; opacity: 0; }
+        .loading-overlay.active { opacity: 1; pointer-events: auto; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Slider */
+        input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; outline: none; background: #334155; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="absolute top-4 left-4 z-10 glass-panel p-4 max-w-sm pointer-events-none">
+        <h1 class="text-2xl font-bold text-white mb-1">Bulk Lattice Explorer</h1>
+        <p class="text-xs text-slate-300">NGSS HS-PS1-3: Bulk Structure & Forces</p>
+    </div>
+
+    <!-- Controls (Top Right) -->
+    <div class="absolute top-4 right-4 z-10 glass-panel p-3">
+        <button onclick="flythrough()" id="fly-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded text-sm text-white font-bold transition-colors">
+            🚀 Start Flythrough
+        </button>
+    </div>
+
+    <!-- 3Dmol Viewer Container -->
+    <div id="viewer-container"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-overlay active">
+        <div class="spinner"></div>
+        <p class="text-lg font-medium text-slate-200">Generating Crystal Lattice...</p>
+        <p id="loading-text" class="text-sm text-slate-400 mt-2">Connecting to COD/Crystallography Open Database</p>
+    </div>
+
+    <!-- UI Overlay (Bottom) -->
+    <div id="ui-overlay">
+
+        <!-- Selection Panel -->
+        <div class="side-panel glass-panel p-4 flex flex-col space-y-2 max-h-[40vh] overflow-y-auto">
+            <h2 class="text-sm font-bold text-white mb-1 border-b border-slate-700 pb-1">Select Substance</h2>
+
+            <button class="mol-btn active flex flex-col" data-crystal="nacl" onclick="loadCrystal(this)">
+                <span class="font-bold text-sm text-blue-300">Sodium Chloride (NaCl)</span>
+                <span class="text-[10px] text-slate-400">Ionic Lattice • Melting Pt: 801&deg;C</span>
+            </button>
+
+            <button class="mol-btn flex flex-col" data-crystal="diamond" onclick="loadCrystal(this)">
+                <span class="font-bold text-sm text-slate-200">Diamond (C)</span>
+                <span class="text-[10px] text-slate-400">Covalent Network • Melting Pt: 4000&deg;C+</span>
+            </button>
+
+            <button class="mol-btn flex flex-col" data-crystal="graphite" onclick="loadCrystal(this)">
+                <span class="font-bold text-sm text-slate-400">Graphite (C)</span>
+                <span class="text-[10px] text-slate-400">2D Network (Sheets) • Sublimes</span>
+            </button>
+        </div>
+
+        <!-- Investigation Panel -->
+        <div class="main-panel">
+            <div class="glass-panel p-4 flex-grow">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-sm font-bold text-white">Scale Investigation (Unit Cell &rarr; Bulk)</h2>
+                    <span id="scale-badge" class="text-xs font-bold bg-blue-900 text-blue-200 px-2 py-1 rounded">1x1x1 (Unit Cell)</span>
+                </div>
+
+                <p class="text-xs text-slate-300 mb-3">
+                    Drag the slider to replicate the basic unit cell and build the macroscopic "bulk" structure.
+                    Notice how the repeating electrical forces (bonds) create an immensely stable, rigid grid.
+                </p>
+
+                <div class="flex items-center space-x-4 mb-4">
+                    <span class="text-xs text-slate-400 font-bold">1x</span>
+                    <input type="range" id="supercell-slider" min="1" max="5" step="1" value="1">
+                    <span class="text-xs text-slate-400 font-bold">5x</span>
+                </div>
+
+                <div class="bg-slate-800 p-3 rounded border border-slate-600">
+                    <p class="text-xs font-medium text-white mb-2">Based on the bulk structure you built, infer the strength of the electrical forces holding the lattice together.</p>
+                    <select id="quiz-1" class="w-full bg-slate-900 text-xs text-slate-200 p-2 rounded border border-slate-600 focus:outline-none focus:border-blue-500">
+                        <option value="">Select inference...</option>
+                        <option value="wrong1">The forces are weak, which is why it melts at room temperature.</option>
+                        <option value="correct">The continuous network of strong bonds requires massive heat energy (high melting point) to break.</option>
+                        <option value="wrong2">The forces exist only between individual molecules, allowing them to slide easily.</option>
+                    </select>
+                    <button onclick="checkAnswer()" class="mt-2 w-full py-1.5 bg-blue-600 hover:bg-blue-500 rounded text-xs text-white font-bold transition-colors">Submit Inference</button>
+                    <div id="feedback" class="text-xs hidden text-center font-bold mt-2"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let viewer;
+        let isFlying = false;
+        let flyInterval;
+
+        // CIF files define crystal unit cells.
+        // We will load direct strings of common CIFs to avoid CORS/Network issues with COD
+        const crystals = {
+            'nacl': {
+                name: 'Sodium Chloride',
+                // Simplified CIF for Halite (NaCl)
+                data: `data_global
+_chemical_name_mineral 'Halite'
+_cell_length_a 5.6402
+_cell_length_b 5.6402
+_cell_length_c 5.6402
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+_symmetry_space_group_name_H-M 'F m -3 m'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+Na 0.00000 0.00000 0.00000
+Cl 0.50000 0.50000 0.50000`
+            },
+            'diamond': {
+                name: 'Diamond',
+                data: `data_global
+_chemical_name_mineral 'Diamond'
+_cell_length_a 3.5667
+_cell_length_b 3.5667
+_cell_length_c 3.5667
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+_symmetry_space_group_name_H-M 'F d -3 m'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C 0.00000 0.00000 0.00000`
+            },
+            'graphite': {
+                name: 'Graphite',
+                data: `data_global
+_chemical_name_mineral 'Graphite'
+_cell_length_a 2.4612
+_cell_length_b 2.4612
+_cell_length_c 6.7090
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 120
+_symmetry_space_group_name_H-M 'P 63/m m c'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 0.00000 0.00000 0.25000
+C2 0.33333 0.66667 0.25000`
+            }
+        };
+
+        window.simulationState = {
+            currentCrystal: 'nacl',
+            scale: 1,
+            loaded: false
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initViewer();
+
+            document.getElementById('supercell-slider').addEventListener('input', (e) => {
+                let scale = parseInt(e.target.value);
+                window.simulationState.scale = scale;
+                document.getElementById('scale-badge').innerText = `${scale}x${scale}x${scale} (Bulk)`;
+
+                // Real-time generation of supercell is slow, so we throttle or just do it on change
+                // For a smooth slider in testing, we use 'change', but for UI 'input' is nicer.
+                // We'll update it immediately.
+                renderCrystal();
+            });
+
+            // Initial load
+            loadCrystal('nacl');
+        });
+
+        function initViewer() {
+            let container = document.getElementById('viewer-container');
+            viewer = $3Dmol.createViewer(container, {
+                backgroundColor: '0x0f172a',
+                antialias: true
+            });
+        }
+
+        window.loadCrystal = function(clickedButton) {
+            if (!viewer) return;
+
+            let crystalKey;
+            // Fallback for playwright test compatibility
+            if (typeof clickedButton === 'string') {
+                crystalKey = clickedButton;
+                clickedButton = document.querySelector(`[data-crystal="${crystalKey}"]`);
+            } else {
+                crystalKey = clickedButton.dataset.crystal;
+            }
+
+            document.querySelectorAll('.mol-btn').forEach(btn => btn.classList.remove('active'));
+            if (clickedButton) clickedButton.classList.add('active');
+
+            window.simulationState.currentCrystal = crystalKey;
+
+            // Reset scale when loading new crystal
+            document.getElementById('supercell-slider').value = 1;
+            window.simulationState.scale = 1;
+            document.getElementById('scale-badge').innerText = `1x1x1 (Unit Cell)`;
+
+            // Stop flying
+            if (isFlying) flythrough();
+
+            renderCrystal();
+        }
+
+        function renderCrystal() {
+            let loadingUI = document.getElementById('loading');
+            loadingUI.classList.add('active');
+
+            // Small timeout to allow UI to render the loading screen before blocking JS thread
+            setTimeout(() => {
+                viewer.clear();
+
+                let scale = window.simulationState.scale;
+                let data = crystals[window.simulationState.currentCrystal].data;
+
+                // Add model using CIF format. We pass options to generate the supercell
+                // options: {doAssembly: true, normalize: true, supercell: [x,y,z]}
+                // Actually, 3Dmol's addModel for CIF with supercell is undocumented but works via 'supercell' option sometimes,
+                // Alternatively, we use `replicateUnitCell`. Let's use `replicateUnitCell` if available, or just parse CIF
+                // with options.
+
+                // The correct way in 3Dmol to draw a supercell from CIF is passing duplicate/replicate opts.
+                // Or simply adding the model and calling addUnitCell. 3Dmol has built-in supercell generation in CIF parser:
+                let m = viewer.addModel(data, "cif", {supercell: [scale, scale, scale]});
+
+                // Style: Sticks and Balls
+                viewer.setStyle({}, {
+                    stick: {radius: 0.15, colorscheme: 'Jmol'},
+                    sphere: {radius: 0.4, colorscheme: 'Jmol'}
+                });
+
+                // Optional: Draw the unit cell outline if scale == 1
+                if (scale === 1) {
+                    viewer.addUnitCell(m, {box:{color:'white'}, a:{hidden:true}, b:{hidden:true}, c:{hidden:true}});
+                } else {
+                    viewer.removeAllLabels();
+                    viewer.removeAllShapes(); // Remove unit cell box
+                }
+
+                viewer.zoomTo();
+                viewer.render();
+
+                loadingUI.classList.remove('active');
+                window.simulationState.loaded = true;
+            }, 50);
+        }
+
+        let flyAnimationId = null;
+
+        function flyLoop() {
+            if (!isFlying || !viewer) return;
+            viewer.translate(0, 0, 1);
+            viewer.rotate(0.5, "y");
+            viewer.rotate(0.2, "x");
+            viewer.render();
+            flyAnimationId = requestAnimationFrame(flyLoop);
+        }
+
+        window.flythrough = function() {
+            let btn = document.getElementById('fly-btn');
+            if (isFlying) {
+                isFlying = false;
+                if (flyAnimationId) cancelAnimationFrame(flyAnimationId);
+                btn.innerText = "🚀 Start Flythrough";
+                btn.classList.replace('bg-red-600', 'bg-indigo-600');
+                btn.classList.replace('hover:bg-red-500', 'hover:bg-indigo-500');
+                viewer.zoomTo();
+            } else {
+                // Must be bulk to fly through
+                if (window.simulationState.scale < 3) {
+                    document.getElementById('supercell-slider').value = 3;
+                    document.getElementById('supercell-slider').dispatchEvent(new Event('input'));
+                }
+
+                isFlying = true;
+                btn.innerText = "🛑 Stop Flythrough";
+                btn.classList.replace('bg-indigo-600', 'bg-red-600');
+                btn.classList.replace('hover:bg-indigo-500', 'hover:bg-red-500');
+
+                // Zoom in close
+                viewer.zoom(5);
+
+                // Set up a camera translation loop
+                flyAnimationId = requestAnimationFrame(flyLoop);
+            }
+        }
+
+        window.checkAnswer = function() {
+            let guess = document.getElementById('quiz-1').value;
+            let feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'text-green-400', 'text-red-400');
+
+            if (guess === 'correct') {
+                feedback.innerText = "Correct! The continuous 3D network of covalent or ionic bonds means immense energy is needed to break them apart, resulting in macroscopic properties like extreme hardness and high melting points.";
+                feedback.classList.add('text-green-400');
+            } else if (guess !== '') {
+                feedback.innerText = "Not quite. Look at how every single particle is bonded to its neighbors in all directions.";
+                feedback.classList.add('text-red-400');
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (viewer) viewer.resize();
+        });
+    </script>
+</body>
+</html>
