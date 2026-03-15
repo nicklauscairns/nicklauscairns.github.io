@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyme Disease Ecology: The Acorn Connection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Analytics Tracking -->
+    <script>
+        window.addEventListener('load', function() {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1';
+            document.head.appendChild(script);
+
+            script.onload = function() {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-DKDGNLCXQ1');
+            };
+        });
+    </script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0fdf4; color: #1f2937; }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .slider-thumb::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #166534; cursor: pointer; }
+        .slider-thumb::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #166534; cursor: pointer; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-green-900 mb-2">Lyme Disease Ecology: The Acorn Connection</h1>
+            <p class="text-lg text-green-800">Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Controls Panel -->
+            <div class="glass-panel p-6 rounded-2xl lg:col-span-1 space-y-6">
+                <h2 class="text-2xl font-bold text-green-900 border-b pb-2">Ecosystem Variables</h2>
+
+                <div class="space-y-4">
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Acorn Crop (Year 1)</label>
+                        <p class="text-xs text-gray-500 mb-2">Oak trees periodically produce massive amounts of acorns ("mast year").</p>
+                        <input type="range" id="acorn-slider" min="10" max="100" value="20" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        <div class="flex justify-between text-xs font-medium text-gray-500 mt-1">
+                            <span>Poor</span><span>Mast Year (Boom)</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Fox & Owl Population</label>
+                        <p class="text-xs text-gray-500 mb-2">Predators that primarily hunt small rodents.</p>
+                        <input type="range" id="predator-slider" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb" style="background: #1e3a8a;">
+                        <div class="flex justify-between text-xs font-medium text-gray-500 mt-1">
+                            <span>Low (Fragmented Forest)</span><span>High (Intact Forest)</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Deer Density</label>
+                        <p class="text-xs text-gray-500 mb-2">Hosts for adult ticks to mate and lay eggs. (Deer do not infect ticks with Lyme).</p>
+                        <input type="range" id="deer-slider" min="10" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb" style="background: #9a3412;">
+                        <div class="flex justify-between text-xs font-medium text-gray-500 mt-1">
+                            <span>Low</span><span>Overpopulated</span>
+                        </div>
+                    </div>
+
+                    <button id="run-btn" class="w-full py-3 bg-green-700 hover:bg-green-800 text-white font-bold rounded-lg shadow transition duration-200">
+                        Run 4-Year Simulation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Visualization Area -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Chart Panel -->
+                <div class="glass-panel p-6 rounded-2xl relative">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">4-Year Ecological Data Log</h2>
+                    <div class="h-80 w-full relative">
+                        <canvas id="ecologyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Inquiry & Field Notes -->
+                <div class="glass-panel p-6 rounded-2xl bg-yellow-50 border-yellow-200">
+                    <h2 class="text-xl font-bold text-yellow-900 mb-3 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        Ecologist's Field Notes
+                    </h2>
+                    <div class="text-sm text-yellow-800 space-y-3">
+                        <p><strong>Observation 1:</strong> Set the Acorn Crop to "Mast Year" and Run the simulation. Notice when the white-footed mouse population peaks.</p>
+                        <p><strong>Observation 2:</strong> Look at the "Infected Nymph Ticks (Human Risk)" line. Why is there a 2-year delay between the acorn mast and the peak risk for humans?</p>
+                        <p><strong>Challenge:</strong> Many people assume culling deer is the best way to stop Lyme disease. Try reducing the Deer Density to 'Low' while keeping Acorns high. Does the human risk drop significantly? Now try increasing Fox & Owl populations. Which strategy is more effective at reducing infected nymphs?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Simulation State
+        const simulationState = {
+            months: 48, // 4 years
+            acornCrop: parseInt(document.getElementById('acorn-slider').value),
+            predators: parseInt(document.getElementById('predator-slider').value),
+            deerDensity: parseInt(document.getElementById('deer-slider').value),
+            data: {
+                labels: Array.from({length: 48}, (_, i) => `Month ${i+1}`),
+                acorns: new Array(48).fill(0),
+                mice: new Array(48).fill(0),
+                nymphs: new Array(48).fill(0) // Infected Questing Nymphs (Human Risk)
+            }
+        };
+
+        // Chart.js Configuration
+        const ctx = document.getElementById('ecologyChart').getContext('2d');
+        const ecologyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: simulationState.data.labels,
+                datasets: [
+                    {
+                        label: 'Acorn Abundance',
+                        data: simulationState.data.acorns,
+                        borderColor: '#166534', // Dark Green
+                        backgroundColor: 'rgba(22, 101, 52, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'White-footed Mouse Population',
+                        data: simulationState.data.mice,
+                        borderColor: '#ca8a04', // Yellow/Brown
+                        backgroundColor: 'rgba(202, 138, 4, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Infected Nymph Ticks (Human Risk)',
+                        data: simulationState.data.nymphs,
+                        borderColor: '#dc2626', // Red
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1' // Use secondary axis for scale differences
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    title: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                let month = parseInt(context[0].label.split(' ')[1]);
+                                let year = Math.ceil(month / 12);
+                                return `Year ${year}, Month ${(month-1)%12 + 1}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Time (Months over 4 Years)' },
+                        ticks: {
+                            callback: function(value, index) {
+                                // Only show yearly ticks to avoid clutter
+                                if (index % 12 === 0) return 'Year ' + (index / 12 + 1);
+                                return null;
+                            }
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'Population Density (Acorns / Mice)' },
+                        suggestedMax: 200
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Infected Nymphs / Hectare' },
+                        grid: { drawOnChartArea: false }, // only want the grid lines for one axis
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+
+        // Event Listeners for UI
+        document.getElementById('acorn-slider').addEventListener('input', (e) => {
+            simulationState.acornCrop = parseInt(e.target.value);
+            runSimulation();
+        });
+        document.getElementById('predator-slider').addEventListener('input', (e) => {
+            simulationState.predators = parseInt(e.target.value);
+            runSimulation();
+        });
+        document.getElementById('deer-slider').addEventListener('input', (e) => {
+            simulationState.deerDensity = parseInt(e.target.value);
+            runSimulation();
+        });
+        document.getElementById('run-btn').addEventListener('click', runSimulation);
+
+        // Core Ecological Mathematical Model
+        function runSimulation() {
+            // Initial conditions
+            let currentMice = 20; // Base surviving winter population
+            let larvalTicks = 500; // Base background ticks hatching in spring
+
+            // Clear previous data
+            simulationState.data.acorns.fill(0);
+            simulationState.data.mice.fill(0);
+            simulationState.data.nymphs.fill(0);
+
+            for (let month = 0; month < simulationState.months; month++) {
+                let currentYear = Math.floor(month / 12);
+                let monthOfYear = month % 12; // 0=Jan, 11=Dec
+
+                // 1. Acorn Availability (Year 0/1 Mast Event)
+                // Acorns fall in Autumn (months 8, 9, 10). The 'Mast Event' is a huge surplus in Year 1.
+                // We must carry over the availability from the previous month to accumulate and decay properly.
+                let acornAvailability = (month > 0) ? simulationState.data.acorns[month - 1] : 10;
+
+                if (currentYear === 0 && (monthOfYear >= 8 && monthOfYear <= 10)) {
+                    // Add fresh acorns during fall
+                    acornAvailability += simulationState.acornCrop * 5; // Stronger multiplier
+                } else {
+                    // Decay over time (eaten by other animals, rotting)
+                    acornAvailability = acornAvailability * 0.8;
+                }
+
+                // Ensure a base level of acorns/food
+                acornAvailability = Math.max(10, acornAvailability);
+                simulationState.data.acorns[month] = acornAvailability;
+
+                // 2. Mouse Population Dynamics (Logistic Growth dependent on Acorns & Predators)
+                // Mice breed primarily in Spring/Summer, driven heavily by over-winter survival from Acorns.
+                let carryingCapacity = 20 + (acornAvailability * 0.5); // Directly tied to food availability
+
+                let growthRate = 0.5; // High breeding rate in summer
+                if (monthOfYear >= 10 || monthOfYear <= 2) {
+                    // Winter: population usually drops, but acorns cushion the fall.
+                    // If acornAvailability is high (> 200), growthRate stays positive.
+                    growthRate = -0.4 + (acornAvailability / 500);
+                }
+
+                let predationRate = simulationState.predators * 0.002; // Foxes/Owls reduce mice
+
+                let newMice = currentMice + (growthRate * currentMice * (1 - currentMice / carryingCapacity)) - (currentMice * predationRate);
+                currentMice = Math.max(2, newMice); // Minimum survival population
+                simulationState.data.mice[month] = currentMice;
+
+                // 3. Tick Lifecycle & Infection Dynamics
+                // Ticks have a 2-year lifecycle.
+                // Year 1, August (month 7): Larvae hatch and quest for first blood meal.
+                // They primarily bite mice. If the mouse is infected, the tick becomes an infected nymph.
+
+                let questingNymphs = 0;
+
+                // Simple model: The number of infected nymphs in Spring of Year 2 (and 3, etc)
+                // is directly proportional to the density of mice in the Summer of the PREVIOUS year.
+                if (month >= 12 && (monthOfYear >= 4 && monthOfYear <= 7)) { // Spring/Summer questing nymphs
+                    // Look back 10-12 months to when they were feeding larvae
+                    let pastMouseDensity = simulationState.data.mice[month - 10] || 10;
+
+                    // The more mice there were during larval feeding, the higher the infection rate.
+                    // Deer keep the overall tick population alive, but don't infect them.
+                    let baseSurvival = simulationState.deerDensity * 0.5; // Deer provide the adult blood meal for the PREVIOUS generation to lay eggs
+                    let infectionProbability = Math.min(0.9, pastMouseDensity / 150); // Mice are the primary reservoir
+
+                    questingNymphs = baseSurvival * infectionProbability * 5; // Scaling factor for chart
+                }
+
+                simulationState.data.nymphs[month] = Math.max(0, questingNymphs);
+            }
+
+            ecologyChart.update();
+        }
+
+        // Expose to window for Playwright testing
+        window.simulationState = simulationState;
+        window.runSimulation = runSimulation;
+
+        // Initial Run
+        runSimulation();
+    </script>
+</body>
+</html>

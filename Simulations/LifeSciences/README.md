@@ -363,6 +363,34 @@ Use mathematical representations to support and revise explanations based on evi
     </ul>
   </details>
 
+- [Lyme Disease Ecology: The Acorn Connection](LymeDiseaseEcology.html) - Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests, modeling the 2-year delay between acorn mast events, white-footed mouse population booms, and infected tick surges.
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 5.0/5 Stars | 2026-03-15 01:45:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An exceptional investigative phenomenon that addresses a highly relevant regional problem (Lyme Disease in New England/Connecticut) by challenging common assumptions (e.g., culling deer is the main solution). It clearly links the multi-year ecological cascade (acorns -> mice -> infected ticks).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (LS2.C) regarding ecosystem dynamics and resilience. Strongly supports SEP (Using Mathematics and Computational Thinking) by modeling population lag times.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Data Analysis:</b> Add an interactive tooltip or highlight over the Chart.js graph to explicitly point out the '2-Year Delay' gap between the green acorn peak and the red tick peak.</li>
+          <li><b>Visual Representation:</b> Add a dynamic visual forest floor alongside the chart that spawns SVG mice and ticks proportional to the populations to give a visceral sense of density.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add Chart.js annotation plugin to highlight the temporal gap.</li>
+          <li>[ ] Create an SVG spawning forest floor canvas next to the chart.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 ### HS-LS2-3
 Construct and revise an explanation based on evidence for the cycling of matter and flow of energy in aerobic and anaerobic conditions.
 
