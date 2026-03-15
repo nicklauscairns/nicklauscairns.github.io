@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portland Brownstone Quarry Simulator (Middletown Area)</title>
+    <meta name="description" content="A resource management and historical settlement simulator where users guide the development of the Portland/Middletown area based on the extraction of brownstone.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Portland Brownstone Quarry Simulator">
+    <meta property="og:description" content="Interactive NGSS-aligned simulation on resource extraction, settlement growth, and flood hazards in Portland, CT.">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/PortlandBrownstoneQuarry.html">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Portland Brownstone Quarry Simulator",
+        "learningResourceType": "Simulation",
+        "educationalLevel": "High School",
+        "educationalUse": "Instruction"
+      }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
+    </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center">
+    <header class="w-full max-w-6xl mb-6 bg-white p-6 rounded-lg shadow-sm">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Portland Brownstone Quarry Simulator</h1>
+        <p class="text-gray-600">
+            <strong>NGSS HS-ESS3-1:</strong> Construct an explanation based on evidence for how the availability of natural resources, occurrence of natural hazards, and changes in climate have influenced human activity.
+        </p>
+        <p class="text-gray-600 mt-2 text-sm">
+            Located across the Connecticut River from Middletown, CT, the Portland Brownstone Quarries provided building material for iconic structures in New York City, Boston, and beyond. In this simulation, manage extraction rates, workforce, and transportation while navigating the ever-present hazard of river flooding (which famously halted major operations in 1938).
+        </p>
+    </header>
+
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Controls & HUD -->
+        <div class="flex flex-col gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Resource Dashboard</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Year</div>
+                        <div id="hud-year" class="font-bold text-xl text-blue-600">1850</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Workforce</div>
+                        <div id="hud-workforce" class="font-bold text-xl">50</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Stone Extracted</div>
+                        <div id="hud-stone" class="font-bold text-xl text-amber-700">0 tons</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Local Wealth</div>
+                        <div id="hud-wealth" class="font-bold text-xl text-green-600">$10,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Management Actions</h2>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Extraction Rate (Workers per block)</label>
+                    <input type="range" id="extraction-slider" min="1" max="5" value="1" class="w-full accent-amber-700">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>Slow / Safe</span>
+                        <span>Fast / Risky</span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <button id="btn-recruit" class="w-full bg-blue-50 text-blue-700 font-semibold py-2 px-4 border border-blue-200 rounded hover:bg-blue-100 transition-colors mb-2">
+                        Recruit 10 Workers (-$500)
+                    </button>
+                    <button id="btn-sell" class="w-full bg-green-50 text-green-700 font-semibold py-2 px-4 border border-green-200 rounded hover:bg-green-100 transition-colors">
+                        Sell Stone (+Wealth, -Stone)
+                    </button>
+                </div>
+
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-md">
+                    <h3 class="font-semibold text-amber-800 text-sm mb-1">Flood Risk Level</h3>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                        <div id="risk-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 10%"></div>
+                    </div>
+                    <p id="risk-text" class="text-xs text-amber-700">Low Risk. Mining deep increases risk of river breach.</p>
+                </div>
+
+                <div class="mt-4 flex gap-2">
+                    <button id="btn-play" class="flex-1 bg-gray-800 text-white font-semibold py-2 px-4 rounded hover:bg-gray-700 transition-colors">
+                        Play Year
+                    </button>
+                    <button id="btn-reset" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Grid -->
+        <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col items-center">
+            <h2 class="text-xl font-semibold mb-4 w-full border-b pb-2">Portland Quarry Map</h2>
+            <div id="quarry-container" class="grid grid-cols-10 gap-0.5 bg-gray-200 p-0.5 w-full max-w-sm mb-4">
+                <!-- Grid generated by JS -->
+            </div>
+            <div class="text-sm text-gray-600 w-full">
+                <p><strong>Instructions:</strong> Click brownstone blocks to mark them for extraction. The deeper you mine (closer to the river), the higher the risk of a flood event during the year.</p>
+            </div>
+            <div id="event-log" class="w-full mt-4 h-32 overflow-y-auto bg-gray-50 p-3 rounded border text-sm font-mono text-gray-700">
+                &gt; Welcome to Portland, CT (1850).
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">Historical Impact Analysis</h2>
+            <div class="flex-1 min-h-[250px] relative">
+                <canvas id="impactChart"></canvas>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p>Observe how the local population (workforce) and wealth fluctuate based on the availability of the resource and the impact of natural hazards (flooding).</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const CONFIG = {
+            START_YEAR: 1850,
+            POWER_COST_PER_BLOCK: 10,
+            YEARS_PER_CLICK: 2,
+            ACCIDENT_PROBABILITY: 0.2,
+            GRID_SIZE: 10
+        };
+
+        // Simulation State
+        const state = {
+            year: CONFIG.START_YEAR,
+            workforce: 50,
+            stone: 0,
+            wealth: 10000,
+            floodRisk: 10,
+            gameOver: false,
+            grid: [], // 10x10 grid. 0 = unmined, 1 = mined, 2 = river, 3 = flooded, 4 = marked for mining
+            history: {
+                labels: [],
+                wealth: [],
+                workforce: [],
+                stone: []
+            }
+        };
+
+        // Expose state for Playwright testing
+        window.simulationState = state;
+
+        let chartInstance = null;
+
+        // DOM Elements
+        const els = {
+            year: document.getElementById('hud-year'),
+            workforce: document.getElementById('hud-workforce'),
+            stone: document.getElementById('hud-stone'),
+            wealth: document.getElementById('hud-wealth'),
+            grid: document.getElementById('quarry-container'),
+            log: document.getElementById('event-log'),
+            btnPlay: document.getElementById('btn-play'),
+            btnReset: document.getElementById('btn-reset'),
+            btnRecruit: document.getElementById('btn-recruit'),
+            btnSell: document.getElementById('btn-sell'),
+            sliderExt: document.getElementById('extraction-slider'),
+            riskBar: document.getElementById('risk-bar'),
+            riskText: document.getElementById('risk-text')
+        };
+
+        // Initialize Simulation
+        function init() {
+            els.log.innerHTML = '';
+            state.year = CONFIG.START_YEAR;
+            state.workforce = 50;
+            state.stone = 0;
+            state.wealth = 10000;
+            state.floodRisk = 10;
+            state.gameOver = false;
+
+            state.history = { labels: [], wealth: [], workforce: [], stone: [] };
+
+            // Setup Grid (River on the right side - cols 8,9)
+            state.grid = Array(CONFIG.GRID_SIZE).fill().map(() => Array(CONFIG.GRID_SIZE).fill(0));
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                state.grid[r][8] = 2; // River
+                state.grid[r][9] = 2; // River
+            }
+
+            // Initialize Event Delegation for Grid (only do this once)
+            if (!els.grid.dataset.initialized) {
+                els.grid.addEventListener('click', (event) => {
+                    const cell = event.target.closest('.quarry-cell');
+                    if (cell) {
+                        handleCellClick(parseInt(cell.dataset.r), parseInt(cell.dataset.c));
+                    }
+                });
+                els.grid.dataset.initialized = "true";
+            }
+
+            renderGrid();
+            calculateRisk();
+            updateHUD();
+            log("Welcome to Portland, CT (1850).");
+            log("Quarry initialized. Operations ready.");
+            initChart();
+            recordHistory();
+            els.btnPlay.disabled = false;
+        }
+
+        // Render Grid
+        function renderGrid() {
+            els.grid.innerHTML = '';
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
+                    const cell = document.createElement('button');
+                    cell.type = 'button';
+                    cell.className = 'quarry-cell w-full aspect-w-1 aspect-h-1 h-0 pb-[100%] rounded-sm transition-all duration-200';
+                    cell.dataset.r = r;
+                    cell.dataset.c = c;
+                    cell.setAttribute('aria-label', `Quarry cell row ${r + 1}, column ${c + 1}`);
+                    cell.setAttribute('aria-pressed', String(state.grid[r][c] === 4));
+
+                    if(state.grid[r][c] === 0) {
+                        cell.classList.add('bg-amber-800', 'cursor-pointer', 'hover:opacity-80');
+                    } else if(state.grid[r][c] === 1) {
+                        cell.classList.add('bg-gray-300', 'cursor-pointer');
+                    } else if(state.grid[r][c] === 2) {
+                        cell.classList.add('bg-blue-500', 'cursor-default');
+                    } else if(state.grid[r][c] === 3) {
+                        cell.classList.add('bg-blue-800', 'cursor-default');
+                    } else if(state.grid[r][c] === 4) {
+                        cell.classList.add('bg-amber-800', 'border-2', 'border-red-500', 'cursor-pointer', 'hover:opacity-80');
+                    }
+
+                    if (state.grid[r][c] === 2 || state.grid[r][c] === 3) {
+                        cell.disabled = true;
+                    }
+
+                    els.grid.appendChild(cell);
+                }
+            }
+        }
+
+        function handleCellClick(r, c) {
+            if(state.gameOver) return;
+            if(state.grid[r][c] === 2 || state.grid[r][c] === 3) return; // Can't click river/flooded
+
+            if(state.grid[r][c] === 0) {
+                state.grid[r][c] = 4; // Mark for mining
+            } else if(state.grid[r][c] === 4) {
+                state.grid[r][c] = 0; // Unmark
+            }
+            renderGrid();
+            calculateRisk();
+        }
+
+        function calculateRisk() {
+            let markedCount = 0;
+            let minDistanceToRiver = 10;
+
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
+                    if(state.grid[r][c] === 1 || state.grid[r][c] === 4) {
+                        // Mined or marked block distance to river (col 8)
+                        let dist = 8 - c;
+                        if(dist < minDistanceToRiver) minDistanceToRiver = dist;
+                    }
+                    if(state.grid[r][c] === 4) markedCount++;
+                }
+            }
+
+            // Risk increases if mining close to river, and base risk over time
+            let risk = 10 + (10 - minDistanceToRiver) * 8 + (state.year - CONFIG.START_YEAR) * 0.5;
+
+            // Climate modifier: arbitrary spike in 1938 for the historical hurricane
+            if (state.year >= 1935 && state.year <= 1940) {
+                risk += 30; // Severe weather period
+            }
+
+            state.floodRisk = Math.min(100, Math.max(0, risk));
+            els.riskBar.style.width = `${state.floodRisk}%`;
+
+            if(state.floodRisk < 30) {
+                els.riskBar.className = 'h-2.5 rounded-full bg-green-500 transition-all duration-500';
+                els.riskText.textContent = "Low Risk. River levels stable.";
+            } else if(state.floodRisk < 70) {
+                els.riskBar.className = 'h-2.5 rounded-full bg-yellow-500 transition-all duration-500';
+                els.riskText.textContent = "Moderate Risk. Ground instability near river.";
+            } else {
+                els.riskBar.className = 'h-2.5 rounded-full bg-red-600 transition-all duration-500';
+                els.riskText.textContent = "HIGH RISK. Flooding imminent. Secure operations!";
+            }
+        }
+
+        // Actions
+        els.btnRecruit.addEventListener('click', () => {
+            if(state.gameOver) return;
+            if(state.wealth >= 500) {
+                state.wealth -= 500;
+                state.workforce += 10;
+                log(`Recruited 10 workers. Workforce now ${state.workforce}.`);
+                updateHUD();
+            } else {
+                log("Not enough wealth to recruit.");
+            }
+        });
+
+        els.btnSell.addEventListener('click', () => {
+            if(state.gameOver) return;
+            if(state.stone >= 10) {
+                let saleAmount = Math.floor(state.stone / 10) * 10;
+                let revenue = saleAmount * 150; // $150 per ton
+                state.stone -= saleAmount;
+                state.wealth += revenue;
+                log(`Sold ${saleAmount} tons of brownstone to NYC for $${revenue}.`);
+                updateHUD();
+            } else {
+                log("Need at least 10 tons of stone to form a shipping manifest.");
+            }
+        });
+
+        // Main Game Loop step
+        els.btnPlay.addEventListener('click', () => {
+            if(state.gameOver) return;
+
+            const extractionPowerPerWorker = parseInt(els.sliderExt.value);
+            let totalPower = state.workforce * extractionPowerPerWorker;
+            let blocksMined = 0;
+            let accidents = 0;
+
+            // Mine marked blocks
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
+                    if(state.grid[r][c] === 4) {
+                        if(totalPower >= CONFIG.POWER_COST_PER_BLOCK) {
+                            state.grid[r][c] = 1;
+                            totalPower -= CONFIG.POWER_COST_PER_BLOCK;
+                            blocksMined++;
+                            state.stone += 10; // 10 tons per block
+
+                            // High extraction rate = risk of accidents
+                            if(extractionPowerPerWorker > 3 && Math.random() < CONFIG.ACCIDENT_PROBABILITY) {
+                                accidents++;
+                            }
+                        } else {
+                            // Not enough workforce to mine this block this year
+                        }
+                    }
+                }
+            }
+
+            state.year += CONFIG.YEARS_PER_CLICK;
+
+            // Costs
+            let wages = state.workforce * 10;
+            state.wealth -= wages;
+
+            if(blocksMined > 0) {
+                log(`Year ${state.year}: Extracted ${blocksMined*10} tons. Paid $${wages} in wages.`);
+            } else {
+                log(`Year ${state.year}: Paid $${wages} in wages. No stone extracted.`);
+            }
+
+            if(accidents > 0) {
+                let workersLost = accidents * 2;
+                state.workforce = Math.max(0, state.workforce - workersLost);
+                log(`⚠️ Mining accidents at high extraction rates! Lost ${workersLost} workers.`);
+            }
+
+            // Natural Hazard Check
+            calculateRisk();
+            if(Math.random() < state.floodRisk / 100) {
+                triggerFlood();
+            } else if (state.wealth < 0) {
+                log("Bankruptcy! Cannot pay workers. Operations shut down.");
+                endGame();
+            } else {
+                renderGrid();
+                updateHUD();
+                recordHistory();
+                updateChart();
+            }
+        });
+
+        function triggerFlood() {
+            log("🚨 CATASTROPHIC FLOOD! The Connecticut River breached the quarry walls.");
+
+            // Flood mined blocks
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
+                    if(state.grid[r][c] === 1 || state.grid[r][c] === 4) {
+                        state.grid[r][c] = 3; // Flooded
+                    }
+                }
+            }
+
+            // Historical context logic
+            if(state.year >= 1935 && state.year <= 1940) {
+                log("The Great Hurricane of 1938 has flooded the quarries permanently. The industry never recovers.");
+            } else {
+                log("Equipment lost and operations severely damaged.");
+            }
+
+            state.workforce = Math.floor(state.workforce * 0.2); // 80% leave
+            state.wealth -= 5000; // Damages
+
+            renderGrid();
+            updateHUD();
+            recordHistory();
+            updateChart();
+            endGame();
+        }
+
+        function endGame() {
+            state.gameOver = true;
+            els.btnPlay.disabled = true;
+            log(`Simulation Ended in ${state.year}.`);
+
+            // Add a summary log connecting to NGSS
+            setTimeout(() => {
+                log("--- SUMMARY ---");
+                log("Observe how the availability of the resource (brownstone) drove population (workforce) and wealth.");
+                log("Ultimately, a natural hazard (flooding) altered human activity permanently, demonstrating the vulnerability of resource-dependent settlements.");
+            }, 1000);
+        }
+
+        function updateHUD() {
+            els.year.textContent = state.year;
+            els.workforce.textContent = state.workforce;
+            els.stone.textContent = `${state.stone} tons`;
+            els.wealth.textContent = `$${state.wealth}`;
+
+            if(state.wealth < 0) els.wealth.classList.replace('text-green-600', 'text-red-600');
+            else els.wealth.classList.replace('text-red-600', 'text-green-600');
+        }
+
+        function log(msg) {
+            const el = document.createElement('div');
+            el.textContent = `> ${msg}`;
+            els.log.appendChild(el);
+            els.log.scrollTop = els.log.scrollHeight;
+        }
+
+        // Charts
+        function initChart() {
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: state.history.labels,
+                    datasets: [
+                        {
+                            label: 'Workforce',
+                            data: state.history.workforce,
+                            borderColor: '#3b82f6',
+                            yAxisID: 'y',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Wealth ($)',
+                            data: state.history.wealth,
+                            borderColor: '#10b981',
+                            yAxisID: 'y1',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Population / Workforce' } },
+                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Wealth ($)' }, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+        }
+
+        function recordHistory() {
+            state.history.labels.push(state.year);
+            state.history.workforce.push(state.workforce);
+            state.history.wealth.push(state.wealth);
+            state.history.stone.push(state.stone);
+        }
+
+        function updateChart() {
+            if(!chartInstance) return;
+            chartInstance.update();
+        }
+
+        els.btnReset.addEventListener('click', init);
+
+        // Start
+        init();
+
+    </script>
+</body>
+</html>
