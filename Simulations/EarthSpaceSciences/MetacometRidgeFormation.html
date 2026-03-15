@@ -7,13 +7,7 @@
     <meta name="description" content="An interactive geological simulation modeling the formation of the Metacomet Ridge, including Higby and Beseck Mountains in Middletown, Connecticut.">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-DKDGNLCXQ1');
-    </script>
+    <script src="../common/analytics-loader.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
         #sim-container { max-width: 1200px; margin: 0 auto; }
@@ -89,8 +83,8 @@
 </div>
 
 <script>
-    // Simulation State exposed for Playwright
-    window.simulationState = {
+    // Initial State Definition
+    const INITIAL_STATE = {
         stage: 0, // 0: start, 1: rift, 2: sediment, 3: volcano, 4: tilt, 5: erode
         time: 0,
         animating: false,
@@ -101,6 +95,9 @@
         tiltAngle: 0,
         erosionLevel: 0
     };
+
+    // Simulation State exposed for Playwright
+    window.simulationState = { ...INITIAL_STATE };
 
     const canvas = document.getElementById('geoCanvas');
     const ctx = canvas.getContext('2d');
@@ -127,7 +124,29 @@
         sediment: '#DEB887',
         sedimentLine: '#CD853F',
         basalt: '#2F4F4F',
+        basaltJoints: '#1F3F3F',
+        erosionMask: 'black',
+        groundLine: '#333',
+        trees: '#228B22',
         grass: '#556B2F'
+    };
+
+    // Animation Constants
+    const ANIMATION_CONFIG = {
+        riftTargetWidth: 250,
+        riftWidthStep: 2,
+        valleyDropTarget: 100,
+        valleyDropStep: 1,
+        sedimentTargetDepth: 60,
+        sedimentDepthStep: 0.5,
+        basaltTargetDepth: 30,
+        basaltDepthStep: 0.5,
+        tiltTargetAngle: 15,
+        tiltAngleStep: 0.2,
+        tiltSedimentStep: 0.3,
+        tiltSedimentMax: 80,
+        erosionTargetLevel: 70,
+        erosionLevelStep: 0.5
     };
 
     let animationId = null;
@@ -215,7 +234,7 @@
             ctx.fillRect(blockLeft, currentFillY - state.basaltDepth, blockWidth, state.basaltDepth);
 
             // Draw columnar jointing lines
-            ctx.strokeStyle = '#1F3F3F';
+            ctx.strokeStyle = colors.basaltJoints;
             ctx.lineWidth = 1;
             for(let x = blockLeft + 10; x < blockRight; x += 15) {
                 ctx.beginPath();
@@ -264,7 +283,7 @@
         if (state.erosionLevel > 0) {
             // We use destination-out to erase the top parts of the canvas to simulate erosion flat line
             ctx.globalCompositeOperation = 'destination-out';
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = colors.erosionMask;
             // Determine erosion line (horizontal flat plane representing current ground level)
             const erosionLineY = groundY - 20 + state.erosionLevel;
 
@@ -274,7 +293,7 @@
             ctx.globalCompositeOperation = 'source-over';
 
             // Draw new ground line and grass
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = colors.groundLine;
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(0, erosionLineY);
@@ -336,7 +355,7 @@
                 ctx.fill();
 
                 // Add some trees
-                ctx.fillStyle = '#228B22';
+                ctx.fillStyle = colors.trees;
                 ctx.beginPath(); ctx.arc(ridgeStartX - 30, erosionLineY-5, 8, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(ridgeEndX + 40, erosionLineY-5, 10, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(ridgePeakX + 80, erosionLineY - 60 + 80*Math.tan(rad) - 5, 6, 0, Math.PI*2); ctx.fill();
@@ -353,45 +372,46 @@
 
     function animate() {
         const state = window.simulationState;
+        const cfg = ANIMATION_CONFIG;
         if (!state.animating) return;
 
         state.time++;
 
         if (state.stage === 1) { // Rifting
-            if (state.riftWidth < 250) state.riftWidth += 2;
-            if (state.valleyDrop < 100) state.valleyDrop += 1;
-            if (state.riftWidth >= 250 && state.valleyDrop >= 100) {
+            if (state.riftWidth < cfg.riftTargetWidth) state.riftWidth += cfg.riftWidthStep;
+            if (state.valleyDrop < cfg.valleyDropTarget) state.valleyDrop += cfg.valleyDropStep;
+            if (state.riftWidth >= cfg.riftTargetWidth && state.valleyDrop >= cfg.valleyDropTarget) {
                 state.animating = false;
                 enableButton(btnSediment);
             }
         }
         else if (state.stage === 2) { // Sedimentation
-            if (state.sedimentDepth < 60) state.sedimentDepth += 0.5;
-            if (state.sedimentDepth >= 60) {
+            if (state.sedimentDepth < cfg.sedimentTargetDepth) state.sedimentDepth += cfg.sedimentDepthStep;
+            if (state.sedimentDepth >= cfg.sedimentTargetDepth) {
                 state.animating = false;
                 enableButton(btnVolcano);
             }
         }
         else if (state.stage === 3) { // Volcanism
-            if (state.basaltDepth < 30) state.basaltDepth += 0.5;
-            if (state.basaltDepth >= 30) {
+            if (state.basaltDepth < cfg.basaltTargetDepth) state.basaltDepth += cfg.basaltDepthStep;
+            if (state.basaltDepth >= cfg.basaltTargetDepth) {
                 state.animating = false;
                 enableButton(btnTilt);
             }
         }
         else if (state.stage === 4) { // Tilting
             // Eastern tilting, about 15-20 degrees
-            if (state.tiltAngle < 15) state.tiltAngle += 0.2;
+            if (state.tiltAngle < cfg.tiltTargetAngle) state.tiltAngle += cfg.tiltAngleStep;
             // Add some more sediment on top as it tilts
-            if (state.sedimentDepth < 80) state.sedimentDepth += 0.3;
-            if (state.tiltAngle >= 15) {
+            if (state.sedimentDepth < cfg.tiltSedimentMax) state.sedimentDepth += cfg.tiltSedimentStep;
+            if (state.tiltAngle >= cfg.tiltTargetAngle) {
                 state.animating = false;
                 enableButton(btnErode);
             }
         }
         else if (state.stage === 5) { // Erosion
-            if (state.erosionLevel < 70) state.erosionLevel += 0.5;
-            if (state.erosionLevel >= 70) {
+            if (state.erosionLevel < cfg.erosionTargetLevel) state.erosionLevel += cfg.erosionLevelStep;
+            if (state.erosionLevel >= cfg.erosionTargetLevel) {
                 state.animating = false;
                 obsPanel.classList.remove('hidden');
             }
@@ -449,11 +469,7 @@
     });
 
     btnReset.addEventListener('click', () => {
-        window.simulationState = {
-            stage: 0, time: 0, animating: false,
-            riftWidth: 0, valleyDrop: 0, sedimentDepth: 0,
-            basaltDepth: 0, tiltAngle: 0, erosionLevel: 0
-        };
+        window.simulationState = { ...INITIAL_STATE };
         cancelAnimationFrame(animationId);
 
         enableButton(btnRift);
