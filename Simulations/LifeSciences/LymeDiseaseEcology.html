@@ -12,7 +12,7 @@
     <!-- Google Analytics placeholder -->
     <script>
         window.addEventListener('load', function() {
-            var script = document.createElement('script');
+            const script = document.createElement('script');
             script.async = true;
             script.src = 'https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1';
             document.head.appendChild(script);
@@ -48,7 +48,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Deer Population Factor (multiplier)</label>
+                        <label for="deerSlider" class="block text-sm font-medium text-slate-700 mb-1">Deer Population Factor (multiplier)</label>
                         <input type="range" id="deerSlider" min="0" max="2" step="0.1" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                         <div class="flex justify-between text-xs text-slate-500 mt-1">
                             <span>0x (None)</span>
@@ -122,6 +122,18 @@
         </div>
     </div>
     <script>
+        const TICK_MODEL_PARAMS = {
+            MOUSE_FACTOR: 0.7,
+            DEER_FACTOR: 0.3,
+            VACCINATION_EFFECTIVENESS: 0.3 // 70% reduction
+        };
+
+        const RISK_THRESHOLDS = {
+            SEVERE: 2.0,
+            HIGH: 1.4,
+            MODERATE: 0.8
+        };
+
         // State variables
         let currentYear = 0;
         let isVaccinated = false;
@@ -142,6 +154,24 @@
         let deerMultiplier = 1.0;
         let nextYearMast = false;
 
+        function updateVaccinationUI() {
+            let btn = document.getElementById('vaccinateMiceBtn');
+            let status = document.getElementById('vaccinateStatus');
+            if (!btn || !status) return;
+
+            if (isVaccinated) {
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                btn.textContent = "Stop Vaccination";
+                status.textContent = "Vaccination active. Infection transmission significantly reduced.";
+            } else {
+                btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                btn.textContent = "Vaccinate Mice";
+                status.textContent = "Reduces the probability of ticks contracting Lyme bacteria from mice.";
+            }
+        }
+
         function initializeState() {
             currentYear = 0;
             isVaccinated = false;
@@ -156,15 +186,7 @@
             document.getElementById('deerSlider').value = 1.0;
             document.getElementById('deerValue').textContent = "1.0x";
 
-            let btn = document.getElementById('vaccinateMiceBtn');
-            let status = document.getElementById('vaccinateStatus');
-            if (btn && status) {
-                btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
-                btn.textContent = "Vaccinate Mice";
-                status.textContent = "Reduces the probability of ticks contracting Lyme bacteria from mice.";
-            }
-
+            updateVaccinationUI();
             updateUI();
         }
 
@@ -190,11 +212,11 @@
             // Nymphs emerge 1 year after the mouse boom.
             // Risk depends on both prior mouse population and deer availability for adult ticks.
             let previousMice = dataMice[currentYear - 1] || baseMice;
-            let currentInfectedNymphs = baseTicks * (previousMice * 0.7 + deerMultiplier * 0.3);
+            let currentInfectedNymphs = baseTicks * (previousMice * TICK_MODEL_PARAMS.MOUSE_FACTOR + deerMultiplier * TICK_MODEL_PARAMS.DEER_FACTOR);
 
             // Vaccination effect: significantly reduces the proportion of infected nymphs
             if (isVaccinated) {
-                currentInfectedNymphs *= 0.3; // 70% reduction in infection rate
+                currentInfectedNymphs *= TICK_MODEL_PARAMS.VACCINATION_EFFECTIVENESS;
             }
 
             // Add variation
@@ -223,9 +245,9 @@
             document.getElementById('statTicks').textContent = currentNymphsVal.toFixed(2);
 
             let riskLevel = "Low";
-            if (currentNymphsVal > 2.0) riskLevel = "Severe";
-            else if (currentNymphsVal > 1.4) riskLevel = "High";
-            else if (currentNymphsVal > 0.8) riskLevel = "Moderate";
+            if (currentNymphsVal > RISK_THRESHOLDS.SEVERE) riskLevel = "Severe";
+            else if (currentNymphsVal > RISK_THRESHOLDS.HIGH) riskLevel = "High";
+            else if (currentNymphsVal > RISK_THRESHOLDS.MODERATE) riskLevel = "Moderate";
             document.getElementById('statRisk').textContent = riskLevel;
 
             // Update chart (will be implemented in next step)
@@ -381,20 +403,7 @@
 
         document.getElementById('vaccinateMiceBtn').addEventListener('click', () => {
             isVaccinated = !isVaccinated;
-            let btn = document.getElementById('vaccinateMiceBtn');
-            let status = document.getElementById('vaccinateStatus');
-
-            if (isVaccinated) {
-                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                btn.classList.add('bg-green-600', 'hover:bg-green-700');
-                btn.textContent = "Stop Vaccination";
-                status.textContent = "Vaccination active. Infection transmission significantly reduced.";
-            } else {
-                btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
-                btn.textContent = "Vaccinate Mice";
-                status.textContent = "Reduces the probability of ticks contracting Lyme bacteria from mice.";
-            }
+            updateVaccinationUI();
         });
 
         // Run initial setup
