@@ -36,42 +36,6 @@
     }
     </script>
 
-    <style>
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        }
-        canvas {
-            touch-action: none;
-        }
-        input[type=range] {
-            accent-color: #3b82f6;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 50;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 600px;
-            border-radius: 8px;
-        }
-    </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
 
@@ -88,7 +52,7 @@
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 gap-4">
 
         <!-- Simulation Canvas Area -->
-        <section class="flex-1 flex flex-col glass-panel rounded-xl shadow-lg overflow-hidden relative">
+        <section class="flex-1 flex flex-col bg-white/90 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] rounded-xl overflow-hidden relative">
             <div class="p-3 bg-slate-200 border-b border-slate-300 flex justify-between items-center">
                 <h2 class="font-semibold text-slate-700">4-Stroke Engine Cylinder</h2>
                 <div id="knockWarning" class="hidden text-red-600 font-bold animate-pulse bg-red-100 px-3 py-1 rounded-full border border-red-300">
@@ -96,7 +60,7 @@
                 </div>
             </div>
             <div class="flex-1 relative bg-white flex justify-center items-center p-4">
-                <canvas id="engineCanvas" width="400" height="500" class="max-w-full max-h-full"></canvas>
+                <canvas id="engineCanvas" width="400" height="500" class="max-w-full max-h-full [touch-action:none]"></canvas>
             </div>
         </section>
 
@@ -104,7 +68,7 @@
         <aside class="w-full lg:w-96 flex flex-col gap-4 overflow-y-auto">
 
             <!-- Inquiry / Phenomenon Section -->
-            <div class="glass-panel p-4 rounded-xl shadow-md border-l-4 border-amber-500">
+            <div class="bg-white/90 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] p-4 rounded-xl border-l-4 border-l-amber-500">
                 <h3 class="font-bold text-amber-700 mb-2">Investigation Challenge</h3>
                 <p class="text-sm text-slate-600 mb-2">
                     Optimize the engine to maximize <strong>Thermal Efficiency</strong> and <strong>Power Output</strong>.
@@ -114,7 +78,7 @@
                 </div>
 
                 <div class="mt-2 text-xs">
-                    <label class="block font-medium text-slate-700 mb-1">What is the optimal Compression Ratio for Mystery Fuel X?</label>
+                    <label for="guessCR" class="block font-medium text-slate-700 mb-1">What is the optimal Compression Ratio for Mystery Fuel X?</label>
                     <div class="flex gap-2">
                         <input type="number" id="guessCR" class="flex-1 p-1 border rounded" placeholder="e.g. 10.0" step="0.1">
                         <button id="checkCRBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded transition">Check</button>
@@ -124,11 +88,11 @@
             </div>
 
             <!-- Controls -->
-            <div class="glass-panel p-4 rounded-xl shadow-md flex-col gap-4 flex">
+            <div class="bg-white/90 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] p-4 rounded-xl flex-col gap-4 flex">
                 <h3 class="font-bold border-b pb-2 text-slate-700">Engineering Controls</h3>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+                    <label for="fuelSelect" class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
                         <span>Fuel Type</span>
                     </label>
                     <select id="fuelSelect" class="w-full p-2 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 bg-white">
@@ -139,20 +103,20 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+                    <label for="crSlider" id="crLabel" class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
                         <span>Compression Ratio (<span id="crVal">8</span>:1)</span>
                     </label>
-                    <input type="range" id="crSlider" min="5" max="15" step="0.1" value="8" class="w-full">
+                    <input type="range" id="crSlider" min="5" max="15" step="0.1" value="8" class="w-full accent-blue-500" aria-labelledby="crLabel">
                     <p class="text-xs text-slate-500 mt-1">Higher ratio = more efficiency, but higher risk of knock.</p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+                    <label for="afrSlider" id="afrLabel" class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
                         <span>Air-Fuel Ratio (AFR)</span>
                         <span id="afrVal" class="font-mono bg-slate-200 px-1 rounded">14.7</span>
                     </label>
-                    <input type="range" id="afrSlider" min="10" max="20" step="0.1" value="14.7" class="w-full">
-                    <div class="flex justify-between text-xs text-slate-500 mt-1">
+                    <input type="range" id="afrSlider" min="10" max="20" step="0.1" value="14.7" class="w-full accent-blue-500" aria-labelledby="afrLabel">
+                    <div class="flex justify-between text-xs text-slate-500 mt-1" aria-hidden="true">
                         <span>Rich</span>
                         <span>Stoichiometric</span>
                         <span>Lean</span>
@@ -161,7 +125,7 @@
             </div>
 
             <!-- Data Readouts -->
-            <div class="glass-panel p-4 rounded-xl shadow-md flex-1 flex flex-col">
+            <div class="bg-white/90 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] p-4 rounded-xl flex-1 flex flex-col">
                 <h3 class="font-bold border-b pb-2 text-slate-700 mb-4">Telemetry Data</h3>
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
@@ -185,10 +149,10 @@
     </main>
 
     <!-- Info Modal -->
-    <div id="infoModal" class="modal">
-        <div class="modal-content shadow-2xl">
+    <div id="infoModal" class="fixed inset-0 z-50 bg-black/50 hidden overflow-auto" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+        <div class="bg-white p-5 border border-gray-300 w-4/5 max-w-[600px] mx-auto my-[10%] rounded shadow-2xl relative">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 class="text-xl font-bold text-slate-800">Engine Efficiency Principles</h2>
+                <h2 id="infoModalTitle" class="text-xl font-bold text-slate-800">Engine Efficiency Principles</h2>
                 <button id="closeModal" class="text-slate-500 hover:text-slate-800 font-bold text-xl" aria-label="Close modal">&times;</button>
             </div>
             <div class="prose text-slate-700 text-sm">
@@ -196,7 +160,7 @@
 
                 <h3 class="font-bold mt-3 text-slate-800">Key Variables:</h3>
                 <ul class="list-disc pl-5 mb-3">
-                    <li><strong>Compression Ratio ($r$):</strong> The ratio of the cylinder's volume at the bottom of the stroke vs the top. Higher ratios extract more work from the expanding gases, increasing efficiency via the ideal Otto cycle efficiency equation: $\eta = 1 - \frac{1}{r^{\gamma-1}}$</li>
+                    <li><strong>Compression Ratio (r):</strong> The ratio of the cylinder's volume at the bottom of the stroke vs the top. Higher ratios extract more work from the expanding gases, increasing efficiency via the ideal Otto cycle efficiency equation: &eta; = 1 - 1 / r<sup>&gamma;-1</sup></li>
                     <li><strong>Engine Knock:</strong> If the compression ratio is too high for a given fuel, the heat of compression causes the fuel to auto-ignite prematurely (detonation). This causes severe damage and a massive drop in power. Different fuels have different knock resistance (octane ratings).</li>
                     <li><strong>Air-Fuel Ratio (AFR):</strong> The mass ratio of air to fuel. Running 'Rich' (more fuel) can provide maximum power but wastes unburnt fuel (lower efficiency). Running slightly 'Lean' (more air) can improve efficiency but may cause the engine to run too hot.</li>
                 </ul>
@@ -348,9 +312,58 @@
         const guessCR = document.getElementById('guessCR');
         const guessResult = document.getElementById('guessResult');
 
-        infoBtn.onclick = () => infoModal.style.display = "block";
-        closeModal.onclick = () => infoModal.style.display = "none";
-        window.onclick = (e) => { if (e.target == infoModal) infoModal.style.display = "none"; }
+        // Focus trap variables
+        const focusableElementsString = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+        let firstTabStop;
+        let lastTabStop;
+        let lastFocusedElement;
+
+        function showDialog() {
+            infoModal.classList.remove('hidden');
+            infoModal.classList.add('block');
+
+            // Trap focus
+            lastFocusedElement = document.activeElement;
+            const focusableElements = infoModal.querySelectorAll(focusableElementsString);
+
+            if (focusableElements.length > 0) {
+                firstTabStop = focusableElements[0];
+                lastTabStop = focusableElements[focusableElements.length - 1];
+                firstTabStop.focus();
+            }
+        }
+
+        function hideDialog() {
+            infoModal.classList.add('hidden');
+            infoModal.classList.remove('block');
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        infoBtn.onclick = showDialog;
+        closeModal.onclick = hideDialog;
+        window.onclick = (e) => { if (e.target == infoModal) hideDialog(); }
+
+        infoModal.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideDialog();
+            }
+
+            if (e.key === 'Tab') {
+                if (e.shiftKey) { // Shift + Tab
+                    if (document.activeElement === firstTabStop) {
+                        e.preventDefault();
+                        lastTabStop.focus();
+                    }
+                } else { // Tab
+                    if (document.activeElement === lastTabStop) {
+                        e.preventDefault();
+                        firstTabStop.focus();
+                    }
+                }
+            }
+        });
 
         function initChart() {
             const chartCtx = document.getElementById('energyChart').getContext('2d');
