@@ -30,10 +30,9 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@type": "LearningResource",
       "name": "Diesel Engine Runaway Phenomenon",
-      "operatingSystem": "Any",
-      "applicationCategory": "EducationalApplication",
+      "learningResourceType": "Simulation",
       "description": "An interactive diesel engine simulation allowing students to explore the conversion of chemical potential energy to macroscopic kinetic energy, and troubleshoot a dangerous real-world trade phenomenon (a blown turbo seal).",
       "educationalAlignment": {
         "@type": "AlignmentObject",
@@ -328,7 +327,7 @@
             maintainAspectRatio: false,
             animation: false,
             scales: {
-                y: { beginAtZero: true, max: 8000, grid: { color: '#4a5568' }, ticks: { color: '#a0aec0' } },
+                y: { beginAtZero: true, suggestedMax: 8000, grid: { color: '#4a5568' }, ticks: { color: '#a0aec0' } },
                 x: { grid: { display: false } }
             },
             plugins: {
@@ -636,8 +635,8 @@
         oilLegend.classList.remove('hidden');
 
         document.getElementById('faultBtnText').innerText = "FAULT ACTIVE: TURBO SEAL BLOWN";
-        mysteryFaultBtn.classList.replace('bg-red-900', 'bg-red-600');
-        mysteryFaultBtn.classList.add('animate-pulse');
+        document.getElementById('mysteryFaultBtn').classList.replace('bg-red-900', 'bg-red-600');
+        document.getElementById('mysteryFaultBtn').classList.add('animate-pulse');
     }
 
     function resetSimulation() {
@@ -657,8 +656,8 @@
 
         oilLegend.classList.add('hidden');
         document.getElementById('faultBtnText').innerText = "Trigger Mystery Fault";
-        mysteryFaultBtn.classList.replace('bg-red-600', 'bg-red-900');
-        mysteryFaultBtn.classList.remove('animate-pulse');
+        document.getElementById('mysteryFaultBtn').classList.replace('bg-red-600', 'bg-red-900');
+        document.getElementById('mysteryFaultBtn').classList.remove('animate-pulse');
 
         container.style.backgroundColor = '';
         rpmDisplay.classList.remove('glow-red');
