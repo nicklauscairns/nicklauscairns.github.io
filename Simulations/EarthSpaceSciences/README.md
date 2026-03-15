@@ -722,3 +722,31 @@ Use a computational representation to illustrate the relationships among Earth s
       </li>
     </ul>
   </details>
+
+- [Long Island Sound Hypoxia Simulation](LongIslandSoundHypoxia.html) - An interactive simulation exploring how human-caused nutrient runoff, combined with seasonal temperature changes, creates dead zones (hypoxia) in coastal ecosystems and impacts marine life.
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-15 10:00:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon for a specific, relatable New England environmental issue. Meets Criterion 1 (Relevance) through local impact and Criterion 4 (Investigable) by allowing manipulation of interacting factors (runoff, temperature, wind).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (ESS3.C) on human impacts on Earth systems and DCI (LS2.C) on ecosystem dynamics. Supports SEP (Using Mathematics and Computational Thinking) by modeling variable interactions.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Data Export:</b> Add a feature to download the logged chart data as a CSV for independent student analysis.</li>
+          <li><b>Improve Interactivity:</b> Allow users to specify the type of "Mystery Factor" (e.g., Hurricane, Cold Front) rather than a generic slider.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add CSV download button for the historical oxygen/algae data.</li>
+          <li>[ ] Replace "Mystery Factor" slider with specific weather event buttons.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
