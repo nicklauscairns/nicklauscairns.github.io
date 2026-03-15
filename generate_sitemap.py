@@ -19,6 +19,8 @@ def generate_sitemap():
 
     # Include NGSS markdown files
     ngss_files = glob.glob('./NGSS/*.md')
+    # Remove NGSS/README.md from ngss_files since it's already in readme_files
+    ngss_files = [f for f in ngss_files if not f.endswith('README.md')]
 
     # Sort for consistency
     html_files.sort()
@@ -99,7 +101,8 @@ def generate_sitemap():
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             f.write(pretty_xml)
 
-    print(f"Sitemap generated successfully with {len(html_files) + 1} URLs.")
+    total_urls = len(html_files) + len(readme_files) + len(ngss_files)
+    print(f"Sitemap generated successfully with {total_urls} URLs.")
 
 if __name__ == "__main__":
     generate_sitemap()
