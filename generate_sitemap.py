@@ -9,7 +9,7 @@ def generate_sitemap():
     repo_root = '.'
 
     # Base URL
-    base_url = 'https://nicklauscairns.com/'
+    base_url = 'https://nicklauscairns.github.io/'
 
     # Find all HTML files in Simulations directory
     html_files = glob.glob('./Simulations/**/*.html', recursive=True)

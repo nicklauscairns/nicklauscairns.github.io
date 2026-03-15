@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nicklauscairns.com/sitemap.xml
+Sitemap: https://nicklauscairns.github.io/sitemap.xml
