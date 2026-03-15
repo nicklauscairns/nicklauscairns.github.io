@@ -326,10 +326,8 @@
                 extensionInput.parentElement.classList.remove('hidden');
                 narrativeBox.innerHTML = `<strong class="text-sky-400 block mb-1">Epoch 1: Triassic Breakup</strong>Pangea begins to rift apart. The crust stretches and thins. Adjust the Eastern Border Fault angle and extension displacement, then Simulate to form a half-graben basin where water and sediment can accumulate.`;
             } else if(window.simulationState.epoch === 2) {
-                controlsPanel.classList.add('hidden'); // No controls, just narrative
                 narrativeBox.innerHTML = `<strong class="text-emerald-400 block mb-1">Epoch 2: Early Jurassic Deposition</strong>Rivers wash sediment into the low basin. Shallow lakes form. Dinosaurs walk the muddy shores, leaving footprints. Simulate to fill the basin with sedimentary rock (East Berlin Formation).`;
             } else if(window.simulationState.epoch === 3) {
-                controlsPanel.classList.add('hidden');
                 narrativeBox.innerHTML = `<strong class="text-rose-400 block mb-1">Epoch 3: CAMP Volcanism</strong>Massive fissures open due to continued rifting. Flood basalts (Holyoke Basalt) pour over the landscape, capping and protecting the delicate lake bed footprints underneath. The whole basin block continues to tilt.`;
             } else if(window.simulationState.epoch === 4) {
                 erosionInput.parentElement.classList.remove('hidden');
