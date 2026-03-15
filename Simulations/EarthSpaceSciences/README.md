@@ -235,6 +235,8 @@ Apply scientific reasoning and evidence from ancient Earth materials, meteorites
 ### HS-ESS2-1
 Develop a model to illustrate how Earth’s internal and surface processes operate at different spatial and temporal scales to form continental and ocean-floor features.
 
+- [Metacomet Ridge Formation](MetacometRidgeFormation.html) - An interactive geological simulation modeling the formation of the Metacomet Ridge, including Higby and Beseck Mountains in Middletown, Connecticut.
+
 - [Tectonic Landscape Modeler](TectonicLandscapeModeller.html) - An interactive simulation exploring how slow constructive forces (uplift) and destructive forces (weathering, mass wasting) shape Earth's surface over geologic time.
 
   <details>
@@ -564,6 +566,8 @@ Construct an explanation based on evidence for how the availability of natural r
       </li>
     </ul>
   </details>
+
+- [Portland Brownstone Quarry Simulator](PortlandBrownstoneQuarry.html) - A resource management simulator focusing on the historical Portland, CT brownstone quarries, demonstrating how natural resources, economics, and natural hazards (flooding) influence human settlement and industry.
 
 ### HS-ESS3-2
 Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.*
