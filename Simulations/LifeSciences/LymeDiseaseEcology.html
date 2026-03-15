@@ -3,7 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests.">
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" content="Lyme Disease Ecology: The Acorn Connection">
+    <meta property="og:description" content="Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests.">
+    <meta property="og:type" content="website">
+
     <title>Lyme Disease Ecology: The Acorn Connection</title>
+
+    <!-- Schema.org LearningResource JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Lyme Disease Ecology: The Acorn Connection",
+      "description": "Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests.",
+      "learningResourceType": "Simulation",
+      "educationalAlignment": [
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "educationalSubject",
+          "targetName": "Ecosystem Dynamics, Functioning, and Resilience"
+        },
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "teaches",
+          "targetName": "HS-LS2-2",
+          "targetUrl": "https://www.nextgenscience.org/pe/hs-ls2-2-ecosystems-interactions-energy-and-dynamics"
+        }
+      ]
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Analytics Tracking -->
@@ -118,10 +150,19 @@
         };
 
         // Chart.js Configuration
-        const ctx = document.getElementById('ecologyChart').getContext('2d');
-        const ecologyChart = new Chart(ctx, {
-            type: 'line',
-            data: {
+        let ecologyChart;
+
+        function initChart() {
+            if (typeof Chart === 'undefined') {
+                console.warn("Chart.js failed to load. Visualization disabled.");
+                document.getElementById('ecologyChart').parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-red-500 text-sm">Visualization unavailable (Chart.js blocked). Simulation will still run internally.</div>';
+                return;
+            }
+
+            const ctx = document.getElementById('ecologyChart').getContext('2d');
+            ecologyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
                 labels: simulationState.data.labels,
                 datasets: [
                     {
@@ -199,11 +240,12 @@
                         position: 'right',
                         title: { display: true, text: 'Infected Nymphs / Hectare' },
                         grid: { drawOnChartArea: false }, // only want the grid lines for one axis
-                        suggestedMax: 100
+                            suggestedMax: 100
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         // Event Listeners for UI
         document.getElementById('acorn-slider').addEventListener('input', (e) => {
@@ -292,7 +334,9 @@
                 simulationState.data.nymphs[month] = Math.max(0, questingNymphs);
             }
 
-            ecologyChart.update();
+            if (ecologyChart) {
+                ecologyChart.update();
+            }
         }
 
         // Expose to window for Playwright testing
@@ -300,7 +344,10 @@
         window.runSimulation = runSimulation;
 
         // Initial Run
-        runSimulation();
+        window.addEventListener('load', () => {
+            initChart();
+            runSimulation();
+        });
     </script>
 </body>
 </html>
