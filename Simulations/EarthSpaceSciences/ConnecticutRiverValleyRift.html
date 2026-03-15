@@ -30,7 +30,7 @@
     </script>
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
 
     <style>
         .glass-panel {
@@ -152,6 +152,19 @@
             glaciation: 0       // Glacial till deposition
         };
 
+        const RIFT_DURATION_MA = 25;
+        const MAX_RIFT_WIDTH = 150;
+        const MAX_FAULT_DROP = 200;
+
+        const epochData = [
+            { maxTime: 0.011, name: "Holocene (Present)" },
+            { maxTime: 2.58, name: "Pleistocene (Ice Age)" },
+            { maxTime: 66, name: "Paleogene / Neogene" },
+            { maxTime: 145, name: "Cretaceous" },
+            { maxTime: 174, name: "Middle/Late Jurassic" },
+            { maxTime: 201, name: "Early Jurassic" },
+        ];
+
         const timelineEvents = [
             {
                 start: 220, end: 201,
@@ -207,9 +220,9 @@
 
             // Calculate interpolation parameters based on time
             // Rifting (220-195)
-            let riftProgress = Math.max(0, Math.min(1, (220 - t) / 25));
-            state.riftWidth = riftProgress * 150;
-            state.faultDrop = riftProgress * 200;
+            let riftProgress = Math.max(0, Math.min(1, (220 - t) / RIFT_DURATION_MA));
+            state.riftWidth = riftProgress * MAX_RIFT_WIDTH;
+            state.faultDrop = riftProgress * MAX_FAULT_DROP;
 
             // Sedimentation (201-190)
             let sedProgress = Math.max(0, Math.min(1, (201 - t) / 11));
@@ -244,17 +257,20 @@
             return timelineEvents[timelineEvents.length - 1];
         }
 
+        function drawJaggedRidge(ctx, erosionY) {
+            ctx.lineTo(-150, erosionY);
+            ctx.lineTo(-100, erosionY - 60 * (state.erosionLevel/280));
+            ctx.lineTo(-50, erosionY + 20 * (state.erosionLevel/280));
+            ctx.lineTo(0, erosionY - 40 * (state.erosionLevel/280));
+            ctx.lineTo(80, erosionY + 10 * (state.erosionLevel/280));
+            ctx.lineTo(150, erosionY - 50 * (state.erosionLevel/280));
+        }
+
         function updateUI() {
             document.getElementById('slider-val').innerText = `${Math.round(state.timeMa)} Ma`;
             document.getElementById('time-display').innerText = `${Math.round(state.timeMa)} Ma`;
 
-            let epoch = "Late Triassic";
-            if(state.timeMa < 201) epoch = "Early Jurassic";
-            if(state.timeMa < 174) epoch = "Middle/Late Jurassic";
-            if(state.timeMa < 145) epoch = "Cretaceous";
-            if(state.timeMa < 66) epoch = "Paleogene / Neogene";
-            if(state.timeMa < 2.58) epoch = "Pleistocene (Ice Age)";
-            if(state.timeMa < 0.011) epoch = "Holocene (Present)";
+            let epoch = epochData.find(e => state.timeMa < e.maxTime)?.name || "Late Triassic";
 
             document.getElementById('epoch-display').innerText = epoch;
 
@@ -449,12 +465,7 @@
                 ctx.beginPath();
                 ctx.moveTo(-400, erosionY);
                 if (state.tiltAngle > 0 && state.timeMa < 175) {
-                    ctx.lineTo(-150, erosionY);
-                    ctx.lineTo(-100, erosionY - 60 * (state.erosionLevel/280));
-                    ctx.lineTo(-50, erosionY + 20 * (state.erosionLevel/280));
-                    ctx.lineTo(0, erosionY - 40 * (state.erosionLevel/280));
-                    ctx.lineTo(80, erosionY + 10 * (state.erosionLevel/280));
-                    ctx.lineTo(150, erosionY - 50 * (state.erosionLevel/280));
+                    drawJaggedRidge(ctx, erosionY);
                 }
                 ctx.lineTo(400, erosionY - (state.timeMa < 175 ? 50 * (state.erosionLevel/280) : 0));
 
@@ -476,12 +487,8 @@
 
                     ctx.moveTo(-400, erosionY);
                     if (state.tiltAngle > 0) {
-                        ctx.lineTo(-150, erosionY);
-                        ctx.lineTo(-100, erosionY - 60);
-                        ctx.lineTo(-50, erosionY + 20);
-                        ctx.lineTo(0, erosionY - 40);
-                        ctx.lineTo(80, erosionY + 10);
-                        ctx.lineTo(150, erosionY - 50);
+                        // Assuming erosionLevel is max (280) during glaciation to match the original hardcoded lines
+                        drawJaggedRidge(ctx, erosionY);
                     }
                     ctx.lineTo(400, erosionY - 50);
 
@@ -495,12 +502,7 @@
                     ctx.moveTo(-400, erosionY);
                     // Follow the jagged ridge line loosely
                     if (state.tiltAngle > 0) {
-                        ctx.lineTo(-150, erosionY);
-                        ctx.lineTo(-100, erosionY - 60);
-                        ctx.lineTo(-50, erosionY + 20);
-                        ctx.lineTo(0, erosionY - 40);
-                        ctx.lineTo(80, erosionY + 10);
-                        ctx.lineTo(150, erosionY - 50);
+                        drawJaggedRidge(ctx, erosionY);
                     }
                     ctx.lineTo(400, erosionY - 50);
                     ctx.lineTo(400, erosionY + state.glaciation);
