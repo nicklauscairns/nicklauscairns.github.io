@@ -171,7 +171,7 @@
             heatFlux: 3,
             initialSugar: 2.0,
 
-            volume: 40.0,
+            mass: 40.0,
             sugarMass: 0.8,
             waterMass: 39.2,
             temperature: 20.0,
@@ -225,10 +225,10 @@
             state.fireActive = false;
             state.timeElapsed = 0;
 
-            state.volume = 40.0;
+            state.mass = 40.0;
             state.sugarConc = state.initialSugar;
-            state.sugarMass = state.volume * (state.sugarConc / 100.0);
-            state.waterMass = state.volume - state.sugarMass;
+            state.sugarMass = state.mass * (state.sugarConc / 100.0);
+            state.waterMass = state.mass - state.sugarMass;
 
             state.temperature = 20.0;
             state.boilingPoint = 100.0;
@@ -265,21 +265,10 @@
             if (state.temperature >= state.boilingPoint) {
                 state.evapRate = state.heatFlux * 0.15;
                 state.waterMass -= state.evapRate * state.dt;
-
-                if (Math.random() < state.evapRate * 0.5) {
-                    state.steam.push({
-                        x: 0.1 + Math.random() * 0.8,
-                        y: 0.5 + (state.volume / 80.0),
-                        size: 20 + Math.random() * 30,
-                        life: 1.0,
-                        vx: (Math.random() - 0.5) * 0.01,
-                        vy: -0.01 - Math.random() * 0.02
-                    });
-                }
             }
 
-            state.volume = state.waterMass + state.sugarMass;
-            state.sugarConc = (state.sugarMass / state.volume) * 100.0;
+            state.mass = state.waterMass + state.sugarMass;
+            state.sugarConc = (state.sugarMass / state.mass) * 100.0;
 
             state.boilingPoint = 100.0 + Math.pow(state.sugarConc / 66.0, 1.5) * 4.0;
 
@@ -305,7 +294,7 @@
             ctx.fillStyle = '#1e293b';
             ctx.fillRect(w*0.07, h*0.2, w*0.86, h*0.58);
 
-            let fluidRatio = state.volume / 40.0;
+            let fluidRatio = state.mass / 40.0;
             let fluidH = fluidRatio * (h * 0.55);
             let fluidY = h*0.78 - fluidH;
 
@@ -380,7 +369,7 @@
             lblFluidTemp.textContent = state.temperature.toFixed(1);
             lblBoilPoint.textContent = state.boilingPoint.toFixed(1);
             lblSugarConc.textContent = state.sugarConc.toFixed(1);
-            lblVolume.textContent = state.volume.toFixed(1);
+            lblVolume.textContent = state.mass.toFixed(1);
             lblEvapRate.textContent = state.evapRate.toFixed(2);
         }
 

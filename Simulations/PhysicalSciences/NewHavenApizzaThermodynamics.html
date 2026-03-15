@@ -200,6 +200,15 @@
         window.addEventListener('resize', resizeCanvas);
 
         // Simulation State (Exposed for testing)
+        const K_CONVECTION_FIRE_AIR = 5.0;
+        const K_CONDUCTION_FIRE_FLOOR = 2.0;
+        const K_RADIATION_FIRE_DOME = 1.5;
+        const K_CONVECTION_AIR_DOME = 0.5;
+        const K_CONVECTION_AIR_FLOOR = 0.5;
+        const K_CONDUCTION_FLOOR_PIZZA = 8.0;
+        const K_RADIATION_DOME_PIZZA = 3.0;
+        const K_CONVECTION_AIR_PIZZA = 1.0;
+
         window.simulationState = {
             isRunning: false,
             fireActive: false,
@@ -226,18 +235,6 @@
             ovenSpecificHeat: 0.9, // Default to brick
             ovenMass: 500, // Very high mass
             airMass: 10,
-
-            // Heat transfer coefficients
-            k_convectionFireAir: 5.0,
-            k_conductionFireFloor: 2.0,
-            k_radiationFireDome: 1.5,
-
-            k_convectionAirDome: 0.5,
-            k_convectionAirFloor: 0.5,
-
-            k_conductionFloorPizza: 8.0, // High conduction from floor
-            k_radiationDomePizza: 3.0,   // Radiation from dome
-            k_convectionAirPizza: 1.0,   // Convection from air
 
             // Visual particles
             particles: []
@@ -291,12 +288,12 @@
             const floorThermalMass = state.ovenMass * state.ovenSpecificHeat;
             const airThermalMass = state.airMass * 1.0;
 
-            let qFireAir = state.k_convectionFireAir * (state.fireTemp - state.airTemp);
-            let qFireDome = state.k_radiationFireDome * (state.fireTemp - state.domeTemp);
-            let qFireFloor = state.k_conductionFireFloor * (state.fireTemp - state.floorTemp);
+            let qFireAir = K_CONVECTION_FIRE_AIR * (state.fireTemp - state.airTemp);
+            let qFireDome = K_RADIATION_FIRE_DOME * (state.fireTemp - state.domeTemp);
+            let qFireFloor = K_CONDUCTION_FIRE_FLOOR * (state.fireTemp - state.floorTemp);
 
-            let qAirDome = state.k_convectionAirDome * (state.airTemp - state.domeTemp);
-            let qAirFloor = state.k_convectionAirFloor * (state.airTemp - state.floorTemp);
+            let qAirDome = K_CONVECTION_AIR_DOME * (state.airTemp - state.domeTemp);
+            let qAirFloor = K_CONVECTION_AIR_FLOOR * (state.airTemp - state.floorTemp);
             let qDomeAmbient = 0.1 * (state.domeTemp - state.ambientTemp);
 
             state.airTemp += (qFireAir - qAirDome - qAirFloor) / airThermalMass * state.dt;
@@ -308,9 +305,9 @@
 
                 const pizzaThermalMass = state.pizzaMass * state.pizzaThickness;
 
-                let qFloorPizza = state.k_conductionFloorPizza * (state.floorTemp - state.pizzaTemp);
-                let qDomePizza = state.k_radiationDomePizza * (state.domeTemp - state.pizzaTemp);
-                let qAirPizza = state.k_convectionAirPizza * (state.airTemp - state.pizzaTemp);
+                let qFloorPizza = K_CONDUCTION_FLOOR_PIZZA * (state.floorTemp - state.pizzaTemp);
+                let qDomePizza = K_RADIATION_DOME_PIZZA * (state.domeTemp - state.pizzaTemp);
+                let qAirPizza = K_CONVECTION_AIR_PIZZA * (state.airTemp - state.pizzaTemp);
 
                 let qTotalPizza = qFloorPizza + qDomePizza + qAirPizza;
 
