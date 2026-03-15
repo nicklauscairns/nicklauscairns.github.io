@@ -83,7 +83,7 @@ jobs:
               return;
             }
 
-            const finalComment = `${digest}—@${author}\n\n@jules`;
+            const finalComment = `${digest}—@${author}\n\n@jules please address this review`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
