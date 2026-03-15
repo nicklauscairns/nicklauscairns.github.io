@@ -602,8 +602,7 @@
             span.className = 'font-mono text-gray-400 mr-2';
             span.textContent = `[${year}]`;
 
-            p.appendChild(span);
-            p.appendChild(document.createTextNode(' ' + msg));
+            p.append(span, ' ' + msg);
 
             logArea.prepend(p);
         }
