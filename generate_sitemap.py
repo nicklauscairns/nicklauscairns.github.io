@@ -4,12 +4,12 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
+# Base URL for the GitHub Pages deployment
+BASE_URL = 'https://nicklauscairns.github.io/'
+
 def generate_sitemap():
     # Root of the repository
     repo_root = '.'
-
-    # Base URL
-    base_url = 'https://nicklauscairns.github.io/'
 
     # Find all HTML files in Simulations directory
     html_files = glob.glob('./Simulations/**/*.html', recursive=True)
@@ -35,7 +35,7 @@ def generate_sitemap():
         normalized_path = filepath.replace('./', '').replace('\\', '/')
 
         # Create full URL
-        full_url = f"{base_url}{normalized_path}"
+        full_url = f"{BASE_URL}{normalized_path}"
 
         # Create XML elements
         url_elem = ET.SubElement(urlset, 'url')
@@ -54,7 +54,7 @@ def generate_sitemap():
             normalized_path = normalized_path.replace('README.md', '')
 
         # Create full URL
-        full_url = f"{base_url}{normalized_path}"
+        full_url = f"{BASE_URL}{normalized_path}"
 
         # Create XML elements
         url_elem = ET.SubElement(urlset, 'url')
@@ -71,7 +71,7 @@ def generate_sitemap():
             normalized_path = normalized_path[:-3]
 
         # Create full URL
-        full_url = f"{base_url}{normalized_path}"
+        full_url = f"{BASE_URL}{normalized_path}"
 
         # Create XML elements
         url_elem = ET.SubElement(urlset, 'url')
