@@ -1,3 +1,3 @@
-## 2024-05-18 - Missing label 'for' attributes in simulation inputs
-**Learning:** Found that multiple NGSS HTML simulation forms (`<input type="range">`) did not correctly associate their `<label>` elements with the corresponding inputs using the `for` attribute. This breaks screen reader functionality and clicking labels doesn't focus the sliders.
-**Action:** Always ensure any `<label>` has a `for="[input_id]"` when paired with form inputs, and use `aria-describedby` when there is supplemental helper text below the label.
+## 2024-05-24 - Interactive Simulation Focus States and Disabled Visibility
+**Learning:** Simulations built with utility classes (Tailwind) often forget to explicitly style `disabled` UI states and keyboard `focus` states. While pointer/mouse interactions work well, keyboard users lack context when input sliders and standard interaction buttons lack a distinct focus ring. Furthermore, disabled play/pause states simply look clickable without `opacity-50 cursor-not-allowed`.
+**Action:** When working on interactive science simulations, proactively audit `<button>` and `<input type="range">` elements to ensure they possess explicit `focus:ring-2 focus:ring-[theme-color]` classes and proper `disabled:opacity-50 disabled:cursor-not-allowed` states, keeping keyboard users visually grounded.
