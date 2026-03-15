@@ -4,11 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lyme Disease Ecology Simulation</title>
+    <meta name="description" content="Interactive NGSS-aligned Lyme disease ecology simulation modeling acorn mast years, mice, deer, and infected tick dynamics over time.">
+    <meta property="og:title" content="Lyme Disease Ecology Simulation">
+    <meta property="og:description" content="Explore mast-year ecological cascades and Lyme disease risk in a New England oak forest.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/LifeSciences/ConnecticutTickEcology.html">
+    <meta property="og:image" content="https://nicklauscairns.com/assets/og/lyme-disease-ecology.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Lyme Disease Ecology Simulation",
+      "educationalUse": "simulation",
+      "learningResourceType": "InteractiveResource",
+      "url": "https://nicklauscairns.com/Simulations/LifeSciences/ConnecticutTickEcology.html"
+    }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    </style>
     <!-- Google Analytics placeholder -->
     <script>
         window.addEventListener('load', function() {
@@ -26,7 +39,7 @@
         });
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 p-6 min-h-screen">
+<body class="bg-slate-50 text-slate-800 p-6 min-h-screen font-sans antialiased">
     <div class="max-w-6xl mx-auto">
         <header class="mb-8 border-b pb-4">
             <h1 class="text-3xl font-bold text-slate-900 mb-2">Lyme Disease Ecology Simulation</h1>
@@ -44,7 +57,7 @@
                         <button id="mastYearBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded transition-colors">
                             Trigger Acorn Mast Year
                         </button>
-                        <p class="text-xs text-slate-500 mt-1">Causes a massive drop of acorns in the current year.</p>
+                        <p class="text-xs text-slate-500 mt-1">Causes a massive acorn production year in the next simulated year.</p>
                     </div>
 
                     <div>
@@ -260,12 +273,15 @@
         window.simulationState = {
             stepYear: stepYear,
             initializeState: initializeState,
-            getAcorns: () => dataAcorns,
-            getMice: () => dataMice,
-            getTicks: () => dataInfectedNymphs,
-            setMast: (val) => { nextYearMast = val; },
-            setVaccinated: (val) => { isVaccinated = val; },
-            setDeer: (val) => { deerMultiplier = val; }
+            getAcorns: () => [...dataAcorns],
+            getMice: () => [...dataMice],
+            getTicks: () => [...dataInfectedNymphs],
+            setMast: (val) => { nextYearMast = !!val; },
+            setVaccinated: (val) => { isVaccinated = !!val; },
+            setDeer: (val) => {
+                const n = Number(val);
+                deerMultiplier = Number.isFinite(n) ? Math.min(2.0, Math.max(0.0, n)) : 1.0;
+            }
         };
 
         // Chart Initialization

@@ -487,7 +487,7 @@ Evaluate the claims, evidence, and reasoning that the complex interactions in ec
     </ul>
   </details>
 
-- [Lyme Disease Ecology](LymeDiseaseEcology.html) - An interactive simulation evaluating claims about ecosystem stability and complex interactions in a Connecticut forest between oak trees, mice, deer, and ticks that drive Lyme disease risk.
+- [Lyme Disease Ecology](ConnecticutTickEcology.html) - An interactive simulation evaluating claims about ecosystem stability and complex interactions in a Connecticut forest between oak trees, mice, deer, and ticks that drive Lyme disease risk.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-15 01:32:27</b></summary>
