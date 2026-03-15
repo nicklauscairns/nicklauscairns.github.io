@@ -181,7 +181,7 @@
         let isRunning = true;
         let timeYears = 0;
         let dt = 0.001; // Integration step (years)
-        let framesPerRender = 2; // Speed up
+        const framesPerRender = 2; // Number of physics steps per frame; higher is faster.
 
         let asteroid = { x:0, y:0, vx:0, vy:0, ax:0, ay:0, path: [], impacted: false };
         let earth = { x:0, y:0, angle: 0 };
