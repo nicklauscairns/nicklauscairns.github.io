@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Island Sound Lobster Collapse</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .slider-label { display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500; }
+        input[type=range] { width: 100%; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white p-6 shadow-md">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-3xl font-bold mb-2">Long Island Sound Lobster Collapse</h1>
+            <p class="text-blue-200">Investigate the environmental factors that led to the dramatic decline of the American Lobster population in the late 1990s.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-6 w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
+
+        <!-- Sidebar Controls -->
+        <aside class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md flex flex-col gap-6">
+            <div>
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Environmental Factors</h2>
+                <p class="text-sm text-gray-600 mb-4">Adjust the variables to observe their impact on the benthic (bottom) ecosystem and lobster population.</p>
+
+                <!-- Fishing Pressure -->
+                <div class="mb-4">
+                    <div class="slider-label">
+                        <label for="fishingPressure">Fishing Pressure (Traps)</label>
+                        <span id="fishingVal" class="text-blue-600 font-bold">Low</span>
+                    </div>
+                    <input type="range" id="fishingPressure" min="0" max="100" value="20" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-xs text-gray-500 mt-1">Commercial harvesting rate of lobsters.</p>
+                </div>
+
+                <!-- Nitrogen Runoff -->
+                <div class="mb-4">
+                    <div class="slider-label">
+                        <label for="nitrogenRunoff">Nitrogen Runoff</label>
+                        <span id="nitrogenVal" class="text-green-600 font-bold">Low</span>
+                    </div>
+                    <input type="range" id="nitrogenRunoff" min="0" max="100" value="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-xs text-gray-500 mt-1">Fertilizer and sewage entering the sound, fueling algal blooms.</p>
+                </div>
+
+                <!-- Mystery Variable -->
+                <div class="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-md">
+                    <div class="slider-label text-orange-800">
+                        <label for="mysteryVariable" class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Mystery Variable X
+                        </label>
+                        <span id="mysteryVal" class="font-bold">Normal</span>
+                    </div>
+                    <input type="range" id="mysteryVariable" min="0" max="100" value="20" class="w-full h-2 bg-orange-200 rounded-lg appearance-none cursor-pointer accent-orange-600">
+                    <p class="text-xs text-orange-700 mt-1">An unknown, changing abiotic factor in the bottom waters.</p>
+                </div>
+
+                <div class="flex gap-2 mt-auto">
+                    <button id="runBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">Play / Pause</button>
+                    <button id="resetBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition">Reset</button>
+                </div>
+            </div>
+
+            <!-- Ecosystem Status readout -->
+            <div class="mt-4 pt-4 border-t">
+                 <h3 class="font-semibold text-gray-700 mb-2">Current State</h3>
+                 <div class="grid grid-cols-2 gap-2 text-sm">
+                     <div class="bg-gray-50 p-2 rounded">Lobsters: <span id="statLobsters" class="font-bold">100%</span></div>
+                     <div class="bg-gray-50 p-2 rounded">Oxygen: <span id="statOxygen" class="font-bold text-blue-500">Normal</span></div>
+                 </div>
+            </div>
+        </aside>
+
+        <!-- Visualization Area -->
+        <section class="w-full lg:w-2/3 flex flex-col gap-6">
+            <!-- Canvas -->
+            <div class="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col">
+                <h2 class="text-lg font-semibold mb-2">Benthic Zone Visualization</h2>
+                <div class="relative w-full h-64 md:h-80 bg-blue-100 rounded border border-gray-300 overflow-hidden">
+                    <canvas id="simCanvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+                    <!-- Overlay for Hypoxia/Algae -->
+                    <div id="waterOverlay" class="absolute top-0 left-0 w-full h-full pointer-events-none transition-colors duration-500 bg-blue-900/10"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 text-center">Cross-section of the Long Island Sound floor. Observe lobsters, algal growth, and water clarity.</p>
+            </div>
+
+            <!-- Chart -->
+            <div class="bg-white p-4 rounded-lg shadow-md h-64 md:h-80 flex flex-col">
+                 <h2 class="text-lg font-semibold mb-2">Population & Environment Data</h2>
+                 <div class="flex-grow relative w-full h-full">
+                    <canvas id="dataChart"></canvas>
+                 </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- State Management ---
+        const initialState = {
+            time: 0,
+            lobsterPopulation: 1000,
+            maxLobsterCapacity: 1200,
+            dissolvedOxygen: 8.0, // mg/L (healthy)
+            algaeLevel: 0, // arbitrary unit 0-100
+            temperature: 15, // Celsius (Mystery Variable)
+            isRunning: false,
+
+            // Inputs
+            fishingPressure: 20, // 0-100%
+            nitrogenRunoff: 10, // 0-100%
+            mysteryVariable: 20, // 0-100 mapped to temp 10-25C
+
+            history: {
+                time: [],
+                lobsters: [],
+                oxygen: [],
+                mysteryVar: []
+            }
+        };
+
+        // Deep copy for reset
+        window.simulationState = JSON.parse(JSON.stringify(initialState));
+
+        // --- Core Logic ---
+        function updateEcosystem() {
+            if (!window.simulationState.isRunning) return;
+
+            let state = window.simulationState;
+            state.time += 1;
+
+            // 1. Process Inputs
+            // Map mystery slider (0-100) to Temperature (10C - 25C)
+            // Lobsters experience thermal stress above ~20C
+            state.temperature = 10 + (state.mysteryVariable / 100) * 15;
+
+            // Algae grows based on nitrogen (nutrients) AND temperature.
+            // Nitrogen increases carrying capacity of algae.
+            let targetAlgae = state.nitrogenRunoff * (state.temperature / 15);
+            state.algaeLevel += (targetAlgae - state.algaeLevel) * 0.1;
+
+            // 2. Calculate Dissolved Oxygen (Hypoxia Model)
+            // Baseline oxygen is related to temperature (colder water holds more O2)
+            let baseDO = 10.0 - (state.temperature - 10) * 0.2;
+
+            // Eutrophication: High algae eventually dies and decomposes, consuming oxygen.
+            // We simulate this by having high algae drastically reduce DO.
+            let oxygenDepletion = (state.algaeLevel / 100) * 5.0;
+
+            // Warm water + high algae = severe hypoxia
+            state.dissolvedOxygen = Math.max(0.5, baseDO - oxygenDepletion);
+
+            // 3. Lobster Population Dynamics
+            // Natural growth (logistic)
+            let growthRate = 0.05;
+
+            // Environmental Stressors
+            let temperatureStress = 0;
+            if (state.temperature > 20) {
+                // Exponential stress above 20C (Mystery variable effect)
+                temperatureStress = Math.pow((state.temperature - 20), 2) * 0.02;
+            }
+
+            let oxygenStress = 0;
+            if (state.dissolvedOxygen < 3.5) {
+                // Severe stress below 3.5 mg/L
+                oxygenStress = (3.5 - state.dissolvedOxygen) * 0.05;
+            }
+
+            // Combined survival modifier (1.0 is neutral, < 1.0 reduces pop)
+            let survivalModifier = 1.0 - temperatureStress - oxygenStress;
+
+            // Fishing mortality
+            let fishingMortality = (state.fishingPressure / 100) * 0.05;
+
+            // Update Population
+            let currentPop = state.lobsterPopulation;
+            let newPop = currentPop + (growthRate * currentPop * (1 - currentPop / state.maxLobsterCapacity))
+                         - (fishingMortality * currentPop);
+
+            // Apply environmental stress (causes die-offs)
+            newPop = newPop * survivalModifier;
+
+            // Prevent negative, add small random fluctuation
+            state.lobsterPopulation = Math.max(0, newPop + (Math.random() * 10 - 5));
+
+            // 4. Record History
+            if (state.time % 5 === 0) {
+                state.history.time.push(state.time);
+                state.history.lobsters.push(Math.round(state.lobsterPopulation));
+                state.history.oxygen.push(state.dissolvedOxygen.toFixed(1));
+                // Store mystery var directly for graphing alongside population
+                state.history.mysteryVar.push(state.temperature.toFixed(1));
+            }
+
+            // Cap history length to prevent memory bloat in long runs
+            if (state.history.time.length > 100) {
+                state.history.time.shift();
+                state.history.lobsters.shift();
+                state.history.oxygen.shift();
+                state.history.mysteryVar.shift();
+            }
+        }
+
+        window.resetSimulation = function() {
+            window.simulationState = JSON.parse(JSON.stringify(initialState));
+            // Keep current slider values
+            window.simulationState.fishingPressure = parseInt(document.getElementById('fishingPressure').value);
+            window.simulationState.nitrogenRunoff = parseInt(document.getElementById('nitrogenRunoff').value);
+            window.simulationState.mysteryVariable = parseInt(document.getElementById('mysteryVariable').value);
+
+            // Initial UI updates
+            updateUI();
+        };
+
+        // --- UI Updates ---
+        function updateUI() {
+            let state = window.simulationState;
+
+            // Values
+            document.getElementById('fishingVal').textContent = state.fishingPressure + "%";
+            document.getElementById('nitrogenVal').textContent = state.nitrogenRunoff + "%";
+            document.getElementById('mysteryVal').textContent = state.mysteryVariable + "%";
+
+            // Stats
+            document.getElementById('statLobsters').textContent = Math.round(state.lobsterPopulation);
+
+            let doElement = document.getElementById('statOxygen');
+            doElement.textContent = state.dissolvedOxygen.toFixed(1) + " mg/L";
+
+            if (state.dissolvedOxygen > 5) {
+                doElement.className = "font-bold text-green-600";
+            } else if (state.dissolvedOxygen > 3) {
+                doElement.className = "font-bold text-yellow-600";
+            } else {
+                doElement.className = "font-bold text-red-600";
+            }
+
+            // Overlay color based on DO and Algae
+            // High algae = green tint, Low DO = darker/reddish tint
+            let overlay = document.getElementById('waterOverlay');
+            let greenVal = Math.min(255, 50 + state.algaeLevel * 2);
+            let redVal = state.dissolvedOxygen < 4 ? 100 : 0;
+            overlay.style.backgroundColor = `rgba(${redVal}, ${greenVal}, 100, 0.3)`;
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('fishingPressure').addEventListener('input', (e) => {
+            window.simulationState.fishingPressure = parseInt(e.target.value);
+            updateUI();
+        });
+
+        document.getElementById('nitrogenRunoff').addEventListener('input', (e) => {
+            window.simulationState.nitrogenRunoff = parseInt(e.target.value);
+            updateUI();
+        });
+
+        document.getElementById('mysteryVariable').addEventListener('input', (e) => {
+            window.simulationState.mysteryVariable = parseInt(e.target.value);
+            updateUI();
+        });
+
+        document.getElementById('runBtn').addEventListener('click', () => {
+            window.simulationState.isRunning = !window.simulationState.isRunning;
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            window.resetSimulation();
+        });
+
+        // --- Canvas Rendering ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        let lobsters = []; // Visual representation objects
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createVisualLobster() {
+            return {
+                x: Math.random() * canvas.width,
+                y: canvas.height - 20 - Math.random() * 40, // Bottom area
+                vx: (Math.random() - 0.5) * 2,
+                size: 8 + Math.random() * 4,
+                color: '#d97706', // Healthy orange
+                health: 1.0 // 0 to 1
+            };
+        }
+
+        function drawEcosystem() {
+            let state = window.simulationState;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Draw Environment (Seafloor)
+            ctx.fillStyle = '#8B4513'; // Brown sand/mud
+            ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+
+            // Add some rocks/structure
+            ctx.fillStyle = '#555';
+            ctx.beginPath();
+            ctx.arc(canvas.width * 0.2, canvas.height - 15, 20, 0, Math.PI, true);
+            ctx.arc(canvas.width * 0.7, canvas.height - 20, 30, 0, Math.PI, true);
+            ctx.fill();
+
+            // 2. Draw Algae Particles
+            if (state.algaeLevel > 0) {
+                let numAlgae = Math.min(100, Math.floor(state.algaeLevel));
+                ctx.fillStyle = 'rgba(34, 197, 94, 0.4)'; // Greenish algae
+                for (let i = 0; i < numAlgae; i++) {
+                    let x = (state.time * 0.5 + i * 20) % canvas.width;
+                    let y = canvas.height - 40 - Math.sin(state.time * 0.05 + i) * 20 - (i * 2);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2 + Math.random()*2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // 3. Manage and Draw Lobsters
+            // Scale visual lobsters to population (1 visual = ~20 real lobsters)
+            let targetVisualLobsters = Math.floor(state.lobsterPopulation / 20);
+
+            // Add or remove visual lobsters to match target
+            while (lobsters.length < targetVisualLobsters) {
+                lobsters.push(createVisualLobster());
+            }
+            while (lobsters.length > targetVisualLobsters && lobsters.length > 0) {
+                lobsters.pop();
+            }
+
+            // Determine overall health based on temperature and DO
+            let overallHealth = 1.0;
+            if (state.temperature > 20) overallHealth -= (state.temperature - 20) * 0.1;
+            if (state.dissolvedOxygen < 4) overallHealth -= (4 - state.dissolvedOxygen) * 0.15;
+            overallHealth = Math.max(0.1, overallHealth);
+
+            // Draw each lobster
+            for (let l of lobsters) {
+                // Movement
+                if (state.isRunning && overallHealth > 0.3) {
+                    l.x += l.vx;
+                    if (l.x < 0 || l.x > canvas.width) l.vx *= -1; // Bounce
+                }
+
+                // Color reflects health (paler/grayer when unhealthy)
+                ctx.fillStyle = `rgba(217, 119, 6, ${overallHealth})`;
+
+                // Draw simple lobster shape (ellipse with claws)
+                ctx.save();
+                ctx.translate(l.x, l.y);
+
+                // Body
+                ctx.beginPath();
+                ctx.ellipse(0, 0, l.size, l.size/2, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                // Claws
+                ctx.beginPath();
+                ctx.arc(-l.size, -l.size/2, l.size/3, 0, Math.PI*2);
+                ctx.arc(l.size, -l.size/2, l.size/3, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        // --- Chart.js Visualization ---
+        const chartCtx = document.getElementById('dataChart').getContext('2d');
+        let myChart = null;
+
+        function initChart() {
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                    labels: window.simulationState.history.time,
+                    datasets: [
+                        {
+                            label: 'Lobster Population',
+                            data: window.simulationState.history.lobsters,
+                            borderColor: '#d97706',
+                            backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                            yAxisID: 'yPop',
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Dissolved Oxygen (mg/L)',
+                            data: window.simulationState.history.oxygen,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'transparent',
+                            yAxisID: 'yDO',
+                            borderDash: [5, 5],
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Mystery Variable (Temp °C)',
+                            data: window.simulationState.history.mysteryVar,
+                            borderColor: '#ea580c',
+                            backgroundColor: 'transparent',
+                            yAxisID: 'yDO', // Share axis with DO for simplicity, or create a third
+                            borderWidth: 2,
+                            tension: 0.1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Time (Simulated Days)' }
+                        },
+                        yPop: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Population' },
+                            min: 0,
+                            suggestedMax: 1500
+                        },
+                        yDO: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'DO (mg/L) / Temp (°C)' },
+                            min: 0,
+                            suggestedMax: 25,
+                            grid: { drawOnChartArea: false } // don't show grid lines for secondary axis
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        // Add a chart update throttle to save performance
+        let lastChartUpdate = 0;
+
+        // --- Main Animation Loop ---
+        function animate() {
+            updateEcosystem();
+            updateUI();
+            drawEcosystem();
+
+            // Update chart occasionally (e.g., every 5 simulation ticks to match history recording)
+            if (window.simulationState.isRunning && window.simulationState.time % 5 === 0) {
+                 if (myChart) {
+                     myChart.update();
+                 }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize
+        window.resetSimulation();
+        initChart();
+        animate();
+
+        // Override reset to clear chart
+        const originalReset = window.resetSimulation;
+        window.resetSimulation = function() {
+            originalReset();
+            initChart(); // re-init chart to clear history arrays bound to it
+        }
+
+    </script>
+</body>
+</html>
