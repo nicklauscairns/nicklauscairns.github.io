@@ -16,6 +16,7 @@
         .cell-mined { background-color: #d1d5db; }
         .cell-river { background-color: #3b82f6; cursor: default; }
         .cell-flooded { background-color: #1d4ed8; }
+        .cell-marked { border: 2px solid #ef4444; }
 
         .hud-value { font-weight: bold; font-size: 1.25rem; }
     </style>
@@ -123,9 +124,17 @@
     </main>
 
     <script>
+        const CONFIG = {
+            START_YEAR: 1850,
+            POWER_COST_PER_BLOCK: 10,
+            YEARS_PER_CLICK: 2,
+            ACCIDENT_PROBABILITY: 0.2,
+            GRID_SIZE: 10
+        };
+
         // Simulation State
         const state = {
-            year: 1850,
+            year: CONFIG.START_YEAR,
             workforce: 50,
             stone: 0,
             wealth: 10000,
@@ -143,7 +152,6 @@
         // Expose state for Playwright testing
         window.simulationState = state;
 
-        const GRID_SIZE = 10;
         let chartInstance = null;
 
         // DOM Elements
@@ -165,7 +173,7 @@
 
         // Initialize Simulation
         function init() {
-            state.year = 1850;
+            state.year = CONFIG.START_YEAR;
             state.workforce = 50;
             state.stone = 0;
             state.wealth = 10000;
@@ -175,10 +183,21 @@
             state.history = { labels: [], wealth: [], workforce: [], stone: [] };
 
             // Setup Grid (River on the right side - cols 8,9)
-            state.grid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
-            for(let r=0; r<GRID_SIZE; r++) {
+            state.grid = Array(CONFIG.GRID_SIZE).fill().map(() => Array(CONFIG.GRID_SIZE).fill(0));
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
                 state.grid[r][8] = 2; // River
                 state.grid[r][9] = 2; // River
+            }
+
+            // Initialize Event Delegation for Grid (only do this once)
+            if (!els.grid.dataset.initialized) {
+                els.grid.addEventListener('click', (event) => {
+                    const cell = event.target.closest('.quarry-cell');
+                    if (cell) {
+                        handleCellClick(parseInt(cell.dataset.r), parseInt(cell.dataset.c));
+                    }
+                });
+                els.grid.dataset.initialized = "true";
             }
 
             renderGrid();
@@ -192,8 +211,8 @@
         // Render Grid
         function renderGrid() {
             els.grid.innerHTML = '';
-            for(let r=0; r<GRID_SIZE; r++) {
-                for(let c=0; c<GRID_SIZE; c++) {
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'quarry-cell';
                     cell.dataset.r = r;
@@ -204,11 +223,9 @@
                     else if(state.grid[r][c] === 2) cell.classList.add('cell-river');
                     else if(state.grid[r][c] === 3) cell.classList.add('cell-flooded');
                     else if(state.grid[r][c] === 4) {
-                        cell.classList.add('cell-unexplored');
-                        cell.style.border = '2px solid #ef4444'; // Red border for marked
+                        cell.classList.add('cell-unexplored', 'cell-marked');
                     }
 
-                    cell.addEventListener('click', () => handleCellClick(r, c));
                     els.grid.appendChild(cell);
                 }
             }
@@ -231,8 +248,8 @@
             let markedCount = 0;
             let minDistanceToRiver = 10;
 
-            for(let r=0; r<GRID_SIZE; r++) {
-                for(let c=0; c<GRID_SIZE; c++) {
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
                     if(state.grid[r][c] === 1 || state.grid[r][c] === 4) {
                         // Mined or marked block distance to river (col 8)
                         let dist = 8 - c;
@@ -243,7 +260,7 @@
             }
 
             // Risk increases if mining close to river, and base risk over time
-            let risk = 10 + (10 - minDistanceToRiver) * 8 + (state.year - 1850) * 0.5;
+            let risk = 10 + (10 - minDistanceToRiver) * 8 + (state.year - CONFIG.START_YEAR) * 0.5;
 
             // Climate modifier: arbitrary spike in 1938 for the historical hurricane
             if (state.year >= 1935 && state.year <= 1940) {
@@ -302,17 +319,17 @@
             let accidents = 0;
 
             // Mine marked blocks
-            for(let r=0; r<GRID_SIZE; r++) {
-                for(let c=0; c<GRID_SIZE; c++) {
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
                     if(state.grid[r][c] === 4) {
-                        if(totalPower >= 10) { // Costs 10 power per block
+                        if(totalPower >= CONFIG.POWER_COST_PER_BLOCK) {
                             state.grid[r][c] = 1;
-                            totalPower -= 10;
+                            totalPower -= CONFIG.POWER_COST_PER_BLOCK;
                             blocksMined++;
                             state.stone += 10; // 10 tons per block
 
                             // High extraction rate = risk of accidents
-                            if(extractionPowerPerWorker > 3 && Math.random() < 0.2) {
+                            if(extractionPowerPerWorker > 3 && Math.random() < CONFIG.ACCIDENT_PROBABILITY) {
                                 accidents++;
                             }
                         } else {
@@ -322,7 +339,7 @@
                 }
             }
 
-            state.year += 2; // Progress 2 years per click
+            state.year += CONFIG.YEARS_PER_CLICK;
 
             // Costs
             let wages = state.workforce * 10;
@@ -342,7 +359,7 @@
 
             // Natural Hazard Check
             calculateRisk();
-            if(Math.random() * 100 < state.floodRisk) {
+            if(Math.random() < state.floodRisk / 100) {
                 triggerFlood();
             } else if (state.wealth < 0) {
                 log("Bankruptcy! Cannot pay workers. Operations shut down.");
@@ -359,8 +376,8 @@
             log("🚨 CATASTROPHIC FLOOD! The Connecticut River breached the quarry walls.");
 
             // Flood mined blocks
-            for(let r=0; r<GRID_SIZE; r++) {
-                for(let c=0; c<GRID_SIZE; c++) {
+            for(let r=0; r<CONFIG.GRID_SIZE; r++) {
+                for(let c=0; c<CONFIG.GRID_SIZE; c++) {
                     if(state.grid[r][c] === 1 || state.grid[r][c] === 4) {
                         state.grid[r][c] = 3; // Flooded
                     }
