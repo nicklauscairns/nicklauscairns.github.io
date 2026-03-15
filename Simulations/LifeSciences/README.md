@@ -487,6 +487,34 @@ Evaluate the claims, evidence, and reasoning that the complex interactions in ec
     </ul>
   </details>
 
+- [Lyme Disease Ecology](LymeDiseaseEcology.html) - An interactive simulation evaluating claims about ecosystem stability and complex interactions in a Connecticut forest between oak trees, mice, deer, and ticks that drive Lyme disease risk.
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-15 01:32:27</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon for evaluating complex ecological interactions and ecosystem stability. Meets Criterion 4 (Investigable) by allowing students to trigger acorn mast years and observe the delayed effects on mouse and tick populations. Meets Criterion 1 (Relevance) through a highly relatable, specific New England public health issue (Lyme disease).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (LS2.C) on ecosystem dynamics and CCC (Cause and Effect, Stability and Change). Thoroughly supports the SEP (Using Mathematics and Computational Thinking). Addresses observable features 1.a (identifying complex interactions), 2.a (using computational representations), and 3.a-b (evaluating outcomes of changing conditions).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature 3.b-c (Refining the simulation/solution):</b> Add an interactive "Claims, Evidence, Reasoning" (CER) framework panel where students must synthesize their findings after a disturbance event (e.g., an acorn mast year).</li>
+          <li><b>Improve Relevance (Criterion 1):</b> Allow students to toggle between historical climate data and projected warmer climate data to see how milder winters increase overwintering tick survival and expand the risk timeline.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement an interactive "Claims, Evidence, Reasoning" (CER) framework panel for students to construct arguments.</li>
+          <li>[ ] Add a climate scenario toggle (Historical vs. Warmer Climate) that alters tick survival rates.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 ### HS-LS2-7
 Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment and biodiversity.*
 

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyme Disease Ecology Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    </style>
+    <!-- Google Analytics placeholder -->
+    <script>
+        window.addEventListener('load', function() {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1';
+            document.head.appendChild(script);
+
+            script.onload = function() {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-DKDGNLCXQ1');
+            };
+        });
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 p-6 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 border-b pb-4">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Lyme Disease Ecology Simulation</h1>
+            <p class="text-slate-600">Investigate the complex ecological interactions in a Connecticut forest between oak trees, mice, deer, and ticks that drive Lyme disease risk.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Controls Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border col-span-1">
+                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Ecosystem Interventions</h2>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Oak Tree Acorn Production</label>
+                        <button id="mastYearBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                            Trigger Acorn Mast Year
+                        </button>
+                        <p class="text-xs text-slate-500 mt-1">Causes a massive drop of acorns in the current year.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Deer Population Factor (multiplier)</label>
+                        <input type="range" id="deerSlider" min="0" max="2" step="0.1" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                            <span>0x (None)</span>
+                            <span id="deerValue">1.0x</span>
+                            <span>2x (High)</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Intervention</label>
+                        <button id="vaccinateMiceBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                            Vaccinate Mice
+                        </button>
+                        <p class="text-xs text-slate-500 mt-1" id="vaccinateStatus">Reduces the probability of ticks contracting Lyme bacteria from mice.</p>
+                    </div>
+
+                    <div>
+                         <label class="block text-sm font-medium text-slate-700 mb-1">Simulation Control</label>
+                         <div class="flex gap-2">
+                             <button id="stepBtn" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded transition-colors">
+                                 Next Year
+                             </button>
+                             <button id="resetBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium py-2 px-4 rounded transition-colors">
+                                 Reset
+                             </button>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border col-span-1 lg:col-span-2">
+                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Population Dynamics (20-Year Horizon)</h2>
+
+                <div class="relative h-80 w-full mb-6">
+                    <canvas id="populationChart"></canvas>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                        <h3 class="text-sm font-medium text-emerald-800 mb-1">Acorns</h3>
+                        <p class="text-2xl font-bold text-emerald-600" id="statAcorns">Normal</p>
+                    </div>
+                    <div class="p-4 bg-amber-50 rounded-lg border border-amber-100">
+                        <h3 class="text-sm font-medium text-amber-800 mb-1">Mice Index</h3>
+                        <p class="text-2xl font-bold text-amber-600" id="statMice">1.00</p>
+                    </div>
+                    <div class="p-4 bg-rose-50 rounded-lg border border-rose-100">
+                        <h3 class="text-sm font-medium text-rose-800 mb-1">Infected Nymphs</h3>
+                        <p class="text-2xl font-bold text-rose-600" id="statTicks">1.00</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                        <h3 class="text-sm font-medium text-blue-800 mb-1">Lyme Risk</h3>
+                        <p class="text-2xl font-bold text-blue-600" id="statRisk">Low</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white p-6 rounded-lg shadow-sm border">
+            <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Ecological Context</h2>
+            <div class="prose max-w-none text-slate-600">
+                <p class="mb-2">In the oak forests of New England (like Connecticut), the interactions between various species strongly dictate the risk of human Lyme disease transmission.</p>
+                <ul class="list-disc pl-5 mb-4 space-y-1">
+                    <li><strong>Year 0 (Mast Year):</strong> Oak trees occasionally produce a massive abundance of acorns.</li>
+                    <li><strong>Year 1 (Mouse Boom):</strong> White-footed mice, which feed on acorns, experience a population boom due to the abundant food source. Mice are the primary reservoir for <em>Borrelia burgdorferi</em> (the Lyme disease bacterium).</li>
+                    <li><strong>Year 2 (Tick Spike & Lyme Risk):</strong> Tick larvae that hatched in Year 1 feed heavily on the abundant, infected mice. By Year 2, these larvae molt into infected nymphs, which are responsible for the vast majority of human Lyme disease cases.</li>
+                </ul>
+                <p>Use the controls to trigger an acorn mast year and observe the delayed effects on the ecosystem. What happens if deer populations are reduced? Can vaccinating mice effectively disrupt the disease cycle?</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        // State variables
+        let currentYear = 0;
+        let isVaccinated = false;
+
+        // Base population multipliers
+        const baseAcorns = 1.0;
+        const baseMice = 1.0;
+        const baseDeer = 1.0;
+        const baseTicks = 1.0;
+
+        // Historic data points for chart
+        let dataAcorns = [];
+        let dataMice = [];
+        let dataInfectedNymphs = [];
+        let labels = [];
+
+        // Simulation parameters
+        let deerMultiplier = 1.0;
+        let nextYearMast = false;
+
+        function initializeState() {
+            currentYear = 0;
+            isVaccinated = false;
+            deerMultiplier = 1.0;
+            nextYearMast = false;
+
+            dataAcorns = [baseAcorns];
+            dataMice = [baseMice];
+            dataInfectedNymphs = [baseTicks];
+            labels = ["Year 0"];
+
+            document.getElementById('deerSlider').value = 1.0;
+            document.getElementById('deerValue').textContent = "1.0x";
+
+            let btn = document.getElementById('vaccinateMiceBtn');
+            let status = document.getElementById('vaccinateStatus');
+            if (btn && status) {
+                btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                btn.textContent = "Vaccinate Mice";
+                status.textContent = "Reduces the probability of ticks contracting Lyme bacteria from mice.";
+            }
+
+            updateUI();
+        }
+
+        function stepYear() {
+            currentYear++;
+            labels.push("Year " + currentYear);
+
+            // 1. Calculate Acorns (Mast Year vs Normal)
+            let currentAcorns = nextYearMast ? 5.0 : 1.0;
+            dataAcorns.push(currentAcorns);
+            nextYearMast = false; // Reset mast trigger
+
+            // 2. Calculate Mice Population
+            // Mice boom the year AFTER a mast year.
+            let previousAcorns = dataAcorns[currentYear - 1];
+            let currentMice = baseMice + (previousAcorns - 1.0) * 0.8;
+
+            // Add some natural variation
+            currentMice = currentMice * (0.9 + Math.random() * 0.2);
+            dataMice.push(Math.max(0.1, currentMice));
+
+            // 3. Calculate Infected Nymph Ticks (Lyme Risk)
+            // Nymphs emerge 1 year after the mouse boom.
+            // Risk depends on both prior mouse population and deer availability for adult ticks.
+            let previousMice = dataMice[currentYear - 1] || baseMice;
+            let currentInfectedNymphs = baseTicks * (previousMice * 0.7 + deerMultiplier * 0.3);
+
+            // Vaccination effect: significantly reduces the proportion of infected nymphs
+            if (isVaccinated) {
+                currentInfectedNymphs *= 0.3; // 70% reduction in infection rate
+            }
+
+            // Add variation
+            currentInfectedNymphs = currentInfectedNymphs * (0.85 + Math.random() * 0.3);
+            dataInfectedNymphs.push(Math.max(0.1, currentInfectedNymphs));
+
+            // Keep arrays to max 20 years
+            if (labels.length > 20) {
+                labels.shift();
+                dataAcorns.shift();
+                dataMice.shift();
+                dataInfectedNymphs.shift();
+            }
+
+            updateUI();
+        }
+
+        function updateUI() {
+            // Update Stat Cards
+            let currentAcornVal = dataAcorns[dataAcorns.length - 1];
+            document.getElementById('statAcorns').textContent = currentAcornVal > 2.0 ? "Mast Year!" : "Normal";
+
+            document.getElementById('statMice').textContent = dataMice[dataMice.length - 1].toFixed(2);
+
+            let currentNymphsVal = dataInfectedNymphs[dataInfectedNymphs.length - 1];
+            document.getElementById('statTicks').textContent = currentNymphsVal.toFixed(2);
+
+            let riskLevel = "Low";
+            if (currentNymphsVal > 2.0) riskLevel = "Severe";
+            else if (currentNymphsVal > 1.4) riskLevel = "High";
+            else if (currentNymphsVal > 0.8) riskLevel = "Moderate";
+            document.getElementById('statRisk').textContent = riskLevel;
+
+            // Update chart (will be implemented in next step)
+            if (window.updateChart) {
+                window.updateChart();
+            }
+        }
+
+        // Expose functions for automated testing
+        window.simulationState = {
+            stepYear: stepYear,
+            initializeState: initializeState,
+            getAcorns: () => dataAcorns,
+            getMice: () => dataMice,
+            getTicks: () => dataInfectedNymphs,
+            setMast: (val) => { nextYearMast = val; },
+            setVaccinated: (val) => { isVaccinated = val; },
+            setDeer: (val) => { deerMultiplier = val; }
+        };
+
+        // Chart Initialization
+        let populationChart;
+
+        function initChart() {
+            const ctx = document.getElementById('populationChart').getContext('2d');
+
+            if (typeof Chart === 'undefined') return;
+
+            if (populationChart) {
+                populationChart.destroy();
+            }
+
+            populationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Acorn Crop',
+                            data: dataAcorns,
+                            borderColor: '#059669', // emerald-600
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#059669',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Mouse Population',
+                            data: dataMice,
+                            borderColor: '#d97706', // amber-600
+                            borderWidth: 3,
+                            pointBackgroundColor: '#d97706',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Infected Nymph Ticks (Risk)',
+                            data: dataInfectedNymphs,
+                            borderColor: '#e11d48', // rose-600
+                            borderWidth: 4,
+                            pointBackgroundColor: '#e11d48',
+                            pointRadius: 4,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2) + 'x Baseline';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Population Relative to Baseline'
+                            },
+                            min: 0,
+                            suggestedMax: 6
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time (Years)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.updateChart = function() {
+            if (populationChart) {
+                populationChart.data.labels = labels;
+                populationChart.data.datasets[0].data = dataAcorns;
+                populationChart.data.datasets[1].data = dataMice;
+                populationChart.data.datasets[2].data = dataInfectedNymphs;
+                populationChart.update();
+            }
+        };
+
+        // Event Listeners
+        document.getElementById('stepBtn').addEventListener('click', stepYear);
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            initializeState();
+            initChart();
+        });
+
+        document.getElementById('mastYearBtn').addEventListener('click', () => {
+            nextYearMast = true;
+            document.getElementById('statAcorns').textContent = "Pending Mast...";
+        });
+
+        document.getElementById('deerSlider').addEventListener('input', (e) => {
+            let val = parseFloat(e.target.value);
+            deerMultiplier = val;
+            document.getElementById('deerValue').textContent = val.toFixed(1) + "x";
+        });
+
+        document.getElementById('vaccinateMiceBtn').addEventListener('click', () => {
+            isVaccinated = !isVaccinated;
+            let btn = document.getElementById('vaccinateMiceBtn');
+            let status = document.getElementById('vaccinateStatus');
+
+            if (isVaccinated) {
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                btn.textContent = "Stop Vaccination";
+                status.textContent = "Vaccination active. Infection transmission significantly reduced.";
+            } else {
+                btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                btn.textContent = "Vaccinate Mice";
+                status.textContent = "Reduces the probability of ticks contracting Lyme bacteria from mice.";
+            }
+        });
+
+        // Run initial setup
+        window.onload = function() {
+            initializeState();
+            initChart();
+        };
+    </script>
+</body>
+</html>
