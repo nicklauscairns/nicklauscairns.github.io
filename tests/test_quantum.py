@@ -22,7 +22,7 @@ def test_quantum_entanglement(page: Page):
 
     # Attempt a click on index 5 (row 1, col 1) to test increment/decrement behavior
     target = 5
-    page.evaluate(f"window.simulateClick({target})")
+    page.evaluate(f"window.applyMove({target})")
 
     new_nodes = page.evaluate("window.getNodes()")
 

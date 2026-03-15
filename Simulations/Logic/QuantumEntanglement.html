@@ -88,6 +88,7 @@
     <script>
         const GRID_SIZE = 16;
         const COLS = Math.sqrt(GRID_SIZE);
+        const ROWS = GRID_SIZE / COLS;
         const STATES = 4;
         const nodes = Array(GRID_SIZE).fill(0);
         let moves = 0;
@@ -103,6 +104,10 @@
         const finalMovesEl = document.getElementById('finalMoves');
 
         function applyMove(index) {
+            if (!Number.isInteger(index) || index < 0 || index >= GRID_SIZE) {
+                return false;
+            }
+
             // Increment clicked node
             nodes[index] = (nodes[index] + 1) % STATES;
 
@@ -112,13 +117,15 @@
             // Decrement adjacent neighbors
             const neighbors = [];
             if (row > 0) neighbors.push(index - COLS); // Up
-            if (row < COLS - 1) neighbors.push(index + COLS); // Down
+            if (row < ROWS - 1) neighbors.push(index + COLS); // Down
             if (col > 0) neighbors.push(index - 1); // Left
             if (col < COLS - 1) neighbors.push(index + 1); // Right
 
             for (const n of neighbors) {
                 nodes[n] = (nodes[n] - 1 + STATES) % STATES;
             }
+
+            return true;
         }
 
         function scramble() {
