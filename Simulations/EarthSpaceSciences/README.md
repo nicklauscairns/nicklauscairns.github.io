@@ -235,6 +235,8 @@ Apply scientific reasoning and evidence from ancient Earth materials, meteorites
 ### HS-ESS2-1
 Develop a model to illustrate how Earth’s internal and surface processes operate at different spatial and temporal scales to form continental and ocean-floor features.
 
+- [Metacomet Ridge Formation](MetacometRidgeFormation.html) - An interactive geological simulation modeling the formation of the Metacomet Ridge, including Higby and Beseck Mountains in Middletown, Connecticut.
+
 - [Tectonic Landscape Modeler](TectonicLandscapeModeller.html) - An interactive simulation exploring how slow constructive forces (uplift) and destructive forces (weathering, mass wasting) shape Earth's surface over geologic time.
 
   <details>

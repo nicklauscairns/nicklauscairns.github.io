@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metacomet Ridge Formation: Middletown, CT Geologic History</title>
+    <meta name="description" content="An interactive geological simulation modeling the formation of the Metacomet Ridge, including Higby and Beseck Mountains in Middletown, Connecticut.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Metacomet Ridge Formation: Middletown, CT Geologic History">
+    <meta property="og:description" content="An interactive geological simulation modeling the formation of the Metacomet Ridge, including Higby and Beseck Mountains in Middletown, Connecticut.">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/MetacometRidgeFormation.html">
+    <meta property="og:site_name" content="NGSS Simulations">
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Metacomet Ridge Formation: Middletown, CT Geologic History",
+      "learningResourceType": "Simulation",
+      "educationalLevel": "High School",
+      "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/MetacometRidgeFormation.html",
+      "description": "An interactive geological simulation modeling the formation of the Metacomet Ridge, including Higby and Beseck Mountains in Middletown, Connecticut.",
+      "datePublished": "2024-05-18",
+      "publisher": {
+          "@type": "Organization",
+          "name": "NGSS Simulations"
+      }
+    }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 md:p-8 bg-gray-100 font-sans">
+
+<div id="sim-container" class="max-w-[1200px] mx-auto bg-white rounded-xl shadow-lg p-6">
+    <header class="mb-6 border-b pb-4">
+        <h1 class="text-3xl font-bold text-gray-800">Formation of the Metacomet Ridge</h1>
+        <p class="text-gray-600 mt-2">Investigate how Earth's internal and surface processes created the iconic trap rock ridges (like Higby and Beseck Mountains) around Middletown, Connecticut, over 200 million years ago.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Controls Panel -->
+        <div class="lg:col-span-1 bg-gray-50 p-4 rounded-lg border">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Geologic Time Controls</h2>
+            <p class="text-sm text-gray-600 mb-4">Trigger the sequence of events that shaped the Hartford Basin during the breakup of Pangaea.</p>
+
+            <div class="space-y-4">
+                <button id="btn-rift" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition">
+                    1. Rifting (200 Ma)
+                </button>
+                <button id="btn-sediment" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition opacity-50 cursor-not-allowed" disabled>
+                    2. Sedimentation
+                </button>
+                <button id="btn-volcano" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition opacity-50 cursor-not-allowed" disabled>
+                    3. Basalt Lava Flows
+                </button>
+                <button id="btn-tilt" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition opacity-50 cursor-not-allowed" disabled>
+                    4. Faulting & Tilting
+                </button>
+                <button id="btn-erode" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition opacity-50 cursor-not-allowed" disabled>
+                    5. Erosion & Glaciation
+                </button>
+                <button id="btn-reset" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition mt-8">
+                    Reset Simulation
+                </button>
+            </div>
+
+            <div class="mt-6 p-4 bg-white border rounded shadow-sm">
+                <h3 class="font-bold text-gray-800 mb-2">Current Process:</h3>
+                <p id="process-description" class="text-sm text-gray-700 italic">Pre-rifting continuous continental crust (Pangaea).</p>
+                <div class="mt-4">
+                    <h4 class="font-semibold text-xs uppercase text-gray-500">Key:</h4>
+                    <ul class="text-xs space-y-1 mt-1">
+                        <li><span class="inline-block w-3 h-3 bg-[#A0522D] rounded-full mr-1"></span> Pre-existing Metamorphic Rock</li>
+                        <li><span class="inline-block w-3 h-3 bg-[#DEB887] rounded-full mr-1"></span> Brownstone (Sandstone/Shale)</li>
+                        <li><span class="inline-block w-3 h-3 bg-[#2F4F4F] rounded-full mr-1"></span> Basalt (Trap Rock)</li>
+                        <li><span class="inline-block w-3 h-3 bg-[#FF4500] rounded-full mr-1"></span> Magma</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Panel -->
+        <div class="lg:col-span-2 relative">
+            <canvas id="geoCanvas" width="800" height="500" class="w-full h-auto bg-sky-300 rounded-lg shadow"></canvas>
+
+            <!-- Observation Box -->
+            <div id="observation-panel" class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur p-4 rounded-lg shadow-md border-l-4 border-blue-500 hidden">
+                <h3 class="font-bold text-blue-800">Scientific Observation:</h3>
+                <p id="observation-text" class="text-sm text-gray-800">Notice how the hard basalt layers resist erosion much better than the soft brownstone, creating the steep west-facing cliffs characteristic of the Middletown area ridges.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 border-t pt-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Pedagogical Connection (NGSS HS-ESS2-1)</h3>
+        <p class="text-gray-700">This simulation models how <strong>internal processes</strong> (mantle upwelling causing rifting and volcanism) interact with <strong>surface processes</strong> (sedimentation from rivers, erosion from glaciers and water) over vast <strong>temporal scales</strong> (200 million years) to form the specific <strong>continental features</strong> observed in Central Connecticut today.</p>
+    </div>
+</div>
+
+<script>
+    // Initial State Definition
+    const INITIAL_STATE = {
+        stage: 0, // 0: start, 1: rift, 2: sediment, 3: volcano, 4: tilt, 5: erode
+        time: 0,
+        animating: false,
+        riftWidth: 0,
+        valleyDrop: 0,
+        sedimentDepth: 0,
+        basaltDepth: 0,
+        tiltAngle: 0,
+        erosionLevel: 0
+    };
+
+    // Simulation State exposed for Playwright
+    window.simulationState = { ...INITIAL_STATE };
+
+    const canvas = document.getElementById('geoCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // UI Elements
+    const btnRift = document.getElementById('btn-rift');
+    const btnSediment = document.getElementById('btn-sediment');
+    const btnVolcano = document.getElementById('btn-volcano');
+    const btnTilt = document.getElementById('btn-tilt');
+    const btnErode = document.getElementById('btn-erode');
+    const btnReset = document.getElementById('btn-reset');
+    const descText = document.getElementById('process-description');
+    const obsPanel = document.getElementById('observation-panel');
+    const obsText = document.getElementById('observation-text');
+
+    // Colors
+    const colors = {
+        sky: '#87CEEB',
+        bedrock: '#A0522D',
+        mantle: '#8B0000',
+        magma: '#FF4500',
+        sediment: '#DEB887',
+        sedimentLine: '#CD853F',
+        basalt: '#2F4F4F',
+        basaltJoints: '#1F3F3F',
+        erosionMask: 'black',
+        groundLine: '#333',
+        trees: '#228B22',
+        grass: '#556B2F'
+    };
+
+    // Animation Constants
+    const ANIMATION_CONFIG = {
+        riftTargetWidth: 250,
+        riftWidthStep: 2,
+        valleyDropTarget: 100,
+        valleyDropStep: 1,
+        sedimentTargetDepth: 60,
+        sedimentDepthStep: 0.5,
+        basaltTargetDepth: 30,
+        basaltDepthStep: 0.5,
+        tiltTargetAngle: 15,
+        tiltAngleStep: 0.2,
+        tiltSedimentStep: 0.3,
+        tiltSedimentMax: 80,
+        erosionTargetLevel: 70,
+        erosionLevelStep: 0.5
+    };
+
+    let animationId = null;
+
+    function drawScene() {
+        ctx.clearRect(0, 0, width, height);
+
+        const state = window.simulationState;
+
+        // Base dimensions
+        const groundY = height * 0.4;
+        const mantleY = height * 0.9;
+        const faultLeft = width * 0.3 - state.riftWidth/2;
+        const faultRight = width * 0.7 + state.riftWidth/2;
+
+        // Sky is handled by canvas background, but we can draw clouds or sun here if wanted
+
+        // Save context for tilting
+        ctx.save();
+
+        // Center rotation point for tilting the graben (valley block)
+        const centerX = width / 2;
+        const centerY = groundY + state.valleyDrop;
+
+        // Draw Left Block (Stable)
+        ctx.fillStyle = colors.bedrock;
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(faultLeft, groundY);
+        ctx.lineTo(faultLeft - state.riftWidth*0.5, mantleY);
+        ctx.lineTo(0, mantleY);
+        ctx.fill();
+
+        // Draw Right Block (Stable)
+        ctx.fillStyle = colors.bedrock;
+        ctx.beginPath();
+        ctx.moveTo(width, groundY);
+        ctx.lineTo(faultRight, groundY);
+        ctx.lineTo(faultRight + state.riftWidth*0.5, mantleY);
+        ctx.lineTo(width, mantleY);
+        ctx.fill();
+
+        // Draw Center Block (Graben/Valley)
+        ctx.save();
+        // Apply tilt only to the valley block and its contents
+        ctx.translate(centerX, centerY);
+        ctx.rotate(state.tiltAngle * Math.PI / 180);
+        ctx.translate(-centerX, -centerY);
+
+        const blockWidth = faultRight - faultLeft;
+        const blockLeft = faultLeft;
+        const blockRight = faultRight;
+        const blockTop = groundY + state.valleyDrop;
+
+        // Bedrock of valley
+        ctx.fillStyle = colors.bedrock;
+        ctx.beginPath();
+        ctx.moveTo(blockLeft, blockTop);
+        ctx.lineTo(blockRight, blockTop);
+        ctx.lineTo(blockRight + state.riftWidth*0.5, mantleY + state.valleyDrop);
+        ctx.lineTo(blockLeft - state.riftWidth*0.5, mantleY + state.valleyDrop);
+        ctx.fill();
+
+        // Fill valley with sediment and basalt
+        let currentFillY = blockTop;
+
+        if (state.sedimentDepth > 0) {
+            ctx.fillStyle = colors.sediment;
+            ctx.fillRect(blockLeft, currentFillY - state.sedimentDepth, blockWidth, state.sedimentDepth);
+
+            // Draw bedding planes
+            ctx.strokeStyle = colors.sedimentLine;
+            ctx.lineWidth = 1;
+            for(let y = currentFillY - state.sedimentDepth + 5; y < currentFillY; y += 10) {
+                ctx.beginPath();
+                ctx.moveTo(blockLeft, y);
+                ctx.lineTo(blockRight, y);
+                ctx.stroke();
+            }
+            currentFillY -= state.sedimentDepth;
+        }
+
+        if (state.basaltDepth > 0) {
+            ctx.fillStyle = colors.basalt;
+            ctx.fillRect(blockLeft, currentFillY - state.basaltDepth, blockWidth, state.basaltDepth);
+
+            // Draw columnar jointing lines
+            ctx.strokeStyle = colors.basaltJoints;
+            ctx.lineWidth = 1;
+            for(let x = blockLeft + 10; x < blockRight; x += 15) {
+                ctx.beginPath();
+                ctx.moveTo(x, currentFillY - state.basaltDepth);
+                ctx.lineTo(x + (Math.random()*4-2), currentFillY);
+                ctx.stroke();
+            }
+            currentFillY -= state.basaltDepth;
+        }
+
+        // Top layer of sediment (East Berlin formation on top of Holyoke basalt)
+        let topSedimentDepth = state.sedimentDepth > 40 ? state.sedimentDepth - 40 : 0;
+        if (state.stage >= 3 && topSedimentDepth > 0) {
+            ctx.fillStyle = colors.sediment;
+            ctx.fillRect(blockLeft, currentFillY - topSedimentDepth, blockWidth, topSedimentDepth);
+            currentFillY -= topSedimentDepth;
+        }
+
+        ctx.restore(); // End of valley tilt
+
+        // Draw Mantle & Magma
+        ctx.fillStyle = colors.mantle;
+        ctx.fillRect(0, mantleY, width, height - mantleY);
+
+        if (state.stage === 1 || state.stage === 3) {
+            ctx.fillStyle = colors.magma;
+            // Magma upwelling
+            ctx.beginPath();
+            ctx.moveTo(centerX - 40, mantleY);
+            ctx.quadraticCurveTo(centerX, mantleY - 30 * (state.time%20/20 + 0.5), centerX + 40, mantleY);
+            ctx.fill();
+        }
+
+        // Draw Magma Dike during volcano stage
+        if (state.stage === 3) {
+             ctx.fillStyle = colors.magma;
+             ctx.beginPath();
+             ctx.moveTo(faultLeft + 20, mantleY);
+             ctx.lineTo(faultLeft + 30, groundY + state.valleyDrop - state.sedimentDepth);
+             ctx.lineTo(faultLeft + 40, groundY + state.valleyDrop - state.sedimentDepth);
+             ctx.lineTo(faultLeft + 30, mantleY);
+             ctx.fill();
+        }
+
+        // EROSION MASK
+        if (state.erosionLevel > 0) {
+            // We use destination-out to erase the top parts of the canvas to simulate erosion flat line
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = colors.erosionMask;
+            // Determine erosion line (horizontal flat plane representing current ground level)
+            const erosionLineY = groundY - 20 + state.erosionLevel;
+
+            // Erase everything above the erosion line
+            ctx.fillRect(0, 0, width, erosionLineY);
+
+            ctx.globalCompositeOperation = 'source-over';
+
+            // Draw new ground line and grass
+            ctx.strokeStyle = colors.groundLine;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, erosionLineY);
+            ctx.lineTo(width, erosionLineY);
+            ctx.stroke();
+
+            // Differential erosion (Basalt stands higher)
+            if (state.stage === 5) {
+                // Calculate where the tilted basalt layer intersects the erosion line
+                // This requires some math based on the tilt angle and block position.
+                // For visual simulation, we'll draw the prominent ridge shape artificially based on the tilted basalt.
+
+                // Find the tilted basalt coordinates
+                const rad = state.tiltAngle * Math.PI / 180;
+
+                // We know basalt is at blockLeft, currentFillY (before top sediment)
+                // Let's draw a ridge where the basalt should be exposed.
+                // West cliff is steep, East slope is gentle.
+
+                // Let's approximate the ridge position
+                const ridgeStartX = centerX - 100;
+                const ridgePeakX = ridgeStartX + 50;
+                const ridgeEndX = ridgePeakX + 200;
+
+                ctx.fillStyle = colors.grass;
+                ctx.beginPath();
+                ctx.moveTo(0, erosionLineY);
+                // Left valley
+                ctx.lineTo(ridgeStartX, erosionLineY);
+                // Steep west cliff (Trap rock)
+                ctx.lineTo(ridgePeakX, erosionLineY - 60);
+                // Gentle east dip slope
+                ctx.lineTo(ridgeEndX, erosionLineY);
+                // Right valley
+                ctx.lineTo(width, erosionLineY);
+                ctx.lineTo(width, height);
+                ctx.lineTo(0, height);
+                // Actually, just draw a polygon for the ground cover over the eroded flat line
+
+                // Let's redraw the eroded surface with grass
+                ctx.fillRect(0, erosionLineY, width, 5);
+
+                // Draw the exposed ridge
+                ctx.fillStyle = colors.basalt;
+                ctx.beginPath();
+                ctx.moveTo(ridgeStartX, erosionLineY);
+                ctx.lineTo(ridgePeakX, erosionLineY - 60);
+                ctx.lineTo(ridgePeakX + 20, erosionLineY - 60 + 20*Math.tan(rad)); // dip slope
+                ctx.lineTo(ridgeEndX, erosionLineY);
+                ctx.fill();
+
+                // Draw brownstone on the gentle slope
+                ctx.fillStyle = colors.sediment;
+                ctx.beginPath();
+                ctx.moveTo(ridgePeakX + 20, erosionLineY - 60 + 20*Math.tan(rad));
+                ctx.lineTo(ridgeEndX, erosionLineY);
+                ctx.lineTo(ridgeEndX, erosionLineY+10);
+                ctx.lineTo(ridgePeakX + 20, erosionLineY+10);
+                ctx.fill();
+
+                // Add some trees
+                ctx.fillStyle = colors.trees;
+                ctx.beginPath(); ctx.arc(ridgeStartX - 30, erosionLineY-5, 8, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(ridgeEndX + 40, erosionLineY-5, 10, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(ridgePeakX + 80, erosionLineY - 60 + 80*Math.tan(rad) - 5, 6, 0, Math.PI*2); ctx.fill();
+
+            } else {
+                 // Plain grass
+                 ctx.fillStyle = colors.grass;
+                 ctx.fillRect(0, erosionLineY, width, 5);
+            }
+        }
+
+        ctx.restore();
+    }
+
+    function animate() {
+        const state = window.simulationState;
+        const cfg = ANIMATION_CONFIG;
+        if (!state.animating) return;
+
+        state.time++;
+
+        if (state.stage === 1) { // Rifting
+            if (state.riftWidth < cfg.riftTargetWidth) state.riftWidth += cfg.riftWidthStep;
+            if (state.valleyDrop < cfg.valleyDropTarget) state.valleyDrop += cfg.valleyDropStep;
+            if (state.riftWidth >= cfg.riftTargetWidth && state.valleyDrop >= cfg.valleyDropTarget) {
+                state.animating = false;
+                enableButton(btnSediment);
+            }
+        }
+        else if (state.stage === 2) { // Sedimentation
+            if (state.sedimentDepth < cfg.sedimentTargetDepth) state.sedimentDepth += cfg.sedimentDepthStep;
+            if (state.sedimentDepth >= cfg.sedimentTargetDepth) {
+                state.animating = false;
+                enableButton(btnVolcano);
+            }
+        }
+        else if (state.stage === 3) { // Volcanism
+            if (state.basaltDepth < cfg.basaltTargetDepth) state.basaltDepth += cfg.basaltDepthStep;
+            if (state.basaltDepth >= cfg.basaltTargetDepth) {
+                state.animating = false;
+                enableButton(btnTilt);
+            }
+        }
+        else if (state.stage === 4) { // Tilting
+            // Eastern tilting, about 15-20 degrees
+            if (state.tiltAngle < cfg.tiltTargetAngle) state.tiltAngle += cfg.tiltAngleStep;
+            // Add some more sediment on top as it tilts
+            if (state.sedimentDepth < cfg.tiltSedimentMax) state.sedimentDepth += cfg.tiltSedimentStep;
+            if (state.tiltAngle >= cfg.tiltTargetAngle) {
+                state.animating = false;
+                enableButton(btnErode);
+            }
+        }
+        else if (state.stage === 5) { // Erosion
+            if (state.erosionLevel < cfg.erosionTargetLevel) state.erosionLevel += cfg.erosionLevelStep;
+            if (state.erosionLevel >= cfg.erosionTargetLevel) {
+                state.animating = false;
+                obsPanel.classList.remove('hidden');
+            }
+        }
+
+        drawScene();
+        if (state.animating) {
+            animationId = requestAnimationFrame(animate);
+        }
+    }
+
+    function startStage(stageNum, desc) {
+        window.simulationState.stage = stageNum;
+        window.simulationState.animating = true;
+        descText.textContent = desc;
+        obsPanel.classList.add('hidden');
+        cancelAnimationFrame(animationId);
+        animate();
+    }
+
+    function enableButton(btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    function disableButton(btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    // Event Listeners
+    btnRift.addEventListener('click', () => {
+        disableButton(btnRift);
+        startStage(1, "Mantle upwelling causes the crust to stretch, fracture, and drop, forming a rift valley (graben).");
+    });
+
+    btnSediment.addEventListener('click', () => {
+        disableButton(btnSediment);
+        startStage(2, "Rivers and lakes fill the valley, depositing layers of sand and mud that lithify into brownstone.");
+    });
+
+    btnVolcano.addEventListener('click', () => {
+        disableButton(btnVolcano);
+        startStage(3, "Deep faults allow magma to erupt to the surface, creating massive basalt (trap rock) lava flows over the sediment.");
+    });
+
+    btnTilt.addEventListener('click', () => {
+        disableButton(btnTilt);
+        startStage(4, "Continued tectonic forces cause the block faults to shift, tilting the entire valley floor down to the east.");
+    });
+
+    btnErode.addEventListener('click', () => {
+        disableButton(btnErode);
+        startStage(5, "Millions of years of weathering and glaciation erode the softer sandstone, exposing the hard, tilted basalt ridges.");
+    });
+
+    btnReset.addEventListener('click', () => {
+        window.simulationState = { ...INITIAL_STATE };
+        cancelAnimationFrame(animationId);
+
+        enableButton(btnRift);
+        disableButton(btnSediment);
+        disableButton(btnVolcano);
+        disableButton(btnTilt);
+        disableButton(btnErode);
+
+        descText.textContent = "Pre-rifting continuous continental crust (Pangaea).";
+        obsPanel.classList.add('hidden');
+
+        drawScene();
+    });
+
+    // Initial draw
+    drawScene();
+
+</script>
+</body>
+</html>
