@@ -363,7 +363,7 @@ Use mathematical representations to support and revise explanations based on evi
     </ul>
   </details>
 
-- [Lyme Disease Ecology: The Acorn Connection](LymeDiseaseEcology.html) - Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests, modeling the 2-year delay between acorn mast events, white-footed mouse population booms, and infected tick surges.
+- [Lyme Disease Ecology: The Acorn Connection](NewEnglandLymeEcology.html) - Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests, modeling the 2-year delay between acorn mast events, white-footed mouse population booms, and infected tick surges.
 
   <details>
     <summary><b>Evaluation: Investigative Phenomenon | 5.0/5 Stars | 2026-03-15 01:45:00</b></summary>
