@@ -126,20 +126,64 @@
                 <p class="text-[10px] text-slate-400">Carbon bonded into a perfect dodecahedron (C20H20). Synthesizing this took 23 complex chemical steps.</p>
             </div>
 
+            <div class="mol-card" id="card-mystery1" onclick="loadMolecule('mystery1')">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-pink-300" id="name-mystery1">Mystery Sample A</span>
+                    <span class="text-[10px] bg-slate-700 px-1 rounded">Unknown</span>
+                </div>
+                <p class="text-[10px] text-slate-400" id="desc-mystery1">Unknown highly strained molecule. Forms a tight geometric shape. Can you deduce its formula?</p>
+            </div>
+
+            <div class="mol-card" id="card-mystery2" onclick="loadMolecule('mystery2')">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-cyan-300" id="name-mystery2">Mystery Sample B</span>
+                    <span class="text-[10px] bg-slate-700 px-1 rounded">Unknown</span>
+                </div>
+                <p class="text-[10px] text-slate-400" id="desc-mystery2">Unknown molecule. Contains a highly strained square base.</p>
+            </div>
+
         </div>
 
         <!-- NGSS Investigation -->
-        <div class="border-t border-slate-700 pt-4">
-            <h2 class="text-sm font-bold text-white mb-2">Pattern Prediction (HS-PS1-1)</h2>
-            <div class="bg-slate-800 p-3 rounded border border-slate-600">
-                <p class="text-xs text-slate-200 mb-2">Look at the Carbon atoms (grey/black spheres) in any of these molecules. Based on its position in Group 14, how many total bonds does each Carbon form?</p>
-                <div class="flex space-x-2">
-                    <button onclick="checkBond(2)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">2 Bonds</button>
-                    <button onclick="checkBond(3)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">3 Bonds</button>
-                    <button onclick="checkBond(4)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">4 Bonds</button>
+        <div id="investigation-panel" class="border-t border-slate-700 pt-4">
+
+            <!-- Standard Investigation -->
+            <div id="standard-investigation">
+                <h2 class="text-sm font-bold text-white mb-2">Pattern Prediction (HS-PS1-1)</h2>
+                <div class="bg-slate-800 p-3 rounded border border-slate-600">
+                    <p class="text-xs text-slate-200 mb-2">Look at the Carbon atoms (grey/black spheres) in any of these molecules. Based on its position in Group 14, how many total bonds does each Carbon form?</p>
+                    <div class="flex space-x-2">
+                        <button onclick="checkBond(2)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">2 Bonds</button>
+                        <button onclick="checkBond(3)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">3 Bonds</button>
+                        <button onclick="checkBond(4)" class="flex-1 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs">4 Bonds</button>
+                    </div>
+                    <div id="bond-feedback" class="text-xs mt-2 hidden text-center font-bold"></div>
                 </div>
-                <div id="bond-feedback" class="text-xs mt-2 hidden text-center font-bold"></div>
             </div>
+
+            <!-- Mystery Investigation -->
+            <div id="mystery-investigation" class="hidden">
+                <h2 class="text-sm font-bold text-pink-300 mb-2">Mystery Investigation</h2>
+                <div class="bg-slate-800 p-3 rounded border border-pink-900/50">
+                    <p class="text-xs text-slate-200 mb-3">Analyze the 3D structure to determine the formula. Count the atoms carefully!</p>
+
+                    <div class="flex space-x-4 mb-3">
+                        <div class="flex-1">
+                            <label class="block text-[10px] text-slate-400 mb-1">Carbon (Grey/Black)</label>
+                            <input type="number" id="guess-c" min="1" max="100" class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-white" placeholder="Count C">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-[10px] text-slate-400 mb-1">Hydrogen (White)</label>
+                            <input type="number" id="guess-h" min="1" max="100" class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-white" placeholder="Count H">
+                        </div>
+                    </div>
+
+                    <button onclick="verifyMystery()" class="w-full py-1 bg-pink-600 hover:bg-pink-500 text-white rounded text-xs font-bold transition-colors">Verify Formula</button>
+
+                    <div id="mystery-feedback" class="text-xs mt-2 hidden text-center font-bold"></div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -151,15 +195,21 @@
         // 3Dmol can fetch directly using the pubchem prefix, but to ensure 3D structures
         // we use the direct SDF endpoint if necessary. We'll try direct URLs to avoid 404s.
         const molecules = {
-            'cubane': { cid: '123121', name: 'Cubane', zoom: 1.5 },
-            'buckyball': { cid: '12359', name: 'Buckminsterfullerene', zoom: 1.2 },
-            'maitotoxin': { cid: '5282218', name: 'Maitotoxin', zoom: 1.0 }, // Maitotoxin is huge
-            'dodecahedrane': { cid: '136081', name: 'Dodecahedrane', zoom: 1.5 }
+            'cubane': { cid: '123121', name: 'Cubane', zoom: 1.5, isMystery: false },
+            'buckyball': { cid: '12359', name: 'Buckminsterfullerene', zoom: 1.2, isMystery: false },
+            'maitotoxin': { cid: '5282218', name: 'Maitotoxin', zoom: 1.0, isMystery: false }, // Maitotoxin is huge
+            'dodecahedrane': { cid: '136081', name: 'Dodecahedrane', zoom: 1.5, isMystery: false },
+            'mystery1': { cid: '6351', name: 'Cyclopropane (C3H6)', formulaC: 3, formulaH: 6, zoom: 2.0, isMystery: true, description: 'Carbon atoms forced into a tight triangle. High ring strain makes it very reactive!' },
+            'mystery2': { cid: '9250', name: 'Cyclobutane (C4H8)', formulaC: 4, formulaH: 8, zoom: 1.8, isMystery: true, description: 'Carbon atoms in a puckered square. Also features significant ring strain.' }
         };
 
         window.simulationState = {
             currentMolecule: 'cubane',
-            loaded: false
+            loaded: false,
+            solved: {
+                mystery1: false,
+                mystery2: false
+            }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -186,9 +236,25 @@
             window.simulationState.currentMolecule = molKey;
             window.simulationState.loaded = false;
 
+            // Toggle investigation panel
+            let isMystery = molecules[molKey].isMystery;
+            let isSolved = window.simulationState.solved[molKey];
+
+            if (isMystery && !isSolved) {
+                document.getElementById('standard-investigation').classList.add('hidden');
+                document.getElementById('mystery-investigation').classList.remove('hidden');
+                document.getElementById('mystery-feedback').classList.add('hidden');
+                document.getElementById('guess-c').value = '';
+                document.getElementById('guess-h').value = '';
+            } else {
+                document.getElementById('standard-investigation').classList.remove('hidden');
+                document.getElementById('mystery-investigation').classList.add('hidden');
+            }
+
             let loadingUI = document.getElementById('loading');
             loadingUI.classList.add('active');
-            document.getElementById('loading-text').innerText = `Fetching ${molecules[molKey].name}...`;
+            let fetchName = (isMystery && !isSolved) ? "Mystery Sample" : molecules[molKey].name;
+            document.getElementById('loading-text').innerText = `Fetching ${fetchName}...`;
 
             viewer.clear();
 
@@ -253,6 +319,37 @@
                 feedback.classList.add('text-green-400');
             } else {
                 feedback.innerText = `Not quite. Count the bonds connected to a single grey carbon atom in the model.`;
+                feedback.classList.add('text-red-400');
+            }
+        }
+
+        window.verifyMystery = function() {
+            let molKey = window.simulationState.currentMolecule;
+            let mol = molecules[molKey];
+            let guessC = parseInt(document.getElementById('guess-c').value);
+            let guessH = parseInt(document.getElementById('guess-h').value);
+
+            let feedback = document.getElementById('mystery-feedback');
+            feedback.classList.remove('hidden', 'text-green-400', 'text-red-400');
+
+            if (guessC === mol.formulaC && guessH === mol.formulaH) {
+                window.simulationState.solved[molKey] = true;
+                feedback.innerText = `Correct! This is ${mol.name}. ${mol.description}`;
+                feedback.classList.add('text-green-400');
+
+                // Update UI card
+                document.getElementById(`name-${molKey}`).innerText = mol.name;
+                document.getElementById(`name-${molKey}`).classList.remove('text-pink-300', 'text-cyan-300');
+                document.getElementById(`name-${molKey}`).classList.add('text-green-300');
+                document.getElementById(`desc-${molKey}`).innerText = mol.description;
+
+                // Switch back to standard investigation after a short delay
+                setTimeout(() => {
+                    document.getElementById('mystery-investigation').classList.add('hidden');
+                    document.getElementById('standard-investigation').classList.remove('hidden');
+                }, 4000);
+            } else {
+                feedback.innerText = "Incorrect formula. Rotate the molecule and count carefully!";
                 feedback.classList.add('text-red-400');
             }
         }
