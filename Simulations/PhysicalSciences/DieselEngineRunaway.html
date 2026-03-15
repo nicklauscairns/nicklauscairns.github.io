@@ -11,6 +11,39 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An interactive diesel engine simulation allowing students to explore the conversion of chemical potential energy to macroscopic kinetic energy, and troubleshoot a dangerous real-world trade phenomenon (a blown turbo seal).">
+    <meta name="keywords" content="NGSS, HS-PS3-2, physics, simulation, diesel engine, runaway, potential energy, kinetic energy, trade skills, interactive">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/PhysicalSciences/DieselEngineRunaway.html">
+    <meta property="og:title" content="Diesel Engine Runaway Phenomenon - Science Simulation">
+    <meta property="og:description" content="Explore macroscopic energy as a combination of microscopic motion and position in this interactive heavy-duty equipment simulation.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://nicklauscairns.com/Simulations/PhysicalSciences/DieselEngineRunaway.html">
+    <meta property="twitter:title" content="Diesel Engine Runaway Phenomenon - Science Simulation">
+    <meta property="twitter:description" content="Explore macroscopic energy as a combination of microscopic motion and position in this interactive heavy-duty equipment simulation.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Diesel Engine Runaway Phenomenon",
+      "operatingSystem": "Any",
+      "applicationCategory": "EducationalApplication",
+      "description": "An interactive diesel engine simulation allowing students to explore the conversion of chemical potential energy to macroscopic kinetic energy, and troubleshoot a dangerous real-world trade phenomenon (a blown turbo seal).",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-PS3-2",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ps3-2-energy"
+      }
+    }
+    </script>
     <title>Diesel Engine Runaway Phenomenon</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -104,7 +137,7 @@
 
             <div class="mt-auto pt-6">
                  <button id="mysteryFaultBtn" onclick="triggerMysteryFault()" class="w-full bg-red-900 hover:bg-red-800 text-red-100 border border-red-700 px-4 py-3 rounded shadow font-bold tracking-wide transition-colors relative overflow-hidden group">
-                    <span class="relative z-10">Trigger Mystery Fault</span>
+                    <span id="faultBtnText" class="relative z-10">Trigger Mystery Fault</span>
                     <div class="absolute inset-0 h-full w-full bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left opacity-20"></div>
                 </button>
             </div>
@@ -122,7 +155,7 @@
                 </div>
                 <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 text-center flex flex-col justify-center">
                     <div class="text-sm text-gray-400 uppercase tracking-wider mb-1">Engine Temp (&deg;C)</div>
-                    <div id="tempDisplay" class="text-3xl font-mono font-bold text-white transition-all">80</div>
+                    <div id="tempDisplay" class="text-3xl font-mono font-bold text-white transition-all">20</div>
                     <div class="text-xs text-orange-400 mt-1">Normal: ~90&deg;C</div>
                 </div>
                 <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 text-center flex flex-col justify-center relative overflow-hidden">
@@ -307,10 +340,12 @@
     // --- Particles System ---
     class Particle {
         constructor(type) {
-            this.type = type; // 'air', 'fuel', 'oil', 'exhaust'
+            this.baseType = type; // The original intent of this particle
+            this.type = type;     // The current render state ('air', 'fuel', 'oil', 'exhaust')
             this.reset();
         }
         reset() {
+            this.type = this.baseType; // Restore original type so it's not permanently exhaust
             this.x = Math.random() * canvas.width;
             this.y = -10 - Math.random() * 50; // Start slightly above
             this.vx = (Math.random() - 0.5) * 2;
@@ -388,7 +423,7 @@
 
         let currentAir = 0, currentFuel = 0, currentOil = 0;
         for (const p of particles) {
-            switch (p.type) {
+            switch (p.baseType) { // Count by baseType, not transient render type
                 case 'air': currentAir++; break;
                 case 'fuel': currentFuel++; break;
                 case 'oil': currentOil++; break;
@@ -400,13 +435,17 @@
         if (currentFuel < desiredFuel && particles.length < MAX_PARTICLES) particles.push(new Particle('fuel'));
         if (currentOil < desiredOil && particles.length < MAX_PARTICLES) particles.push(new Particle('oil'));
 
-        // Remove excess roughly
+        // Remove excess roughly (only remove uncombusted ones to avoid visual pop)
         if (currentFuel > desiredFuel) {
-            let idx = particles.findIndex(p => p.type === 'fuel' && !p.combusted);
+            let idx = particles.findIndex(p => p.baseType === 'fuel' && !p.combusted);
             if (idx !== -1) particles.splice(idx, 1);
         }
         if (currentAir > desiredAir) {
-            let idx = particles.findIndex(p => p.type === 'air' && !p.combusted);
+            let idx = particles.findIndex(p => p.baseType === 'air' && !p.combusted);
+            if (idx !== -1) particles.splice(idx, 1);
+        }
+        if (currentOil > desiredOil) {
+            let idx = particles.findIndex(p => p.baseType === 'oil' && !p.combusted);
             if (idx !== -1) particles.splice(idx, 1);
         }
     }
@@ -596,7 +635,7 @@
         state.faultSeverity = 10; // Start small, grows in update loop
         oilLegend.classList.remove('hidden');
 
-        mysteryFaultBtn.innerText = "FAULT ACTIVE: TURBO SEAL BLOWN";
+        document.getElementById('faultBtnText').innerText = "FAULT ACTIVE: TURBO SEAL BLOWN";
         mysteryFaultBtn.classList.replace('bg-red-900', 'bg-red-600');
         mysteryFaultBtn.classList.add('animate-pulse');
     }
@@ -617,7 +656,7 @@
         airVal.innerText = "100%";
 
         oilLegend.classList.add('hidden');
-        mysteryFaultBtn.innerText = "Trigger Mystery Fault";
+        document.getElementById('faultBtnText').innerText = "Trigger Mystery Fault";
         mysteryFaultBtn.classList.replace('bg-red-600', 'bg-red-900');
         mysteryFaultBtn.classList.remove('animate-pulse');
 
