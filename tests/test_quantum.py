@@ -14,29 +14,32 @@ def test_quantum_entanglement(page: Page):
     # Allow scripts to initialize
     page.wait_for_selector("#grid button")
 
-    # Get nodes and partners
+    # Get initial nodes
     nodes = page.evaluate("window.getNodes()")
-    partners = page.evaluate("window.getPartners()")
 
     # Assert grid size is correct
     assert len(nodes) == 16
-    assert len(partners) == 16
 
-    # Assert every node has a partner and it's symmetrical
-    for i in range(16):
-        partner = partners[i]
-        assert partners[partner] == i
-        assert i != partner
-
-    # Attempt a click on index 0 to test increment/decrement behavior
-    initial_node_0_state = nodes[0]
-    initial_partner_state = nodes[partners[0]]
-
-    page.evaluate("window.simulateClick(0)")
+    # Attempt a click on index 5 (row 1, col 1) to test increment/decrement behavior
+    target = 5
+    page.evaluate(f"window.simulateClick({target})")
 
     new_nodes = page.evaluate("window.getNodes()")
-    assert new_nodes[0] == (initial_node_0_state + 1) % 4
-    assert new_nodes[partners[0]] == (initial_partner_state - 1 + 4) % 4
+
+    # Target should be incremented (modulo 4)
+    expected_target = (nodes[target] + 1) % 4
+    assert new_nodes[target] == expected_target
+
+    # Neighbors should be decremented (modulo 4)
+    neighbors = [1, 9, 4, 6]
+    for n in neighbors:
+        expected = (nodes[n] - 1 + 4) % 4
+        assert new_nodes[n] == expected
+
+    # Non-neighbors should be unchanged
+    for i in range(16):
+        if i not in neighbors and i != target:
+            assert new_nodes[i] == nodes[i]
 
     # The grid elements should exist
     grid_buttons = page.locator("#grid button")
