@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quantum Entanglement Puzzle</title>
-    <meta name="description" content="A 4x4 grid puzzle where nodes are secretly entangled in pairs. Increment one, decrement its hidden partner. Solve the puzzle by reaching a specific energy state.">
+    <meta name="description" content="A 4x4 grid puzzle where nodes are locally entangled. Increment one, decrement its adjacent neighbors. Solve the puzzle by reaching a specific energy state.">
     <meta name="keywords" content="logic game, puzzle, quantum entanglement, grid puzzle, cognitive ability">
     <meta name="author" content="NGSS Simulations">
 
     <!-- Open Graph Tags -->
     <meta property="og:title" content="Quantum Entanglement Puzzle">
-    <meta property="og:description" content="Solve the 4x4 entangled nodes puzzle by manipulating their hidden states.">
+    <meta property="og:description" content="Solve the 4x4 entangled nodes puzzle by manipulating their local neighborhood states.">
     <meta property="og:type" content="website">
 
     <!-- Schema.org JSON-LD -->
@@ -19,7 +19,7 @@
         "@context": "https://schema.org",
         "@type": "LearningResource",
         "name": "Quantum Entanglement Puzzle",
-        "description": "A logic game involving a 4x4 grid where nodes are secretly entangled in pairs. Clicking a node increments its state but decrements its hidden partner's state.",
+        "description": "A logic game involving a 4x4 grid where nodes are entangled. Clicking a node increments its state but decrements its orthogonal neighbors' states.",
         "learningResourceType": "Simulation",
         "educationalLevel": "High School"
     }
@@ -52,9 +52,9 @@
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">Quantum Entanglement</h1>
             <p class="text-lg text-slate-400 max-w-2xl mx-auto">
-                The 16 nodes in this grid are secretly entangled in pairs.
+                The 16 nodes in this grid are locally entangled.
                 Clicking a node increases its energy state (0 &rarr; 1 &rarr; 2 &rarr; 3 &rarr; 0),
-                but simultaneously decreases the state of its hidden partner (0 &rarr; 3 &rarr; 2 &rarr; 1 &rarr; 0).<br><br>
+                but simultaneously decreases the states of its adjacent neighbors (up, down, left, right).<br><br>
                 <strong>Goal:</strong> Stabilize the system by setting all nodes to state 0.
             </p>
         </header>
@@ -87,9 +87,10 @@
 
     <script>
         const GRID_SIZE = 16;
+        const COLS = Math.sqrt(GRID_SIZE);
+        const ROWS = GRID_SIZE / COLS;
         const STATES = 4;
         const nodes = Array(GRID_SIZE).fill(0);
-        let partners = [];
         let moves = 0;
         let isSolved = false;
 
@@ -102,22 +103,29 @@
         const newGameBtn = document.getElementById('newGameBtn');
         const finalMovesEl = document.getElementById('finalMoves');
 
-        function generatePartners() {
-            let available = Array.from({length: GRID_SIZE}, (_, i) => i);
-            partners = Array(GRID_SIZE).fill(-1);
-
-            // Randomize array
-            for (let i = available.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [available[i], available[j]] = [available[j], available[i]];
+        function applyMove(index) {
+            if (!Number.isInteger(index) || index < 0 || index >= GRID_SIZE) {
+                return false;
             }
 
-            for (let i = 0; i < GRID_SIZE; i += 2) {
-                const a = available[i];
-                const b = available[i + 1];
-                partners[a] = b;
-                partners[b] = a;
+            // Increment clicked node
+            nodes[index] = (nodes[index] + 1) % STATES;
+
+            const row = Math.floor(index / COLS);
+            const col = index % COLS;
+
+            // Decrement adjacent neighbors
+            const neighbors = [];
+            if (row > 0) neighbors.push(index - COLS); // Up
+            if (row < ROWS - 1) neighbors.push(index + COLS); // Down
+            if (col > 0) neighbors.push(index - 1); // Left
+            if (col < COLS - 1) neighbors.push(index + 1); // Right
+
+            for (const n of neighbors) {
+                nodes[n] = (nodes[n] - 1 + STATES) % STATES;
             }
+
+            return true;
         }
 
         function scramble() {
@@ -128,11 +136,7 @@
             const scrambleMoves = 20 + Math.floor(Math.random() * 20);
             for (let i = 0; i < scrambleMoves; i++) {
                 const target = Math.floor(Math.random() * GRID_SIZE);
-                // Increment target
-                nodes[target] = (nodes[target] + 1) % STATES;
-                // Decrement partner
-                const partner = partners[target];
-                nodes[partner] = (nodes[partner] - 1 + STATES) % STATES;
+                applyMove(target);
             }
         }
 
@@ -163,7 +167,6 @@
             moves = 0;
             winMessage.classList.add('hidden');
             gridEl.style.pointerEvents = 'auto';
-            generatePartners();
             scramble();
             renderGrid();
             moveCountEl.textContent = moves;
@@ -172,12 +175,7 @@
         function handleNodeClick(index) {
             if (isSolved) return;
 
-            // Increment clicked node
-            nodes[index] = (nodes[index] + 1) % STATES;
-
-            // Decrement hidden partner
-            const partnerIndex = partners[index];
-            nodes[partnerIndex] = (nodes[partnerIndex] - 1 + STATES) % STATES;
+            applyMove(index);
 
             moves++;
             updateUI();
@@ -207,7 +205,7 @@
         // Expose for testing
         window.simulateClick = handleNodeClick;
         window.getNodes = () => nodes;
-        window.getPartners = () => partners;
+        window.applyMove = applyMove;
     </script>
 </body>
 </html>
