@@ -332,6 +332,8 @@ Use mathematical and/or computational representations to support explanations of
 
 - [Bioluminescent Bay Ecosystem Dynamics](BioluminescentBayDynamics.html) - An interactive simulation of Puerto Rico's bioluminescent bay ecosystem, modeling the population dynamics and carrying capacity of the dinoflagellate Pyrodinium bahamense based on unique environmental factors.
 
+- [Connecticut Black Bear Population Expansion](ConnecticutBlackBearPopulationExpansion.html) - Model the factors affecting the carrying capacity and expansion of the black bear population in Connecticut.
+
 ### HS-LS2-2
 Use mathematical representations to support and revise explanations based on evidence about factors affecting biodiversity and populations in ecosystems of different scales.
 

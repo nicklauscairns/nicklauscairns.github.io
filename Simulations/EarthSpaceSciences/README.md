@@ -501,6 +501,8 @@ Plan and conduct an investigation of the properties of water and its effects on 
     </ul>
   </details>
 
+- [Frost Heaves and Connecticut Stone Walls](FrostHeavesAndConnecticutStoneWalls.html) - Simulate the physics of ice expansion and frost heaving that pushes rocks to the surface, explaining the abundance of stone walls in New England.
+
 
 ### HS-ESS2-6
 Develop a quantitative model to describe the cycling of carbon among the hydrosphere, atmosphere, geosphere, and biosphere.
