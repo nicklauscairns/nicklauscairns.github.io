@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DKDGNLCXQ1');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An interactive diesel engine simulation allowing students to explore the conversion of chemical potential energy to macroscopic kinetic energy, and troubleshoot a dangerous real-world trade phenomenon (a blown turbo seal).">
+    <meta name="keywords" content="NGSS, HS-PS3-2, physics, simulation, diesel engine, runaway, potential energy, kinetic energy, trade skills, interactive">
+    <meta name="author" content="Nicklaus Cairns">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/PhysicalSciences/DieselEngineRunaway.html">
+    <meta property="og:title" content="Diesel Engine Runaway Phenomenon - Science Simulation">
+    <meta property="og:description" content="Explore macroscopic energy as a combination of microscopic motion and position in this interactive heavy-duty equipment simulation.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://nicklauscairns.com/Simulations/PhysicalSciences/DieselEngineRunaway.html">
+    <meta property="twitter:title" content="Diesel Engine Runaway Phenomenon - Science Simulation">
+    <meta property="twitter:description" content="Explore macroscopic energy as a combination of microscopic motion and position in this interactive heavy-duty equipment simulation.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Diesel Engine Runaway Phenomenon",
+      "learningResourceType": "Simulation",
+      "description": "An interactive diesel engine simulation allowing students to explore the conversion of chemical potential energy to macroscopic kinetic energy, and troubleshoot a dangerous real-world trade phenomenon (a blown turbo seal).",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "NGSS",
+        "targetName": "HS-PS3-2",
+        "targetUrl": "https://www.nextgenscience.org/pe/hs-ps3-2-energy"
+      }
+    }
+    </script>
+    <title>Diesel Engine Runaway Phenomenon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a202c; color: #e2e8f0; }
+        .canvas-container { position: relative; width: 100%; height: 300px; background-color: #2d3748; border-radius: 0.5rem; overflow: hidden; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+        canvas { display: block; }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #4299e1;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #4a5568;
+            border-radius: 2px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        .glow-red { text-shadow: 0 0 10px #f56565, 0 0 20px #f56565; }
+        .alert-flash { animation: flash 1s infinite alternate; }
+        @keyframes flash {
+            from { background-color: rgba(229, 62, 62, 0.2); }
+            to { background-color: rgba(229, 62, 62, 0.6); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+<div class="max-w-6xl mx-auto">
+    <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-700 pb-4">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Diesel Engine Runaway Phenomenon</h1>
+            <p class="text-gray-400">NGSS HS-PS3-2: Macroscopic energy as a combination of microscopic motion and position.</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex space-x-2">
+            <button onclick="document.getElementById('briefingModal').classList.remove('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition-colors">Mission Briefing</button>
+            <button onclick="resetSimulation()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded shadow transition-colors">Reset Engine</button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Controls Column -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col space-y-6 border border-gray-700">
+            <h2 class="text-xl font-semibold border-b border-gray-600 pb-2">Operator Controls</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <label class="text-sm font-medium text-gray-300">Fuel Injection (Chemical Potential Energy)</label>
+                        <span id="fuelVal" class="text-sm font-mono text-blue-400">0%</span>
+                    </div>
+                    <input type="range" id="fuelSlider" min="0" max="100" value="0" class="w-full">
+                    <p class="text-xs text-gray-500 mt-1">Controls intentional diesel fuel entering the cylinder.</p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <label class="text-sm font-medium text-gray-300">Air Intake Valve (Throttle)</label>
+                        <span id="airVal" class="text-sm font-mono text-green-400">100%</span>
+                    </div>
+                    <input type="range" id="airSlider" min="0" max="100" value="100" class="w-full">
+                    <p class="text-xs text-gray-500 mt-1">Diesels are air-throttled. Normally open, can be choked.</p>
+                </div>
+
+                <div class="pt-4 border-t border-gray-700">
+                    <h3 class="text-md font-semibold text-yellow-500 mb-2">Diagnostic Tools</h3>
+                    <div class="flex items-center justify-between bg-gray-900 p-3 rounded">
+                        <span class="text-sm text-gray-300">System Load</span>
+                        <button id="toggleLoadBtn" onclick="toggleLoad()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-xs transition-colors">Apply Load</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Applying a heavy load will normally lower RPM.</p>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-6">
+                 <button id="mysteryFaultBtn" onclick="triggerMysteryFault()" class="w-full bg-red-900 hover:bg-red-800 text-red-100 border border-red-700 px-4 py-3 rounded shadow font-bold tracking-wide transition-colors relative overflow-hidden group">
+                    <span id="faultBtnText" class="relative z-10">Trigger Mystery Fault</span>
+                    <div class="absolute inset-0 h-full w-full bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left opacity-20"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Visualization Column -->
+        <div class="lg:col-span-2 flex flex-col space-y-6">
+
+            <!-- Dashboard -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 text-center flex flex-col justify-center">
+                    <div class="text-sm text-gray-400 uppercase tracking-wider mb-1">Engine RPM</div>
+                    <div id="rpmDisplay" class="text-4xl font-mono font-bold text-white transition-all">0</div>
+                    <div class="text-xs text-red-500 mt-1">Redline: 4500</div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 text-center flex flex-col justify-center">
+                    <div class="text-sm text-gray-400 uppercase tracking-wider mb-1">Engine Temp (&deg;C)</div>
+                    <div id="tempDisplay" class="text-3xl font-mono font-bold text-white transition-all">20</div>
+                    <div class="text-xs text-orange-400 mt-1">Normal: ~90&deg;C</div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 text-center flex flex-col justify-center relative overflow-hidden">
+                    <div id="statusBg" class="absolute inset-0 opacity-20 transition-colors duration-500 bg-green-500"></div>
+                    <div class="relative z-10">
+                        <div class="text-sm text-gray-400 uppercase tracking-wider mb-1">System Status</div>
+                        <div id="statusText" class="text-xl font-bold text-green-400">IDLE</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Engine Visual -->
+            <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 relative">
+                <h3 class="absolute top-4 left-4 text-sm font-semibold text-gray-400 z-10">Cylinder Particle View</h3>
+                <div class="canvas-container" id="engineContainer">
+                    <canvas id="engineCanvas"></canvas>
+                </div>
+                <div class="mt-4 text-sm text-gray-400 flex justify-between">
+                    <span>Blue: Air Molecules</span>
+                    <span>Yellow: Diesel Fuel</span>
+                    <span id="oilLegend" class="hidden text-red-400">Red: Combustible Engine Oil</span>
+                </div>
+            </div>
+
+            <!-- Graph -->
+            <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <h3 class="text-sm font-semibold text-gray-400 mb-2">Energy Conversion (Potential -> Kinetic)</h3>
+                <div class="h-48 w-full">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Mission Briefing Modal -->
+<div id="briefingModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+    <div class="bg-gray-800 max-w-2xl w-full rounded-xl border border-gray-600 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="bg-blue-900 p-4 border-b border-blue-700 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <svg class="w-6 h-6 mr-2 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Mission Briefing
+            </h2>
+            <button onclick="document.getElementById('briefingModal').classList.add('hidden')" class="text-blue-300 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto">
+            <p class="text-gray-300 mb-4 leading-relaxed">
+                Welcome to the heavy-duty diesel mechanics diagnostic bay. Your task is to investigate a dangerous and dramatic phenomenon known as a <strong class="text-red-400">Diesel Runaway</strong>.
+            </p>
+            <p class="text-gray-300 mb-4 leading-relaxed">
+                Unlike gasoline engines which use a spark plug and throttle body to control air/fuel, diesel engines pull in maximum air at all times. They compress that air until it gets so hot that injected fuel ignites spontaneously. Engine speed is normally controlled purely by how much fuel is injected.
+            </p>
+            <div class="bg-gray-900 p-4 rounded border border-gray-700 mb-4">
+                <h3 class="text-yellow-500 font-semibold mb-2">Your Task:</h3>
+                <ol class="list-decimal pl-5 text-gray-300 space-y-2">
+                    <li>Start the engine and observe normal operation by increasing fuel injection.</li>
+                    <li>Trigger the "Mystery Fault" and observe what happens to the RPM and Temperature.</li>
+                    <li>Figure out <em class="text-blue-300">what</em> is causing the runaway (where is the extra energy coming from?).</li>
+                    <li>Figure out <em class="text-green-400">how to stop it</em> using the available controls before the engine destroys itself.</li>
+                </ol>
+            </div>
+            <p class="text-sm text-gray-500 border-t border-gray-700 pt-4">
+                <strong>NGSS Connection (HS-PS3-2):</strong> Notice how the chemical potential energy stored in the molecular bonds of the fuel (and the mystery fluid) is rapidly converted into the macroscopic kinetic energy of the moving pistons, manifesting as dangerous RPM levels.
+            </p>
+        </div>
+        <div class="p-4 border-t border-gray-700 bg-gray-800 text-right">
+            <button onclick="document.getElementById('briefingModal').classList.add('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow font-semibold transition-colors">Start Investigation</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- State Variables ---
+    const state = {
+        fuel: 0,           // 0-100% intentional injection
+        air: 100,          // 0-100% air intake
+        rpm: 0,
+        targetRpm: 0,
+        temp: 20,
+        hasLoad: false,
+        faultActive: false, // Is the runaway active?
+        faultSeverity: 0,   // 0-100 amount of unintended oil
+        engineDestroyed: false,
+
+        // Physics constants mapping
+        maxNormalRpm: 3500,
+        redlineRpm: 4500,
+        maxCatastrophicRpm: 7000,
+        baseFriction: 5,
+        loadFriction: 40,
+        combustionEfficiency: 0.8,
+        faultSeverityIncrement: 0.5,
+        oilEnergyFactor: 1.5,
+        minAirFactor: 0.1,
+        powerCurveExponent: 1.2,
+        powerFactor: 20,
+        idleRpm: 800
+    };
+
+    window.simulationState = state; // Expose for Playwright testing
+
+    // --- DOM Elements ---
+    const fuelSlider = document.getElementById('fuelSlider');
+    const airSlider = document.getElementById('airSlider');
+    const fuelVal = document.getElementById('fuelVal');
+    const airVal = document.getElementById('airVal');
+    const rpmDisplay = document.getElementById('rpmDisplay');
+    const tempDisplay = document.getElementById('tempDisplay');
+    const statusText = document.getElementById('statusText');
+    const statusBg = document.getElementById('statusBg');
+    const toggleLoadBtn = document.getElementById('toggleLoadBtn');
+    const mysteryFaultBtn = document.getElementById('mysteryFaultBtn');
+    const oilLegend = document.getElementById('oilLegend');
+
+    // --- Canvas Setup ---
+    const canvas = document.getElementById('engineCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('engineContainer');
+
+    const drawingConstants = {
+        CYLINDER_X_FACTOR: 0.2,
+        CYLINDER_WIDTH_FACTOR: 0.6,
+        PISTON_X_FACTOR: 0.25,
+        PISTON_WIDTH_FACTOR: 0.5,
+        PISTON_HEIGHT_FACTOR: 0.4,
+        PISTON_Y_BASE_FACTOR: 0.7,
+        PISTON_Y_PHASE_FACTOR: 0.15,
+        ROD_X_FACTOR: 0.45,
+        ROD_WIDTH_FACTOR: 0.1,
+        ROD_Y_OFFSET_FACTOR: 0.2
+    };
+
+    function resizeCanvas() {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // --- Chart Setup ---
+    const chartCtx = document.getElementById('energyChart').getContext('2d');
+    const energyChart = new Chart(chartCtx, {
+        type: 'line',
+        data: {
+            labels: Array(30).fill(''),
+            datasets: [
+                {
+                    label: 'Kinetic Energy (RPM)',
+                    data: Array(30).fill(0),
+                    borderColor: '#4299e1',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Thermal Energy',
+                    data: Array(30).fill(20),
+                    borderColor: '#ed8936',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+                y: { beginAtZero: true, suggestedMax: 8000, grid: { color: '#4a5568' }, ticks: { color: '#a0aec0' } },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                legend: { labels: { color: '#a0aec0' } }
+            }
+        }
+    });
+
+    // --- Particles System ---
+    class Particle {
+        constructor(type) {
+            this.baseType = type; // The original intent of this particle
+            this.type = type;     // The current render state ('air', 'fuel', 'oil', 'exhaust')
+            this.reset();
+        }
+        reset() {
+            this.type = this.baseType; // Restore original type so it's not permanently exhaust
+            this.x = Math.random() * canvas.width;
+            this.y = -10 - Math.random() * 50; // Start slightly above
+            this.vx = (Math.random() - 0.5) * 2;
+            this.vy = Math.random() * 5 + 2;
+            this.life = 1.0;
+            this.combusted = false;
+        }
+        update(rpm) {
+            // Speed based on RPM pulling things in
+            let speedMult = 1 + (rpm / 1000);
+            this.x += this.vx * speedMult;
+            this.y += this.vy * speedMult;
+
+            // Combustion zone (middle of canvas)
+            if (this.y > canvas.height * 0.4 && this.y < canvas.height * 0.6 && !this.combusted) {
+                // If it's combustible and there's enough air (simplification for visuals)
+                if ((this.type === 'fuel' || this.type === 'oil') && rpm > 100) {
+                    this.combusted = true;
+                    this.type = 'exhaust';
+                    this.vx = (Math.random() - 0.5) * 10;
+                    this.vy = (Math.random() - 0.5) * 10;
+                    // Flash effect handled in draw loop
+                }
+            }
+
+            // Exhaust phase
+            if (this.combusted) {
+                this.life -= 0.05;
+                this.y += 5; // push down out exhaust
+            }
+
+            if (this.y > canvas.height || this.life <= 0) {
+                this.reset();
+                return true; // respawned
+            }
+            return false;
+        }
+        draw(ctx) {
+            ctx.beginPath();
+            if (this.type === 'air') {
+                ctx.fillStyle = `rgba(66, 153, 225, ${this.life})`;
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            } else if (this.type === 'fuel') {
+                ctx.fillStyle = `rgba(236, 201, 75, ${this.life})`;
+                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+            } else if (this.type === 'oil') {
+                ctx.fillStyle = `rgba(229, 62, 62, ${this.life})`; // Red for visual distinction of fault
+                ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
+            } else if (this.type === 'exhaust') {
+                ctx.fillStyle = `rgba(160, 174, 192, ${this.life})`;
+                ctx.arc(this.x, this.y, 6, 0, Math.PI * 2);
+            }
+            ctx.fill();
+
+            // Draw combustion flash
+            if (this.combusted && this.life > 0.8) {
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255, 165, 0, ${(this.life - 0.8) * 5})`;
+                ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    let particles = [];
+    const MAX_PARTICLES = 300;
+
+    function manageParticles() {
+        // Calculate desired particles based on inputs
+        let desiredAir = Math.floor((state.air / 100) * 100) + 10;
+        let desiredFuel = Math.floor((state.fuel / 100) * 80);
+        let desiredOil = Math.floor((state.faultSeverity / 100) * 150); // Oil dumps in heavily
+
+        if (state.engineDestroyed) { desiredFuel = 0; desiredAir = 0; desiredOil = 0; }
+
+        let currentAir = 0, currentFuel = 0, currentOil = 0;
+        for (const p of particles) {
+            switch (p.baseType) { // Count by baseType, not transient render type
+                case 'air': currentAir++; break;
+                case 'fuel': currentFuel++; break;
+                case 'oil': currentOil++; break;
+            }
+        }
+
+        // Add missing
+        if (currentAir < desiredAir && particles.length < MAX_PARTICLES) particles.push(new Particle('air'));
+        if (currentFuel < desiredFuel && particles.length < MAX_PARTICLES) particles.push(new Particle('fuel'));
+        if (currentOil < desiredOil && particles.length < MAX_PARTICLES) particles.push(new Particle('oil'));
+
+        // Remove excess roughly (only remove uncombusted ones to avoid visual pop)
+        if (currentFuel > desiredFuel) {
+            let idx = particles.findIndex(p => p.baseType === 'fuel' && !p.combusted);
+            if (idx !== -1) particles.splice(idx, 1);
+        }
+        if (currentAir > desiredAir) {
+            let idx = particles.findIndex(p => p.baseType === 'air' && !p.combusted);
+            if (idx !== -1) particles.splice(idx, 1);
+        }
+        if (currentOil > desiredOil) {
+            let idx = particles.findIndex(p => p.baseType === 'oil' && !p.combusted);
+            if (idx !== -1) particles.splice(idx, 1);
+        }
+    }
+
+    // --- Physics Engine Update ---
+    function updateEngineLogic() {
+        if (state.engineDestroyed) {
+            state.targetRpm = 0;
+            state.rpm *= 0.95; // fast spin down
+            return;
+        }
+
+        // 1. Calculate available combustible energy
+        // In a runaway, engine oil from a blown turbo acts as uncontrolled fuel
+        let totalCombustible = state.fuel;
+        if (state.faultActive) {
+            // Fault severity increases over time to simulate seal failing completely
+            if (state.faultSeverity < 100) state.faultSeverity += state.faultSeverityIncrement;
+            // Oil provides massive unchecked energy
+            totalCombustible += state.faultSeverity * state.oilEnergyFactor;
+        }
+
+        // 2. Air restriction (Diesel throttle)
+        // Diesels need air to burn the fuel. If choked, no combustion.
+        let usableAirFactor = state.air / 100;
+        let actualCombustionEnergy = totalCombustible * usableAirFactor;
+
+        // 3. Calculate Target RPM based on energy vs friction/load
+        let currentFriction = state.baseFriction + (state.hasLoad ? state.loadFriction : 0);
+
+        // Non-linear power curve
+        let powerGenerated = Math.pow(actualCombustionEnergy, state.powerCurveExponent) * state.powerFactor;
+
+        if (usableAirFactor < state.minAirFactor) {
+            // Air choked, engine dies
+            state.targetRpm = 0;
+        } else if (actualCombustionEnergy < 5) {
+            // Idle friction overcomes tiny fuel
+            state.targetRpm = 0;
+        } else {
+            state.targetRpm = (powerGenerated / currentFriction) * 100;
+        }
+
+        // Add idle
+        if (state.fuel > 0 && usableAirFactor > state.minAirFactor && !state.faultActive) {
+            state.targetRpm = Math.max(state.targetRpm, state.idleRpm);
+        }
+
+        // 4. Smooth RPM interpolation (inertia)
+        let diff = state.targetRpm - state.rpm;
+        state.rpm += diff * 0.05;
+
+        // 5. Calculate Temperature based on RPM and load
+        let targetTemp = 20 + (state.rpm / 50);
+        if (state.hasLoad) targetTemp += 20;
+        if (state.faultActive) targetTemp += (state.rpm / 20); // Runs much hotter on oil
+
+        state.temp += (targetTemp - state.temp) * 0.01;
+
+        // 6. Check for destruction
+        if (state.rpm > state.maxCatastrophicRpm) {
+            destroyEngine();
+        }
+    }
+
+    function destroyEngine() {
+        if (state.engineDestroyed) return;
+        state.engineDestroyed = true;
+        statusText.innerText = "CATASTROPHIC FAILURE: ROD THROWN";
+        statusText.classList.replace('text-green-400', 'text-red-500');
+        statusText.classList.replace('text-red-400', 'text-red-500');
+        statusBg.className = "absolute inset-0 opacity-40 bg-red-700 alert-flash";
+
+        // UI updates
+        rpmDisplay.classList.add('glow-red');
+        container.style.backgroundColor = '#1a0505';
+    }
+
+    // --- UI Update Loop ---
+    let frameCount = 0;
+    function updateUI() {
+        // Text displays
+        rpmDisplay.innerText = Math.round(state.rpm);
+        tempDisplay.innerText = Math.round(state.temp);
+
+        // Warning colors
+        if (state.rpm > state.redlineRpm && !state.engineDestroyed) {
+            rpmDisplay.classList.add('text-red-400', 'glow-red');
+            rpmDisplay.classList.remove('text-white');
+            if (statusText.innerText !== "RUNAWAY WARNING") {
+                statusText.innerText = "RUNAWAY WARNING";
+                statusText.classList.replace('text-green-400', 'text-red-400');
+                statusBg.classList.replace('bg-green-500', 'bg-red-500');
+                statusBg.classList.add('alert-flash');
+            }
+        } else if (state.rpm <= state.redlineRpm && !state.engineDestroyed) {
+            rpmDisplay.classList.remove('text-red-400', 'glow-red');
+            rpmDisplay.classList.add('text-white');
+
+            if (state.rpm > 500) {
+                statusText.innerText = state.hasLoad ? "UNDER LOAD" : "RUNNING";
+                statusText.className = "text-xl font-bold text-green-400";
+                statusBg.className = "absolute inset-0 opacity-20 transition-colors duration-500 bg-green-500";
+            } else {
+                statusText.innerText = "IDLE / OFF";
+                statusText.className = "text-xl font-bold text-gray-400";
+                statusBg.className = "absolute inset-0 opacity-20 transition-colors duration-500 bg-gray-500";
+            }
+        }
+
+        // Chart update (every 10 frames to save perf)
+        if (frameCount % 10 === 0) {
+            let dataArr1 = energyChart.data.datasets[0].data;
+            let dataArr2 = energyChart.data.datasets[1].data;
+            dataArr1.shift();
+            dataArr2.shift();
+            dataArr1.push(state.rpm);
+            dataArr2.push(state.temp * 10); // Scale temp for chart visibility
+            energyChart.update();
+        }
+    }
+
+    // --- Main Animation Loop ---
+    function animate() {
+        updateEngineLogic();
+        manageParticles();
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw cylinder background indication
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(canvas.width * drawingConstants.CYLINDER_X_FACTOR, 0, canvas.width * drawingConstants.CYLINDER_WIDTH_FACTOR, canvas.height);
+
+        // Piston visual (simple rect moving up and down based on RPM)
+        if (state.rpm > 100) {
+            let period = 60000 / state.rpm; // ms per revolution
+            let time = Date.now() % period;
+            let phase = Math.sin((time / period) * Math.PI * 2);
+            let pistonY = canvas.height * drawingConstants.PISTON_Y_BASE_FACTOR + (phase * canvas.height * drawingConstants.PISTON_Y_PHASE_FACTOR);
+
+            ctx.fillStyle = '#718096'; // gray-500
+            ctx.fillRect(canvas.width * drawingConstants.PISTON_X_FACTOR, pistonY, canvas.width * drawingConstants.PISTON_WIDTH_FACTOR, canvas.height * drawingConstants.PISTON_HEIGHT_FACTOR);
+            // Connecting rod
+            ctx.fillStyle = '#4a5568';
+            ctx.fillRect(canvas.width * drawingConstants.ROD_X_FACTOR, pistonY + canvas.height * drawingConstants.ROD_Y_OFFSET_FACTOR, canvas.width * drawingConstants.ROD_WIDTH_FACTOR, canvas.height);
+        }
+
+        // Draw and update particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update(state.rpm);
+            particles[i].draw(ctx);
+        }
+
+        updateUI();
+        frameCount++;
+        requestAnimationFrame(animate);
+    }
+
+    // --- Interactions ---
+    fuelSlider.addEventListener('input', (e) => {
+        state.fuel = parseInt(e.target.value, 10);
+        fuelVal.innerText = state.fuel + '%';
+    });
+
+    airSlider.addEventListener('input', (e) => {
+        state.air = parseInt(e.target.value, 10);
+        airVal.innerText = state.air + '%';
+    });
+
+    function toggleLoad() {
+        state.hasLoad = !state.hasLoad;
+        if (state.hasLoad) {
+            toggleLoadBtn.innerText = "Remove Load";
+            toggleLoadBtn.classList.replace('bg-yellow-600', 'bg-red-600');
+            toggleLoadBtn.classList.replace('hover:bg-yellow-700', 'hover:bg-red-700');
+        } else {
+            toggleLoadBtn.innerText = "Apply Load";
+            toggleLoadBtn.classList.replace('bg-red-600', 'bg-yellow-600');
+            toggleLoadBtn.classList.replace('hover:bg-red-700', 'hover:bg-yellow-700');
+        }
+    }
+
+    function triggerMysteryFault() {
+        if (state.faultActive || state.engineDestroyed) return;
+        state.faultActive = true;
+        state.faultSeverity = 10; // Start small, grows in update loop
+        oilLegend.classList.remove('hidden');
+
+        document.getElementById('faultBtnText').innerText = "FAULT ACTIVE: TURBO SEAL BLOWN";
+        document.getElementById('mysteryFaultBtn').classList.replace('bg-red-900', 'bg-red-600');
+        document.getElementById('mysteryFaultBtn').classList.add('animate-pulse');
+    }
+
+    function resetSimulation() {
+        state.fuel = 0;
+        state.air = 100;
+        state.rpm = 0;
+        state.targetRpm = 0;
+        state.temp = 20;
+        state.faultActive = false;
+        state.faultSeverity = 0;
+        state.engineDestroyed = false;
+
+        fuelSlider.value = 0;
+        fuelVal.innerText = "0%";
+        airSlider.value = 100;
+        airVal.innerText = "100%";
+
+        oilLegend.classList.add('hidden');
+        document.getElementById('faultBtnText').innerText = "Trigger Mystery Fault";
+        document.getElementById('mysteryFaultBtn').classList.replace('bg-red-600', 'bg-red-900');
+        document.getElementById('mysteryFaultBtn').classList.remove('animate-pulse');
+
+        container.style.backgroundColor = '';
+        rpmDisplay.classList.remove('glow-red');
+        statusBg.classList.remove('alert-flash');
+
+        particles = [];
+
+        let dataArr1 = energyChart.data.datasets[0].data;
+        let dataArr2 = energyChart.data.datasets[1].data;
+        dataArr1.fill(0);
+        dataArr2.fill(20);
+        energyChart.update();
+    }
+
+    // --- Init ---
+    // Show briefing on load
+    // setTimeout(() => document.getElementById('briefingModal').classList.remove('hidden'), 500);
+    animate();
+
+</script>
+</body>
+</html>
