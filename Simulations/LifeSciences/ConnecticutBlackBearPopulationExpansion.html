@@ -238,7 +238,7 @@
         function generateGarbageNodes() {
             const state = window.simulationState;
             state.garbageNodes = [];
-            const numNodes = Math.floor(state.garbageAvailability * 50);
+            const numNodes = Math.floor(state.garbageAvailability * GARBAGE_NODE_DENSITY_FACTOR);
 
             for(let i=0; i<numNodes; i++) {
                 let x = 0.3 + Math.random() * 0.6;

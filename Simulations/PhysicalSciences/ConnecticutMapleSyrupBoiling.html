@@ -72,8 +72,8 @@
                             <span class="font-bold text-yellow-300"><span id="lblSugarConc">2.0</span> %</span>
                         </div>
                         <div class="flex justify-between w-48 mb-1">
-                            <span>Fluid Vol.:</span>
-                            <span class="font-bold text-blue-300"><span id="lblVolume">40.0</span> Gal</span>
+                            <span>Fluid Mass:</span>
+                            <span class="font-bold text-blue-300"><span id="lblVolume">40.0</span> kg</span>
                         </div>
                         <div class="flex justify-between w-48">
                             <span>Evap Rate:</span>
@@ -265,6 +265,17 @@
             if (state.temperature >= state.boilingPoint) {
                 state.evapRate = state.heatFlux * 0.15;
                 state.waterMass -= state.evapRate * state.dt;
+
+                if (Math.random() < state.evapRate * 0.5) {
+                    state.steam.push({
+                        x: 0.1 + Math.random() * 0.8,
+                        y: 0.5 + (state.mass / 80.0),
+                        size: 20 + Math.random() * 30,
+                        life: 1.0,
+                        vx: (Math.random() - 0.5) * 0.01,
+                        vy: -0.01 - Math.random() * 0.02
+                    });
+                }
             }
 
             state.mass = state.waterMass + state.sugarMass;
@@ -278,6 +289,27 @@
                 state.sugarConc = 66.0;
                 btnPower.disabled = true;
                 syrupAlert.classList.replace('opacity-0', 'opacity-100');
+            }
+
+            // Bubble generation
+            if (state.temperature >= state.boilingPoint - 0.5 && !state.done) {
+                if (Math.random() < state.heatFlux * 0.4) {
+                    state.bubbles.push({
+                        x: 0.1 + Math.random() * 0.8,
+                        y: 0.75, // normalized to match update logic instead of hard pixels
+                        size: 2 + Math.random() * 6,
+                        speed: 2 + Math.random() * 3
+                    });
+                }
+            }
+
+            // Update bubble positions
+            const fluidTopY = 0.78 - (state.mass / 40.0) * 0.55;
+            for(let i = state.bubbles.length - 1; i >= 0; i--) {
+                let b = state.bubbles[i];
+                b.y -= b.speed * 0.01; // normalize movement
+                b.x += (Math.random() - 0.5) * 0.01;
+                if (b.y < fluidTopY) state.bubbles.splice(i, 1);
             }
         }
 
