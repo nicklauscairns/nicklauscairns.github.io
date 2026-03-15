@@ -377,7 +377,6 @@
             btnSimulate.disabled = true;
 
             let targetValue = 0;
-            let currentVal = 0;
             let s = window.simulationState;
 
             if(s.epoch === 1) {
@@ -385,32 +384,47 @@
                 targetValue = s.extension;
                 s.extension = 0.1; // start small
 
-                let anim = setInterval(() => {
-                    s.extension += 0.1;
-                    if(s.extension >= targetValue) {
-                        s.extension = targetValue;
-                        clearInterval(anim);
-                        finishEpoch();
+                let lastTime = 0;
+                function animateRifting(time) {
+                    if (time - lastTime > 30) {
+                        s.extension += 0.1;
+                        if(s.extension >= targetValue) {
+                            s.extension = targetValue;
+                            calculateGeometry();
+                            draw();
+                            finishEpoch();
+                            return;
+                        }
+                        calculateGeometry();
+                        draw();
+                        lastTime = time;
                     }
-                    calculateGeometry();
-                    draw();
-                }, 30);
+                    requestAnimationFrame(animateRifting);
+                }
+                requestAnimationFrame(animateRifting);
             }
             else if(s.epoch === 2) {
                 // Animate sediment filling
                 targetValue = s.basinDepth * 0.7; // Fill 70% of basin
                 s.sedimentThick = 0;
 
-                let anim = setInterval(() => {
-                    s.sedimentThick += targetValue / 20;
-                    if(s.sedimentThick >= targetValue) {
-                        s.sedimentThick = targetValue;
-                        s.hasTracks = true;
-                        clearInterval(anim);
-                        finishEpoch();
+                let lastTime = 0;
+                function animateSediment(time) {
+                    if (time - lastTime > 50) {
+                        s.sedimentThick += targetValue / 20;
+                        if(s.sedimentThick >= targetValue) {
+                            s.sedimentThick = targetValue;
+                            s.hasTracks = true;
+                            draw();
+                            finishEpoch();
+                            return;
+                        }
+                        draw();
+                        lastTime = time;
                     }
-                    draw();
-                }, 50);
+                    requestAnimationFrame(animateSediment);
+                }
+                requestAnimationFrame(animateSediment);
             }
             else if(s.epoch === 3) {
                 // Animate basalt & tilting
@@ -420,19 +434,26 @@
                 let initialDip = s.dipAngle;
                 let steps = 0;
 
-                let anim = setInterval(() => {
-                    s.basaltThick += targetValue / 20;
-                    steps++;
-                    s.dipAngle = initialDip + (10 * (steps/20));
-                    document.getElementById('data-dip-angle').innerText = Math.round(s.dipAngle) + '° E';
-                    if(s.basaltThick >= targetValue) {
-                        s.basaltThick = targetValue;
-                        s.dipAngle = targetDip;
-                        clearInterval(anim);
-                        finishEpoch();
+                let lastTime = 0;
+                function animateBasalt(time) {
+                    if (time - lastTime > 50) {
+                        s.basaltThick += targetValue / 20;
+                        steps++;
+                        s.dipAngle = initialDip + (10 * (steps/20));
+                        document.getElementById('data-dip-angle').innerText = Math.round(s.dipAngle) + '° E';
+                        if(s.basaltThick >= targetValue) {
+                            s.basaltThick = targetValue;
+                            s.dipAngle = targetDip;
+                            draw();
+                            finishEpoch();
+                            return;
+                        }
+                        draw();
+                        lastTime = time;
                     }
-                    draw();
-                }, 50);
+                    requestAnimationFrame(animateBasalt);
+                }
+                requestAnimationFrame(animateBasalt);
             }
             else if(s.epoch === 4) {
                 // Evaluate
@@ -541,7 +562,8 @@
             btnSimulate.disabled = false;
 
             calculateGeometry();
-            init();
+            updateUI();
+            draw();
         }
 
         // Drawing Functions
@@ -588,7 +610,7 @@
             ctx.fill();
 
             // Texture for footwall
-            drawGneissTexture(0, faultX, height/2, height, false);
+            drawGneissTexture(0, faultX, height/2, height);
 
             // 2. Draw Hanging Wall (Right side, drops and rotates)
             ctx.save();
@@ -693,7 +715,7 @@
         }
 
         // Texture generators
-        function drawGneissTexture(x1, x2, y1, y2, rotated) {
+        function drawGneissTexture(x1, x2, y1, y2) {
             ctx.strokeStyle = '#64748b';
             ctx.lineWidth = 1;
             for(let i=0; i<100; i++) {
