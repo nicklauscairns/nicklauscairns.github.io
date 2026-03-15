@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyme Disease Ecology & Population Dynamics</title>
+    <meta name="description" content="Explore the ecological cascade of Lyme disease in New England, from oak masting to human infection risk.">
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Lyme Disease Ecology & Population Dynamics">
+    <meta property="og:description" content="Explore the ecological cascade of Lyme disease in New England, from oak masting to human infection risk.">
+
+    <!-- Schema.org LearningResource -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Lyme Disease Ecology Simulation",
+      "description": "Interactive model of oak mast, mice, tick dynamics, and Lyme risk.",
+      "learningResourceType": "Simulation",
+      "educationalLevel": "High School"
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
+    <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="mb-8 bg-white p-6 rounded-lg shadow-sm">
+            <h1 class="text-3xl font-bold text-green-800 mb-2">Lyme Disease Ecological Cascade</h1>
+            <p class="text-gray-600">
+                Investigate how environmental factors and population dynamics in New England forests drive the spread of Lyme disease.
+                Observe the multi-year ripple effect starting from an "Oak Mast" (a year of overabundant acorn production) all the way to human infection risk.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Controls & Inquiry -->
+            <div class="lg:col-span-1 space-y-6">
+
+                <!-- Environmental Controls -->
+                <section class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Environmental Factors</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label for="winterSeverity" class="text-sm font-medium">Winter Severity</label>
+                                <span id="winterSeverityValue" class="text-sm font-bold text-blue-600">Normal</span>
+                            </div>
+                            <input type="range" id="winterSeverity" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:cursor-pointer">
+                            <p class="text-xs text-gray-500 mt-1">Harsh winters decrease mouse and tick survival.</p>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label for="foxPopulation" class="text-sm font-medium">Fox Population (Predators)</label>
+                                <span id="foxPopulationValue" class="text-sm font-bold text-red-600">Stable</span>
+                            </div>
+                            <input type="range" id="foxPopulation" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:cursor-pointer">
+                            <p class="text-xs text-gray-500 mt-1">Foxes control the white-footed mouse population.</p>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label for="deerDensity" class="text-sm font-medium">Deer Density</label>
+                                <span id="deerDensityValue" class="text-sm font-bold text-amber-700">Moderate</span>
+                            </div>
+                            <input type="range" id="deerDensity" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:cursor-pointer">
+                            <p class="text-xs text-gray-500 mt-1">Deer are crucial for adult tick mating and reproduction.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <button id="triggerMastBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded shadow transition duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Trigger Oak Mast Year
+                        </button>
+                        <p class="text-xs text-center text-gray-500 mt-2">Simulate a massive drop of acorns.</p>
+                    </div>
+                </section>
+
+                <!-- Inquiry & Evidence Log -->
+                <section class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Evidence Log</h2>
+                    <p class="text-sm text-gray-600 mb-3">Formulate a hypothesis before triggering an Oak Mast, then record your observations.</p>
+                    <label for="hypothesisLog" class="sr-only">Hypothesis</label>
+                    <textarea id="hypothesisLog" class="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 mb-2" rows="2" placeholder="Hypothesis: If an oak mast occurs, then..."></textarea>
+                    <label for="observationsLog" class="sr-only">Observations</label>
+                    <textarea id="observationsLog" class="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500" rows="3" placeholder="Observations: In Year 1... In Year 2..."></textarea>
+                </section>
+            </div>
+
+            <!-- Right Column: Visualization -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Chart Area -->
+                <section class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Population Dynamics Over Time</h2>
+                        <div class="text-sm font-medium bg-gray-100 px-3 py-1 rounded">Year: <span id="currentYearDisplay">0</span></div>
+                    </div>
+                    <div class="relative h-80 w-full">
+                        <canvas id="ecosystemChart"></canvas>
+                    </div>
+
+                    <div class="mt-4 flex justify-between items-center bg-red-50 p-3 rounded border border-red-100">
+                        <span class="font-bold text-red-800">Human Lyme Disease Risk:</span>
+                        <span id="lymeRiskDisplay" class="text-xl font-black text-red-600">Low</span>
+                    </div>
+                </section>
+
+                <!-- Explanation / Mechanism -->
+                <section class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">The Ecological Cascade</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
+                        <div class="p-2 border rounded bg-amber-50">
+                            <div class="font-bold text-amber-800 mb-1">1. Oak Mast</div>
+                            <p class="text-xs text-gray-600">Oaks drop massive amounts of acorns (food).</p>
+                        </div>
+                        <div class="p-2 border rounded bg-gray-50">
+                            <div class="font-bold text-gray-700 mb-1">2. Mouse Boom</div>
+                            <p class="text-xs text-gray-600">Mice thrive on acorns and population spikes.</p>
+                        </div>
+                        <div class="p-2 border rounded bg-stone-100">
+                            <div class="font-bold text-stone-800 mb-1">3. Tick Nymphs</div>
+                            <p class="text-xs text-gray-600">Larvae feed on infected mice, becoming infected nymphs.</p>
+                        </div>
+                        <div class="p-2 border rounded bg-red-50">
+                            <div class="font-bold text-red-800 mb-1">4. Lyme Risk</div>
+                            <p class="text-xs text-gray-600">Infected nymphs seek new hosts, including humans.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State and Mathematical Model ---
+
+        // Expose state to window for Playwright testing and external interactions
+        window.simulationState = {
+            year: 0,
+
+            // Ecosystem Populations (arbitrary units for visualization)
+            acorns: 50,
+            mice: 50,
+            tickLarvae: 50,
+            tickNymphs: 50, // These pose the highest risk to humans
+
+            // Output Metric
+            lymeRisk: 25,
+
+            // Environmental Parameters (set via UI controls)
+            winterSeverity: 0.5, // 0 to 1
+            foxPopulation: 0.5,  // 0 to 1
+            deerDensity: 0.5,    // 0 to 1
+
+            // Event flags
+            oakMastTriggered: false
+        };
+
+        // Data arrays for Chart.js
+        const chartData = {
+            labels: [0], // Years
+            acorns: [50],
+            mice: [50],
+            tickNymphs: [50],
+            lymeRisk: [25]
+        };
+
+        const MAX_YEARS = 30; // Number of years to keep in chart
+
+        // --- Model Constants (Magic Numbers Refactored) ---
+        const ACORN_BASELINE_MIN = 30;
+        const ACORN_BASELINE_VARIANCE = 20;
+        const OAK_MAST_ACORN_SPIKE = 150;
+
+        const MOUSE_ACORN_FOOD_MULTIPLIER = 1.5;
+        const MOUSE_PREDATION_MULTIPLIER = 100;
+        const MOUSE_WINTER_MORTALITY_MAX = 0.3;
+        const MOUSE_CARRYING_CAPACITY = 200;
+        const MOUSE_MIN_POPULATION = 10;
+
+        const LARVAE_DEER_REPRODUCTION_FACTOR = 120;
+        const LARVAE_BASE_SURVIVAL = 0.8;
+        const LARVAE_SURVIVAL_VARIANCE = 0.4;
+
+        const TICK_WINTER_MORTALITY_MAX = 0.5;
+        const NYMPH_MIN_POPULATION = 5;
+        const NYMPH_MAX_POPULATION = 180;
+
+        const LYME_RISK_MULTIPLIER = 0.8;
+
+        /**
+         * Core Mathematical Model Step
+         * Simulates one year of ecological interactions.
+         */
+        function stepSimulation() {
+            const s = window.simulationState;
+            s.year += 1;
+
+            // 1. Acorn Production (Oak Mast)
+            // Acorns naturally fluctuate slightly, but a triggered mast sends them sky-high.
+            let nextAcorns = ACORN_BASELINE_MIN + (Math.random() * ACORN_BASELINE_VARIANCE);
+            if (s.oakMastTriggered) {
+                nextAcorns = OAK_MAST_ACORN_SPIKE; // Huge spike
+                s.oakMastTriggered = false; // Reset trigger
+            }
+            // Acorns decay over the year, but carry over heavily to mice next year.
+
+            // 2. White-footed Mice Population
+            // Dependent on previous year's acorns (food) and fox population (predators).
+            // Affected by winter severity (harsh winters kill mice).
+            const acornFoodFactor = s.acorns * MOUSE_ACORN_FOOD_MULTIPLIER;
+            const predationFactor = s.foxPopulation * MOUSE_PREDATION_MULTIPLIER;
+            const winterSurvivalMice = 1 - (s.winterSeverity * MOUSE_WINTER_MORTALITY_MAX);
+
+            let nextMice = (acornFoodFactor - predationFactor) * winterSurvivalMice;
+            // Introduce some carrying capacity and floor
+            if (nextMice > MOUSE_CARRYING_CAPACITY) nextMice = MOUSE_CARRYING_CAPACITY;
+            if (nextMice < MOUSE_MIN_POPULATION) nextMice = MOUSE_MIN_POPULATION;
+
+            // 3. Tick Larvae
+            // Dependent on adult ticks feeding on deer the previous fall.
+            const deerReproductionFactor = s.deerDensity * LARVAE_DEER_REPRODUCTION_FACTOR;
+            let nextLarvae = deerReproductionFactor * (LARVAE_BASE_SURVIVAL + Math.random() * LARVAE_SURVIVAL_VARIANCE);
+
+            // 4. Tick Nymphs (The infected stage)
+            // Dependent on last year's larvae surviving winter and feeding on last year's mice.
+            // This is the crucial link: more mice last year = more larvae got infected = more nymphs this year.
+            const larvaeFeedingSuccess = (s.mice / MOUSE_CARRYING_CAPACITY); // 0 to 1 probability based on mouse density
+            const winterSurvivalTicks = 1 - (s.winterSeverity * TICK_WINTER_MORTALITY_MAX); // Ticks more susceptible to harsh winters
+
+            let nextNymphs = s.tickLarvae * larvaeFeedingSuccess * winterSurvivalTicks;
+            if (nextNymphs < NYMPH_MIN_POPULATION) nextNymphs = NYMPH_MIN_POPULATION;
+            if (nextNymphs > NYMPH_MAX_POPULATION) nextNymphs = NYMPH_MAX_POPULATION;
+
+            // 5. Human Lyme Risk
+            // Directly proportional to the density of infected nymphs seeking hosts in the current year.
+            let nextLymeRisk = nextNymphs * LYME_RISK_MULTIPLIER;
+
+            // Apply calculated next state
+            s.acorns = nextAcorns;
+            s.mice = nextMice;
+            s.tickLarvae = nextLarvae;
+            s.tickNymphs = nextNymphs;
+            s.lymeRisk = nextLymeRisk;
+
+            // Update Chart Data Arrays
+            chartData.labels.push(s.year);
+            chartData.acorns.push(s.acorns);
+            chartData.mice.push(s.mice);
+            chartData.tickNymphs.push(s.tickNymphs);
+            chartData.lymeRisk.push(s.lymeRisk);
+
+            // Keep array size manageable
+            if (chartData.labels.length > MAX_YEARS) {
+                chartData.labels.shift();
+                chartData.acorns.shift();
+                chartData.mice.shift();
+                chartData.tickNymphs.shift();
+                chartData.lymeRisk.shift();
+            }
+
+            // Expose a step completion flag for testing
+            window.simulationState.lastStepCompleted = true;
+        }
+
+        console.log("Mathematical model implemented.");
+
+        // --- UI and Chart.js Integration ---
+
+        let myChart;
+
+        function initChart() {
+            const ctx = document.getElementById('ecosystemChart').getContext('2d');
+
+            // Safety check for CDN failures
+            if (typeof Chart === 'undefined') {
+                console.error("Chart.js failed to load.");
+                return;
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: 'Acorns (Food)',
+                            data: chartData.acorns,
+                            borderColor: 'rgb(217, 119, 6)', // amber-600
+                            backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Mice Population',
+                            data: chartData.mice,
+                            borderColor: 'rgb(75, 85, 99)', // gray-600
+                            backgroundColor: 'rgba(75, 85, 99, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Infected Tick Nymphs',
+                            data: chartData.tickNymphs,
+                            borderColor: 'rgb(34, 197, 94)', // green-500
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Human Lyme Risk',
+                            data: chartData.lymeRisk,
+                            borderColor: 'rgb(220, 38, 38)', // red-600
+                            backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            yAxisID: 'y',
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Simulation Year' } },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Population / Risk Index' },
+                            min: 0,
+                            suggestedMax: 200
+                        }
+                    },
+                    animation: {
+                        duration: 800,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Setup Event Listeners
+        function setupControls() {
+            const getLabelText = (val) => {
+                if (val < 0.3) return "Low";
+                if (val > 0.7) return "High";
+                return "Normal";
+            };
+
+            const winterEl = document.getElementById('winterSeverity');
+            const foxEl = document.getElementById('foxPopulation');
+            const deerEl = document.getElementById('deerDensity');
+            const triggerBtn = document.getElementById('triggerMastBtn');
+
+            winterEl.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) / 100;
+                window.simulationState.winterSeverity = val;
+                document.getElementById('winterSeverityValue').innerText = getLabelText(val);
+            });
+
+            foxEl.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) / 100;
+                window.simulationState.foxPopulation = val;
+                document.getElementById('foxPopulationValue').innerText = getLabelText(val);
+            });
+
+            deerEl.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) / 100;
+                window.simulationState.deerDensity = val;
+                document.getElementById('deerDensityValue').innerText = getLabelText(val);
+            });
+
+            triggerBtn.addEventListener('click', () => {
+                window.simulationState.oakMastTriggered = true;
+
+                // Visual feedback
+                const originalHTML = triggerBtn.innerHTML;
+                triggerBtn.disabled = true;
+                triggerBtn.classList.remove('bg-amber-600', 'hover:bg-amber-700');
+                triggerBtn.classList.add('bg-green-600');
+                triggerBtn.innerText = "Oak Mast Occurring!";
+                setTimeout(() => {
+                    triggerBtn.innerHTML = originalHTML;
+                    triggerBtn.classList.remove('bg-green-600');
+                    triggerBtn.classList.add('bg-amber-600', 'hover:bg-amber-700');
+                    triggerBtn.disabled = false;
+                }, 1500);
+            });
+        }
+
+        function updateUI() {
+            // Update Year
+            document.getElementById('currentYearDisplay').innerText = window.simulationState.year;
+
+            // Update Risk Label
+            const risk = window.simulationState.lymeRisk;
+            const riskEl = document.getElementById('lymeRiskDisplay');
+            if (risk > 100) {
+                riskEl.innerText = "EXTREME";
+                riskEl.className = "text-xl font-black text-red-700 animate-pulse";
+            } else if (risk > 60) {
+                riskEl.innerText = "High";
+                riskEl.className = "text-xl font-black text-red-500";
+            } else if (risk > 30) {
+                riskEl.innerText = "Moderate";
+                riskEl.className = "text-xl font-black text-amber-500";
+            } else {
+                riskEl.innerText = "Low";
+                riskEl.className = "text-xl font-black text-green-600";
+            }
+
+            // Update Chart
+            if (myChart) {
+                myChart.update();
+            }
+        }
+
+        // Main Simulation Loop
+        function simulationLoop() {
+            stepSimulation();
+            updateUI();
+            setTimeout(simulationLoop, 2000); // Run a step every 2 seconds
+        }
+
+        // Initialize Everything
+        window.addEventListener('load', () => {
+            initChart();
+            setupControls();
+            // Start simulation immediately after load
+            simulationLoop();
+        });
+
+    </script>
+</body>
+</html>
