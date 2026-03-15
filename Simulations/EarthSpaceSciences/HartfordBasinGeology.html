@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation of the Metacomet Ridge | Earth Science Simulation</title>
+    <meta name="description" content="Explore the internal and surface processes that shaped the Metacomet Ridge and Hartford Basin in Central Connecticut over 200 million years.">
+    <meta property="og:title" content="Formation of the Metacomet Ridge | Earth Science Simulation">
+    <meta property="og:description" content="Explore the internal and surface processes that shaped the Metacomet Ridge and Hartford Basin in Central Connecticut over 200 million years.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/HartfordBasinGeology.html">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Formation of the Metacomet Ridge Simulation",
+      "description": "An interactive Earth science simulation allowing students to model the tectonic rifting, volcanism, and glacial erosion that formed the Metacomet Ridge in Central Connecticut (e.g., Mount Higby). Aligns with NGSS HS-ESS2-1.",
+      "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/HartfordBasinGeology.html",
+      "educationalAlignment": [
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "educationalSubject",
+          "targetName": "Earth Science"
+        },
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "educationalStandard",
+          "targetName": "HS-ESS2-1",
+          "targetUrl": "https://www.nextgenscience.org/pe/hs-ess2-1-earths-systems"
+        }
+      ],
+      "audience": {
+        "@type": "EducationalAudience",
+        "educationalRole": "student"
+      }
+    }
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-DKDGNLCXQ1');
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        input[type=range] {
+            accent-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <header class="bg-slate-900 text-white p-4 shadow-md z-10 relative">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-400">Formation of the Metacomet Ridge</h1>
+                <p class="text-sm text-slate-300">Central Connecticut (Hartford Basin) Geologic Modeler | HS-ESS2-1</p>
+            </div>
+            <button id="infoBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition shadow">
+                Investigation Guide
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col lg:flex-row p-4 gap-4 max-w-7xl mx-auto w-full relative">
+
+        <!-- Controls Sidebar -->
+        <aside class="w-full lg:w-1/3 flex flex-col gap-4">
+
+            <div class="glass-panel p-5 rounded-xl">
+                <h2 class="text-lg font-bold text-slate-800 mb-2 border-b pb-2">Geologic Timeline Control</h2>
+                <p class="text-sm text-slate-600 mb-4">Advance time to observe how internal and surface processes shape the landscape.</p>
+
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm font-semibold mb-1 text-slate-700">
+                        <span>Time (Millions of Years Ago)</span>
+                        <span id="timeDisplay" class="text-blue-600 font-mono">200 Ma</span>
+                    </div>
+                    <input type="range" id="timeSlider" min="0" max="200" value="200" class="w-full" step="1" dir="rtl">
+                    <div class="flex justify-between text-xs text-slate-500 mt-1">
+                        <span>Present</span>
+                        <span>Triassic Period</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="playBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded transition font-semibold">Play</button>
+                    <button id="resetBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded transition">Reset</button>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-xl flex-grow overflow-y-auto">
+                <h2 class="text-lg font-bold text-slate-800 mb-2 border-b pb-2">Active Processes</h2>
+
+                <div id="processLog" class="space-y-3 mt-4">
+                    <!-- Dynamic content injected here -->
+                </div>
+
+                <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <h3 class="font-bold text-blue-800 text-sm mb-1">Observation Target</h3>
+                    <p class="text-xs text-blue-900">Watch how the alternating layers of soft sandstone and hard basalt react differently to the tilting fault and eventual glacial erosion to form the distinct ridges seen in Middletown today.</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Simulation Canvas -->
+        <section class="w-full lg:w-2/3 glass-panel rounded-xl overflow-hidden relative flex flex-col min-h-[500px]">
+            <div class="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded shadow text-sm font-mono z-10 border border-slate-200">
+                Era: <span id="eraDisplay" class="font-bold text-blue-600">Mesozoic (Triassic)</span>
+            </div>
+
+            <div class="flex-grow relative bg-sky-100" id="canvasContainer">
+                <canvas id="geologyCanvas"></canvas>
+            </div>
+
+            <div class="bg-slate-100 p-3 text-xs text-slate-500 border-t flex justify-between items-center">
+                <span>Cross-section View: West (Left) to East (Right)</span>
+                <span>Scale: ~10 miles across</span>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white">
+                <h2 class="text-2xl font-bold text-slate-800">Investigation: The Metacomet Ridge</h2>
+                <button id="closeInfoBtn" class="text-slate-400 hover:text-slate-800 text-2xl font-bold leading-none">&times;</button>
+            </div>
+            <div class="p-6 space-y-4 text-slate-700">
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4">
+                    <p class="font-bold text-amber-800 mb-1">The Phenomenon</p>
+                    <p class="text-sm text-amber-900">In Central Connecticut, such as near Middletown and Meriden, the landscape features dramatic, steep-faced ridges (like Mount Higby or Castle Craig) rising abruptly from relatively flat valleys. Why do these distinct ridges exist here, and how did they form?</p>
+                </div>
+
+                <h3 class="font-bold text-lg text-slate-900">Your Task (HS-ESS2-1)</h3>
+                <p>Develop a model using the simulation timeline to illustrate how Earth's internal and surface processes operate at different spatial and temporal scales to form these features.</p>
+
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Identify the processes:</strong> As time advances, classify which events are <em>internal</em> (driven by Earth's heat) and which are <em>surface</em> (driven by the sun/climate).</li>
+                    <li><strong>Observe the temporal scale:</strong> Notice how long rifting and deposition take compared to the sudden lava flows, or the late-stage glacial erosion.</li>
+                    <li><strong>Determine the relationships:</strong> How does the internal faulting (tilting the land) interact with the surface weathering to create the final asymmetrical ridge shape we see today?</li>
+                </ul>
+
+                <h3 class="font-bold text-lg text-slate-900 mt-6">Key Geologic Layers</h3>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 bg-[#d4a373]"></div><span>Arkosic Sandstone (Sedimentary)</span></div>
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 bg-[#4a4e69]"></div><span>Basalt / Trap Rock (Igneous)</span></div>
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 bg-[#6c584c]"></div><span>Precambrian Basement Rock</span></div>
+                    <div class="flex items-center gap-2"><div class="w-4 h-4 bg-[#e0e1dd]"></div><span>Glacial Till / Moraine</span></div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end rounded-b-xl">
+                <button id="startInvestigatingBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-bold transition">Start Investigating</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('geologyCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const timeSlider = document.getElementById('timeSlider');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const eraDisplay = document.getElementById('eraDisplay');
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processLog = document.getElementById('processLog');
+
+        // Modal Elements
+        const infoModal = document.getElementById('infoModal');
+        const infoBtn = document.getElementById('infoBtn');
+        const closeInfoBtn = document.getElementById('closeInfoBtn');
+        const startInvestigatingBtn = document.getElementById('startInvestigatingBtn');
+
+        // Modals
+        const openModal = () => infoModal.classList.remove('hidden');
+        const closeModal = () => infoModal.classList.add('hidden');
+        infoBtn.addEventListener('click', openModal);
+        closeInfoBtn.addEventListener('click', closeModal);
+        startInvestigatingBtn.addEventListener('click', closeModal);
+
+        // Resize Canvas
+        function resizeCanvas() {
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
+            drawSimulation();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // Simulation State
+        window.simulationState = {
+            timeMa: 200, // Starts at 200 Million Years Ago
+            isPlaying: false,
+            riftDepth: 0,
+            tiltAngle: 0,
+            sedimentLayers: 0,
+            basaltFlows: 0,
+            erosionDepth: 0,
+            glacierPresent: false,
+            activeProcess: null
+        };
+
+        // Geologic Events Timeline (Ma = Million years ago)
+        const events = [
+            { start: 200, end: 195, name: "Pangea Rifting Begins", type: "Internal", desc: "Tectonic plates pull apart, creating a rift valley (Hartford Basin).", era: "Mesozoic (Triassic)" },
+            { start: 195, end: 185, name: "Sediment Deposition", type: "Surface", desc: "Rivers deposit sand and mud into the sinking valley, forming sandstone.", era: "Mesozoic (Jurassic)" },
+            { start: 185, end: 184, name: "Lava Flow (Holyoke Basalt)", type: "Internal", desc: "Magma erupts through faults, flooding the valley with hard basalt.", era: "Mesozoic (Jurassic)" },
+            { start: 184, end: 175, name: "More Sedimentation", type: "Surface", desc: "More sandstone layers form on top of the cooling basalt.", era: "Mesozoic (Jurassic)" },
+            { start: 175, end: 150, name: "Eastern Border Faulting", type: "Internal", desc: "The valley block drops and tilts eastward along a major fault.", era: "Mesozoic (Jurassic)" },
+            { start: 150, end: 2.5, name: "Gradual Erosion", type: "Surface", desc: "Millions of years of wind and water slowly wear down the tilted layers.", era: "Cenozoic (Tertiary)" },
+            { start: 2.5, end: 0.01, name: "Pleistocene Glaciation", type: "Surface", desc: "Massive ice sheets scrape the landscape, carving out the soft sandstone and leaving the hard basalt ridges protruding.", era: "Cenozoic (Quaternary)" },
+            { start: 0.01, end: 0, name: "Present Day", type: "Surface", desc: "The Metacomet Ridge (Mt. Higby, etc.) is visible today.", era: "Holocene" }
+        ];
+
+        let animationId;
+
+        function updateStateFromTime(time) {
+            window.simulationState.timeMa = time;
+
+            // Calculate state variables based on time
+            // 200 to 0 scale (descending)
+
+            // Rift Depth (starts at 200, deepens to 175)
+            if (time > 195) window.simulationState.riftDepth = (200 - time) * 10;
+            else window.simulationState.riftDepth = 50;
+
+            // Sediment Layers (195-185, 184-175)
+            let sed1 = Math.max(0, Math.min(10, 195 - time));
+            let sed2 = time < 184 ? Math.max(0, Math.min(9, 184 - time)) : 0;
+            window.simulationState.sedimentLayers = sed1 + sed2;
+
+            // Basalt Flows
+            window.simulationState.basaltFlows = time <= 185 ? 1 : 0;
+
+            // Tilt Angle (175 - 150)
+            if (time > 175) window.simulationState.tiltAngle = 0;
+            else if (time <= 175 && time > 150) window.simulationState.tiltAngle = (175 - time) * 0.006; // Max ~0.15 rads (~10-15 degrees)
+            else window.simulationState.tiltAngle = 0.15;
+
+            // Erosion (150 - 2.5)
+            if (time > 150) window.simulationState.erosionDepth = 0;
+            else if (time <= 150 && time > 2.5) window.simulationState.erosionDepth = (150 - time) * 0.5;
+            else window.simulationState.erosionDepth = 147.5 * 0.5 + (2.5 - time) * 10; // Extra heavy erosion from glacier
+
+            // Glacier Present
+            window.simulationState.glacierPresent = (time <= 2.5 && time > 0.01);
+
+            // Determine Active Process
+            let currentEvent = events.find(e => time <= e.start && time > e.end);
+            if (!currentEvent && time === 0) currentEvent = events[events.length-1];
+
+            if (currentEvent) {
+                window.simulationState.activeProcess = currentEvent;
+                eraDisplay.textContent = currentEvent.era;
+                updateProcessLog(currentEvent);
+            }
+
+            drawSimulation();
+        }
+
+        function updateProcessLog(event) {
+            const processId = `process-${event.start}`;
+
+            // Check if already showing
+            const existing = document.getElementById(processId);
+            if (!existing) {
+                // Clear active styles
+                document.querySelectorAll('.process-card').forEach(el => {
+                    el.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                    el.classList.add('border-slate-200', 'bg-white', 'opacity-60');
+                });
+
+                const badgeColor = event.type === 'Internal' ? 'bg-red-100 text-red-800 border-red-200' : 'bg-sky-100 text-sky-800 border-sky-200';
+
+                const cardHtml = `
+                    <div id="${processId}" class="process-card p-3 rounded border border-blue-500 bg-blue-50 ring-2 ring-blue-200 transition-all shadow-sm">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800">${event.name}</span>
+                            <span class="text-xs px-2 py-0.5 rounded border ${badgeColor}">${event.type} Process</span>
+                        </div>
+                        <p class="text-xs text-slate-600">${event.desc}</p>
+                    </div>
+                `;
+
+                processLog.innerHTML = cardHtml + processLog.innerHTML; // Prepend
+
+                // Keep only last 3
+                if (processLog.children.length > 3) {
+                    processLog.removeChild(processLog.lastChild);
+                }
+            } else {
+                // Re-activate existing if dragging backwards
+                document.querySelectorAll('.process-card').forEach(el => {
+                    el.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                    el.classList.add('border-slate-200', 'bg-white', 'opacity-60');
+                });
+                existing.classList.remove('border-slate-200', 'bg-white', 'opacity-60');
+                existing.classList.add('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                processLog.prepend(existing); // Move to top
+            }
+        }
+
+        function drawSimulation() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const state = window.simulationState;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Sky
+            ctx.fillStyle = state.glacierPresent ? '#e0f2fe' : '#bae6fd';
+            ctx.fillRect(0, 0, w, h);
+
+            // Save context for landscape rotation/translation
+            ctx.save();
+
+            // Base transform point (center bottomish)
+            const pivotX = w * 0.7; // Eastern fault line area
+            const pivotY = h * 0.8;
+
+            ctx.translate(pivotX, pivotY);
+            ctx.rotate(state.tiltAngle);
+            ctx.translate(-pivotX, -pivotY);
+
+            // --- DRAW LAYERS ---
+
+            // 1. Basement Rock (Brownish)
+            ctx.fillStyle = '#6c584c';
+            ctx.beginPath();
+            ctx.moveTo(-w, h*2); // Way off screen to handle tilt
+            ctx.lineTo(w*2, h*2);
+
+            // Fault line break
+            if (state.timeMa <= 175) {
+                ctx.lineTo(w*2, h * 0.6); // Eastern block stays high
+                ctx.lineTo(w * 0.8, h * 0.6); // Fault scarp
+                ctx.lineTo(w * 0.8, h * 0.6 + state.riftDepth + 100); // Down-dropped valley
+            } else {
+                ctx.lineTo(w*2, h * 0.6 + state.riftDepth);
+            }
+
+            ctx.lineTo(-w, h * 0.6 + state.riftDepth);
+            ctx.fill();
+
+            // Fault Line visual
+            if (state.timeMa <= 175) {
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(w * 0.8, h * 0.2);
+                ctx.lineTo(w * 0.8, h * 1.5);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw Basin Layers (only to the left of the fault w * 0.8)
+            const basinRight = w * 0.8;
+            const basinLeft = -w;
+            let currentY = h * 0.6 + state.riftDepth;
+
+            // Helper to draw a layer subject to erosion
+            function drawLayer(thickness, color, isHard = false) {
+                if (thickness <= 0) return currentY;
+
+                // Calculate erosion. Hard rocks (basalt) erode much slower than soft (sandstone)
+                let layerErosion = 0;
+                if (state.erosionDepth > 0) {
+                    const erosionResistance = isHard ? 0.2 : 1.0;
+                    layerErosion = state.erosionDepth * erosionResistance;
+                }
+
+                const actualThickness = Math.max(0, thickness - layerErosion);
+
+                if (actualThickness > 0) {
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.moveTo(basinLeft, currentY);
+                    ctx.lineTo(basinRight, currentY);
+
+                    // Top edge (eroded)
+                    // If it's a hard rock next to a soft rock, we create a ridge effect
+                    if (isHard && state.erosionDepth > 50) {
+                        ctx.lineTo(basinRight, currentY - actualThickness);
+                        ctx.lineTo(basinLeft, currentY - actualThickness);
+                    } else {
+                        // Smooth erosion line for soft rock
+                        ctx.lineTo(basinRight, currentY - actualThickness);
+                        // Add some noise to the eroded surface
+                        for(let i=basinRight; i>basinLeft; i-=20) {
+                            ctx.lineTo(i, currentY - actualThickness + (Math.random()*4 - 2));
+                        }
+                    }
+
+                    ctx.fill();
+
+                    // Draw lines for sandstone
+                    if (!isHard && actualThickness > 5) {
+                        ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                        ctx.lineWidth = 1;
+                        for(let i=0; i<actualThickness; i+=10) {
+                            ctx.beginPath();
+                            ctx.moveTo(basinLeft, currentY - i);
+                            ctx.lineTo(basinRight, currentY - i);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                currentY -= actualThickness;
+                return currentY;
+            }
+
+            // Lower Sandstone
+            drawLayer(state.sedimentLayers > 10 ? 10 * 8 : state.sedimentLayers * 8, '#d4a373');
+
+            // Basalt
+            if (state.basaltFlows > 0) {
+                drawLayer(25, '#4a4e69', true); // Hard rock!
+            }
+
+            // Upper Sandstone
+            if (state.sedimentLayers > 10) {
+                drawLayer((state.sedimentLayers - 10) * 8, '#e6b88a');
+            }
+
+            ctx.restore(); // Undo rotation for overlays
+
+            // Glacier Overlay
+            if (state.glacierPresent) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(w, 0);
+                ctx.lineTo(w, h*0.5); // Ice sheet depth
+                // Jagged bottom of glacier
+                for(let i=w; i>0; i-=30) {
+                    ctx.lineTo(i, h*0.5 + Math.random()*20);
+                }
+                ctx.fill();
+
+                // Ice lines
+                ctx.strokeStyle = 'rgba(200, 230, 255, 0.5)';
+                ctx.lineWidth = 2;
+                for(let i=0; i<10; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random()*w, 0);
+                    ctx.lineTo(Math.random()*w, h*0.5);
+                    ctx.stroke();
+                }
+            }
+
+            // Final Ground Overlay (Present Day Greenery)
+            if (state.timeMa < 1) {
+                ctx.fillStyle = 'rgba(100, 200, 100, 0.3)';
+                // Rough estimation of the ground line based on tilt and erosion
+                // This is purely aesthetic for the final view
+            }
+        }
+
+        // Animation Loop
+        function animate() {
+            if (!window.simulationState.isPlaying) return;
+
+            let t = parseFloat(timeSlider.value);
+            t -= 0.5; // Speed of time
+
+            if (t <= 0) {
+                t = 0;
+                window.simulationState.isPlaying = false;
+                playBtn.textContent = 'Play';
+                playBtn.classList.replace('bg-amber-500', 'bg-green-600');
+                playBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-700');
+            }
+
+            timeSlider.value = t;
+            timeDisplay.textContent = t.toFixed(1) + ' Ma';
+            updateStateFromTime(t);
+
+            if (window.simulationState.isPlaying) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        // Event Listeners
+        timeSlider.addEventListener('input', (e) => {
+            let val = parseFloat(e.target.value);
+            timeDisplay.textContent = val.toFixed(1) + ' Ma';
+            updateStateFromTime(val);
+        });
+
+        playBtn.addEventListener('click', () => {
+            window.simulationState.isPlaying = !window.simulationState.isPlaying;
+            if (window.simulationState.isPlaying) {
+                if (parseFloat(timeSlider.value) === 0) {
+                    timeSlider.value = 200; // Reset if at end
+                }
+                playBtn.textContent = 'Pause';
+                playBtn.classList.replace('bg-green-600', 'bg-amber-500');
+                playBtn.classList.replace('hover:bg-green-700', 'hover:bg-amber-600');
+                animate();
+            } else {
+                playBtn.textContent = 'Play';
+                playBtn.classList.replace('bg-amber-500', 'bg-green-600');
+                playBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-700');
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            window.simulationState.isPlaying = false;
+            cancelAnimationFrame(animationId);
+            playBtn.textContent = 'Play';
+            playBtn.classList.replace('bg-amber-500', 'bg-green-600');
+            playBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-700');
+            timeSlider.value = 200;
+            timeDisplay.textContent = '200.0 Ma';
+            processLog.innerHTML = ''; // Clear log
+            updateStateFromTime(200);
+        });
+
+        // Init
+        setTimeout(() => {
+            resizeCanvas();
+            updateStateFromTime(200);
+            openModal(); // Show info on load
+        }, 100);
+
+    </script>
+</body>
+</html>
