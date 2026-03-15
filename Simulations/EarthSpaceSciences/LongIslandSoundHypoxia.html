@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Island Sound Hypoxia Simulation</title>
+    <meta name="description" content="Explore the causes of hypoxia (low oxygen) in Long Island Sound and the impact on marine life. Investigate the relationships between runoff, temperature, and a mystery factor.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script src="../common/analytics-loader.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col items-center py-8">
+    <div class="max-w-6xl w-full px-4 flex flex-col gap-6">
+        <header class="text-center">
+            <h1 class="text-4xl font-bold text-slate-900 mb-2">Long Island Sound Hypoxia Simulation</h1>
+            <p class="text-lg text-slate-600">Investigate the factors leading to summer hypoxia and its effects on marine life.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Controls Panel -->
+            <div class="bg-white p-6 rounded-lg shadow-md flex flex-col gap-6">
+                <h2 class="text-2xl font-semibold mb-2">Environmental Controls</h2>
+
+                <div class="flex flex-col gap-2">
+                    <label for="runoff-slider" class="font-medium text-slate-700 flex justify-between">
+                        <span>Nutrient Runoff (Nitrogen)</span>
+                        <span id="runoff-val">Low</span>
+                    </label>
+                    <input type="range" id="runoff-slider" min="0" max="100" value="20" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-xs text-slate-500">Represents fertilizer from lawns and agriculture, and wastewater treatment plant discharge.</p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="temp-slider" class="font-medium text-slate-700 flex justify-between">
+                        <span>Surface Temperature</span>
+                        <span id="temp-val">15&deg;C</span>
+                    </label>
+                    <input type="range" id="temp-slider" min="10" max="30" value="15" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-xs text-slate-500">Summer heating warms the surface water, reducing its density.</p>
+                </div>
+
+                <div class="flex flex-col gap-2 mt-4 p-4 border border-dashed border-purple-400 rounded-lg bg-purple-50">
+                    <label for="mystery-slider" class="font-bold text-purple-800 flex justify-between">
+                        <span>Mystery Factor "X"</span>
+                        <span id="mystery-val">Low</span>
+                    </label>
+                    <input type="range" id="mystery-slider" min="0" max="100" value="10" class="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-xs text-purple-600 mt-2">What is this? Observe how it affects the water column layers and oxygen levels!</p>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="bg-white p-4 rounded-lg shadow-md lg:col-span-2 flex flex-col relative">
+                <h2 class="text-2xl font-semibold mb-4 text-center">Cross-Section View</h2>
+                <div class="relative w-full aspect-[4/3] bg-slate-100 rounded-md overflow-hidden border border-slate-300">
+                    <canvas id="sim-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="bg-white p-6 rounded-lg shadow-md w-full">
+            <h2 class="text-2xl font-semibold mb-4">Data Log</h2>
+            <div class="w-full h-64 relative">
+                <canvas id="data-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Educational Content -->
+        <div id="educational-content" class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800 border-b pb-2">Understanding Hypoxia in Long Island Sound</h2>
+
+            <div class="space-y-4 text-slate-700">
+                <p>Every summer, the western and central portions of <strong>Long Island Sound</strong> experience a severe environmental problem known as <strong>hypoxia</strong>, which literally means "low oxygen."</p>
+
+                <h3 class="text-xl font-semibold text-slate-800 mt-6">The Recipe for Disaster</h3>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li><strong>Nutrient Runoff:</strong> Rain washes nitrogen from fertilizers, sewage, and urban runoff into the sound.</li>
+                    <li><strong>Algal Blooms:</strong> These excess nutrients act as food, causing microscopic phytoplankton (algae) to reproduce explosively in the sunlit surface waters.</li>
+                    <li><strong>Decomposition:</strong> When the algae die, they sink to the bottom. Bacteria consume them in a process of decomposition that uses up the dissolved oxygen in the bottom water.</li>
+                </ul>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-6">
+                    <h4 class="font-bold text-blue-800">Inquiry Challenge 1: The Summer Barrier</h4>
+                    <p class="text-sm mt-1">
+                        Try raising the <strong>Surface Temperature</strong> while keeping runoff high. Notice the dotted white line that appears? This is the <strong>pycnocline</strong>, a density barrier caused by warm, less-dense water floating on top of colder, denser bottom water. This stratification prevents oxygen from the surface from mixing down to the bottom, trapping the marine life below.
+                    </p>
+                </div>
+
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 my-6">
+                    <h4 class="font-bold text-purple-800">Inquiry Challenge 2: The Mystery Factor</h4>
+                    <p class="text-sm mt-1">
+                        What happens in the late summer or early fall that finally breaks the hypoxia cycle? Increase the <strong>Mystery Factor "X"</strong>. What real-world weather events does this represent, and how does it affect the pycnocline and the bottom oxygen levels?
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation State
+        const state = {
+            runoffRate: 20, // 0 - 100
+            temperature: 15, // 10 - 30 deg C
+            windMixing: 10, // 0 - 100 (Mystery Factor)
+
+            // System Variables
+            nutrients: 20,
+            algae: 10,
+            deadAlgae: 0,
+            bottomOxygen: 8.0, // mg/L
+            stratification: 0.1, // 0 (mixed) to 1.0 (highly stratified)
+
+            // Configuration
+            maxOxygen: 8.0,
+            hypoxiaThreshold: 3.0,
+            anoxiaThreshold: 0.5,
+
+            // Simulation parameters
+            nutrientInjectionFactor: 0.5,
+            algaeConsumptionProb: 0.05,
+            algaeReproductionCycle: 100,
+            maxAlgaeParticles: 300,
+            algaeDeathRateBase: 0.005,
+            algaeDeathRateFactor: 10000,
+            oxygenConsumptionPerAlgae: 0.001,
+            deadAlgaeDecayTime: 200,
+            baseOxygenDiffusionRate: 0.05,
+            windMixingDiffusionFactor: 0.1,
+
+            // Visualization
+            canvasWidth: 800,
+            canvasHeight: 600,
+            waterLayers: {
+                surface: { y: 0, h: 300, temp: 15 },
+                pycnocline: { y: 300, h: 50 },
+                bottom: { y: 350, h: 250, temp: 12 }
+            },
+
+            // Particles
+            nutrientParticles: [],
+            algaeParticles: [],
+            deadAlgaeParticles: [],
+            oxygenBubbles: [],
+
+            // Time tracking
+            lastUpdate: performance.now(),
+            dayCount: 0,
+            timeScale: 0.1, // simulation days per real second
+
+            // Historical data
+            history: {
+                time: [],
+                oxygen: [],
+                algae: []
+            }
+        };
+
+        // Expose state for testing
+        window.simulationState = state;
+
+        // Particle Classes
+        class Particle {
+            constructor(x, y, vx, vy, size) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.size = size;
+                this.active = true;
+            }
+        }
+
+        class Nutrient extends Particle {
+            constructor() {
+                super(
+                    Math.random() * state.canvasWidth,
+                    Math.random() * state.waterLayers.surface.h,
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10 + 5, // Tends to drift slightly downwards initially
+                    3
+                );
+                this.life = 100;
+            }
+        }
+
+        class Algae extends Particle {
+            constructor(x, y) {
+                super(
+                    x || Math.random() * state.canvasWidth,
+                    y || Math.random() * state.waterLayers.surface.h,
+                    (Math.random() - 0.5) * 5,
+                    (Math.random() - 0.5) * 5,
+                    5
+                );
+                this.growthCycle = 0;
+            }
+        }
+
+        class DeadAlgae extends Particle {
+            constructor(x, y) {
+                super(
+                    x,
+                    y,
+                    (Math.random() - 0.5) * 2,
+                    2 + Math.random() * 3, // Sinking velocity
+                    4
+                );
+                this.decayStage = 0;
+            }
+        }
+
+        class OxygenBubble extends Particle {
+            constructor(x, y) {
+                super(
+                    x || Math.random() * state.canvasWidth,
+                    y || (state.waterLayers.bottom.y + Math.random() * state.waterLayers.bottom.h),
+                    (Math.random() - 0.5) * 2,
+                    -1 - Math.random() * 2, // Floating up
+                    2
+                );
+            }
+        }
+
+        // Initialize particles
+        function initSimulation() {
+            state.nutrientParticles = [];
+            state.algaeParticles = [];
+            state.deadAlgaeParticles = [];
+            state.oxygenBubbles = [];
+
+            for(let i=0; i<50; i++) state.nutrientParticles.push(new Nutrient());
+            for(let i=0; i<30; i++) state.algaeParticles.push(new Algae());
+            for(let i=0; i<100; i++) state.oxygenBubbles.push(new OxygenBubble());
+        }
+
+        function updateStratification() {
+            // Temperature difference drives stratification. Wind mixing breaks it down.
+            let tempDiff = Math.max(0, state.temperature - state.waterLayers.bottom.temp);
+            // Mystery Factor (Wind Mixing) reduces stratification
+            let mixingFactor = state.windMixing / 100;
+
+            // Stratification index: 0 = fully mixed, 1 = perfectly stratified
+            state.stratification = Math.max(0, Math.min(1, (tempDiff / 15) * (1 - mixingFactor)));
+
+            // Adjust pycnocline thickness based on stratification
+            // Strong stratification = thin, sharp boundary. Weak = thick, blurry boundary.
+            state.waterLayers.pycnocline.h = 50 + (1 - state.stratification) * 100;
+        }
+
+        // Mechanics & Update Loop
+        function updateLogic() {
+            // Runoff injects nutrients
+            if (Math.random() < state.runoffRate / 100 * state.nutrientInjectionFactor) {
+                state.nutrientParticles.push(new Nutrient());
+            }
+
+            // Stratification acts as a barrier.
+            const pycnoclineCenter = state.waterLayers.pycnocline.y + state.waterLayers.pycnocline.h / 2;
+
+            // Process Nutrients
+            for (let i = state.nutrientParticles.length - 1; i >= 0; i--) {
+                let n = state.nutrientParticles[i];
+                n.x += n.vx;
+                n.y += n.vy;
+                n.life--;
+
+                // Wrap around X
+                if (n.x < 0) n.x = state.canvasWidth;
+                if (n.x > state.canvasWidth) n.x = 0;
+
+                // Nutrients sink slowly but can be held up by pycnocline
+                if (n.y > state.waterLayers.pycnocline.y && Math.random() < state.stratification) {
+                    n.vy = -0.1; // Bounce back up slightly if highly stratified
+                }
+
+                if (n.y > state.canvasHeight || n.life <= 0) {
+                    state.nutrientParticles.splice(i, 1);
+                    continue;
+                }
+
+                // Algae consumes nutrients in surface layer
+                if (n.y < pycnoclineCenter && Math.random() < state.algaeConsumptionProb) {
+                    // Warm temp + Nutrients = Algae bloom
+                    if (Math.random() < state.temperature / 30) {
+                        state.algaeParticles.push(new Algae(n.x, n.y));
+                        state.nutrientParticles.splice(i, 1);
+                    }
+                }
+            }
+
+            // Process Algae
+            for (let i = state.algaeParticles.length - 1; i >= 0; i--) {
+                let a = state.algaeParticles[i];
+                a.x += a.vx;
+                a.y += a.vy;
+                a.growthCycle++;
+
+                // Keep algae generally in the surface
+                if (a.y < 0) a.vy *= -1;
+                if (a.y > pycnoclineCenter) a.vy *= -1;
+
+                // Wrap around X
+                if (a.x < 0) a.x = state.canvasWidth;
+                if (a.x > state.canvasWidth) a.x = 0;
+
+                // Algae reproduces quickly if temp is high
+                if (a.growthCycle > state.algaeReproductionCycle && state.algaeParticles.length < state.maxAlgaeParticles && Math.random() < 0.01 * (state.temperature / 15)) {
+                    state.algaeParticles.push(new Algae(a.x, a.y));
+                    a.growthCycle = 0;
+                }
+
+                // Algae eventually dies (faster if carrying capacity is high)
+                let deathRate = state.algaeDeathRateBase + (state.algaeParticles.length / state.algaeDeathRateFactor);
+                if (Math.random() < deathRate) {
+                    state.deadAlgaeParticles.push(new DeadAlgae(a.x, a.y));
+                    state.algaeParticles.splice(i, 1);
+                }
+            }
+
+            // Process Dead Algae & Oxygen Consumption (The core mechanism)
+            let oxygenConsumptionRate = 0;
+            for (let i = state.deadAlgaeParticles.length - 1; i >= 0; i--) {
+                let d = state.deadAlgaeParticles[i];
+                d.x += d.vx;
+                d.y += d.vy;
+
+                // Wrap around X
+                if (d.x < 0) d.x = state.canvasWidth;
+                if (d.x > state.canvasWidth) d.x = 0;
+
+                // Dead algae sinks to the bottom
+                if (d.y > state.waterLayers.bottom.y + 50) {
+                    d.vy = 0; // Settles on bottom
+                    d.decayStage++;
+
+                    // Bacteria decompose it, consuming oxygen
+                    oxygenConsumptionRate += state.oxygenConsumptionPerAlgae;
+
+                    if (d.decayStage > state.deadAlgaeDecayTime) {
+                        state.deadAlgaeParticles.splice(i, 1);
+                    }
+                }
+            }
+
+            // Oxygen Dynamics
+            // Oxygen naturally diffuses from surface to bottom
+            // Stratification prevents this diffusion
+            let diffusionRate = state.baseOxygenDiffusionRate * (1 - state.stratification);
+            // Wind mixing greatly increases diffusion
+            let mixingDiffusion = (state.windMixing / 100) * state.windMixingDiffusionFactor;
+
+            let totalDiffusion = diffusionRate + mixingDiffusion;
+
+            // Oxygen is replenished by diffusion
+            state.bottomOxygen += totalDiffusion;
+
+            // Oxygen is consumed by decomposition
+            state.bottomOxygen -= oxygenConsumptionRate;
+
+            // Clamp oxygen levels
+            state.bottomOxygen = Math.max(0, Math.min(state.maxOxygen, state.bottomOxygen));
+
+            // Visual representation of oxygen (Bubbles)
+            let targetBubbles = Math.floor(state.bottomOxygen * 10);
+            if (state.oxygenBubbles.length < targetBubbles && Math.random() < 0.5) {
+                state.oxygenBubbles.push(new OxygenBubble());
+            } else if (state.oxygenBubbles.length > targetBubbles && state.oxygenBubbles.length > 0) {
+                state.oxygenBubbles.pop();
+            }
+
+            for (let i = state.oxygenBubbles.length - 1; i >= 0; i--) {
+                let o = state.oxygenBubbles[i];
+                o.x += o.vx;
+                o.y += o.vy;
+
+                // Bubbles float up, but slow down at pycnocline if stratified
+                if (o.y < state.waterLayers.pycnocline.y + state.waterLayers.pycnocline.h && o.y > state.waterLayers.pycnocline.y) {
+                     if (Math.random() < state.stratification) {
+                         o.vy = -0.1; // Gets trapped
+                     } else {
+                         o.vy = -1; // Passes through
+                     }
+                }
+
+                if (o.y < 0) {
+                    // Replenish from bottom
+                    o.y = state.waterLayers.bottom.y + Math.random() * state.waterLayers.bottom.h;
+                    o.x = Math.random() * state.canvasWidth;
+                }
+            }
+
+            // Log history
+            state.dayCount += state.timeScale;
+
+            const LOG_INTERVAL = 5; // Days
+            if (state.history.lastLogDay === undefined || state.dayCount >= state.history.lastLogDay + LOG_INTERVAL) {
+                state.history.lastLogDay = state.dayCount;
+
+                state.history.time.push(state.dayCount);
+                state.history.oxygen.push(state.bottomOxygen);
+                state.history.algae.push(state.algaeParticles.length);
+
+                if (state.history.time.length > 50) {
+                    state.history.time.shift();
+                    state.history.oxygen.shift();
+                    state.history.algae.shift();
+                }
+            }
+        }
+
+        // Rendering logic
+        function render(ctx) {
+            // Clear canvas
+            ctx.clearRect(0, 0, state.canvasWidth, state.canvasHeight);
+
+            // Draw Background layers
+            // Surface (bluer with less nutrients, greener with more algae)
+            const surfaceColor = `rgba(100, ${150 + Math.min(100, state.algaeParticles.length / 2)}, 200, 1)`;
+            ctx.fillStyle = surfaceColor;
+            ctx.fillRect(0, state.waterLayers.surface.y, state.canvasWidth, state.waterLayers.surface.h);
+
+            // Pycnocline (gradient)
+            const gradient = ctx.createLinearGradient(0, state.waterLayers.pycnocline.y, 0, state.waterLayers.pycnocline.y + state.waterLayers.pycnocline.h);
+            gradient.addColorStop(0, surfaceColor);
+
+            // Bottom water color depends on oxygen level
+            // High O2 = blue, Low O2 = dark purple/grey
+            const o2Ratio = state.bottomOxygen / state.maxOxygen;
+            const bottomColor = `rgba(${50 + (1 - o2Ratio) * 50}, ${100 * o2Ratio}, ${150 * o2Ratio + 50}, 1)`;
+            gradient.addColorStop(1, bottomColor);
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, state.waterLayers.pycnocline.y, state.canvasWidth, state.waterLayers.pycnocline.h);
+
+            // Bottom
+            ctx.fillStyle = bottomColor;
+            ctx.fillRect(0, state.waterLayers.bottom.y, state.canvasWidth, state.waterLayers.bottom.h);
+
+            // Draw Seafloor
+            ctx.fillStyle = '#8B7355'; // Mud/Sand
+            ctx.beginPath();
+            ctx.moveTo(0, state.canvasHeight);
+            ctx.lineTo(0, state.canvasHeight - 50);
+            ctx.quadraticCurveTo(state.canvasWidth / 2, state.canvasHeight - 80, state.canvasWidth, state.canvasHeight - 40);
+            ctx.lineTo(state.canvasWidth, state.canvasHeight);
+            ctx.fill();
+
+            // Draw Stratification Line
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${state.stratification * 0.8})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, state.waterLayers.pycnocline.y + state.waterLayers.pycnocline.h / 2);
+            ctx.lineTo(state.canvasWidth, state.waterLayers.pycnocline.y + state.waterLayers.pycnocline.h / 2);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset
+
+            // Draw Label for Pycnocline if stratified
+            if (state.stratification > 0.3) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${state.stratification})`;
+                ctx.font = '14px sans-serif';
+                ctx.fillText("Pycnocline (Density Barrier)", 10, state.waterLayers.pycnocline.y + state.waterLayers.pycnocline.h / 2 - 10);
+            }
+
+            // Draw Particles
+            // Nutrients (Orange/Brown squares)
+            ctx.fillStyle = '#D97706';
+            for (let n of state.nutrientParticles) {
+                ctx.fillRect(n.x, n.y, n.size, n.size);
+            }
+
+            // Algae (Green circles)
+            ctx.fillStyle = '#22C55E';
+            for (let a of state.algaeParticles) {
+                ctx.beginPath();
+                ctx.arc(a.x, a.y, a.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Dead Algae (Dark brown/grey dropping)
+            ctx.fillStyle = '#4B5563';
+            for (let d of state.deadAlgaeParticles) {
+                ctx.beginPath();
+                ctx.moveTo(d.x, d.y - d.size);
+                ctx.lineTo(d.x + d.size/2, d.y + d.size);
+                ctx.lineTo(d.x - d.size/2, d.y + d.size);
+                ctx.fill();
+            }
+
+            // Oxygen (Light blue bubbles)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.strokeStyle = '#38BDF8';
+            ctx.lineWidth = 1;
+            for (let o of state.oxygenBubbles) {
+                ctx.beginPath();
+                ctx.arc(o.x, o.y, o.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Draw Marine Life Health Indicator (e.g., Lobster on bottom)
+            drawLobster(ctx, 600, state.canvasHeight - 60, state.bottomOxygen);
+
+            // Text Overlays
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.shadowColor = 'black';
+            ctx.shadowBlur = 4;
+            ctx.fillText(`Bottom O2: ${state.bottomOxygen.toFixed(1)} mg/L`, 10, state.canvasHeight - 20);
+            ctx.shadowBlur = 0; // reset
+        }
+
+        function drawLobster(ctx, x, y, o2) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Color changes based on health
+            let color = '#EF4444'; // Healthy red
+            if (o2 <= state.anoxiaThreshold) {
+                color = '#9CA3AF'; // Dead (grey)
+                ctx.rotate(Math.PI); // Flipped over
+                ctx.translate(0, -20);
+            } else if (o2 <= state.hypoxiaThreshold) {
+                color = '#F87171'; // Stressed (pale)
+                // Fleeing behavior - moving up or away
+            }
+
+            ctx.fillStyle = color;
+            // Body
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Tail
+            ctx.beginPath();
+            ctx.moveTo(-20, 0);
+            ctx.lineTo(-35, -10);
+            ctx.lineTo(-35, 10);
+            ctx.fill();
+            // Claws
+            ctx.beginPath();
+            ctx.arc(20, -15, 8, 0, Math.PI * 2);
+            ctx.arc(20, 15, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Status text
+            ctx.fillStyle = 'white';
+            ctx.font = '12px sans-serif';
+            ctx.shadowColor = 'black';
+            ctx.shadowBlur = 3;
+            if (o2 <= state.anoxiaThreshold) {
+                ctx.fillText("Deceased", -20, -25);
+            } else if (o2 <= state.hypoxiaThreshold) {
+                ctx.fillText("Stressed/Fleeing", -30, -25);
+            } else {
+                ctx.fillText("Healthy", -20, -25);
+            }
+
+            ctx.restore();
+        }
+
+        // Chart.js Setup
+        let chartInstance = null;
+
+        function initChart() {
+            const ctx = document.getElementById('data-chart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: state.history.time,
+                    datasets: [
+                        {
+                            label: 'Bottom Dissolved O2 (mg/L)',
+                            data: state.history.oxygen,
+                            borderColor: '#38BDF8',
+                            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                            yAxisID: 'y',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Surface Algae (Count)',
+                            data: state.history.algae,
+                            borderColor: '#22C55E',
+                            backgroundColor: 'transparent',
+                            yAxisID: 'y1',
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false, // Disable for real-time updates
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Time (Days)' },
+                            ticks: { maxTicksLimit: 10 }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Dissolved Oxygen (mg/L)' },
+                            min: 0,
+                            suggestedMax: 10,
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Algae Count' },
+                            min: 0,
+                            suggestedMax: 200,
+                            grid: { drawOnChartArea: false }
+                        }
+                    },
+                    plugins: {
+                        annotation: {
+                            annotations: {
+                                hypoxiaLine: {
+                                    type: 'line',
+                                    yMin: 3.0,
+                                    yMax: 3.0,
+                                    borderColor: 'red',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        content: 'Hypoxia Threshold (< 3mg/L)',
+                                        enabled: true,
+                                        position: 'start',
+                                        color: 'red'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            if (!chartInstance) return;
+            chartInstance.data.labels = state.history.time.map(t => Math.floor(t));
+            chartInstance.data.datasets[0].data = state.history.oxygen;
+            chartInstance.data.datasets[1].data = state.history.algae;
+            chartInstance.update();
+        }
+
+        // Animation Loop setup
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('sim-canvas');
+            const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                // Ensure correct aspect ratio rendering internally, visually scales via CSS
+                canvas.width = state.canvasWidth;
+                canvas.height = state.canvasHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const runoffSlider = document.getElementById('runoff-slider');
+            const tempSlider = document.getElementById('temp-slider');
+            const mysterySlider = document.getElementById('mystery-slider');
+
+            runoffSlider.addEventListener('input', (e) => {
+                state.runoffRate = parseInt(e.target.value, 10);
+                document.getElementById('runoff-val').innerText =
+                    state.runoffRate < 33 ? 'Low' : (state.runoffRate < 66 ? 'Medium' : 'High');
+            });
+
+            tempSlider.addEventListener('input', (e) => {
+                state.temperature = parseInt(e.target.value, 10);
+                document.getElementById('temp-val').innerText = state.temperature + '°C';
+                // Adjust Pycnocline (stratification) based on temp difference
+                updateStratification();
+            });
+
+            mysterySlider.addEventListener('input', (e) => {
+                state.windMixing = parseInt(e.target.value, 10);
+                document.getElementById('mystery-val').innerText =
+                    state.windMixing < 33 ? 'Calm' : (state.windMixing < 66 ? 'Breezy' : 'Stormy');
+                updateStratification();
+            });
+
+            initSimulation();
+            updateStratification();
+            initChart();
+
+            let lastChartUpdate = 0;
+            function loop(timestamp) {
+                updateLogic();
+                render(ctx);
+
+                // Throttle chart updates for performance
+                if (timestamp - lastChartUpdate > 500) {
+                    updateChart();
+                    lastChartUpdate = timestamp;
+                }
+
+                requestAnimationFrame(loop);
+            }
+
+            requestAnimationFrame(loop);
+        });
+    </script>
+</body>
+</html>

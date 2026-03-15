@@ -335,6 +335,34 @@ Use mathematical and/or computational representations to support explanations of
 ### HS-LS2-2
 Use mathematical representations to support and revise explanations based on evidence about factors affecting biodiversity and populations in ecosystems of different scales.
 
+- [Lyme Disease Ecology Simulation](LymeDiseaseEcology.html) - An interactive mathematical model exploring the ecological cascade in New England forests, demonstrating how oak masting, predator populations, and winter severity drive mouse populations, tick proliferation, and human Lyme disease risk.
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-15 02:00:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Excellent investigative phenomenon rooted in a highly relevant, localized New England context. It strongly meets Criterion 4 (Investigable Through Practices) by allowing students to manipulate environmental variables (winter severity, fox populations, deer density) and trigger an Oak Mast to observe the delayed ripple effect on human Lyme disease risk.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (LS2.C) regarding ecosystem dynamics, functioning, and resilience. Thoroughly supports the SEP (Using Mathematics and Computational Thinking) by plotting population dynamics on a shared axis, allowing students to mathematically trace the multi-year lag between acorn spikes and infection risk.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Fulfill Observable Feature 3.b (Revising Explanations):</b> Add a feature where a sudden, user-triggered intervention (e.g., "Deploy Tick-Tube Insecticides" or "Cull Deer") occurs in year 10, forcing students to revise their original predictions about carrying capacity and risk.</li>
+          <li><b>Improve Relevance (Criterion 1):</b> Include historical graph overlays of actual Lyme disease cases in Connecticut over the past two decades for students to compare against their simulated model.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Implement a "Sudden Intervention" event trigger mid-simulation.</li>
+          <li>[ ] Add real-world historical Lyme disease case data as a toggleable overlay on the Chart.js visualization.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 - [Biodiversity & Population Dynamics Lab](BiodiversityPopulationDynamics.html) - Explore how habitat size, pollution, climate stress, and invasive species affect biodiversity and population trends, then revise claims using disturbance evidence. [2026-03-13 13:15:00]
 
   <details>
@@ -358,6 +386,34 @@ Use mathematical representations to support and revise explanations based on evi
         <ul>
           <li>[ ] Add explicit highlights for critical population events (crashes/recoveries) in the data log.</li>
           <li>[ ] Include real-world case study context for each stressor type.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
+- [Lyme Disease Ecology: The Acorn Connection](NewEnglandLymeEcology.html) - Investigate the complex, multi-year ecological cascade that drives Lyme disease risk in New England forests, modeling the 2-year delay between acorn mast events, white-footed mouse population booms, and infected tick surges.
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 5.0/5 Stars | 2026-03-15 01:45:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An exceptional investigative phenomenon that addresses a highly relevant regional problem (Lyme Disease in New England/Connecticut) by challenging common assumptions (e.g., culling deer is the main solution). It clearly links the multi-year ecological cascade (acorns -> mice -> infected ticks).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports DCI (LS2.C) regarding ecosystem dynamics and resilience. Strongly supports SEP (Using Mathematics and Computational Thinking) by modeling population lag times.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Data Analysis:</b> Add an interactive tooltip or highlight over the Chart.js graph to explicitly point out the '2-Year Delay' gap between the green acorn peak and the red tick peak.</li>
+          <li><b>Visual Representation:</b> Add a dynamic visual forest floor alongside the chart that spawns SVG mice and ticks proportional to the populations to give a visceral sense of density.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add Chart.js annotation plugin to highlight the temporal gap.</li>
+          <li>[ ] Create an SVG spawning forest floor canvas next to the chart.</li>
         </ul>
       </li>
     </ul>
@@ -514,6 +570,7 @@ Evaluate the claims, evidence, and reasoning that the complex interactions in ec
       </li>
     </ul>
   </details>
+- [Long Island Sound Lobster Collapse](LongIslandSoundLobsterCollapse.html) - An investigative simulation exploring the causes of the American Lobster population collapse using a mystery environmental variable.
 
 ### HS-LS2-7
 Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment and biodiversity.*
