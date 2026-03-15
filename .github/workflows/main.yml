@@ -7,30 +7,16 @@ on:
 jobs:
   repost-comment:
     runs-on: ubuntu-latest
-    # Note: moved the actor check into the script for easier debugging
     steps:
-      - name: Debug actor & review author
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.MY_PAT }}
-          script: |
-            console.log("GITHUB_ACTOR env:", process.env.GITHUB_ACTOR);
-            console.log("context.actor:", context.actor);
-            console.log("review user login:", context.payload.review && context.payload.review.user ? context.payload.review.user.login : "(no review.user)");
-            console.log("Full event payload (truncated):", JSON.stringify(context.payload, null, 2).slice(0, 2000));
-
       - name: Quote and bundle review comments
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.MY_PAT }}
           script: |
-            const reviewId = context.payload.review && context.payload.review.id;
-            const issueNumber = context.payload.pull_request && context.payload.pull_request.number;
             const actor = context.actor;
             const reviewUser = context.payload.review && context.payload.review.user && context.payload.review.user.login;
-            console.log("actor:", actor, "reviewUser:", reviewUser);
 
-            // Allowed bot names -- adjust after you inspect the debug logs
+            // Allowed bot names
             const allowed = [
               "gemini-code-assist[bot]",
               "chatgpt-codex-connector[bot]",
@@ -53,6 +39,9 @@ jobs:
               console.log(`Skipping: neither actor (${actor}) nor review author (${reviewUser}) is in allowed list.`);
               return;
             }
+
+            const reviewId = context.payload.review && context.payload.review.id;
+            const issueNumber = context.payload.pull_request && context.payload.pull_request.number;
 
             if (!reviewId || !issueNumber) {
               console.log("Missing review id or pull request number; skipping.");
@@ -87,7 +76,7 @@ jobs:
               return;
             }
 
-            const finalComment = `${digest}—@${author}\n\n@jules please address this review`;
+            const finalComment = `${digest}—*${author}*\n\n@jules please address this review`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
