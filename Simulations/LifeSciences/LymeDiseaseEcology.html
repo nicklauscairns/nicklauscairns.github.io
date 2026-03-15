@@ -55,7 +55,7 @@
                     <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
                         <label class="block text-sm font-bold text-gray-700 mb-1">Fox & Owl Population</label>
                         <p class="text-xs text-gray-500 mb-2">Predators that primarily hunt small rodents.</p>
-                        <input type="range" id="predator-slider" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb" style="background: #1e3a8a;">
+                        <input type="range" id="predator-slider" min="0" max="100" value="50" class="w-full h-2 rounded-lg appearance-none cursor-pointer slider-thumb bg-blue-900">
                         <div class="flex justify-between text-xs font-medium text-gray-500 mt-1">
                             <span>Low (Fragmented Forest)</span><span>High (Intact Forest)</span>
                         </div>
@@ -64,7 +64,7 @@
                     <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
                         <label class="block text-sm font-bold text-gray-700 mb-1">Deer Density</label>
                         <p class="text-xs text-gray-500 mb-2">Hosts for adult ticks to mate and lay eggs. (Deer do not infect ticks with Lyme).</p>
-                        <input type="range" id="deer-slider" min="10" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb" style="background: #9a3412;">
+                        <input type="range" id="deer-slider" min="10" max="100" value="50" class="w-full h-2 rounded-lg appearance-none cursor-pointer slider-thumb bg-orange-800">
                         <div class="flex justify-between text-xs font-medium text-gray-500 mt-1">
                             <span>Low</span><span>Overpopulated</span>
                         </div>
@@ -224,7 +224,6 @@
         function runSimulation() {
             // Initial conditions
             let currentMice = 20; // Base surviving winter population
-            let larvalTicks = 500; // Base background ticks hatching in spring
 
             // Clear previous data
             simulationState.data.acorns.fill(0);
