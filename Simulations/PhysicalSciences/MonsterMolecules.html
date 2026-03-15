@@ -212,7 +212,20 @@
             }
         };
 
+        // DOM Element Caching
+        let uiElements = {};
+
         document.addEventListener('DOMContentLoaded', () => {
+            uiElements = {
+                standardInvestigationPanel: document.getElementById('standard-investigation'),
+                mysteryInvestigationPanel: document.getElementById('mystery-investigation'),
+                mysteryFeedback: document.getElementById('mystery-feedback'),
+                guessC: document.getElementById('guess-c'),
+                guessH: document.getElementById('guess-h'),
+                loadingUI: document.getElementById('loading'),
+                loadingText: document.getElementById('loading-text')
+            };
+
             initViewer();
             loadMolecule('cubane');
         });
@@ -241,20 +254,19 @@
             let isSolved = window.simulationState.solved[molKey];
 
             if (isMystery && !isSolved) {
-                document.getElementById('standard-investigation').classList.add('hidden');
-                document.getElementById('mystery-investigation').classList.remove('hidden');
-                document.getElementById('mystery-feedback').classList.add('hidden');
-                document.getElementById('guess-c').value = '';
-                document.getElementById('guess-h').value = '';
+                uiElements.standardInvestigationPanel.classList.add('hidden');
+                uiElements.mysteryInvestigationPanel.classList.remove('hidden');
+                uiElements.mysteryFeedback.classList.add('hidden');
+                uiElements.guessC.value = '';
+                uiElements.guessH.value = '';
             } else {
-                document.getElementById('standard-investigation').classList.remove('hidden');
-                document.getElementById('mystery-investigation').classList.add('hidden');
+                uiElements.standardInvestigationPanel.classList.remove('hidden');
+                uiElements.mysteryInvestigationPanel.classList.add('hidden');
             }
 
-            let loadingUI = document.getElementById('loading');
-            loadingUI.classList.add('active');
+            uiElements.loadingUI.classList.add('active');
             let fetchName = (isMystery && !isSolved) ? "Mystery Sample" : molecules[molKey].name;
-            document.getElementById('loading-text').innerText = `Fetching ${fetchName}...`;
+            uiElements.loadingText.innerText = `Fetching ${fetchName}...`;
 
             viewer.clear();
 
@@ -291,7 +303,7 @@
 
                     viewer.render();
 
-                    loadingUI.classList.remove('active');
+                    uiElements.loadingUI.classList.remove('active');
                     window.simulationState.loaded = true;
 
                     // Start slow rotation
@@ -299,8 +311,8 @@
                 })
                 .catch(error => {
                     console.error("Error loading molecule:", error);
-                    document.getElementById('loading-text').innerText = "Error loading. Check connection.";
-                    document.getElementById('loading-text').classList.add("text-red-400");
+                    uiElements.loadingText.innerText = "Error loading. Check connection.";
+                    uiElements.loadingText.classList.add("text-red-400");
                 });
         }
 
@@ -326,31 +338,31 @@
         window.verifyMystery = function() {
             let molKey = window.simulationState.currentMolecule;
             let mol = molecules[molKey];
-            let guessC = parseInt(document.getElementById('guess-c').value);
-            let guessH = parseInt(document.getElementById('guess-h').value);
+            let guessC = parseInt(uiElements.guessC.value, 10);
+            let guessH = parseInt(uiElements.guessH.value, 10);
 
-            let feedback = document.getElementById('mystery-feedback');
-            feedback.classList.remove('hidden', 'text-green-400', 'text-red-400');
+            uiElements.mysteryFeedback.classList.remove('hidden', 'text-green-400', 'text-red-400');
 
             if (guessC === mol.formulaC && guessH === mol.formulaH) {
                 window.simulationState.solved[molKey] = true;
-                feedback.innerText = `Correct! This is ${mol.name}. ${mol.description}`;
-                feedback.classList.add('text-green-400');
+                uiElements.mysteryFeedback.innerText = `Correct! This is ${mol.name}. ${mol.description}`;
+                uiElements.mysteryFeedback.classList.add('text-green-400');
 
                 // Update UI card
-                document.getElementById(`name-${molKey}`).innerText = mol.name;
-                document.getElementById(`name-${molKey}`).classList.remove('text-pink-300', 'text-cyan-300');
-                document.getElementById(`name-${molKey}`).classList.add('text-green-300');
+                const nameEl = document.getElementById(`name-${molKey}`);
+                nameEl.innerText = mol.name;
+                nameEl.classList.remove('text-pink-300', 'text-cyan-300');
+                nameEl.classList.add('text-green-300');
                 document.getElementById(`desc-${molKey}`).innerText = mol.description;
 
                 // Switch back to standard investigation after a short delay
                 setTimeout(() => {
-                    document.getElementById('mystery-investigation').classList.add('hidden');
-                    document.getElementById('standard-investigation').classList.remove('hidden');
+                    uiElements.mysteryInvestigationPanel.classList.add('hidden');
+                    uiElements.standardInvestigationPanel.classList.remove('hidden');
                 }, 4000);
             } else {
-                feedback.innerText = "Incorrect formula. Rotate the molecule and count carefully!";
-                feedback.classList.add('text-red-400');
+                uiElements.mysteryFeedback.innerText = "Incorrect formula. Rotate the molecule and count carefully!";
+                uiElements.mysteryFeedback.classList.add('text-red-400');
             }
         }
 
