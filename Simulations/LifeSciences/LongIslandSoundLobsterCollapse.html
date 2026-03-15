@@ -4,17 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Long Island Sound Lobster Collapse</title>
+    <meta name="description" content="An interactive investigative simulation exploring the environmental factors that led to the dramatic decline of the American Lobster population in the Long Island Sound in the late 1990s.">
+    <meta property="og:title" content="Long Island Sound Lobster Collapse Simulation">
+    <meta property="og:description" content="An interactive investigative simulation exploring the environmental factors that led to the dramatic decline of the American Lobster population in the Long Island Sound in the late 1990s.">
+    <meta property="og:type" content="website">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Long Island Sound Lobster Collapse Simulation",
+      "description": "An interactive investigative simulation exploring the environmental factors that led to the dramatic decline of the American Lobster population in the Long Island Sound in the late 1990s.",
+      "learningResourceType": "Interactive Simulation",
+      "educationalAlignment": [
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "educationalSubject",
+          "targetName": "Life Sciences"
+        },
+        {
+          "@type": "AlignmentObject",
+          "alignmentType": "teaches",
+          "targetName": "HS-LS2-6",
+          "targetDescription": "Evaluate the claims, evidence, and reasoning that the complex interactions in ecosystems maintain relatively consistent numbers and types of organisms in stable conditions, but changing conditions may result in a new ecosystem."
+        }
+      ]
+    }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .slider-label { display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500; }
-        input[type=range] { width: 100%; }
-    </style>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col">
+<body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col font-sans">
 
     <!-- Header -->
     <header class="bg-blue-900 text-white p-6 shadow-md">
@@ -35,7 +58,7 @@
 
                 <!-- Fishing Pressure -->
                 <div class="mb-4">
-                    <div class="slider-label">
+                    <div class="flex justify-between mb-1 text-sm font-medium">
                         <label for="fishingPressure">Fishing Pressure (Traps)</label>
                         <span id="fishingVal" class="text-blue-600 font-bold">Low</span>
                     </div>
@@ -45,7 +68,7 @@
 
                 <!-- Nitrogen Runoff -->
                 <div class="mb-4">
-                    <div class="slider-label">
+                    <div class="flex justify-between mb-1 text-sm font-medium">
                         <label for="nitrogenRunoff">Nitrogen Runoff</label>
                         <span id="nitrogenVal" class="text-green-600 font-bold">Low</span>
                     </div>
@@ -55,7 +78,7 @@
 
                 <!-- Mystery Variable -->
                 <div class="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-md">
-                    <div class="slider-label text-orange-800">
+                    <div class="flex justify-between mb-1 text-sm font-medium text-orange-800">
                         <label for="mysteryVariable" class="flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Mystery Variable X
@@ -396,6 +419,12 @@
         let myChart = null;
 
         function initChart() {
+            // Guard against Chart.js failing to load (e.g., blocked CDN, testing sandbox)
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js not loaded. Data visualization disabled.');
+                return;
+            }
+
             if (myChart) myChart.destroy();
 
             myChart = new Chart(chartCtx, {
