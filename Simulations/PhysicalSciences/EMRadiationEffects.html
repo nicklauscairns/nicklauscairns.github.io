@@ -136,6 +136,11 @@
     const canvas = document.getElementById('radiationCanvas');
     const ctx = canvas.getContext('2d');
 
+    // ⚡ Bolt Performance Optimization: Cached DOM queries outside the animation loop
+    // Impact: Avoids ~120 DOM lookups per second (at 60 FPS) in drawSimulation()
+    const tDisp = document.getElementById('status-temp');
+    const dDisp = document.getElementById('status-damage');
+
     // Particles (Photons / Waves)
     let waves = [];
 
@@ -309,13 +314,11 @@
         }
 
         // Update UI Status Panels
-        const tDisp = document.getElementById('status-temp');
         tDisp.textContent = `${temperature.toFixed(1)}°C`;
         if (temperature > 60) tDisp.className = "font-mono text-red-500 font-bold";
         else if (temperature > 40) tDisp.className = "font-mono text-yellow-500 font-bold";
         else tDisp.className = "font-mono text-green-400";
 
-        const dDisp = document.getElementById('status-damage');
         dDisp.textContent = `${Math.round(dnaDamage)}%`;
         if (dnaDamage > 50) dDisp.className = "font-mono text-red-500 font-bold";
         else if (dnaDamage > 10) dDisp.className = "font-mono text-yellow-500 font-bold";
