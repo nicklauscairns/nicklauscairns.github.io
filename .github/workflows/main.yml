@@ -42,6 +42,10 @@ jobs:
               "github-copilot",
               "github-copilot[bot]",
               "github-copilot-preview[bot]",
+              "copilot-pull-request-reviewer[bot]",
+              "copilot-pull-request-reviewer[AI]",
+              "Copilot[AI]",
+              "copilot[AI]",
               "deepsource-io[bot]"
             ];
 
