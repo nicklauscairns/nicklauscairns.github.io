@@ -293,6 +293,7 @@ Develop a model to illustrate how Earth’s internal and surface processes opera
     </ul>
   </details>
 
+- [Formation of the Metacomet Ridge](HartfordBasinGeology.html) - An interactive Earth science simulation allowing students to model the tectonic rifting, volcanism, and glacial erosion that formed the Metacomet Ridge in Central Connecticut (e.g., Mount Higby). Aligns with NGSS HS-ESS2-1.
 ### HS-ESS2-2
 Analyze geoscience data to make the claim that one change to Earth's surface can create feedbacks that cause changes to other Earth systems.
 
