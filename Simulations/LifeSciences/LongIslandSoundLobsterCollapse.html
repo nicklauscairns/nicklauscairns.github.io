@@ -107,6 +107,12 @@
     </main>
 
     <script>
+        // --- Constants ---
+        const TEMP_STRESS_THRESHOLD = 20;
+        const TEMP_STRESS_FACTOR = 0.02;
+        const OXYGEN_STRESS_THRESHOLD = 3.5;
+        const OXYGEN_STRESS_FACTOR = 0.05;
+
         // --- State Management ---
         const initialState = {
             time: 0,
@@ -167,15 +173,15 @@
 
             // Environmental Stressors
             let temperatureStress = 0;
-            if (state.temperature > 20) {
-                // Exponential stress above 20C (Mystery variable effect)
-                temperatureStress = Math.pow((state.temperature - 20), 2) * 0.02;
+            if (state.temperature > TEMP_STRESS_THRESHOLD) {
+                // Exponential stress above threshold (Mystery variable effect)
+                temperatureStress = Math.pow((state.temperature - TEMP_STRESS_THRESHOLD), 2) * TEMP_STRESS_FACTOR;
             }
 
             let oxygenStress = 0;
-            if (state.dissolvedOxygen < 3.5) {
-                // Severe stress below 3.5 mg/L
-                oxygenStress = (3.5 - state.dissolvedOxygen) * 0.05;
+            if (state.dissolvedOxygen < OXYGEN_STRESS_THRESHOLD) {
+                // Severe stress below threshold
+                oxygenStress = (OXYGEN_STRESS_THRESHOLD - state.dissolvedOxygen) * OXYGEN_STRESS_FACTOR;
             }
 
             // Combined survival modifier (1.0 is neutral, < 1.0 reduces pop)
@@ -222,6 +228,11 @@
 
             // Initial UI updates
             updateUI();
+
+            // Initialize/reset chart if the function exists
+            if (typeof initChart === 'function') {
+                initChart();
+            }
         };
 
         // --- UI Updates ---
@@ -458,9 +469,6 @@
             });
         }
 
-        // Add a chart update throttle to save performance
-        let lastChartUpdate = 0;
-
         // --- Main Animation Loop ---
         function animate() {
             updateEcosystem();
@@ -479,15 +487,7 @@
 
         // Initialize
         window.resetSimulation();
-        initChart();
         animate();
-
-        // Override reset to clear chart
-        const originalReset = window.resetSimulation;
-        window.resetSimulation = function() {
-            originalReset();
-            initChart(); // re-init chart to clear history arrays bound to it
-        }
 
     </script>
 </body>
