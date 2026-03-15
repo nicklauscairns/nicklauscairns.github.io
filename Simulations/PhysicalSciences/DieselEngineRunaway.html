@@ -216,7 +216,13 @@
         maxCatastrophicRpm: 7000,
         baseFriction: 5,
         loadFriction: 40,
-        combustionEfficiency: 0.8
+        combustionEfficiency: 0.8,
+        faultSeverityIncrement: 0.5,
+        oilEnergyFactor: 1.5,
+        minAirFactor: 0.1,
+        powerCurveExponent: 1.2,
+        powerFactor: 20,
+        idleRpm: 800
     };
 
     window.simulationState = state; // Expose for Playwright testing
@@ -238,6 +244,19 @@
     const canvas = document.getElementById('engineCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('engineContainer');
+
+    const drawingConstants = {
+        CYLINDER_X_FACTOR: 0.2,
+        CYLINDER_WIDTH_FACTOR: 0.6,
+        PISTON_X_FACTOR: 0.25,
+        PISTON_WIDTH_FACTOR: 0.5,
+        PISTON_HEIGHT_FACTOR: 0.4,
+        PISTON_Y_BASE_FACTOR: 0.7,
+        PISTON_Y_PHASE_FACTOR: 0.15,
+        ROD_X_FACTOR: 0.45,
+        ROD_WIDTH_FACTOR: 0.1,
+        ROD_Y_OFFSET_FACTOR: 0.2
+    };
 
     function resizeCanvas() {
         canvas.width = container.clientWidth;
@@ -367,9 +386,14 @@
 
         if (state.engineDestroyed) { desiredFuel = 0; desiredAir = 0; desiredOil = 0; }
 
-        let currentAir = particles.filter(p => p.type === 'air').length;
-        let currentFuel = particles.filter(p => p.type === 'fuel').length;
-        let currentOil = particles.filter(p => p.type === 'oil').length;
+        let currentAir = 0, currentFuel = 0, currentOil = 0;
+        for (const p of particles) {
+            switch (p.type) {
+                case 'air': currentAir++; break;
+                case 'fuel': currentFuel++; break;
+                case 'oil': currentOil++; break;
+            }
+        }
 
         // Add missing
         if (currentAir < desiredAir && particles.length < MAX_PARTICLES) particles.push(new Particle('air'));
@@ -400,9 +424,9 @@
         let totalCombustible = state.fuel;
         if (state.faultActive) {
             // Fault severity increases over time to simulate seal failing completely
-            if (state.faultSeverity < 100) state.faultSeverity += 0.5;
+            if (state.faultSeverity < 100) state.faultSeverity += state.faultSeverityIncrement;
             // Oil provides massive unchecked energy
-            totalCombustible += state.faultSeverity * 1.5;
+            totalCombustible += state.faultSeverity * state.oilEnergyFactor;
         }
 
         // 2. Air restriction (Diesel throttle)
@@ -414,9 +438,9 @@
         let currentFriction = state.baseFriction + (state.hasLoad ? state.loadFriction : 0);
 
         // Non-linear power curve
-        let powerGenerated = Math.pow(actualCombustionEnergy, 1.2) * 20;
+        let powerGenerated = Math.pow(actualCombustionEnergy, state.powerCurveExponent) * state.powerFactor;
 
-        if (usableAirFactor < 0.1) {
+        if (usableAirFactor < state.minAirFactor) {
             // Air choked, engine dies
             state.targetRpm = 0;
         } else if (actualCombustionEnergy < 5) {
@@ -427,8 +451,8 @@
         }
 
         // Add idle
-        if (state.fuel > 0 && usableAirFactor > 0.1 && !state.faultActive) {
-            state.targetRpm = Math.max(state.targetRpm, 800);
+        if (state.fuel > 0 && usableAirFactor > state.minAirFactor && !state.faultActive) {
+            state.targetRpm = Math.max(state.targetRpm, state.idleRpm);
         }
 
         // 4. Smooth RPM interpolation (inertia)
@@ -458,7 +482,7 @@
 
         // UI updates
         rpmDisplay.classList.add('glow-red');
-        document.getElementById('engineContainer').style.backgroundColor = '#1a0505';
+        container.style.backgroundColor = '#1a0505';
     }
 
     // --- UI Update Loop ---
@@ -515,20 +539,20 @@
 
         // Draw cylinder background indication
         ctx.fillStyle = 'rgba(255,255,255,0.05)';
-        ctx.fillRect(canvas.width*0.2, 0, canvas.width*0.6, canvas.height);
+        ctx.fillRect(canvas.width * drawingConstants.CYLINDER_X_FACTOR, 0, canvas.width * drawingConstants.CYLINDER_WIDTH_FACTOR, canvas.height);
 
         // Piston visual (simple rect moving up and down based on RPM)
         if (state.rpm > 100) {
             let period = 60000 / state.rpm; // ms per revolution
             let time = Date.now() % period;
             let phase = Math.sin((time / period) * Math.PI * 2);
-            let pistonY = canvas.height * 0.7 + (phase * canvas.height * 0.15);
+            let pistonY = canvas.height * drawingConstants.PISTON_Y_BASE_FACTOR + (phase * canvas.height * drawingConstants.PISTON_Y_PHASE_FACTOR);
 
             ctx.fillStyle = '#718096'; // gray-500
-            ctx.fillRect(canvas.width*0.25, pistonY, canvas.width*0.5, canvas.height*0.4);
+            ctx.fillRect(canvas.width * drawingConstants.PISTON_X_FACTOR, pistonY, canvas.width * drawingConstants.PISTON_WIDTH_FACTOR, canvas.height * drawingConstants.PISTON_HEIGHT_FACTOR);
             // Connecting rod
             ctx.fillStyle = '#4a5568';
-            ctx.fillRect(canvas.width*0.45, pistonY + canvas.height*0.2, canvas.width*0.1, canvas.height);
+            ctx.fillRect(canvas.width * drawingConstants.ROD_X_FACTOR, pistonY + canvas.height * drawingConstants.ROD_Y_OFFSET_FACTOR, canvas.width * drawingConstants.ROD_WIDTH_FACTOR, canvas.height);
         }
 
         // Draw and update particles
@@ -597,7 +621,7 @@
         mysteryFaultBtn.classList.replace('bg-red-600', 'bg-red-900');
         mysteryFaultBtn.classList.remove('animate-pulse');
 
-        document.getElementById('engineContainer').style.backgroundColor = '#2d3748';
+        container.style.backgroundColor = '';
         rpmDisplay.classList.remove('glow-red');
         statusBg.classList.remove('alert-flash');
 
