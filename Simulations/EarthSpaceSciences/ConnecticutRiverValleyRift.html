@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecticut River Valley Rift Simulation</title>
+    <meta name="description" content="An interactive simulation for HS-ESS2-1 exploring the geological history of the Hartford Basin and Metacomet Ridge near Middletown, CT.">
+    <meta name="keywords" content="NGSS, HS-ESS2-1, Earth Systems, Geology, Plate Tectonics, Rifting, Metacomet Ridge, Simulation, Middletown, Connecticut">
+    <meta name="author" content="NGSS Simulations">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Connecticut River Valley Rift Simulation">
+    <meta property="og:description" content="Explore the 200-million-year geological history of the Hartford Basin, brownstone deposition, and the volcanic Metacomet Ridge in Central Connecticut.">
+    <meta property="og:type" content="website">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      "name": "Connecticut River Valley Rift Simulation",
+      "description": "An interactive simulation for HS-ESS2-1 exploring the geological history of the Hartford Basin and Metacomet Ridge near Middletown, CT.",
+      "educationalAlignment": {
+        "@type": "AlignmentObject",
+        "alignmentType": "educationalSubject",
+        "educationalFramework": "Next Generation Science Standards",
+        "targetName": "HS-ESS2-1"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            border-radius: 12px;
+        }
+        canvas {
+            user-select: none;
+            touch-action: none;
+        }
+    </style>
+    <script src="../common/analytics-loader.js"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-indigo-900 text-white p-4 shadow-md z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Middletown Geologic History: The Hartford Basin</h1>
+            <span class="px-3 py-1 bg-indigo-700 rounded-full text-sm font-semibold">HS-ESS2-1 Model</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex flex-col md:flex-row overflow-hidden relative">
+        <!-- Visualization Area -->
+        <section class="flex-grow relative bg-sky-100 flex items-center justify-center p-4">
+            <div class="w-full h-full max-w-5xl max-h-[800px] relative glass-panel overflow-hidden border border-slate-300 shadow-inner">
+                <canvas id="sim-canvas" class="w-full h-full block rounded-lg"></canvas>
+
+                <!-- Overlay Stats/Legend -->
+                <div class="absolute top-4 left-4 glass-panel p-3 text-sm z-10 pointer-events-none">
+                    <h3 class="font-bold border-b border-slate-300 pb-1 mb-2">Cross-Section Legend</h3>
+                    <div class="flex items-center mb-1"><div class="w-4 h-4 bg-orange-700 mr-2 border border-black"></div> Pre-Mesozoic Basement (Schist/Gneiss)</div>
+                    <div class="flex items-center mb-1"><div class="w-4 h-4 bg-red-900 mr-2 border border-black"></div> Arkose / Brownstone (Portland Fm)</div>
+                    <div class="flex items-center mb-1"><div class="w-4 h-4 bg-stone-800 mr-2 border border-black"></div> Basalt Lava Flows (Metacomet Ridge)</div>
+                    <div class="flex items-center"><div class="w-4 h-4 bg-gray-500 mr-2 border border-black"></div> Glacial Till / Modern Soil</div>
+                </div>
+
+                <!-- Timeline Display Overlay -->
+                <div class="absolute top-4 right-4 glass-panel p-3 text-center z-10 pointer-events-none">
+                    <div class="text-xs uppercase text-slate-500 font-bold tracking-wider">Geologic Time</div>
+                    <div id="time-display" class="text-3xl font-bold text-indigo-900">220 Ma</div>
+                    <div id="epoch-display" class="text-sm font-semibold text-slate-700">Late Triassic</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sidebar Controls & Info -->
+        <aside class="w-full md:w-96 bg-white border-l border-slate-200 shadow-xl flex flex-col z-20 overflow-y-auto">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-2 text-indigo-900">Tectonic Timeline</h2>
+                <p class="text-sm text-slate-600 mb-6">Investigate how the supercontinent Pangea rifted apart, forming the landscape of Central Connecticut, including the famous Portland brownstone and the volcanic ridges of Middletown.</p>
+
+                <!-- Controls -->
+                <div class="space-y-6 mb-8">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-semibold text-sm">Time (Millions of Years Ago)</label>
+                            <span id="slider-val" class="text-indigo-700 font-bold">220 Ma</span>
+                        </div>
+                        <input type="range" id="time-slider" min="0" max="220" value="220" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500" style="direction: rtl;">
+                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                            <span>Present</span>
+                            <span>220 Ma</span>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-2">
+                        <button id="btn-play" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition shadow">
+                            Play Timeline
+                        </button>
+                        <button id="btn-pause" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-4 rounded transition shadow hidden">
+                            Pause
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Event Information -->
+                <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                    <h3 id="event-title" class="font-bold text-lg text-indigo-800 mb-2">Pangea Intact</h3>
+                    <p id="event-desc" class="text-sm text-slate-700 leading-relaxed">Central Connecticut is situated near the center of the supercontinent Pangea. The region is characterized by ancient, highly metamorphosed basement rocks from earlier mountain-building events (like the Appalachians).</p>
+
+                    <!-- Mystery Element (Phenomena-Driven Design) -->
+                    <div class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                        <h4 class="text-sm font-bold text-yellow-800 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Middletown Connection
+                        </h4>
+                        <p id="local-phenomenon" class="text-xs text-slate-700 mt-1">
+                            The metamorphic rocks beneath Middletown today (like the Bolton Schist) were formed deep underground long before the dinosaurs.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+    </main>
+    <script>
+        const canvas = document.getElementById('sim-canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+
+        let state = {
+            timeMa: 220,     // 220 to 0 (Present)
+            isPlaying: false,
+            animationId: null,
+            width: 1000,
+            height: 600,
+
+            // Geologic parameters
+            riftWidth: 0,       // Distance of crustal stretching
+            faultDrop: 0,       // Vertical displacement of the Eastern Border Fault
+            sedimentDepth: 0,   // Accumulated brownstone
+            basaltThickness: 0, // Metacomet lava flows
+            tiltAngle: 0,       // Post-rifting tectonic tilt
+            erosionLevel: 0,    // Top-down erosion cutting
+            glaciation: 0       // Glacial till deposition
+        };
+
+        const RIFT_DURATION_MA = 25;
+        const MAX_RIFT_WIDTH = 150;
+        const MAX_FAULT_DROP = 200;
+
+        const epochData = [
+            { maxTime: 0.011, name: "Holocene (Present)" },
+            { maxTime: 2.58, name: "Pleistocene (Ice Age)" },
+            { maxTime: 66, name: "Paleogene / Neogene" },
+            { maxTime: 145, name: "Cretaceous" },
+            { maxTime: 174, name: "Middle/Late Jurassic" },
+            { maxTime: 201, name: "Early Jurassic" },
+        ];
+
+        const timelineEvents = [
+            {
+                start: 220, end: 201,
+                title: "Pangea Begins Rifting",
+                desc: "Tensional tectonic forces begin pulling the supercontinent Pangea apart. The crust thins and cracks, creating a massive rift valley stretching from modern-day Nova Scotia to North Carolina.",
+                phenom: "The Eastern Border Fault, running just east of Middletown, began forming as a massive crack in the Earth's crust."
+            },
+            {
+                start: 201, end: 195,
+                title: "Sedimentation & Brownstone",
+                desc: "As the rift valley floor drops via normal faulting (a 'half-graben'), rivers and streams rush in from the eastern highlands, depositing massive amounts of sand, mud, and gravel over millions of years.",
+                phenom: "This iron-rich sediment compressed into the famous 'Portland Brownstone', extensively quarried across the river from Middletown to build NYC."
+            },
+            {
+                start: 195, end: 190,
+                title: "The Metacomet Volcanic Eruptions",
+                desc: "As rifting reaches its peak, the crust thins enough to allow magma from the mantle to erupt into the rift valley floor. Three massive, distinct lava flows flood the valley, separated by more periods of sedimentation.",
+                phenom: "These dense basalt lava flows cooled into hard trap rock, eventually forming the prominent ridges like Beseck Mountain in Middlefield/Middletown."
+            },
+            {
+                start: 190, end: 175,
+                title: "Tectonic Tilting",
+                desc: "The active rifting process shifts eastward, eventually opening the Atlantic Ocean. The stresses cause the entire block of rock in the Hartford Basin to tilt downward toward the east by about 15-20 degrees.",
+                phenom: "This tilting explains why the hard basalt layers, once flat, now poke out of the ground at an angle, creating asymmetrical ridges with steep western cliffs and gentle eastern slopes."
+            },
+            {
+                start: 175, end: 2,
+                title: "Millions of Years of Erosion",
+                desc: "For over 170 million years, the region experiences continuous erosion. The softer brownstone erodes away much faster than the hard basalt lava flows, leaving the tilted basalt layers standing high above the valley floor.",
+                phenom: "The differential erosion of soft sedimentary rock vs. hard volcanic rock created the distinct topography of the Connecticut River Valley we see today."
+            },
+            {
+                start: 2, end: 0,
+                title: "Pleistocene Glaciation",
+                desc: "During the last Ice Age, massive continental glaciers scrape across New England. They carve the landscape, smoothing the ridges and leaving behind a blanket of unsorted rock, sand, and clay (glacial till) as they retreat.",
+                phenom: "The retreating glaciers also formed temporary 'Glacial Lake Hitchcock', leaving fine clay deposits beneath the modern Connecticut River floodplain in Middletown."
+            }
+        ];
+
+        function resize() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            state.width = canvas.width;
+            state.height = canvas.height;
+            draw();
+        }
+
+        window.addEventListener('resize', resize);
+
+        function updateStateFromTime() {
+            let t = state.timeMa;
+
+            // Calculate interpolation parameters based on time
+            // Rifting (220-195)
+            let riftProgress = Math.max(0, Math.min(1, (220 - t) / RIFT_DURATION_MA));
+            state.riftWidth = riftProgress * MAX_RIFT_WIDTH;
+            state.faultDrop = riftProgress * MAX_FAULT_DROP;
+
+            // Sedimentation (201-190)
+            let sedProgress = Math.max(0, Math.min(1, (201 - t) / 11));
+            state.sedimentDepth = sedProgress * 250;
+
+            // Basalt Eruptions (195-190) - Three distinct pulses
+            let basaltProgress = Math.max(0, Math.min(1, (195 - t) / 5));
+            state.basaltThickness = basaltProgress * 40;
+
+            // Tilting (190-175)
+            let tiltProgress = Math.max(0, Math.min(1, (190 - t) / 15));
+            state.tiltAngle = tiltProgress * (15 * Math.PI / 180); // 15 degrees in radians
+
+            // Erosion (175-0)
+            let erosionProgress = Math.max(0, Math.min(1, (175 - t) / 175));
+            state.erosionLevel = erosionProgress * 280;
+
+            // Glaciation (2-0)
+            let glaciationProgress = Math.max(0, Math.min(1, (2 - t) / 2));
+            state.glaciation = glaciationProgress * 20;
+
+            updateUI();
+            draw();
+        }
+
+        function getCurrentEvent() {
+            for (let ev of timelineEvents) {
+                if (state.timeMa <= ev.start && state.timeMa >= ev.end) {
+                    return ev;
+                }
+            }
+            return timelineEvents[timelineEvents.length - 1];
+        }
+
+        function drawJaggedRidge(ctx, erosionY) {
+            ctx.lineTo(-150, erosionY);
+            ctx.lineTo(-100, erosionY - 60 * (state.erosionLevel/280));
+            ctx.lineTo(-50, erosionY + 20 * (state.erosionLevel/280));
+            ctx.lineTo(0, erosionY - 40 * (state.erosionLevel/280));
+            ctx.lineTo(80, erosionY + 10 * (state.erosionLevel/280));
+            ctx.lineTo(150, erosionY - 50 * (state.erosionLevel/280));
+        }
+
+        function updateUI() {
+            document.getElementById('slider-val').innerText = `${Math.round(state.timeMa)} Ma`;
+            document.getElementById('time-display').innerText = `${Math.round(state.timeMa)} Ma`;
+
+            let epoch = epochData.find(e => state.timeMa < e.maxTime)?.name || "Late Triassic";
+
+            document.getElementById('epoch-display').innerText = epoch;
+
+            const ev = getCurrentEvent();
+            document.getElementById('event-title').innerText = ev.title;
+            document.getElementById('event-desc').innerText = ev.desc;
+            document.getElementById('local-phenomenon').innerText = ev.phenom;
+        }
+
+        function draw() {
+            ctx.fillStyle = '#87CEEB'; // Sky blue
+            ctx.fillRect(0, 0, state.width, state.height);
+
+            ctx.save();
+
+            // Center the coordinate system roughly in the middle, slightly lower
+            ctx.translate(state.width / 2, state.height * 0.7);
+
+            // Scale to fit visually
+            let scale = Math.min(state.width/800, state.height/600) * 1.5;
+            ctx.scale(scale, scale);
+
+            // Origin is now roughly center bottom-ish
+
+            // 1. Draw Pre-Mesozoic Basement (Eastern Highlands - Upthrown block)
+            ctx.fillStyle = '#9A3B14'; // Schist/Gneiss color
+            ctx.beginPath();
+            // Start from right edge (East)
+            ctx.moveTo(400, 200);
+            ctx.lineTo(400, -200);
+            // Eastern Border Fault surface
+            ctx.lineTo(100 + state.riftWidth/2, -200);
+            ctx.lineTo(100 + state.riftWidth/2, 200);
+            ctx.fill();
+            ctx.strokeStyle = '#5c220a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 2. Draw Western/Valley Basement (Downthrown block in the half-graben)
+            ctx.save();
+            // This block drops down relative to the eastern fault
+            ctx.translate(-state.riftWidth/2, state.faultDrop);
+
+            // Apply Tectonic Tilting ONLY to the valley block and its contents
+            ctx.rotate(state.tiltAngle);
+
+            ctx.fillStyle = '#b34719'; // Slightly different shade for distinction
+            ctx.beginPath();
+            ctx.moveTo(100 + state.riftWidth, 200);
+            ctx.lineTo(-400, 200);
+            ctx.lineTo(-400, -200);
+            ctx.lineTo(100 + state.riftWidth, -200);
+            ctx.fill();
+            ctx.stroke();
+
+            // 3. Draw Sedimentary Basin (Brownstone) on top of Western Basement
+            if (state.sedimentDepth > 0) {
+                // We draw in layers to interbed the basalt
+
+                // Lower sedimentary layer (Portland Fm / New Haven Arkose)
+                ctx.fillStyle = '#A0522D'; // Brownstone
+                ctx.beginPath();
+                ctx.moveTo(-400, -200);
+                ctx.lineTo(100 + state.riftWidth, -200);
+                ctx.lineTo(100 + state.riftWidth, -200 - state.sedimentDepth * 0.4);
+                ctx.lineTo(-400, -200 - state.sedimentDepth * 0.4);
+                ctx.fill();
+
+                // Basalt Layer 1 (Talcott/Holyoke)
+                if (state.basaltThickness > 0) {
+                    ctx.fillStyle = '#333333'; // Basalt
+                    ctx.beginPath();
+                    ctx.moveTo(-400, -200 - state.sedimentDepth * 0.4);
+                    ctx.lineTo(100 + state.riftWidth, -200 - state.sedimentDepth * 0.4);
+                    ctx.lineTo(100 + state.riftWidth, -200 - state.sedimentDepth * 0.4 - state.basaltThickness);
+                    ctx.lineTo(-400, -200 - state.sedimentDepth * 0.4 - state.basaltThickness);
+                    ctx.fill();
+                }
+
+                // Middle sedimentary layer
+                ctx.fillStyle = '#A0522D';
+                ctx.beginPath();
+                let midYBase = -200 - state.sedimentDepth * 0.4 - state.basaltThickness;
+                ctx.moveTo(-400, midYBase);
+                ctx.lineTo(100 + state.riftWidth, midYBase);
+                ctx.lineTo(100 + state.riftWidth, midYBase - state.sedimentDepth * 0.3);
+                ctx.lineTo(-400, midYBase - state.sedimentDepth * 0.3);
+                ctx.fill();
+
+                // Basalt Layer 2 (Hampden)
+                if (state.basaltThickness > 10) {
+                    ctx.fillStyle = '#404040'; // Basalt 2
+                    ctx.beginPath();
+                    let b2YBase = midYBase - state.sedimentDepth * 0.3;
+                    ctx.moveTo(-400, b2YBase);
+                    ctx.lineTo(100 + state.riftWidth, b2YBase);
+                    ctx.lineTo(100 + state.riftWidth, b2YBase - state.basaltThickness * 0.6);
+                    ctx.lineTo(-400, b2YBase - state.basaltThickness * 0.6);
+                    ctx.fill();
+                }
+
+                // Upper sedimentary layer
+                ctx.fillStyle = '#A0522D';
+                ctx.beginPath();
+                let upperYBase = midYBase - state.sedimentDepth * 0.3 - (state.basaltThickness > 10 ? state.basaltThickness * 0.6 : 0);
+                ctx.moveTo(-400, upperYBase);
+                ctx.lineTo(100 + state.riftWidth, upperYBase);
+                ctx.lineTo(100 + state.riftWidth, upperYBase - state.sedimentDepth * 0.3);
+                ctx.lineTo(-400, upperYBase - state.sedimentDepth * 0.3);
+                ctx.fill();
+
+                // Add bedding planes to brownstone
+                ctx.strokeStyle = '#703a20';
+                ctx.lineWidth = 1;
+                for(let i=0; i<5; i++) {
+                    ctx.beginPath();
+                    let lineY = -200 - (state.sedimentDepth * (i/5));
+                    ctx.moveTo(-400, lineY);
+                    ctx.lineTo(100 + state.riftWidth, lineY);
+                    ctx.stroke();
+                }
+            }
+
+            ctx.restore(); // Undo tilt/translation for Western Block
+
+            // 4. Draw Fault Line (Eastern Border Fault)
+            ctx.strokeStyle = '#FF0000'; // Fault line
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(100 + state.riftWidth/2, 200);
+            ctx.lineTo(100 + state.riftWidth/2, -400); // Draw high up
+            ctx.stroke();
+
+            // 5. Apply Global Erosion (Global clipping/masking)
+            // We draw a large rectangle acting as the "sky" that erodes downwards over time.
+            if (state.erosionLevel > 0) {
+                // Erase everything above the erosion line
+                // To do this simply, we draw sky over it
+                ctx.fillStyle = '#87CEEB';
+
+                // Calculate base erosion height relative to the non-tilted origin
+                let erosionY = -150 + state.erosionLevel;
+
+                ctx.beginPath();
+                ctx.moveTo(-400, erosionY);
+                ctx.lineTo(400, erosionY);
+                ctx.lineTo(400, -500);
+                ctx.lineTo(-400, -500);
+                ctx.fill();
+
+                // Draw a rough eroded surface line
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-400, erosionY);
+
+                // Differential erosion simulation: basalt is harder, brownstone is softer
+                // We'd realistically calculate intersections, but for visual representation,
+                // we draw a jagged line. The tilt makes basalt stick up on the west.
+
+                if (state.tiltAngle > 0 && state.timeMa < 175) {
+                    // Create ridges based on tilt and basalt location
+                    // This is a simplified visual approximation of the Metacomet Ridge
+
+                    // Western ridge (Metacomet)
+                    ctx.lineTo(-150, erosionY);
+                    ctx.lineTo(-100, erosionY - 60 * (state.erosionLevel/280)); // Ridge peak (Basalt)
+                    ctx.lineTo(-50, erosionY + 20 * (state.erosionLevel/280));  // Valley (Brownstone)
+
+                    // Eastern ridge
+                    ctx.lineTo(0, erosionY - 40 * (state.erosionLevel/280));  // Ridge 2
+                    ctx.lineTo(80, erosionY + 10 * (state.erosionLevel/280));   // Valley
+
+                    // Eastern highlands (resilient metamorphic rock)
+                    ctx.lineTo(150, erosionY - 50 * (state.erosionLevel/280));
+                }
+
+                ctx.lineTo(400, erosionY - (state.timeMa < 175 ? 50 * (state.erosionLevel/280) : 0));
+
+                // Fill the ground down to hide any rock that was supposed to be eroded.
+                // We're essentially drawing a solid color below the erosion line, but we only
+                // want to color the 'dirt' layer at the top. Since we didn't clip the rock blocks below,
+                // we have to be careful. The sky box we drew above successfully masks the top.
+                // Let's add the dirt veneer directly underneath the jagged surface line.
+                ctx.lineTo(400, erosionY + 10);
+                ctx.lineTo(-400, erosionY + 10);
+                ctx.fillStyle = '#8B4513';
+                ctx.fill();
+
+                // Now we need to mask out the rock ABOVE the jagged line, which is currently visible
+                // because we only drew a flat sky rectangle down to erosionY. The jagged line dips below erosionY.
+                ctx.beginPath();
+                ctx.moveTo(-400, erosionY);
+                if (state.tiltAngle > 0 && state.timeMa < 175) {
+                    drawJaggedRidge(ctx, erosionY);
+                }
+                ctx.lineTo(400, erosionY - (state.timeMa < 175 ? 50 * (state.erosionLevel/280) : 0));
+
+                // Complete the polygon up to the flat sky box to erase the rock peaks sticking through
+                ctx.lineTo(400, erosionY);
+                ctx.lineTo(-400, erosionY);
+                ctx.fillStyle = '#87CEEB'; // Sky
+                ctx.fill();
+            }
+
+            // 6. Draw Glaciation/Glacial Till
+            if (state.glaciation > 0) {
+                let erosionY = -150 + state.erosionLevel;
+
+                if (state.timeMa > 0.05 && state.timeMa < 2) {
+                    // Ice sheet
+                    ctx.fillStyle = 'rgba(200, 240, 255, 0.8)';
+                    ctx.beginPath();
+
+                    ctx.moveTo(-400, erosionY);
+                    if (state.tiltAngle > 0) {
+                        // Assuming erosionLevel is max (280) during glaciation to match the original hardcoded lines
+                        drawJaggedRidge(ctx, erosionY);
+                    }
+                    ctx.lineTo(400, erosionY - 50);
+
+                    ctx.lineTo(400, erosionY - 100);
+                    ctx.lineTo(-400, erosionY - 100);
+                    ctx.fill();
+                } else {
+                    // Glacial Till / Lake deposits (thin layer on top)
+                    ctx.fillStyle = '#a89f91'; // Till color
+                    ctx.beginPath();
+                    ctx.moveTo(-400, erosionY);
+                    // Follow the jagged ridge line loosely
+                    if (state.tiltAngle > 0) {
+                        drawJaggedRidge(ctx, erosionY);
+                    }
+                    ctx.lineTo(400, erosionY - 50);
+                    ctx.lineTo(400, erosionY + state.glaciation);
+                    ctx.lineTo(-400, erosionY + state.glaciation);
+                    ctx.fill();
+
+                    // Draw modern Connecticut River in the valley
+                    if (state.timeMa < 0.1) {
+                        ctx.fillStyle = '#3b82f6'; // Blue water
+                        ctx.beginPath();
+                        ctx.arc(30, erosionY + 15, 12, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        ctx.fillStyle = 'white';
+                        ctx.font = '12px sans-serif';
+                        ctx.fillText("CT River", 15, erosionY - 5);
+                    }
+                }
+            }
+
+            // Labels
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.fillText("West", -380, 180);
+            ctx.fillText("East", 350, 180);
+
+            if (state.timeMa > 190) {
+                ctx.font = '14px sans-serif';
+                ctx.fillText("Eastern Border Fault", 120 + state.riftWidth/2, -100);
+            }
+
+            ctx.restore();
+        }
+
+        // Controls
+        const slider = document.getElementById('time-slider');
+        const btnPlay = document.getElementById('btn-play');
+        const btnPause = document.getElementById('btn-pause');
+
+        slider.addEventListener('input', (e) => {
+            state.timeMa = parseFloat(e.target.value);
+            updateStateFromTime();
+        });
+
+        function playLoop() {
+            if (!state.isPlaying) return;
+
+            state.timeMa -= 0.5; // speed
+            if (state.timeMa <= 0) {
+                state.timeMa = 0;
+                pause();
+            }
+
+            slider.value = state.timeMa;
+            updateStateFromTime();
+
+            if (state.isPlaying) {
+                state.animationId = requestAnimationFrame(playLoop);
+            }
+        }
+
+        function play() {
+            if (state.timeMa <= 0) state.timeMa = 220; // reset if at end
+            state.isPlaying = true;
+            btnPlay.classList.add('hidden');
+            btnPause.classList.remove('hidden');
+            playLoop();
+        }
+
+        function pause() {
+            state.isPlaying = false;
+            btnPlay.classList.remove('hidden');
+            btnPause.classList.add('hidden');
+            cancelAnimationFrame(state.animationId);
+        }
+
+        btnPlay.addEventListener('click', play);
+        btnPause.addEventListener('click', pause);
+
+        // Expose state for testing
+        window.simulationState = state;
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            resize();
+            updateStateFromTime();
+        });
+    </script>
+</body>
+</html>

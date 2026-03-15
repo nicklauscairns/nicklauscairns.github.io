@@ -262,6 +262,8 @@ Develop a model to illustrate how Earth’s internal and surface processes opera
       </li>
     </ul>
   </details>
+- [Connecticut River Valley Rift Simulation](ConnecticutRiverValleyRift.html) - Explore the 200-million-year geological history of the Hartford Basin, Portland brownstone deposition, and the volcanic Metacomet Ridge in Central Connecticut.
+- [Metacomet Ridge Formation](MetacometRidgeFormation.html) - An interactive geological simulation modeling the formation of the Metacomet Ridge, including Higby and Beseck Mountains in Middletown, Connecticut.
 
 - [Tectonic Landscape Modeler](TectonicLandscapeModeller.html) - An interactive simulation exploring how slow constructive forces (uplift) and destructive forces (weathering, mass wasting) shape Earth's surface over geologic time.
 
@@ -319,6 +321,7 @@ Develop a model to illustrate how Earth’s internal and surface processes opera
     </ul>
   </details>
 
+- [Formation of the Metacomet Ridge](HartfordBasinGeology.html) - An interactive Earth science simulation allowing students to model the tectonic rifting, volcanism, and glacial erosion that formed the Metacomet Ridge in Central Connecticut (e.g., Mount Higby). Aligns with NGSS HS-ESS2-1.
 ### HS-ESS2-2
 Analyze geoscience data to make the claim that one change to Earth's surface can create feedbacks that cause changes to other Earth systems.
 
@@ -591,6 +594,8 @@ Construct an explanation based on evidence for how the availability of natural r
       </li>
     </ul>
   </details>
+
+- [Portland Brownstone Quarry Simulator](PortlandBrownstoneQuarry.html) - A resource management simulator focusing on the historical Portland, CT brownstone quarries, demonstrating how natural resources, economics, and natural hazards (flooding) influence human settlement and industry.
 
 ### HS-ESS3-2
 Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.*
