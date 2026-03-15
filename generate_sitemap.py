@@ -4,12 +4,12 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
+# Base URL for the GitHub Pages deployment
+BASE_URL = 'https://nicklauscairns.github.io/'
+
 def generate_sitemap():
     # Root of the repository
     repo_root = '.'
-
-    # Base URL
-    base_url = 'https://nicklauscairns.com/'
 
     # Find all HTML files in Simulations directory
     html_files = glob.glob('./Simulations/**/*.html', recursive=True)
@@ -19,6 +19,8 @@ def generate_sitemap():
 
     # Include NGSS markdown files
     ngss_files = glob.glob('./NGSS/*.md')
+    # Remove NGSS/README.md from ngss_files since it's already in readme_files
+    ngss_files = [f for f in ngss_files if not f.endswith('README.md')]
 
     # Sort for consistency
     html_files.sort()
@@ -35,7 +37,7 @@ def generate_sitemap():
         normalized_path = filepath.replace('./', '').replace('\\', '/')
 
         # Create full URL
-        full_url = f"{base_url}{normalized_path}"
+        full_url = f"{BASE_URL}{normalized_path}"
 
         # Create XML elements
         url_elem = ET.SubElement(urlset, 'url')
@@ -54,7 +56,7 @@ def generate_sitemap():
             normalized_path = normalized_path.replace('README.md', '')
 
         # Create full URL
-        full_url = f"{base_url}{normalized_path}"
+        full_url = f"{BASE_URL}{normalized_path}"
 
         # Create XML elements
         url_elem = ET.SubElement(urlset, 'url')
@@ -71,7 +73,7 @@ def generate_sitemap():
             normalized_path = normalized_path[:-3]
 
         # Create full URL
-        full_url = f"{base_url}{normalized_path}"
+        full_url = f"{BASE_URL}{normalized_path}"
 
         # Create XML elements
         url_elem = ET.SubElement(urlset, 'url')
@@ -99,7 +101,8 @@ def generate_sitemap():
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             f.write(pretty_xml)
 
-    print(f"Sitemap generated successfully with {len(html_files) + 1} URLs.")
+    total_urls = len(html_files) + len(readme_files) + len(ngss_files)
+    print(f"Sitemap generated successfully with {total_urls} URLs.")
 
 if __name__ == "__main__":
     generate_sitemap()
