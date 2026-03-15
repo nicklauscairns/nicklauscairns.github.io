@@ -93,7 +93,7 @@
             <div id="controls-panel" class="hidden">
                  <h2 class="text-lg font-semibold text-sky-300 border-b border-slate-600 pb-2 mb-4">Variables</h2>
 
-                 <div class="mb-5">
+                 <div class="mb-5 control-input">
                     <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
                         <span>Eastern Border Fault Angle</span>
                         <span id="fault-angle-val" class="text-sky-400">60&deg;</span>
@@ -102,7 +102,7 @@
                     <p class="text-xs text-slate-400 mt-1">Controls the geometry of the half-graben rift basin.</p>
                  </div>
 
-                 <div class="mb-5">
+                 <div class="mb-5 control-input">
                     <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
                         <span>Rift Extension (Displacement)</span>
                         <span id="extension-val" class="text-sky-400">2 km</span>
@@ -111,7 +111,7 @@
                     <p class="text-xs text-slate-400 mt-1">How far the crust stretches, increasing basin accommodation space.</p>
                  </div>
 
-                 <div class="mb-5">
+                 <div class="mb-5 control-input">
                     <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
                         <span>Erosion Depth (Glacial Scouring)</span>
                         <span id="erosion-val" class="text-sky-400">Moderate</span>
@@ -317,19 +317,15 @@
 
             // Show appropriate controls
             controlsPanel.classList.remove('hidden');
-            faultAngleInput.parentElement.classList.add('hidden');
-            extensionInput.parentElement.classList.add('hidden');
-            erosionInput.parentElement.classList.add('hidden');
+            document.querySelectorAll('.control-input').forEach(el => el.classList.add('hidden'));
 
             if(window.simulationState.epoch === 1) {
                 faultAngleInput.parentElement.classList.remove('hidden');
                 extensionInput.parentElement.classList.remove('hidden');
                 narrativeBox.innerHTML = `<strong class="text-sky-400 block mb-1">Epoch 1: Triassic Breakup</strong>Pangea begins to rift apart. The crust stretches and thins. Adjust the Eastern Border Fault angle and extension displacement, then Simulate to form a half-graben basin where water and sediment can accumulate.`;
             } else if(window.simulationState.epoch === 2) {
-                controlsPanel.classList.add('hidden'); // No controls, just narrative
                 narrativeBox.innerHTML = `<strong class="text-emerald-400 block mb-1">Epoch 2: Early Jurassic Deposition</strong>Rivers wash sediment into the low basin. Shallow lakes form. Dinosaurs walk the muddy shores, leaving footprints. Simulate to fill the basin with sedimentary rock (East Berlin Formation).`;
             } else if(window.simulationState.epoch === 3) {
-                controlsPanel.classList.add('hidden');
                 narrativeBox.innerHTML = `<strong class="text-rose-400 block mb-1">Epoch 3: CAMP Volcanism</strong>Massive fissures open due to continued rifting. Flood basalts (Holyoke Basalt) pour over the landscape, capping and protecting the delicate lake bed footprints underneath. The whole basin block continues to tilt.`;
             } else if(window.simulationState.epoch === 4) {
                 erosionInput.parentElement.classList.remove('hidden');
