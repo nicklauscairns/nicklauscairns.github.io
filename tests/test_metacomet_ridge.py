@@ -8,10 +8,10 @@ def sim_page(page: Page):
     file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Simulations', 'EarthSpaceSciences', 'MetacometRidgeFormation.html'))
     file_url = f"file://{file_path}"
 
-    # Intercept network requests to allow local files and Tailwind CDN, block others
+    # Intercept network requests to allow local files only, block CDNs
     def handle_route(route):
         url = route.request.url
-        if url.startswith("file://") or "tailwindcss.com" in url or "googletagmanager" in url:
+        if url.startswith("file://"):
             route.continue_()
         else:
             route.abort()
