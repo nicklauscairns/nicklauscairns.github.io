@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frost Heaves and Connecticut Stone Walls - NGSS Simulation</title>
+    <meta name="description" content="Simulate the physics of ice expansion and frost heaving that pushes rocks to the surface, explaining the abundance of stone walls in New England.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #d1d5db;
+            outline: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans">
+    <div class="max-w-5xl mx-auto p-4 flex flex-col gap-4">
+        <header class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Frost Heaves & Connecticut Stone Walls</h1>
+            <p class="text-slate-600 mb-4">
+                Why are there so many historic stone walls weaving through Connecticut forests? When 18th-century farmers cleared the land,
+                they discovered a never-ending supply of glacial rocks. Even after clearing a field, more rocks would magically appear the next spring.
+                This simulation models <strong>frost heaving</strong>—the mechanical weathering process where water freezes, expands by 9%, and pushes
+                rocks upward through the soil cycle after cycle.
+            </p>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded text-sm text-blue-800">
+                <strong>NGSS HS-ESS2-5:</strong> Plan and conduct an investigation of the properties of water and its effects on Earth
+                materials and surface processes (e.g., expansion of water as it freezes).
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- Simulation Canvas -->
+            <div class="lg:col-span-2 bg-white p-4 rounded-lg shadow-md border border-slate-200 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xl font-bold text-slate-800">Soil Cross-Section</h2>
+                    <div class="text-sm font-mono bg-slate-100 px-3 py-1 rounded border">
+                        Years Passed: <span id="lblYears" class="font-bold">0</span>
+                    </div>
+                </div>
+
+                <div class="relative flex-grow bg-sky-100 rounded overflow-hidden aspect-video border border-slate-300">
+                    <canvas id="soilCanvas" class="absolute inset-0 w-full h-full"></canvas>
+
+                    <!-- Overlays -->
+                    <div class="absolute top-2 right-2 bg-white/90 p-2 rounded text-sm font-mono shadow border border-slate-300">
+                        Season: <span id="lblSeason" class="font-bold text-green-600">Summer</span><br>
+                        Temp: <span id="lblTemp" class="font-bold">20</span> &deg;C<br>
+                        Soil Moisture: <span id="lblMoistureOut">Medium</span>
+                    </div>
+
+                    <div id="harvestOverlay" class="absolute bottom-2 left-2 bg-stone-800 text-white p-2 rounded text-sm shadow border border-stone-600 flex items-center gap-2">
+                        Rocks Harvested: <span id="lblHarvested" class="font-bold text-yellow-400 text-lg">0</span>
+                        <div class="w-8 h-8 flex items-center justify-center border-l border-stone-600 pl-2">
+                            <div class="w-6 h-6 bg-stone-500 rounded border-2 border-stone-400 shadow-inner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-2 justify-between items-center bg-slate-50 p-3 rounded border">
+                    <button id="btnPlay" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold shadow transition-colors w-32">Start Time</button>
+                    <button id="btnHarvest" class="px-4 py-2 bg-stone-600 hover:bg-stone-700 text-white rounded font-bold shadow transition-colors">Clear Surface Rocks</button>
+                    <button id="btnReset" class="px-4 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded font-bold shadow transition-colors">Reset Field</button>
+                </div>
+            </div>
+
+            <!-- Controls & Explanation -->
+            <div class="flex flex-col gap-4">
+                <!-- Controls -->
+                <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Environmental Variables</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-slate-700 flex justify-between">
+                            <span>Soil Moisture</span>
+                            <span id="valMoisture" class="font-mono text-blue-600">60%</span>
+                        </label>
+                        <input type="range" id="sliderMoisture" min="10" max="100" step="10" value="60" class="slider mt-2">
+                        <p class="text-xs text-slate-500 mt-1">Amount of water in the soil available to freeze and form ice lenses.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-slate-700 flex justify-between">
+                            <span>Winter Severity (Freeze Depth)</span>
+                            <span id="valWinter" class="font-mono text-cyan-600">Moderate</span>
+                        </label>
+                        <input type="range" id="sliderWinter" min="1" max="5" step="1" value="3" class="slider mt-2">
+                        <p class="text-xs text-slate-500 mt-1">How deep the frost line penetrates the soil during winter.</p>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="block text-sm font-medium text-slate-700 flex justify-between">
+                            <span>Soil Type</span>
+                            <span id="valSoil" class="font-mono text-amber-800">Silt/Loam</span>
+                        </label>
+                        <input type="range" id="sliderSoil" min="1" max="3" step="1" value="2" class="slider mt-2">
+                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                            <span>Sand</span>
+                            <span>Silt</span>
+                            <span>Clay</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200 flex-grow text-sm text-slate-700">
+                    <h3 class="font-bold text-slate-800 mb-2">The Physics of Frost Heaving</h3>
+                    <p class="mb-2">
+                        Unlike almost all other substances, water <strong>expands</strong> by about 9% when it freezes into ice.
+                    </p>
+                    <p class="mb-2">
+                        During a New England winter, the freezing front penetrates the soil. Water in the soil freezes, forming <strong>ice lenses</strong>
+                        under rocks. Because water expands, these ice lenses physically lift the rocks upward.
+                    </p>
+                    <p>
+                        In spring, the ice melts. The cavity left beneath the rock fills with fine soil particles, preventing the rock from falling back down.
+                        Over many freeze-thaw cycles, rocks migrate entirely to the surface!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wall Building Visualizer -->
+        <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200 h-40 relative overflow-hidden flex flex-col justify-end">
+            <h2 class="absolute top-2 left-4 text-lg font-bold text-slate-800 z-10">Your Connecticut Stone Wall</h2>
+            <div id="wallContainer" class="flex flex-wrap-reverse gap-1 justify-center max-w-4xl mx-auto opacity-90">
+                <!-- Rocks will be appended here -->
+            </div>
+            <div class="absolute bottom-0 left-0 w-full h-4 bg-green-700 border-t-2 border-green-800"></div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('soilCanvas');
+        const ctx = canvas.getContext('2d');
+        const btnPlay = document.getElementById('btnPlay');
+        const btnHarvest = document.getElementById('btnHarvest');
+        const btnReset = document.getElementById('btnReset');
+
+        const sliderMoisture = document.getElementById('sliderMoisture');
+        const sliderWinter = document.getElementById('sliderWinter');
+        const sliderSoil = document.getElementById('sliderSoil');
+
+        const valMoisture = document.getElementById('valMoisture');
+        const valWinter = document.getElementById('valWinter');
+        const valSoil = document.getElementById('valSoil');
+
+        const lblYears = document.getElementById('lblYears');
+        const lblSeason = document.getElementById('lblSeason');
+        const lblTemp = document.getElementById('lblTemp');
+        const lblMoistureOut = document.getElementById('lblMoistureOut');
+        const lblHarvested = document.getElementById('lblHarvested');
+        const wallContainer = document.getElementById('wallContainer');
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        window.simulationState = {
+            isRunning: false,
+            time: 0,
+            yearsPassed: 0,
+
+            moisture: 0.6,
+            winterSeverity: 3,
+            soilType: 2,
+
+            temperature: 20,
+            seasonPhase: 0,
+            frostDepth: 0,
+
+            rocks: [],
+            harvestedCount: 0
+        };
+
+        function resetSimulation() {
+            const state = window.simulationState;
+            state.isRunning = false;
+            state.time = 0;
+            state.yearsPassed = 0;
+            state.temperature = 20;
+            state.seasonPhase = 0;
+            state.frostDepth = 0;
+            state.harvestedCount = 0;
+
+            wallContainer.innerHTML = '';
+            lblHarvested.textContent = "0";
+            lblYears.textContent = "0";
+
+            btnPlay.textContent = "Start Time";
+            btnPlay.classList.replace('bg-yellow-600', 'bg-blue-600');
+            btnPlay.classList.replace('hover:bg-yellow-700', 'hover:bg-blue-700');
+
+            state.rocks = [];
+            for(let i=0; i<30; i++) {
+                let depth = 0.2 + Math.sqrt(Math.random()) * 0.8;
+                state.rocks.push({
+                    x: 0.05 + Math.random() * 0.9,
+                    y: depth,
+                    size: 0.03 + Math.random() * 0.05,
+                    color: `rgb(${100+Math.random()*50}, ${100+Math.random()*50}, ${100+Math.random()*50})`,
+                    iceLensBase: 0,
+                    iceLensSize: 0,
+                    isHeaving: false,
+                    isAtSurface: false
+                });
+            }
+
+            drawFrame();
+        }
+
+        function updatePhysics() {
+            const state = window.simulationState;
+
+            state.time += 0.01;
+            state.seasonPhase = (state.time % 1.0);
+
+            let oldYear = state.yearsPassed;
+            state.yearsPassed = Math.floor(state.time);
+
+            if(state.yearsPassed > oldYear) {
+                lblYears.textContent = state.yearsPassed;
+            }
+
+            state.temperature = 7.5 + 17.5 * Math.cos(state.seasonPhase * Math.PI * 2);
+
+            lblTemp.textContent = Math.round(state.temperature);
+            if (state.seasonPhase < 0.25 || state.seasonPhase > 0.75) {
+                lblSeason.textContent = "Summer";
+                lblSeason.className = "font-bold text-green-600";
+            } else if (state.seasonPhase > 0.4 && state.seasonPhase < 0.6) {
+                lblSeason.textContent = "Winter";
+                lblSeason.className = "font-bold text-cyan-600";
+            } else if (state.seasonPhase >= 0.25 && state.seasonPhase <= 0.4) {
+                lblSeason.textContent = "Autumn";
+                lblSeason.className = "font-bold text-orange-500";
+            } else {
+                lblSeason.textContent = "Spring";
+                lblSeason.className = "font-bold text-emerald-500";
+            }
+
+            if (state.temperature < 0) {
+                let targetDepth = (state.winterSeverity / 5.0) * 0.8;
+                state.frostDepth += (targetDepth - state.frostDepth) * 0.05;
+            } else {
+                state.frostDepth -= 0.05;
+                if(state.frostDepth < 0) state.frostDepth = 0;
+            }
+
+            let heaveEfficiency = 0;
+            if (state.soilType === 1) heaveEfficiency = 0.2;
+            else if (state.soilType === 2) heaveEfficiency = 1.0;
+            else if (state.soilType === 3) heaveEfficiency = 0.5;
+
+            state.rocks.forEach(rock => {
+                if (rock.isAtSurface) return;
+
+                let rockBottom = rock.y + rock.size/2;
+
+                if (state.temperature < 0 && state.frostDepth > rockBottom) {
+                    if (!rock.isHeaving) {
+                        rock.isHeaving = true;
+                        rock.iceLensBase = rockBottom;
+                    }
+
+                    let maxIce = state.moisture * heaveEfficiency * 0.05;
+                    if (rock.iceLensSize < maxIce) {
+                        rock.iceLensSize += 0.001;
+                        rock.y -= 0.001;
+                    }
+                } else if (state.temperature >= 0 && rock.isHeaving) {
+                    rock.isHeaving = false;
+                    rock.iceLensSize = 0;
+                    rock.y += 0.002;
+                }
+
+                if (rock.y <= 0.2) {
+                    rock.y = 0.18 + Math.random() * 0.02;
+                    rock.isAtSurface = true;
+                    rock.isHeaving = false;
+                    rock.iceLensSize = 0;
+                }
+            });
+        }
+
+        function drawFrame() {
+            const rect = canvas.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+            const state = window.simulationState;
+
+            ctx.clearRect(0, 0, w, h);
+
+            if (state.temperature < 0) ctx.fillStyle = '#e0f2fe';
+            else ctx.fillStyle = '#bae6fd';
+            ctx.fillRect(0, 0, w, h*0.2);
+
+            let soilL = 30 - state.moisture * 10;
+            ctx.fillStyle = `hsl(30, 40%, ${soilL}%)`;
+            ctx.fillRect(0, h*0.2, w, h*0.8);
+
+            if (state.frostDepth > 0) {
+                let fY = h*0.2 + state.frostDepth * (h*0.8);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.fillRect(0, h*0.2, w, fY - h*0.2);
+
+                ctx.strokeStyle = '#38bdf8';
+                ctx.setLineDash([5, 5]);
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, fY);
+                ctx.lineTo(w, fY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            if (state.temperature < 0) {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, h*0.18, w, h*0.02);
+            } else {
+                ctx.fillStyle = '#4ade80';
+                ctx.fillRect(0, h*0.19, w, h*0.01);
+            }
+
+            state.rocks.forEach(rock => {
+                let rx = rock.x * w;
+                let ry = rock.y * h;
+                let rSize = rock.size * h;
+
+                if (rock.isHeaving && rock.iceLensSize > 0) {
+                    ctx.fillStyle = 'rgba(186, 230, 253, 0.8)';
+                    ctx.beginPath();
+                    ctx.ellipse(rx, ry + rSize/2 + (rock.iceLensSize*h)/2, rSize, rock.iceLensSize*h, 0, 0, Math.PI*2);
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = rock.color;
+                ctx.strokeStyle = '#1c1917';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+
+                ctx.moveTo(rx - rSize, ry);
+                ctx.lineTo(rx - rSize*0.8, ry - rSize*0.7);
+                ctx.lineTo(rx + rSize*0.5, ry - rSize*0.9);
+                ctx.lineTo(rx + rSize, ry - rSize*0.2);
+                ctx.lineTo(rx + rSize*0.8, ry + rSize*0.6);
+                ctx.lineTo(rx - rSize*0.3, ry + rSize*0.8);
+                ctx.closePath();
+
+                ctx.fill();
+                ctx.stroke();
+
+                if(rock.isAtSurface && state.temperature >= 0) {
+                    ctx.strokeStyle = 'rgba(250, 204, 21, 0.8)';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function buildWallBlock() {
+            const block = document.createElement('div');
+            let bw = 20 + Math.random()*20;
+            let bh = 15 + Math.random()*10;
+
+            block.style.width = `${bw}px`;
+            block.style.height = `${bh}px`;
+            block.style.backgroundColor = `rgb(${100+Math.random()*50}, ${100+Math.random()*50}, ${100+Math.random()*50})`;
+            block.className = "rounded border-2 border-stone-800 shadow-inner";
+
+            wallContainer.appendChild(block);
+        }
+
+        function loop() {
+            if (!window.simulationState.isRunning) return;
+
+            updatePhysics();
+            drawFrame();
+
+            requestAnimationFrame(loop);
+        }
+
+        btnPlay.addEventListener('click', () => {
+            const state = window.simulationState;
+            state.isRunning = !state.isRunning;
+            if (state.isRunning) {
+                btnPlay.textContent = "Pause Time";
+                btnPlay.classList.replace('bg-blue-600', 'bg-yellow-600');
+                btnPlay.classList.replace('hover:bg-blue-700', 'hover:bg-yellow-700');
+                requestAnimationFrame(loop);
+            } else {
+                btnPlay.textContent = "Start Time";
+                btnPlay.classList.replace('bg-yellow-600', 'bg-blue-600');
+                btnPlay.classList.replace('hover:bg-yellow-700', 'hover:bg-blue-700');
+            }
+        });
+
+        btnHarvest.addEventListener('click', () => {
+            const state = window.simulationState;
+            let surfaceCount = 0;
+            for(let i = state.rocks.length - 1; i >= 0; i--) {
+                if (state.rocks[i].isAtSurface) {
+                    state.rocks.splice(i, 1);
+                    surfaceCount++;
+                    state.harvestedCount++;
+                    buildWallBlock();
+                }
+            }
+
+            lblHarvested.textContent = state.harvestedCount;
+            if (!state.isRunning) drawFrame();
+        });
+
+        btnReset.addEventListener('click', resetSimulation);
+
+        sliderMoisture.addEventListener('input', (e) => {
+            const v = parseInt(e.target.value, 10);
+            window.simulationState.moisture = v / 100.0;
+            valMoisture.textContent = v + "%";
+
+            let l = "Low";
+            if(v > 30) l = "Medium";
+            if(v > 70) l = "High";
+            lblMoistureOut.textContent = l;
+        });
+
+        sliderWinter.addEventListener('input', (e) => {
+            const v = parseInt(e.target.value, 10);
+            window.simulationState.winterSeverity = v;
+
+            let labels = ["Very Mild", "Mild", "Moderate", "Severe", "Arctic"];
+            valWinter.textContent = labels[v-1];
+        });
+
+        sliderSoil.addEventListener('input', (e) => {
+            const v = parseInt(e.target.value, 10);
+            window.simulationState.soilType = v;
+
+            let labels = ["Sand (Well drained)", "Silt/Loam (High heave)", "Clay (Impermeable)"];
+            valSoil.textContent = labels[v-1];
+        });
+
+        resetSimulation();
+    </script>
+</body>
+</html>

@@ -245,6 +245,8 @@ Apply scientific principles and evidence to provide an explanation about the eff
     </ul>
   </details>
 
+- [Connecticut Maple Syrup Thermodynamics](ConnecticutMapleSyrupBoiling.html) - Simulate the thermodynamics of boiling sap to make maple syrup, focusing on phase changes, evaporation, and boiling point elevation.
+
 ### HS-PS1-6
 Refine the design of a chemical system by specifying a change in conditions that would produce increased amounts of products at equilibrium.
 
@@ -698,6 +700,8 @@ Plan and conduct an investigation to provide evidence that the transfer of therm
       </li>
     </ul>
   </details>
+
+- [New Haven Apizza Thermodynamics](NewHavenApizzaThermodynamics.html) - Explore the science of heat transfer (conduction, convection, radiation) in a traditional coal-fired brick oven and how it uniquely cooks Connecticut's famous apizza.
 
 ### HS-PS3-5
 Develop and use a model of two objects interacting through electric or magnetic fields to illustrate the forces between objects and the changes in energy of the objects due to the interaction.
