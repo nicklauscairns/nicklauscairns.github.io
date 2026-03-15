@@ -28,8 +28,10 @@
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/GreenhouseEffect.html</loc>
   </url>
   <url>
-    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/HartfordBasinRiftModel.html</loc>
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/HartfordBasinGeology.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/HartfordBasinRiftModel.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/EarthSpaceSciences/HumanMigrationSettlementSimulator.html</loc>
@@ -234,6 +236,9 @@
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/CrystalFlythrough.html</loc>
+  </url>
+  <url>
+    <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/DieselEngineRunaway.html</loc>
   </url>
   <url>
     <loc>https://nicklauscairns.com/Simulations/PhysicalSciences/DigitalTransmissionAdvantage.html</loc>

@@ -584,6 +584,20 @@ Create a computational model to calculate the change in the energy of one compon
 ### HS-PS3-2
 Develop and use models to illustrate that energy at the macroscopic scale can be accounted for as a combination of energy associated with the motions of particles (objects) and energy associated with the relative position of particles (objects).
 
+- [Diesel Engine Runaway Phenomenon](DieselEngineRunaway.html) - An interactive diesel engine simulation allowing students to explore the conversion of chemical potential energy to macroscopic kinetic energy, and how to troubleshoot a dangerous real-world trade phenomenon (a blown turbo seal).
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-15 12:00:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> An excellent, highly relevant investigative phenomenon for students in diesel and heavy-duty equipment trade programs. It connects abstract physics directly to a dangerous real-world scenario they may encounter in their careers (Criterion 1: Cultural and Personal Relevance).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Strongly supports the target dimensions. It addresses DCI PS3.A (macroscopic energy as a combination of particle motion and position) by showing how the chemical potential energy of the oil/fuel (relative position of atoms) converts into the rapid kinetic motion of the engine (particle motion at macro scale). It engages SEP Developing and Using Models by allowing students to test variables (throttle, fuel) to understand the system and solve the runaway problem.
+      </li>
+    </ul>
+  </details>
+
 - [Macroscopic vs. Microscopic Energy Model](MacroscopicEnergyModel.html) - An interactive dual-view model illustrating how macroscopic temperature and elastic potential energy are derived from microscopic particle motion and relative particle positions.
 
   <details>
