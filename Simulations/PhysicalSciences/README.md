@@ -614,6 +614,32 @@ Develop and use models to illustrate that energy at the macroscopic scale can be
 ### HS-PS3-3
 Design, build, and refine a device that works within given constraints to convert one form of energy into another form of energy.
 
+- [Engine Efficiency Simulation](EngineEfficiencySimulation.html) - An interactive simulation of the Otto cycle where students tune an internal combustion engine (Compression Ratio, Air-Fuel Ratio) across different fuel types to optimize thermal efficiency and power while avoiding engine knock. Includes an inquiry challenge using an unknown "Mystery Fuel X".
+
+  <details>
+    <summary><b>Evaluation: Investigative Phenomenon | 4.5/5 Stars | 2026-03-15 09:00:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> This simulation serves as a strong investigative phenomenon for converting chemical potential energy into kinetic work and thermal energy. It aligns well with automotive technology contexts (Criterion 1) and challenges students to balance engineering constraints like knock limits and efficiency (Criterion 4).
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> The simulation robustly supports the DCI (PS3.A/D: Energy conversions and waste heat) and ETS1.A (Constraints). For the SEP (Constructing Explanations and Designing Solutions), it demonstrates Observable Features 1.a (designing a device/solution that converts energy), 2.a (quantifying criteria like Thermal Efficiency and constraints like max Compression Ratio to avoid knock), and 3.b (evaluating the device to maximize power while managing waste heat).
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance the Visual Model (CCC: Energy and Matter):</b> While the gauges and charts are great for quantitative data, the visual canvas could more explicitly show the *flow* of energy. Add visual "heat rays" or red expanding particles leaving the engine block during the exhaust stroke to clearly model the "waste heat" portion of PS3.D.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add an expanding particle effect or radial gradient animation around the engine cylinder during the exhaust stroke to visualize the unrecoverable thermal energy (waste heat) lost to the environment.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 - [Stage Lighting Simulator](StageLightingSimulator.html) - Investigate the energy transfer and circuit topography of two stage lighting tracks.
 
   <details>

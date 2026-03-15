@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engine Efficiency Simulation</title>
+    <meta name="author" content="Nicklaus Cairns">
+    <meta name="description" content="Interactive science simulation for understanding internal combustion engine efficiency, thermodynamics, and the Otto cycle. Explore optimal parameters for various fuels including a Mystery Fuel.">
+    <meta name="keywords" content="science, simulation, NGSS, Engine Efficiency, thermodynamics, Otto cycle, education, interactive">
+
+    <meta property="og:title" content="Engine Efficiency Simulation">
+    <meta property="og:description" content="Interactive science simulation for understanding internal combustion engine efficiency, thermodynamics, and the Otto cycle. Explore optimal parameters for various fuels including a Mystery Fuel.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/PhysicalSciences/EngineEfficiencySimulation.html">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Engine Efficiency Simulation",
+        "description": "Interactive science simulation for understanding internal combustion engine efficiency, thermodynamics, and the Otto cycle. Explore optimal parameters for various fuels including a Mystery Fuel.",
+        "url": "https://nicklauscairns.com/Simulations/PhysicalSciences/EngineEfficiencySimulation.html",
+        "author": {
+            "@type": "Person",
+            "name": "Nicklaus Cairns"
+        },
+        "educationalAlignment": {
+            "@type": "AlignmentObject",
+            "alignmentType": "educational framework",
+            "educationalFramework": "Next Generation Science Standards (NGSS)"
+        },
+        "learningResourceType": "Interactive Simulation"
+    }
+    </script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        canvas {
+            touch-action: none;
+        }
+        input[type=range] {
+            accent-color: #3b82f6;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center z-10">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight">Engine Efficiency Optimization</h1>
+            <p class="text-sm text-blue-100">Thermodynamics & the Otto Cycle</p>
+        </div>
+        <button id="infoBtn" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded transition duration-200">
+            Simulation Info
+        </button>
+    </header>
+
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 gap-4">
+
+        <!-- Simulation Canvas Area -->
+        <section class="flex-1 flex flex-col glass-panel rounded-xl shadow-lg overflow-hidden relative">
+            <div class="p-3 bg-slate-200 border-b border-slate-300 flex justify-between items-center">
+                <h2 class="font-semibold text-slate-700">4-Stroke Engine Cylinder</h2>
+                <div id="knockWarning" class="hidden text-red-600 font-bold animate-pulse bg-red-100 px-3 py-1 rounded-full border border-red-300">
+                    ⚠️ ENGINE KNOCK DETECTED
+                </div>
+            </div>
+            <div class="flex-1 relative bg-white flex justify-center items-center p-4">
+                <canvas id="engineCanvas" width="400" height="500" class="max-w-full max-h-full"></canvas>
+            </div>
+        </section>
+
+        <!-- Controls and Data Panel -->
+        <aside class="w-full lg:w-96 flex flex-col gap-4 overflow-y-auto">
+
+            <!-- Inquiry / Phenomenon Section -->
+            <div class="glass-panel p-4 rounded-xl shadow-md border-l-4 border-amber-500">
+                <h3 class="font-bold text-amber-700 mb-2">Investigation Challenge</h3>
+                <p class="text-sm text-slate-600 mb-2">
+                    Optimize the engine to maximize <strong>Thermal Efficiency</strong> and <strong>Power Output</strong>.
+                </p>
+                <div class="bg-amber-50 p-2 rounded text-sm text-amber-800 font-medium mb-2">
+                    Select <em>Mystery Fuel X</em> and find its optimal Compression Ratio and Air-Fuel Ratio before Engine Knock occurs.
+                </div>
+
+                <div class="mt-2 text-xs">
+                    <label class="block font-medium text-slate-700 mb-1">What is the optimal Compression Ratio for Mystery Fuel X?</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="guessCR" class="flex-1 p-1 border rounded" placeholder="e.g. 10.0" step="0.1">
+                        <button id="checkCRBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded transition">Check</button>
+                    </div>
+                    <p id="guessResult" class="mt-1 font-bold"></p>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="glass-panel p-4 rounded-xl shadow-md flex-col gap-4 flex">
+                <h3 class="font-bold border-b pb-2 text-slate-700">Engineering Controls</h3>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+                        <span>Fuel Type</span>
+                    </label>
+                    <select id="fuelSelect" class="w-full p-2 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 bg-white">
+                        <option value="gasoline">Standard Gasoline (87 Octane)</option>
+                        <option value="ethanol">E85 Ethanol</option>
+                        <option value="mystery" class="font-bold text-amber-600">Mystery Fuel X</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+                        <span>Compression Ratio (<span id="crVal">8</span>:1)</span>
+                    </label>
+                    <input type="range" id="crSlider" min="5" max="15" step="0.1" value="8" class="w-full">
+                    <p class="text-xs text-slate-500 mt-1">Higher ratio = more efficiency, but higher risk of knock.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+                        <span>Air-Fuel Ratio (AFR)</span>
+                        <span id="afrVal" class="font-mono bg-slate-200 px-1 rounded">14.7</span>
+                    </label>
+                    <input type="range" id="afrSlider" min="10" max="20" step="0.1" value="14.7" class="w-full">
+                    <div class="flex justify-between text-xs text-slate-500 mt-1">
+                        <span>Rich</span>
+                        <span>Stoichiometric</span>
+                        <span>Lean</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Readouts -->
+            <div class="glass-panel p-4 rounded-xl shadow-md flex-1 flex flex-col">
+                <h3 class="font-bold border-b pb-2 text-slate-700 mb-4">Telemetry Data</h3>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-blue-50 p-3 rounded border border-blue-200 text-center">
+                        <div class="text-xs text-blue-600 font-bold uppercase tracking-wider">Thermal Efficiency</div>
+                        <div class="text-2xl font-black text-blue-800"><span id="effDisplay">0</span>%</div>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded border border-green-200 text-center">
+                        <div class="text-xs text-green-600 font-bold uppercase tracking-wider">Relative Power</div>
+                        <div class="text-2xl font-black text-green-800"><span id="powerDisplay">0</span>%</div>
+                    </div>
+                </div>
+
+                <div class="flex-1 relative min-h-[150px]">
+                    <canvas id="energyChart"></canvas>
+                </div>
+                <p class="text-xs text-slate-500 text-center mt-2">Energy Balance (Output vs Waste Heat)</p>
+            </div>
+
+        </aside>
+    </main>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content shadow-2xl">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h2 class="text-xl font-bold text-slate-800">Engine Efficiency Principles</h2>
+                <button id="closeModal" class="text-slate-500 hover:text-slate-800 font-bold text-xl">&times;</button>
+            </div>
+            <div class="prose text-slate-700 text-sm">
+                <p>Internal combustion engines are fundamentally heat engines. They convert chemical potential energy into thermal energy, and then into kinetic work. According to the laws of thermodynamics, they can never be 100% efficient; much energy is always lost as waste heat.</p>
+
+                <h3 class="font-bold mt-3 text-slate-800">Key Variables:</h3>
+                <ul class="list-disc pl-5 mb-3">
+                    <li><strong>Compression Ratio ($r$):</strong> The ratio of the cylinder's volume at the bottom of the stroke vs the top. Higher ratios extract more work from the expanding gases, increasing efficiency via the ideal Otto cycle efficiency equation: $\eta = 1 - \frac{1}{r^{\gamma-1}}$</li>
+                    <li><strong>Engine Knock:</strong> If the compression ratio is too high for a given fuel, the heat of compression causes the fuel to auto-ignite prematurely (detonation). This causes severe damage and a massive drop in power. Different fuels have different knock resistance (octane ratings).</li>
+                    <li><strong>Air-Fuel Ratio (AFR):</strong> The mass ratio of air to fuel. Running 'Rich' (more fuel) can provide maximum power but wastes unburnt fuel (lower efficiency). Running slightly 'Lean' (more air) can improve efficiency but may cause the engine to run too hot.</li>
+                </ul>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 my-4">
+                    <strong>The Engineering Challenge:</strong> Engineers must balance these constraints. You want the highest possible compression ratio for efficiency, but you are constrained by the physical properties (knock limit) of the fuel.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Physics Engine State & Constants
+        const G_GAMMA = 1.35; // Specific heat ratio (simplified for engine gases)
+        const BASE_POWER = 100; // arbitrary unit
+
+        // Fuel Database
+        const FUEL_DATA = {
+            gasoline: {
+                name: "Standard Gasoline (87 Octane)",
+                stoichAFR: 14.7,
+                maxKnockCR: 10.5,
+                energyDensity: 44, // MJ/kg
+                color: "#ffc107" // Amber
+            },
+            ethanol: {
+                name: "E85 Ethanol",
+                stoichAFR: 9.76,
+                maxKnockCR: 13.0,
+                energyDensity: 33,
+                color: "#4caf50" // Green
+            },
+            mystery: {
+                name: "Mystery Fuel X (Unknown)",
+                stoichAFR: 11.5, // e.g. a high-octane racing blend
+                maxKnockCR: 14.2,
+                energyDensity: 40,
+                color: "#e91e63" // Pink/Purple
+            }
+        };
+
+        // State variables
+        let state = {
+            cr: 8.0, // Compression Ratio
+            afr: 14.7, // Air-Fuel Ratio
+            fuelType: 'gasoline',
+            isKnocking: false,
+            thermalEfficiency: 0.0, // calculated
+            powerOutput: 0.0, // calculated
+            wasteHeat: 0.0, // calculated
+            engineSpeed: 0, // visual animation speed
+            crankAngle: 0 // degrees 0-720
+        };
+
+        // Make state accessible for Playwright tests
+        window.simulationState = state;
+
+        // Core Physics Calculation Engine
+        function updatePhysics() {
+            const fuel = FUEL_DATA[state.fuelType];
+
+            // 1. Calculate Otto Cycle Ideal Efficiency
+            // Equation: Efficiency = 1 - 1 / (CR ^ (gamma - 1))
+            let idealEff = 1.0 - (1.0 / Math.pow(state.cr, G_GAMMA - 1.0));
+
+            // 2. Check for Engine Knock (Detonation)
+            // If CR is higher than fuel's max limit, engine knocks
+            state.isKnocking = state.cr > fuel.maxKnockCR;
+
+            // 3. Calculate AFR modifier
+            // We penalize efficiency/power if AFR is far from Stoichiometric
+            // A simple bell curve centered around stoichAFR
+            const afrDiff = Math.abs(state.afr - fuel.stoichAFR);
+            let afrPenalty = 1.0;
+
+            // Slightly rich makes more power but less efficiency.
+            // We'll simplify: deviating too far ruins both.
+            if (afrDiff > 4.0) {
+                afrPenalty = 0.2; // engine sputtering
+            } else {
+                // Bell curve shape: e^(-x^2 / variance)
+                afrPenalty = Math.exp(-(afrDiff * afrDiff) / 4.0);
+            }
+
+            // 4. Calculate Final Efficiency and Power
+            if (state.isKnocking) {
+                // Knocking drastically destroys efficiency and power (energy lost to destructive shockwaves)
+                state.thermalEfficiency = idealEff * 0.4;
+                state.powerOutput = BASE_POWER * 0.3;
+            } else {
+                state.thermalEfficiency = idealEff * afrPenalty;
+
+                // Power is somewhat decoupled from thermal efficiency.
+                // Slightly rich (lower AFR than stoich) actually increases power slightly while hurting efficiency.
+                let powerModifier = 1.0;
+                if (state.afr < fuel.stoichAFR && state.afr > (fuel.stoichAFR - 2.0)) {
+                    powerModifier = 1.05; // Rich power bump
+                } else if (state.afr > fuel.stoichAFR) {
+                    powerModifier = 0.9 - (state.afr - fuel.stoichAFR)*0.05; // Lean power drop
+                }
+
+                // Power scales with CR and Energy Density
+                const energyFactor = fuel.energyDensity / 44.0; // relative to gasoline
+                state.powerOutput = BASE_POWER * state.thermalEfficiency * powerModifier * energyFactor * 2.5;
+            }
+
+            // Cap efficiency to realistic bounds for display (0 - ~50%)
+            state.thermalEfficiency = Math.max(0.01, state.thermalEfficiency);
+            state.powerOutput = Math.max(0.0, state.powerOutput);
+
+            // 5. Calculate Waste Heat (Conservation of Energy)
+            // Total energy in = Power out + Waste Heat
+            // Therefore Waste Heat = Power Out / Efficiency - Power Out
+            // Or simpler for percentages: Waste % = 100% - Eff%
+            state.wasteHeat = 100.0 - (state.thermalEfficiency * 100.0);
+        }
+
+        // --- UI Rendering and Interaction ---
+
+        const canvas = document.getElementById('engineCanvas');
+        const ctx = canvas.getContext('2d');
+        let chartInstance = null;
+
+        // DOM Elements
+        const crSlider = document.getElementById('crSlider');
+        const crVal = document.getElementById('crVal');
+        const afrSlider = document.getElementById('afrSlider');
+        const afrVal = document.getElementById('afrVal');
+        const fuelSelect = document.getElementById('fuelSelect');
+        const effDisplay = document.getElementById('effDisplay');
+        const powerDisplay = document.getElementById('powerDisplay');
+        const knockWarning = document.getElementById('knockWarning');
+
+        // Modal Elements
+        const infoModal = document.getElementById('infoModal');
+        const infoBtn = document.getElementById('infoBtn');
+        const closeModal = document.getElementById('closeModal');
+
+        // Inquiry Elements
+        const checkCRBtn = document.getElementById('checkCRBtn');
+        const guessCR = document.getElementById('guessCR');
+        const guessResult = document.getElementById('guessResult');
+
+        infoBtn.onclick = () => infoModal.style.display = "block";
+        closeModal.onclick = () => infoModal.style.display = "none";
+        window.onclick = (e) => { if (e.target == infoModal) infoModal.style.display = "none"; }
+
+        function initChart() {
+            const chartCtx = document.getElementById('energyChart').getContext('2d');
+            chartInstance = new Chart(chartCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Useful Work (Efficiency)', 'Waste Heat'],
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: ['#3b82f6', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function updateUI() {
+            updatePhysics();
+
+            // Text Readouts
+            effDisplay.innerText = (state.thermalEfficiency * 100).toFixed(1);
+            powerDisplay.innerText = state.powerOutput.toFixed(0);
+
+            // Chart Update
+            chartInstance.data.datasets[0].data = [state.thermalEfficiency * 100, state.wasteHeat];
+            chartInstance.update();
+
+            // Knock Warning
+            if (state.isKnocking) {
+                knockWarning.classList.remove('hidden');
+                effDisplay.parentElement.classList.replace('bg-blue-50', 'bg-red-100');
+                powerDisplay.parentElement.classList.replace('bg-green-50', 'bg-red-100');
+            } else {
+                knockWarning.classList.add('hidden');
+                effDisplay.parentElement.classList.replace('bg-red-100', 'bg-blue-50');
+                powerDisplay.parentElement.classList.replace('bg-red-100', 'bg-green-50');
+            }
+        }
+
+        function attachListeners() {
+            crSlider.addEventListener('input', (e) => {
+                state.cr = parseFloat(e.target.value);
+                crVal.innerText = state.cr.toFixed(1);
+                updateUI();
+            });
+
+            afrSlider.addEventListener('input', (e) => {
+                state.afr = parseFloat(e.target.value);
+                afrVal.innerText = state.afr.toFixed(1);
+                updateUI();
+            });
+
+            checkCRBtn.addEventListener('click', () => {
+                if (state.fuelType !== 'mystery') {
+                    guessResult.innerText = "Please select Mystery Fuel X first!";
+                    guessResult.className = "mt-1 font-bold text-red-500";
+                    return;
+                }
+
+                const guess = parseFloat(guessCR.value);
+                const actual = FUEL_DATA['mystery'].maxKnockCR;
+
+                if (isNaN(guess)) return;
+
+                if (Math.abs(guess - actual) < 0.2) {
+                    guessResult.innerText = "✅ Correct! 14.2 is the max safe CR.";
+                    guessResult.className = "mt-1 font-bold text-green-600";
+                } else if (guess > actual) {
+                    guessResult.innerText = "❌ Too high! Engine will knock.";
+                    guessResult.className = "mt-1 font-bold text-red-500";
+                } else {
+                    guessResult.innerText = "❌ Too low! You are leaving efficiency on the table.";
+                    guessResult.className = "mt-1 font-bold text-amber-500";
+                }
+            });
+
+            fuelSelect.addEventListener('change', (e) => {
+                state.fuelType = e.target.value;
+                const fuel = FUEL_DATA[state.fuelType];
+
+                // Adjust AFR slider bounds slightly based on fuel type
+                if (state.fuelType === 'ethanol') {
+                    afrSlider.min = 6; afrSlider.max = 14;
+                    state.afr = fuel.stoichAFR;
+                } else {
+                    afrSlider.min = 10; afrSlider.max = 20;
+                    if (state.fuelType === 'mystery') state.afr = 12.0; // Start somewhere plausible
+                    else state.afr = fuel.stoichAFR;
+                }
+
+                afrSlider.value = state.afr;
+                afrVal.innerText = state.afr.toFixed(1);
+                updateUI();
+            });
+        }
+
+        // --- Canvas Animation ---
+
+        let lastTime = 0;
+        function animate(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = timestamp - lastTime;
+            lastTime = timestamp;
+
+            // Engine speed drops drastically if knocking
+            const targetSpeed = state.isKnocking ? 2 : (10 + (state.powerOutput / 10));
+            state.engineSpeed += (targetSpeed - state.engineSpeed) * 0.1;
+
+            state.crankAngle = (state.crankAngle + state.engineSpeed) % 720;
+
+            renderCanvas();
+            requestAnimationFrame(animate);
+        }
+
+        function renderCanvas() {
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // Center engine
+            const cx = w / 2;
+            const cy = h / 2 + 50;
+
+            const bore = 120; // Cylinder width
+            const stroke = 150; // Piston travel distance
+            const conRodLength = 180;
+            const crankRadius = stroke / 2;
+
+            // Calculate piston position using crank math
+            const angleRad = state.crankAngle * Math.PI / 180;
+            const pistonY = cy - crankRadius * Math.cos(angleRad) - Math.sqrt(Math.pow(conRodLength, 2) - Math.pow(crankRadius * Math.sin(angleRad), 2));
+
+            // Visual modifiers based on state
+            const clearanceVolumeHeight = stroke / (state.cr - 1);
+            const topDeadCenter = cy - crankRadius - conRodLength;
+            const cylinderTop = topDeadCenter - clearanceVolumeHeight;
+
+            // Determine Stroke Phase
+            let strokeName = "";
+            let gasColor = "rgba(200, 200, 200, 0.1)"; // Default empty
+            const ca = state.crankAngle;
+
+            if (ca >= 0 && ca < 180) {
+                strokeName = "Intake";
+                gasColor = `rgba(100, 150, 255, ${0.1 + (ca/180)*0.3})`;
+            } else if (ca >= 180 && ca < 360) {
+                strokeName = "Compression";
+                gasColor = `rgba(150, 100, 200, ${0.4 + ((ca-180)/180)*0.5})`;
+            } else if (ca >= 360 && ca < 540) {
+                strokeName = "Combustion / Power";
+                if (ca < 380) { // Spark/Ignition flash
+                    gasColor = state.isKnocking ? "rgba(255, 0, 0, 0.9)" : "rgba(255, 200, 0, 0.9)";
+                } else {
+                    gasColor = `rgba(255, 100, 0, ${0.8 - ((ca-380)/160)*0.5})`;
+                }
+            } else {
+                strokeName = "Exhaust";
+                gasColor = `rgba(100, 100, 100, ${0.5 - ((ca-540)/180)*0.4})`;
+            }
+
+            if (state.isKnocking && Math.random() > 0.5) {
+                // Violent shaking effect
+                ctx.translate((Math.random()-0.5)*10, (Math.random()-0.5)*10);
+            }
+
+            // Draw Cylinder Block
+            ctx.fillStyle = "#e2e8f0";
+            ctx.fillRect(cx - bore/2 - 20, cylinderTop - 10, bore + 40, stroke + clearanceVolumeHeight + conRodLength + crankRadius + 20);
+
+            // Draw cylinder bore (background)
+            ctx.fillStyle = "#cbd5e1";
+            ctx.fillRect(cx - bore/2, cylinderTop, bore, cy - cylinderTop);
+
+            // Draw Gases
+            ctx.fillStyle = gasColor;
+            ctx.fillRect(cx - bore/2, cylinderTop, bore, pistonY - cylinderTop);
+
+            // Draw Piston
+            ctx.fillStyle = "#94a3b8"; // Silver/grey
+            ctx.fillRect(cx - bore/2 + 2, pistonY, bore - 4, 60);
+
+            // Draw Piston Rings
+            ctx.fillStyle = "#475569";
+            ctx.fillRect(cx - bore/2 + 2, pistonY + 10, bore - 4, 5);
+            ctx.fillRect(cx - bore/2 + 2, pistonY + 20, bore - 4, 5);
+
+            // Draw Crankshaft & Connecting Rod
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 15;
+            ctx.lineCap = "round";
+
+            // Con Rod
+            ctx.beginPath();
+            ctx.moveTo(cx, pistonY + 50); // Piston pin
+            const crankPinX = cx + crankRadius * Math.sin(angleRad);
+            const crankPinY = cy - crankRadius * Math.cos(angleRad);
+            ctx.lineTo(crankPinX, crankPinY); // Crank pin
+            ctx.stroke();
+
+            // Crank center
+            ctx.fillStyle = "#334155";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Crank pin
+            ctx.fillStyle = "#94a3b8";
+            ctx.beginPath();
+            ctx.arc(crankPinX, crankPinY, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Reset transform if knocking shook it
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            // Overlay Text
+            ctx.fillStyle = "#1e293b";
+            ctx.font = "bold 20px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(`Stroke: ${strokeName}`, w/2, 40);
+
+            if (state.isKnocking) {
+                ctx.fillStyle = "red";
+                ctx.font = "bold 24px Arial";
+                ctx.fillText("CRITICAL KNOCK", w/2, 70);
+            }
+        }
+
+        // --- Initialization ---
+        initChart();
+        attachListeners();
+        updateUI();
+        requestAnimationFrame(animate);
+
+    </script>
+</body>
+</html>
