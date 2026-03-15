@@ -564,6 +564,8 @@ Construct an explanation based on evidence for how the availability of natural r
     </ul>
   </details>
 
+- [Portland Brownstone Quarry Simulator](PortlandBrownstoneQuarry.html) - A resource management simulator focusing on the historical Portland, CT brownstone quarries, demonstrating how natural resources, economics, and natural hazards (flooding) influence human settlement and industry.
+
 ### HS-ESS3-2
 Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources based on cost-benefit ratios.*
 
