@@ -8,13 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-DKDGNLCXQ1');
-    </script>
+    <script src="../common/analytics-loader.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col items-center py-8">
     <div class="max-w-6xl w-full px-4 flex flex-col gap-6">
@@ -123,6 +117,18 @@
             hypoxiaThreshold: 3.0,
             anoxiaThreshold: 0.5,
 
+            // Simulation parameters
+            nutrientInjectionFactor: 0.5,
+            algaeConsumptionProb: 0.05,
+            algaeReproductionCycle: 100,
+            maxAlgaeParticles: 300,
+            algaeDeathRateBase: 0.005,
+            algaeDeathRateFactor: 10000,
+            oxygenConsumptionPerAlgae: 0.001,
+            deadAlgaeDecayTime: 200,
+            baseOxygenDiffusionRate: 0.05,
+            windMixingDiffusionFactor: 0.1,
+
             // Visualization
             canvasWidth: 800,
             canvasHeight: 600,
@@ -229,36 +235,6 @@
             for(let i=0; i<100; i++) state.oxygenBubbles.push(new OxygenBubble());
         }
 
-        // Set up event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            const runoffSlider = document.getElementById('runoff-slider');
-            const tempSlider = document.getElementById('temp-slider');
-            const mysterySlider = document.getElementById('mystery-slider');
-
-            runoffSlider.addEventListener('input', (e) => {
-                state.runoffRate = parseInt(e.target.value);
-                document.getElementById('runoff-val').innerText =
-                    state.runoffRate < 33 ? 'Low' : (state.runoffRate < 66 ? 'Medium' : 'High');
-            });
-
-            tempSlider.addEventListener('input', (e) => {
-                state.temperature = parseInt(e.target.value);
-                document.getElementById('temp-val').innerText = state.temperature + '°C';
-                // Adjust Pycnocline (stratification) based on temp difference
-                updateStratification();
-            });
-
-            mysterySlider.addEventListener('input', (e) => {
-                state.windMixing = parseInt(e.target.value);
-                document.getElementById('mystery-val').innerText =
-                    state.windMixing < 33 ? 'Calm' : (state.windMixing < 66 ? 'Breezy' : 'Stormy');
-                updateStratification();
-            });
-
-            initSimulation();
-            updateStratification();
-        });
-
         function updateStratification() {
             // Temperature difference drives stratification. Wind mixing breaks it down.
             let tempDiff = Math.max(0, state.temperature - state.waterLayers.bottom.temp);
@@ -276,7 +252,7 @@
         // Mechanics & Update Loop
         function updateLogic() {
             // Runoff injects nutrients
-            if (Math.random() < state.runoffRate / 100 * 0.5) {
+            if (Math.random() < state.runoffRate / 100 * state.nutrientInjectionFactor) {
                 state.nutrientParticles.push(new Nutrient());
             }
 
@@ -305,7 +281,7 @@
                 }
 
                 // Algae consumes nutrients in surface layer
-                if (n.y < pycnoclineCenter && Math.random() < 0.05) {
+                if (n.y < pycnoclineCenter && Math.random() < state.algaeConsumptionProb) {
                     // Warm temp + Nutrients = Algae bloom
                     if (Math.random() < state.temperature / 30) {
                         state.algaeParticles.push(new Algae(n.x, n.y));
@@ -330,13 +306,13 @@
                 if (a.x > state.canvasWidth) a.x = 0;
 
                 // Algae reproduces quickly if temp is high
-                if (a.growthCycle > 100 && state.algaeParticles.length < 300 && Math.random() < 0.01 * (state.temperature / 15)) {
+                if (a.growthCycle > state.algaeReproductionCycle && state.algaeParticles.length < state.maxAlgaeParticles && Math.random() < 0.01 * (state.temperature / 15)) {
                     state.algaeParticles.push(new Algae(a.x, a.y));
                     a.growthCycle = 0;
                 }
 
                 // Algae eventually dies (faster if carrying capacity is high)
-                let deathRate = 0.005 + (state.algaeParticles.length / 10000);
+                let deathRate = state.algaeDeathRateBase + (state.algaeParticles.length / state.algaeDeathRateFactor);
                 if (Math.random() < deathRate) {
                     state.deadAlgaeParticles.push(new DeadAlgae(a.x, a.y));
                     state.algaeParticles.splice(i, 1);
@@ -360,9 +336,9 @@
                     d.decayStage++;
 
                     // Bacteria decompose it, consuming oxygen
-                    oxygenConsumptionRate += 0.001;
+                    oxygenConsumptionRate += state.oxygenConsumptionPerAlgae;
 
-                    if (d.decayStage > 200) {
+                    if (d.decayStage > state.deadAlgaeDecayTime) {
                         state.deadAlgaeParticles.splice(i, 1);
                     }
                 }
@@ -371,9 +347,9 @@
             // Oxygen Dynamics
             // Oxygen naturally diffuses from surface to bottom
             // Stratification prevents this diffusion
-            let diffusionRate = 0.05 * (1 - state.stratification);
+            let diffusionRate = state.baseOxygenDiffusionRate * (1 - state.stratification);
             // Wind mixing greatly increases diffusion
-            let mixingDiffusion = (state.windMixing / 100) * 0.1;
+            let mixingDiffusion = (state.windMixing / 100) * state.windMixingDiffusionFactor;
 
             let totalDiffusion = diffusionRate + mixingDiffusion;
 
@@ -418,19 +394,18 @@
             // Log history
             state.dayCount += state.timeScale;
 
-            // Use integer comparison to avoid floating point modulo issues
-            if (Math.abs((state.dayCount % 5) - 0) < 0.01 || Math.abs((state.dayCount % 5) - 5) < 0.01) {
-                // Prevent duplicate logging in the same frame due to tolerance
-                if (state.history.time.length === 0 || state.dayCount - state.history.time[state.history.time.length-1] > 2) {
-                    state.history.time.push(state.dayCount);
-                    state.history.oxygen.push(state.bottomOxygen);
-                    state.history.algae.push(state.algaeParticles.length);
+            const LOG_INTERVAL = 5; // Days
+            if (state.history.lastLogDay === undefined || state.dayCount >= state.history.lastLogDay + LOG_INTERVAL) {
+                state.history.lastLogDay = state.dayCount;
 
-                    if (state.history.time.length > 50) {
-                        state.history.time.shift();
-                        state.history.oxygen.shift();
-                        state.history.algae.shift();
-                    }
+                state.history.time.push(state.dayCount);
+                state.history.oxygen.push(state.bottomOxygen);
+                state.history.algae.push(state.algaeParticles.length);
+
+                if (state.history.time.length > 50) {
+                    state.history.time.shift();
+                    state.history.oxygen.shift();
+                    state.history.algae.shift();
                 }
             }
         }
@@ -694,6 +669,32 @@
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
 
+            const runoffSlider = document.getElementById('runoff-slider');
+            const tempSlider = document.getElementById('temp-slider');
+            const mysterySlider = document.getElementById('mystery-slider');
+
+            runoffSlider.addEventListener('input', (e) => {
+                state.runoffRate = parseInt(e.target.value, 10);
+                document.getElementById('runoff-val').innerText =
+                    state.runoffRate < 33 ? 'Low' : (state.runoffRate < 66 ? 'Medium' : 'High');
+            });
+
+            tempSlider.addEventListener('input', (e) => {
+                state.temperature = parseInt(e.target.value, 10);
+                document.getElementById('temp-val').innerText = state.temperature + '°C';
+                // Adjust Pycnocline (stratification) based on temp difference
+                updateStratification();
+            });
+
+            mysterySlider.addEventListener('input', (e) => {
+                state.windMixing = parseInt(e.target.value, 10);
+                document.getElementById('mystery-val').innerText =
+                    state.windMixing < 33 ? 'Calm' : (state.windMixing < 66 ? 'Breezy' : 'Stormy');
+                updateStratification();
+            });
+
+            initSimulation();
+            updateStratification();
             initChart();
 
             let lastChartUpdate = 0;
