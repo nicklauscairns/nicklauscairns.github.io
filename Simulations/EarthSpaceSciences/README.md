@@ -235,6 +235,34 @@ Apply scientific reasoning and evidence from ancient Earth materials, meteorites
 ### HS-ESS2-1
 Develop a model to illustrate how Earth’s internal and surface processes operate at different spatial and temporal scales to form continental and ocean-floor features.
 
+- [Hartford Basin Rift & Dinosaur Tracks Modeler](HartfordBasinRiftModel.html) - An interactive simulation of the Central Valley of Connecticut, modeling how Triassic rifting, Jurassic sedimentation and volcanism, and Pleistocene glaciation interact to preserve and expose dinosaur tracks. [2026-03-15 07:15:00]
+
+  <details>
+    <summary><b>Evaluation: Anchor Phenomenon | 5.0/5 Stars | 2026-03-15 07:15:00</b></summary>
+    <ul>
+      <li>
+        <b>Overview:</b> Phenomenal anchor for New England students. Meets Criterion 1 (Relevance) by using a famous local state park (Dinosaur State Park in Rocky Hill, CT) and Criterion 4 (Investigable) by allowing students to manipulate deep-time geological forces (rifting, lava flows, glaciation) to solve the mystery of why the tracks are exposed today.
+      </li>
+      <li>
+        <b>Dimensional Evaluation & Evidence Statements:</b> Directly supports DCI (ESS2.A) regarding Earth's materials and systems and DCI (ESS2.B) on plate tectonics. Strongly supports SEP (Developing and Using Models) and CCC (Scale, Proportion, and Quantity) by illustrating interactions across hundreds of millions of years.
+      </li>
+      <li>
+        <b>AI Action Items for Improvement:</b>
+        <ul>
+          <li><b>Enhance Crosscutting Concepts:</b> Include explicit scale markers or a timeline mini-map to better emphasize the temporal jumps between the 200 Ma deposition and the 10k Ya glaciation.</li>
+          <li><b>Improve Interactivity:</b> Allow users to vary the sediment thickness or the basalt thickness to see how different deposition rates would have changed the modern surface geology.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Implementation Checklist for AI Agent:</b>
+        <ul>
+          <li>[ ] Add an interactive timeline mini-map showing the current epoch.</li>
+          <li>[ ] Add user controls for sediment and basalt layer thicknesses.</li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+
 - [Tectonic Landscape Modeler](TectonicLandscapeModeller.html) - An interactive simulation exploring how slow constructive forces (uplift) and destructive forces (weathering, mass wasting) shape Earth's surface over geologic time.
 
   <details>
