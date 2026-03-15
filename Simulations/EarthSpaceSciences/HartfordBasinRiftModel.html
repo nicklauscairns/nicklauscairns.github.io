@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hartford Basin Rift & Dinosaur Tracks Modeler</title>
+    <meta name="description" content="Interactive science simulation modeling the formation of the Hartford Basin, normal faulting, and the preservation of Early Jurassic dinosaur tracks (Eubrontes) in Connecticut.">
+    <meta name="author" content="Nicklaus Cairns">
+    <meta name="keywords" content="science, simulation, NGSS, Hartford Basin, Rift Valley, Connecticut geology, Dinosaur State Park, normal fault, Triassic, Jurassic, interactive">
+    <meta property="og:title" content="Hartford Basin Rift & Dinosaur Tracks Modeler">
+    <meta property="og:description" content="Interactive science simulation modeling the formation of the Hartford Basin, normal faulting, and the preservation of Early Jurassic dinosaur tracks (Eubrontes) in Connecticut.">
+    <meta property="og:url" content="https://nicklauscairns.com/Simulations/EarthSpaceSciences/HartfordBasinRiftModel.html">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { background-color: #0f172a; color: #f1f5f9; }
+        canvas {
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .layer-btn { transition: all 0.2s; }
+        .layer-btn.active { ring: 2px; ring-color: #38bdf8; background-color: #334155; transform: scale(1.05); }
+    </style>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Hartford Basin Rift & Dinosaur Tracks Modeler",
+        "description": "Interactive science simulation modeling the formation of the Hartford Basin, normal faulting, and the preservation of Early Jurassic dinosaur tracks (Eubrontes) in Connecticut.",
+        "url": "https://nicklauscairns.com/Simulations/EarthSpaceSciences/HartfordBasinRiftModel.html",
+        "author": {
+            "@type": "Person",
+            "name": "Nicklaus Cairns"
+        },
+        "educationalAlignment": {
+            "@type": "AlignmentObject",
+            "alignmentType": "educational framework",
+            "educationalFramework": "Next Generation Science Standards",
+            "targetName": "HS-ESS2-1",
+            "targetUrl": "https://www.nextgenscience.org/pe/hs-ess2-1-earths-systems"
+        }
+    }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+    <header class="bg-slate-900 border-b border-slate-700 py-4 px-6 shadow-md flex justify-between items-center z-10">
+        <div>
+            <h1 class="text-2xl font-bold text-sky-400 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Hartford Basin Rift Modeler
+            </h1>
+            <p class="text-sm text-slate-400 mt-1">Model normal faulting and sedimentary deposition to preserve early Jurassic dinosaur tracks (Connecticut).</p>
+        </div>
+        <div class="flex gap-4">
+            <button onclick="document.getElementById('infoModal').classList.remove('hidden')" class="text-slate-300 hover:text-sky-400 transition-colors" title="Information">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 relative">
+        <section class="lg:col-span-1 bg-slate-800 rounded-xl p-5 border border-slate-700 shadow-lg flex flex-col gap-6 h-fit z-10">
+            <div>
+                <h2 class="text-lg font-semibold text-sky-300 border-b border-slate-600 pb-2 mb-4">Geological Epochs</h2>
+                <div class="flex flex-col gap-3">
+                    <button id="btn-epoch-1" class="layer-btn active bg-slate-700 hover:bg-slate-600 text-left px-4 py-3 rounded-md font-medium text-sm flex items-center justify-between group">
+                        <span>1. Triassic Pangea Breakup</span>
+                        <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 group-hover:text-sky-300">220 Ma</span>
+                    </button>
+                    <button id="btn-epoch-2" class="layer-btn bg-slate-700 hover:bg-slate-600 text-left px-4 py-3 rounded-md font-medium text-sm flex items-center justify-between group opacity-50 cursor-not-allowed">
+                        <span>2. Early Jurassic Deposition & Dinosaurs</span>
+                        <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 group-hover:text-sky-300">200 Ma</span>
+                    </button>
+                    <button id="btn-epoch-3" class="layer-btn bg-slate-700 hover:bg-slate-600 text-left px-4 py-3 rounded-md font-medium text-sm flex items-center justify-between group opacity-50 cursor-not-allowed">
+                        <span>3. CAMP Volcanism (Holyoke Basalt)</span>
+                        <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 group-hover:text-sky-300">198 Ma</span>
+                    </button>
+                    <button id="btn-epoch-4" class="layer-btn bg-slate-700 hover:bg-slate-600 text-left px-4 py-3 rounded-md font-medium text-sm flex items-center justify-between group opacity-50 cursor-not-allowed">
+                        <span>4. Modern Erosion (Pleistocene/Holocene)</span>
+                        <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 group-hover:text-sky-300">10k Ya</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="controls-panel" class="hidden">
+                 <h2 class="text-lg font-semibold text-sky-300 border-b border-slate-600 pb-2 mb-4">Variables</h2>
+
+                 <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
+                        <span>Eastern Border Fault Angle</span>
+                        <span id="fault-angle-val" class="text-sky-400">60&deg;</span>
+                    </label>
+                    <input type="range" id="fault-angle" min="40" max="80" value="60" class="w-full accent-sky-500">
+                    <p class="text-xs text-slate-400 mt-1">Controls the geometry of the half-graben rift basin.</p>
+                 </div>
+
+                 <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
+                        <span>Rift Extension (Displacement)</span>
+                        <span id="extension-val" class="text-sky-400">2 km</span>
+                    </label>
+                    <input type="range" id="extension" min="1" max="5" value="2" step="0.5" class="w-full accent-sky-500">
+                    <p class="text-xs text-slate-400 mt-1">How far the crust stretches, increasing basin accommodation space.</p>
+                 </div>
+
+                 <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
+                        <span>Erosion Depth (Glacial Scouring)</span>
+                        <span id="erosion-val" class="text-sky-400">Moderate</span>
+                    </label>
+                    <input type="range" id="erosion" min="0" max="100" value="50" class="w-full accent-sky-500">
+                    <p class="text-xs text-slate-400 mt-1">Pleistocene glacial scouring removes overlying rock, exposing tilted strata.</p>
+                 </div>
+
+                 <button id="btn-simulate" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded transition-colors shadow-lg flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                    Simulate Epoch
+                 </button>
+            </div>
+
+            <div id="narrative-box" class="bg-slate-900 border border-slate-700 p-4 rounded-lg text-sm text-slate-300 h-full mt-auto">
+                <strong class="text-sky-400 block mb-1">Epoch 1: Triassic Breakup</strong>
+                Pangea begins to rift apart. The crust stretches and thins. Adjust the Eastern Border Fault angle and extension displacement, then Simulate to form a half-graben basin where water and sediment can accumulate.
+            </div>
+
+        </section>
+
+        <section class="lg:col-span-3 flex flex-col gap-6">
+            <div class="bg-slate-800 rounded-xl p-2 border border-slate-700 shadow-lg relative h-[600px] flex items-center justify-center overflow-hidden">
+                <canvas id="geologyCanvas" width="900" height="580" class="max-w-full h-auto"></canvas>
+
+                <!-- Overlays for results -->
+                <div id="success-overlay" class="absolute inset-0 bg-slate-900/80 hidden flex-col items-center justify-center p-8 text-center backdrop-blur-sm">
+                    <div class="text-5xl mb-4">🦖 ⛏️</div>
+                    <h2 class="text-3xl font-bold text-emerald-400 mb-4">Discovery! Dinosaur State Park</h2>
+                    <p class="text-lg text-slate-300 max-w-2xl mb-6">
+                        Perfect! The combination of rift basin sediment accumulation (East Berlin Formation), subsequent CAMP basalt lava flows (Holyoke Basalt) that baked and preserved the tracks, tectonic tilting, and precise glacial erosion has exposed the 200-million-year-old <i>Eubrontes</i> footprints at the surface in modern-day Rocky Hill, Connecticut!
+                    </p>
+                    <button onclick="resetSimulation()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 px-6 rounded transition-colors">Play Again</button>
+                </div>
+
+                <div id="failure-overlay" class="absolute inset-0 bg-slate-900/80 hidden flex-col items-center justify-center p-8 text-center backdrop-blur-sm">
+                    <div class="text-5xl mb-4">💨 🌊</div>
+                    <h2 class="text-3xl font-bold text-rose-400 mb-4">Tracks Lost to Time</h2>
+                    <p id="failure-reason" class="text-lg text-slate-300 max-w-2xl mb-6">
+                        The tracks were eroded away.
+                    </p>
+                    <button onclick="resetSimulation()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 px-6 rounded transition-colors">Adjust Parameters & Try Again</button>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 rounded-xl p-5 border border-slate-700 shadow-lg flex items-center gap-6">
+                 <div class="w-1/4">
+                    <h3 class="font-semibold text-slate-200 mb-2">Cross-Section Legend</h3>
+                    <ul class="text-xs space-y-2">
+                        <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-sm" style="background: #94a3b8;"></span> Pre-Mesozoic Crystalline Basement (Gneiss/Schist)</li>
+                        <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-sm" style="background: #d97706;"></span> Triassic/Jurassic Arkosic Sandstone (Redbeds)</li>
+                        <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-sm" style="background: #27272a;"></span> Early Jurassic CAMP Basalt (Holyoke Flow)</li>
+                        <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-sm" style="background: #65a30d;"></span> Lake Bed / Tracks Layer (East Berlin Formation)</li>
+                    </ul>
+                 </div>
+                 <div class="w-3/4 border-l border-slate-600 pl-6">
+                    <h3 class="font-semibold text-slate-200 mb-2">Data Telemetry</h3>
+                    <div class="grid grid-cols-3 gap-4 text-sm text-slate-400">
+                        <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                            <span class="block text-xs text-sky-400/70 uppercase tracking-wide">Basin Depth</span>
+                            <span id="data-basin-depth" class="font-mono text-lg text-slate-200">0 m</span>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                            <span class="block text-xs text-sky-400/70 uppercase tracking-wide">Strata Dip Angle</span>
+                            <span id="data-dip-angle" class="font-mono text-lg text-slate-200">0&deg;</span>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded border border-slate-700">
+                            <span class="block text-xs text-sky-400/70 uppercase tracking-wide">Erosion Level</span>
+                            <span id="data-erosion-level" class="font-mono text-lg text-slate-200">None</span>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 rounded-xl max-w-2xl w-full border border-slate-600 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-900">
+                <h2 class="text-xl font-bold text-sky-400">About the Hartford Basin</h2>
+                <button onclick="document.getElementById('infoModal').classList.add('hidden')" class="text-slate-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto text-slate-300 space-y-4 text-sm">
+                <p>The <strong>Hartford Basin</strong> is a rift valley located in Connecticut and Massachusetts. It formed roughly 220 million years ago during the Triassic period as the supercontinent Pangea broke apart.</p>
+                <p>As the crust stretched, a massive normal fault (the Eastern Border Fault) caused the land to drop, creating a half-graben valley. This valley filled with lakes and rivers.</p>
+                <p>During the Early Jurassic (approx. 200 million years ago), dinosaurs like <i>Dilophosaurus</i> walked along the muddy shores of these lakes, leaving footprints (ichnogenus <i>Eubrontes</i>).</p>
+                <p><strong>Preservation:</strong> To be preserved until today, the footprints had to be covered by sediment, baked and buried deeply, then protected by hard volcanic rock (Central Atlantic Magmatic Province basalts). Finally, the entire sequence was tilted, and precise glacial erosion during the Pleistocene scraped off just enough top layers to expose the tracks at the surface in Rocky Hill, Connecticut.</p>
+                <p class="mt-4 text-sky-300 font-semibold">NGSS Alignment (HS-ESS2-1)</p>
+                <p>This simulation develops a model to illustrate how Earth’s internal (rifting, volcanism) and surface processes (sedimentation, erosion) operate at different spatial and temporal scales to form continental features.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics script block to satisfy AGENTS.md requirements for standalone HTML -->
+    <script>
+        window.addEventListener('load', function() {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-DKDGNLCXQ1';
+            document.head.appendChild(script);
+
+            script.onload = function() {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-DKDGNLCXQ1');
+            };
+        });
+    </script>
+
+    <script>
+        // State Management
+        window.simulationState = {
+            epoch: 1, // 1: Rift, 2: Deposition, 3: Volcanism, 4: Erosion
+            isAnimating: false,
+            faultAngle: 60,
+            extension: 2,
+            erosionDepth: 50,
+            // Computed geometry
+            basinDepth: 0,
+            dipAngle: 0,
+            hwX: 0, // Hanging wall x offset
+            hwY: 0, // Hanging wall y offset
+            sedimentThick: 0,
+            basaltThick: 0,
+            erodedY: 0,
+            hasTracks: false
+        };
+
+        const canvas = document.getElementById('geologyCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Colors
+        const colors = {
+            basement: '#94a3b8',
+            faultLine: '#ef4444',
+            sediment: '#d97706',
+            lakeBed: '#65a30d',
+            basalt: '#27272a',
+            sky: '#38bdf8',
+            water: '#0ea5e9'
+        };
+
+        // UI Elements
+        const faultAngleInput = document.getElementById('fault-angle');
+        const extensionInput = document.getElementById('extension');
+        const erosionInput = document.getElementById('erosion');
+        const btnSimulate = document.getElementById('btn-simulate');
+        const narrativeBox = document.getElementById('narrative-box');
+        const controlsPanel = document.getElementById('controls-panel');
+
+        // Initialization
+        function init() {
+            updateUI();
+            draw();
+
+            faultAngleInput.addEventListener('input', (e) => {
+                document.getElementById('fault-angle-val').innerHTML = e.target.value + '&deg;';
+                window.simulationState.faultAngle = parseFloat(e.target.value);
+                if(window.simulationState.epoch === 1) calculateGeometry();
+                if(!window.simulationState.isAnimating) draw();
+            });
+
+            extensionInput.addEventListener('input', (e) => {
+                document.getElementById('extension-val').innerHTML = e.target.value + ' km';
+                window.simulationState.extension = parseFloat(e.target.value);
+                if(window.simulationState.epoch === 1) calculateGeometry();
+                if(!window.simulationState.isAnimating) draw();
+            });
+
+            erosionInput.addEventListener('input', (e) => {
+                let val = parseFloat(e.target.value);
+                let text = "Moderate";
+                if(val < 30) text = "Shallow";
+                if(val > 70) text = "Deep";
+                document.getElementById('erosion-val').innerHTML = text;
+                window.simulationState.erosionDepth = val;
+                if(window.simulationState.epoch === 4) calculateErosion();
+                if(!window.simulationState.isAnimating) draw();
+            });
+
+            btnSimulate.addEventListener('click', simulateEpoch);
+        }
+
+        function updateUI() {
+            // Reset all layers
+            for(let i=1; i<=4; i++) {
+                let btn = document.getElementById(`btn-epoch-${i}`);
+                btn.classList.remove('active');
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            let currentBtn = document.getElementById(`btn-epoch-${window.simulationState.epoch}`);
+            currentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            currentBtn.classList.add('active');
+
+            // Show appropriate controls
+            controlsPanel.classList.remove('hidden');
+            faultAngleInput.parentElement.classList.add('hidden');
+            extensionInput.parentElement.classList.add('hidden');
+            erosionInput.parentElement.classList.add('hidden');
+
+            if(window.simulationState.epoch === 1) {
+                faultAngleInput.parentElement.classList.remove('hidden');
+                extensionInput.parentElement.classList.remove('hidden');
+                narrativeBox.innerHTML = `<strong class="text-sky-400 block mb-1">Epoch 1: Triassic Breakup</strong>Pangea begins to rift apart. The crust stretches and thins. Adjust the Eastern Border Fault angle and extension displacement, then Simulate to form a half-graben basin where water and sediment can accumulate.`;
+            } else if(window.simulationState.epoch === 2) {
+                controlsPanel.classList.add('hidden'); // No controls, just narrative
+                narrativeBox.innerHTML = `<strong class="text-emerald-400 block mb-1">Epoch 2: Early Jurassic Deposition</strong>Rivers wash sediment into the low basin. Shallow lakes form. Dinosaurs walk the muddy shores, leaving footprints. Simulate to fill the basin with sedimentary rock (East Berlin Formation).`;
+            } else if(window.simulationState.epoch === 3) {
+                controlsPanel.classList.add('hidden');
+                narrativeBox.innerHTML = `<strong class="text-rose-400 block mb-1">Epoch 3: CAMP Volcanism</strong>Massive fissures open due to continued rifting. Flood basalts (Holyoke Basalt) pour over the landscape, capping and protecting the delicate lake bed footprints underneath. The whole basin block continues to tilt.`;
+            } else if(window.simulationState.epoch === 4) {
+                erosionInput.parentElement.classList.remove('hidden');
+                narrativeBox.innerHTML = `<strong class="text-sky-200 block mb-1">Epoch 4: Pleistocene Glaciation</strong>Millions of years pass. Mile-high glaciers scrape across the tilted landscape. Adjust the erosion depth to scrape off the top layers. <b>Goal:</b> Erode just enough to expose the lake bed (green) at the surface without destroying it!`;
+                btnSimulate.innerHTML = 'Evaluate Discovery';
+            }
+        }
+
+        function calculateGeometry() {
+            let s = window.simulationState;
+            // Fault logic (Eastern border fault on the right)
+            // Center of fault at surface is roughly x=600
+            let faultX = 700;
+            let faultRad = s.faultAngle * Math.PI / 180;
+
+            // horizontal displacement in pixels (scale 1km = 40px)
+            s.hwX = s.extension * 40;
+            // vertical displacement along fault
+            s.hwY = s.hwX * Math.tan(faultRad);
+
+            // Dip angle of the block (simplified rotation based on extension)
+            s.dipAngle = s.extension * 2; // Degrees
+
+            // Basin depth approx
+            s.basinDepth = s.hwY;
+
+            document.getElementById('data-basin-depth').innerText = Math.round(s.basinDepth / 40 * 10) / 10 + ' km';
+            document.getElementById('data-dip-angle').innerText = s.dipAngle + '° E';
+        }
+
+        function calculateErosion() {
+            let s = window.simulationState;
+            // Map 0-100 to y-pixels from top.
+            // 0 erosion = top of block. 100 = deep into basement.
+            let maxErosionY = height/2 + 100;
+            let minErosionY = height/2 - 150;
+            s.erodedY = minErosionY + (s.erosionDepth / 100) * (maxErosionY - minErosionY);
+
+            document.getElementById('data-erosion-level').innerText = s.erosionDepth + '%';
+        }
+
+        function simulateEpoch() {
+            if(window.simulationState.isAnimating) return;
+            window.simulationState.isAnimating = true;
+            btnSimulate.disabled = true;
+
+            let targetValue = 0;
+            let s = window.simulationState;
+
+            if(s.epoch === 1) {
+                // Animate rifting (extension)
+                targetValue = s.extension;
+                s.extension = 0.1; // start small
+
+                let lastTime = 0;
+                function animateRifting(time) {
+                    if (time - lastTime > 30) {
+                        s.extension += 0.1;
+                        if(s.extension >= targetValue) {
+                            s.extension = targetValue;
+                            calculateGeometry();
+                            draw();
+                            finishEpoch();
+                            return;
+                        }
+                        calculateGeometry();
+                        draw();
+                        lastTime = time;
+                    }
+                    requestAnimationFrame(animateRifting);
+                }
+                requestAnimationFrame(animateRifting);
+            }
+            else if(s.epoch === 2) {
+                // Animate sediment filling
+                targetValue = s.basinDepth * 0.7; // Fill 70% of basin
+                s.sedimentThick = 0;
+
+                let lastTime = 0;
+                function animateSediment(time) {
+                    if (time - lastTime > 50) {
+                        s.sedimentThick += targetValue / 20;
+                        if(s.sedimentThick >= targetValue) {
+                            s.sedimentThick = targetValue;
+                            s.hasTracks = true;
+                            draw();
+                            finishEpoch();
+                            return;
+                        }
+                        draw();
+                        lastTime = time;
+                    }
+                    requestAnimationFrame(animateSediment);
+                }
+                requestAnimationFrame(animateSediment);
+            }
+            else if(s.epoch === 3) {
+                // Animate basalt & tilting
+                targetValue = 60; // Basalt thickness
+                s.basaltThick = 0;
+                let targetDip = s.dipAngle + 10; // Extra tilt from loading/rifting
+                let initialDip = s.dipAngle;
+                let steps = 0;
+
+                let lastTime = 0;
+                function animateBasalt(time) {
+                    if (time - lastTime > 50) {
+                        s.basaltThick += targetValue / 20;
+                        steps++;
+                        s.dipAngle = initialDip + (10 * (steps/20));
+                        document.getElementById('data-dip-angle').innerText = Math.round(s.dipAngle) + '° E';
+                        if(s.basaltThick >= targetValue) {
+                            s.basaltThick = targetValue;
+                            s.dipAngle = targetDip;
+                            draw();
+                            finishEpoch();
+                            return;
+                        }
+                        draw();
+                        lastTime = time;
+                    }
+                    requestAnimationFrame(animateBasalt);
+                }
+                requestAnimationFrame(animateBasalt);
+            }
+            else if(s.epoch === 4) {
+                // Evaluate
+                evaluateDiscovery();
+            }
+        }
+
+        function finishEpoch() {
+            window.simulationState.isAnimating = false;
+            btnSimulate.disabled = false;
+            window.simulationState.epoch++;
+            if(window.simulationState.epoch === 4) calculateErosion();
+            updateUI();
+        }
+
+        function evaluateDiscovery() {
+            let s = window.simulationState;
+            // The lake bed (tracks) is located relative to the hanging wall block.
+            // We need to check if erodedY intersects the lake bed layer.
+
+            // Base of block y = height/2
+            // Top of sediment = height/2 - sedimentThick
+            // Lake bed is at the very top of the sediment.
+            // But it's rotated by dipAngle.
+
+            // Approximate y-level of lake bed at center of basin (x=450)
+            let faultX = 700;
+
+            // Pivot is roughly at fault
+            let pivotX = faultX + s.hwX;
+            let pivotY = height/2 + s.hwY;
+
+            // Rotation is positive (clockwise), so angle is just s.dipAngle * Math.PI / 180
+            // But the y coordinate is downwards. Let's just calculate the y intersection at x=450.
+            let angleRad = s.dipAngle * Math.PI / 180;
+
+            // Local coords relative to pivot at x=450
+            // x_world = pivotX + x_local * cos(a) - y_local * sin(a)
+            // y_world = pivotY + x_local * sin(a) + y_local * cos(a)
+            // We want y_world at x_world = 450 for the lakebed.
+            // Lakebed is at y_local = -s.sedimentThick (relative to pivot)
+
+            // Approx x_local:
+            // 450 = pivotX + x_local * cos(a) - (-s.sedimentThick) * sin(a)
+            let x_local = (450 - pivotX - s.sedimentThick * Math.sin(angleRad)) / Math.cos(angleRad);
+
+            // Now calculate y_world:
+            let rotY = pivotY + x_local * Math.sin(angleRad) - s.sedimentThick * Math.cos(angleRad);
+
+            // Approx y for basalt top at x=450:
+            let basaltTopY = pivotY + x_local * Math.sin(angleRad) - (s.sedimentThick + s.basaltThick) * Math.cos(angleRad);
+
+            window.simulationState.isAnimating = false;
+
+            // Success condition: Erosion cuts through basalt, but not entirely through the lake bed.
+            // erodedY must be below basaltTopY (i.e. erodedY > basaltTopY), and erodedY must be above the bottom of the lake bed.
+            // Let's use a tolerance.
+            if(s.erodedY > basaltTopY + 10 && s.erodedY < rotY + 40) {
+                document.getElementById('success-overlay').classList.remove('hidden');
+                document.getElementById('success-overlay').classList.add('flex');
+            } else {
+                let reason = "";
+                if(s.erodedY <= basaltTopY + 10) {
+                    reason = "Erosion was too shallow. The tracks are still buried deep beneath the hard Holyoke Basalt layer. Need more glacial scouring!";
+                } else if(s.erodedY >= rotY + 40) {
+                    reason = "Erosion was too deep! The Pleistocene glaciers completely scraped away the East Berlin Formation layer containing the tracks.";
+                } else {
+                    reason = "Erosion didn't quite hit the right layer.";
+                }
+                document.getElementById('failure-reason').innerText = reason;
+                document.getElementById('failure-overlay').classList.remove('hidden');
+                document.getElementById('failure-overlay').classList.add('flex');
+            }
+        }
+
+        function resetSimulation() {
+            document.getElementById('success-overlay').classList.add('hidden');
+            document.getElementById('success-overlay').classList.remove('flex');
+            document.getElementById('failure-overlay').classList.add('hidden');
+            document.getElementById('failure-overlay').classList.remove('flex');
+
+            window.simulationState = {
+                epoch: 1,
+                isAnimating: false,
+                faultAngle: 60,
+                extension: 2,
+                erosionDepth: 50,
+                basinDepth: 0,
+                dipAngle: 0,
+                hwX: 0,
+                hwY: 0,
+                sedimentThick: 0,
+                basaltThick: 0,
+                erodedY: 0,
+                hasTracks: false
+            };
+
+            faultAngleInput.value = 60;
+            extensionInput.value = 2;
+            erosionInput.value = 50;
+
+            document.getElementById('fault-angle-val').innerHTML = '60&deg;';
+            document.getElementById('extension-val').innerHTML = '2 km';
+            document.getElementById('erosion-val').innerHTML = 'Moderate';
+            btnSimulate.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg> Simulate Epoch`;
+            btnSimulate.disabled = false;
+
+            calculateGeometry();
+            updateUI();
+            draw();
+        }
+
+        // Drawing Functions
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            let s = window.simulationState;
+
+            let faultX = 700;
+            let faultRad = s.faultAngle * Math.PI / 180;
+
+            // Sky gradient already in CSS, we just draw over it
+
+            ctx.save();
+
+            // Handle Epoch 4 Erosion Clip
+            if(s.epoch === 4 || s.erodedY > 0) {
+                // Create a clip path that only allows drawing BELOW erodedY
+                ctx.beginPath();
+
+                // Add some irregularity to the erosion surface
+                ctx.moveTo(0, s.erodedY);
+                for(let x=0; x<=width; x+=50) {
+                    let noise = Math.sin(x/30) * 10 + Math.cos(x/70) * 5;
+                    ctx.lineTo(x, s.erodedY + noise);
+                }
+                ctx.lineTo(width, height);
+                ctx.lineTo(0, height);
+                ctx.closePath();
+                ctx.clip();
+
+                // Draw sky above the clip manually (to cover what was there)
+                // Actually, the clearRect handles this, clip just prevents drawing above.
+            }
+
+            // 1. Draw Footwall (Left side, stationary)
+            ctx.fillStyle = colors.basement;
+            ctx.beginPath();
+            ctx.moveTo(0, height/2);
+            // Draw fault line boundary
+            ctx.lineTo(faultX, height/2);
+            ctx.lineTo(faultX - (height/2)/Math.tan(faultRad), height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Texture for footwall
+            drawGneissTexture(0, faultX, height/2, height);
+
+            // 2. Draw Hanging Wall (Right side, drops and rotates)
+            ctx.save();
+            // Pivot point for rotation: Top left corner of hanging wall (at the fault)
+            let pivotX = faultX + s.hwX;
+            let pivotY = height/2 + s.hwY;
+
+            ctx.translate(pivotX, pivotY);
+            // Rotate (tilt down to the right)
+            ctx.rotate(s.dipAngle * Math.PI / 180);
+
+            // Draw basement of hanging wall
+            ctx.fillStyle = colors.basement;
+            ctx.beginPath();
+            ctx.moveTo(0, 0); // At pivot
+            ctx.lineTo(width, 0);
+            ctx.lineTo(width, height);
+            // Angle cut for fault matching
+            ctx.lineTo(- (height)/Math.tan(faultRad), height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Sediment deposition
+            if(s.sedimentThick > 0) {
+                ctx.fillStyle = colors.sediment;
+                ctx.fillRect(0, -s.sedimentThick, width, s.sedimentThick);
+                drawSandstoneTexture(0, width, -s.sedimentThick, 0);
+
+                // Lake bed / Tracks layer at top of sediment
+                if(s.hasTracks) {
+                    ctx.fillStyle = colors.lakeBed;
+                    ctx.fillRect(0, -s.sedimentThick, width, 8);
+
+                    // Draw little track icons if zoomed in enough or just indicate
+                    ctx.fillStyle = 'black';
+                    for(let tx = 50; tx < width-50; tx+=80) {
+                        ctx.fillText("🐾", tx, -s.sedimentThick + 6);
+                    }
+                }
+            }
+
+            // Basalt volcanism
+            if(s.basaltThick > 0) {
+                ctx.fillStyle = colors.basalt;
+                ctx.fillRect(0, -s.sedimentThick - s.basaltThick, width, s.basaltThick);
+
+                // Columns for basalt
+                ctx.strokeStyle = '#3f3f46';
+                ctx.lineWidth = 1;
+                for(let bx = 0; bx < width; bx += 15) {
+                    ctx.beginPath();
+                    ctx.moveTo(bx, -s.sedimentThick - s.basaltThick);
+                    ctx.lineTo(bx, -s.sedimentThick);
+                    ctx.stroke();
+                }
+            }
+
+            ctx.restore();
+
+            // Draw Fault Line
+            ctx.strokeStyle = colors.faultLine;
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(faultX, height/2 - 50);
+            ctx.lineTo(faultX - (height)/Math.tan(faultRad), height + 50);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.restore(); // Restore clip
+
+            // Draw Erosion Line overlay if in epoch 4
+            if(s.epoch === 4 && !s.isAnimating) {
+                ctx.strokeStyle = '#f8fafc';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([10, 5]);
+                ctx.beginPath();
+                ctx.moveTo(0, s.erodedY);
+                ctx.lineTo(width, s.erodedY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = '12px sans-serif';
+                ctx.fillText("Glacial Scour Level", 20, s.erodedY - 10);
+            }
+
+            // Water filling the basin in Epoch 1/2
+            if((s.epoch === 1 || s.epoch === 2) && s.basinDepth > 0 && !s.isAnimating) {
+                ctx.fillStyle = colors.water;
+                ctx.globalAlpha = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(faultX, height/2); // Top left edge
+
+                // Calc intersection with rotated hanging wall
+                let rightEdgeX = faultX + 200; // approximation for visual
+                ctx.lineTo(rightEdgeX, height/2);
+                ctx.lineTo(pivotX, pivotY); // deep point
+                ctx.closePath();
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        // Texture generators
+        function drawGneissTexture(x1, x2, y1, y2) {
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<100; i++) {
+                let rx = x1 + Math.random() * (x2 - x1);
+                let ry = y1 + Math.random() * (y2 - y1);
+                ctx.beginPath();
+                // Squiggly lines
+                ctx.moveTo(rx, ry);
+                ctx.quadraticCurveTo(rx+10, ry+5, rx+20, ry-5);
+                ctx.stroke();
+            }
+        }
+
+        function drawSandstoneTexture(x1, x2, y1, y2) {
+            ctx.fillStyle = '#b45309';
+            for(let i=0; i<300; i++) {
+                let rx = x1 + Math.random() * (x2 - x1);
+                let ry = y1 + Math.random() * (y2 - y1);
+                ctx.fillRect(rx, ry, 2, 2);
+            }
+            // Bedding planes
+            ctx.strokeStyle = '#b45309';
+            ctx.lineWidth = 1;
+            for(let y=y1+10; y<y2; y+=15) {
+                ctx.beginPath();
+                ctx.moveTo(x1, y);
+                ctx.lineTo(x2, y);
+                ctx.stroke();
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
