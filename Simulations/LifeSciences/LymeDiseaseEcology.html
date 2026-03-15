@@ -170,6 +170,27 @@
 
         const MAX_YEARS = 30; // Number of years to keep in chart
 
+        // --- Model Constants (Magic Numbers Refactored) ---
+        const ACORN_BASELINE_MIN = 30;
+        const ACORN_BASELINE_VARIANCE = 20;
+        const OAK_MAST_ACORN_SPIKE = 150;
+
+        const MOUSE_ACORN_FOOD_MULTIPLIER = 1.5;
+        const MOUSE_PREDATION_MULTIPLIER = 100;
+        const MOUSE_WINTER_MORTALITY_MAX = 0.3;
+        const MOUSE_CARRYING_CAPACITY = 200;
+        const MOUSE_MIN_POPULATION = 10;
+
+        const LARVAE_DEER_REPRODUCTION_FACTOR = 120;
+        const LARVAE_BASE_SURVIVAL = 0.8;
+        const LARVAE_SURVIVAL_VARIANCE = 0.4;
+
+        const TICK_WINTER_MORTALITY_MAX = 0.5;
+        const NYMPH_MIN_POPULATION = 5;
+        const NYMPH_MAX_POPULATION = 180;
+
+        const LYME_RISK_MULTIPLIER = 0.8;
+
         /**
          * Core Mathematical Model Step
          * Simulates one year of ecological interactions.
@@ -180,9 +201,9 @@
 
             // 1. Acorn Production (Oak Mast)
             // Acorns naturally fluctuate slightly, but a triggered mast sends them sky-high.
-            let nextAcorns = 30 + (Math.random() * 20); // Baseline 30-50
+            let nextAcorns = ACORN_BASELINE_MIN + (Math.random() * ACORN_BASELINE_VARIANCE);
             if (s.oakMastTriggered) {
-                nextAcorns = 150; // Huge spike
+                nextAcorns = OAK_MAST_ACORN_SPIKE; // Huge spike
                 s.oakMastTriggered = false; // Reset trigger
             }
             // Acorns decay over the year, but carry over heavily to mice next year.
@@ -190,33 +211,33 @@
             // 2. White-footed Mice Population
             // Dependent on previous year's acorns (food) and fox population (predators).
             // Affected by winter severity (harsh winters kill mice).
-            const acornFoodFactor = s.acorns * 1.5;
-            const predationFactor = s.foxPopulation * 100;
-            const winterSurvivalMice = 1 - (s.winterSeverity * 0.3); // max 30% mortality from winter
+            const acornFoodFactor = s.acorns * MOUSE_ACORN_FOOD_MULTIPLIER;
+            const predationFactor = s.foxPopulation * MOUSE_PREDATION_MULTIPLIER;
+            const winterSurvivalMice = 1 - (s.winterSeverity * MOUSE_WINTER_MORTALITY_MAX);
 
             let nextMice = (acornFoodFactor - predationFactor) * winterSurvivalMice;
             // Introduce some carrying capacity and floor
-            if (nextMice > 200) nextMice = 200;
-            if (nextMice < 10) nextMice = 10;
+            if (nextMice > MOUSE_CARRYING_CAPACITY) nextMice = MOUSE_CARRYING_CAPACITY;
+            if (nextMice < MOUSE_MIN_POPULATION) nextMice = MOUSE_MIN_POPULATION;
 
             // 3. Tick Larvae
             // Dependent on adult ticks feeding on deer the previous fall.
-            const deerReproductionFactor = s.deerDensity * 120;
-            let nextLarvae = deerReproductionFactor * (0.8 + Math.random() * 0.4);
+            const deerReproductionFactor = s.deerDensity * LARVAE_DEER_REPRODUCTION_FACTOR;
+            let nextLarvae = deerReproductionFactor * (LARVAE_BASE_SURVIVAL + Math.random() * LARVAE_SURVIVAL_VARIANCE);
 
             // 4. Tick Nymphs (The infected stage)
             // Dependent on last year's larvae surviving winter and feeding on last year's mice.
             // This is the crucial link: more mice last year = more larvae got infected = more nymphs this year.
-            const larvaeFeedingSuccess = (s.mice / 200); // 0 to 1 probability based on mouse density
-            const winterSurvivalTicks = 1 - (s.winterSeverity * 0.5); // Ticks more susceptible to harsh winters
+            const larvaeFeedingSuccess = (s.mice / MOUSE_CARRYING_CAPACITY); // 0 to 1 probability based on mouse density
+            const winterSurvivalTicks = 1 - (s.winterSeverity * TICK_WINTER_MORTALITY_MAX); // Ticks more susceptible to harsh winters
 
             let nextNymphs = s.tickLarvae * larvaeFeedingSuccess * winterSurvivalTicks;
-            if (nextNymphs < 5) nextNymphs = 5;
-            if (nextNymphs > 180) nextNymphs = 180;
+            if (nextNymphs < NYMPH_MIN_POPULATION) nextNymphs = NYMPH_MIN_POPULATION;
+            if (nextNymphs > NYMPH_MAX_POPULATION) nextNymphs = NYMPH_MAX_POPULATION;
 
             // 5. Human Lyme Risk
             // Directly proportional to the density of infected nymphs seeking hosts in the current year.
-            let nextLymeRisk = nextNymphs * 0.8;
+            let nextLymeRisk = nextNymphs * LYME_RISK_MULTIPLIER;
 
             // Apply calculated next state
             s.acorns = nextAcorns;
@@ -366,15 +387,16 @@
                 window.simulationState.oakMastTriggered = true;
 
                 // Visual feedback
-                triggerBtn.classList.remove('bg-amber-600');
-                triggerBtn.classList.remove('hover:bg-amber-700');
+                const originalHTML = triggerBtn.innerHTML;
+                triggerBtn.disabled = true;
+                triggerBtn.classList.remove('bg-amber-600', 'hover:bg-amber-700');
                 triggerBtn.classList.add('bg-green-600');
                 triggerBtn.innerText = "Oak Mast Occurring!";
                 setTimeout(() => {
+                    triggerBtn.innerHTML = originalHTML;
                     triggerBtn.classList.remove('bg-green-600');
-                    triggerBtn.classList.add('bg-amber-600');
-                    triggerBtn.classList.add('hover:bg-amber-700');
-                    triggerBtn.innerHTML = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Trigger Oak Mast Year`;
+                    triggerBtn.classList.add('bg-amber-600', 'hover:bg-amber-700');
+                    triggerBtn.disabled = false;
                 }, 1500);
             });
         }
