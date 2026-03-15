@@ -86,7 +86,7 @@
 <label for="temperatureSlider">Temperature (Kinetic Energy)</label>
 <span class="text-orange-600 font-bold" id="temperatureVal">300 K</span>
 </div>
-<input class="w-full focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-1 accent-orange-500" id="temperatureSlider" max="600" min="100" step="10" type="range" value="300"/>
+<input class="w-full focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 accent-orange-500" id="temperatureSlider" max="600" min="100" step="10" type="range" value="300"/>
 <p class="text-xs text-slate-500 mt-1">Increases particle speed and collision energy.</p>
 </div>
 <div class="slider-container mt-4">
@@ -94,7 +94,7 @@
 <label for="activationEnergySlider">Activation Energy Barrier</label>
 <span class="text-slate-600" id="activationEnergyVal">Medium</span>
 </div>
-<input class="w-full focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1 accent-slate-500" id="activationEnergySlider" max="100" min="1" step="1" type="range" value="50"/>
+<input class="w-full focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 accent-slate-500" id="activationEnergySlider" max="100" min="1" step="1" type="range" value="50"/>
 <p class="text-xs text-slate-500 mt-1">Minimum energy required for a successful collision.</p>
 </div>
 </div>
@@ -104,14 +104,14 @@
 <label for="concentrationASlider">Initial Concentration [A]</label>
 <span class="text-blue-600 font-bold" id="concentrationAVal">50 particles</span>
 </div>
-<input class="w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 accent-blue-500" id="concentrationASlider" max="150" min="10" step="5" type="range" value="50"/>
+<input class="w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 accent-blue-500" id="concentrationASlider" max="150" min="10" step="5" type="range" value="50"/>
 </div>
 <div class="slider-container mt-4">
 <div class="slider-label">
 <label for="concentrationBSlider">Initial Concentration [B]</label>
 <span class="text-red-600 font-bold" id="concentrationBVal">50 particles</span>
 </div>
-<input class="w-full focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 accent-red-500" id="concentrationBSlider" max="150" min="10" step="5" type="range" value="50"/>
+<input class="w-full focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 accent-red-500" id="concentrationBSlider" max="150" min="10" step="5" type="range" value="50"/>
 <p class="text-xs text-slate-500 mt-1">Increases collision frequency.</p>
 </div>
 </div>
@@ -135,7 +135,7 @@
 <!-- Data Log -->
 <div class="data-panel shadow-sm overflow-hidden flex flex-col" style="max-height: 350px;">
 <div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-lg mb-2">Experimental Data</h3>
-<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
+<button class="ml-4 bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm transition shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex-shrink-0 float-right" onclick="exportTableToCSV('simulation_data.csv')">
         Export CSV
     </button>
 </div>
