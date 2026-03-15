@@ -189,7 +189,7 @@
         <div class="modal-content shadow-2xl">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
                 <h2 class="text-xl font-bold text-slate-800">Engine Efficiency Principles</h2>
-                <button id="closeModal" class="text-slate-500 hover:text-slate-800 font-bold text-xl">&times;</button>
+                <button id="closeModal" class="text-slate-500 hover:text-slate-800 font-bold text-xl" aria-label="Close modal">&times;</button>
             </div>
             <div class="prose text-slate-700 text-sm">
                 <p>Internal combustion engines are fundamentally heat engines. They convert chemical potential energy into thermal energy, and then into kinetic work. According to the laws of thermodynamics, they can never be 100% efficient; much energy is always lost as waste heat.</p>
@@ -220,21 +220,25 @@
                 stoichAFR: 14.7,
                 maxKnockCR: 10.5,
                 energyDensity: 44, // MJ/kg
-                color: "#ffc107" // Amber
+                color: "#ffc107", // Amber
+                afrRange: { min: 10, max: 20 }
             },
             ethanol: {
                 name: "E85 Ethanol",
                 stoichAFR: 9.76,
                 maxKnockCR: 13.0,
                 energyDensity: 33,
-                color: "#4caf50" // Green
+                color: "#4caf50", // Green
+                afrRange: { min: 6, max: 14 }
             },
             mystery: {
                 name: "Mystery Fuel X (Unknown)",
                 stoichAFR: 11.5, // e.g. a high-octane racing blend
                 maxKnockCR: 14.2,
                 energyDensity: 40,
-                color: "#e91e63" // Pink/Purple
+                color: "#e91e63", // Pink/Purple
+                afrRange: { min: 10, max: 20 },
+                initialAfr: 12.0
             }
         };
 
@@ -292,10 +296,14 @@
                 // Power is somewhat decoupled from thermal efficiency.
                 // Slightly rich (lower AFR than stoich) actually increases power slightly while hurting efficiency.
                 let powerModifier = 1.0;
-                if (state.afr < fuel.stoichAFR && state.afr > (fuel.stoichAFR - 2.0)) {
-                    powerModifier = 1.05; // Rich power bump
+                const RICH_MIXTURE_POWER_THRESHOLD = 2.0;
+                const RICH_MIXTURE_POWER_BONUS = 1.05;
+                const LEAN_MIXTURE_BASE_PENALTY = 0.9;
+                const LEAN_MIXTURE_PENALTY_FACTOR = 0.05;
+                if (state.afr < fuel.stoichAFR && state.afr > (fuel.stoichAFR - RICH_MIXTURE_POWER_THRESHOLD)) {
+                    powerModifier = RICH_MIXTURE_POWER_BONUS; // Rich power bump
                 } else if (state.afr > fuel.stoichAFR) {
-                    powerModifier = 0.9 - (state.afr - fuel.stoichAFR)*0.05; // Lean power drop
+                    powerModifier = LEAN_MIXTURE_BASE_PENALTY - (state.afr - fuel.stoichAFR) * LEAN_MIXTURE_PENALTY_FACTOR; // Lean power drop
                 }
 
                 // Power scales with CR and Energy Density
@@ -416,7 +424,7 @@
                 if (isNaN(guess)) return;
 
                 if (Math.abs(guess - actual) < 0.2) {
-                    guessResult.innerText = "✅ Correct! 14.2 is the max safe CR.";
+                    guessResult.innerText = `✅ Correct! ${actual} is the max safe CR.`;
                     guessResult.className = "mt-1 font-bold text-green-600";
                 } else if (guess > actual) {
                     guessResult.innerText = "❌ Too high! Engine will knock.";
@@ -431,14 +439,13 @@
                 state.fuelType = e.target.value;
                 const fuel = FUEL_DATA[state.fuelType];
 
-                // Adjust AFR slider bounds slightly based on fuel type
-                if (state.fuelType === 'ethanol') {
-                    afrSlider.min = 6; afrSlider.max = 14;
-                    state.afr = fuel.stoichAFR;
+                afrSlider.min = fuel.afrRange.min;
+                afrSlider.max = fuel.afrRange.max;
+
+                if (state.fuelType === 'mystery') {
+                    state.afr = fuel.initialAfr; // Start somewhere plausible
                 } else {
-                    afrSlider.min = 10; afrSlider.max = 20;
-                    if (state.fuelType === 'mystery') state.afr = 12.0; // Start somewhere plausible
-                    else state.afr = fuel.stoichAFR;
+                    state.afr = fuel.stoichAFR;
                 }
 
                 afrSlider.value = state.afr;
@@ -567,13 +574,13 @@
 
             // Overlay Text
             ctx.fillStyle = "#1e293b";
-            ctx.font = "bold 20px Arial";
+            ctx.font = "bold 20px Arial, sans-serif";
             ctx.textAlign = "center";
             ctx.fillText(`Stroke: ${strokeName}`, w/2, 40);
 
             if (state.isKnocking) {
                 ctx.fillStyle = "red";
-                ctx.font = "bold 24px Arial";
+                ctx.font = "bold 24px Arial, sans-serif";
                 ctx.fillText("CRITICAL KNOCK", w/2, 70);
             }
         }
