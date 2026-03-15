@@ -31,7 +31,14 @@ def test_quantum_entanglement(page: Page):
     assert new_nodes[target] == expected_target
 
     # Neighbors should be decremented (modulo 4)
-    neighbors = [1, 9, 4, 6]
+    COLS = 4
+    row, col = divmod(target, COLS)
+    neighbors = []
+    if row > 0: neighbors.append(target - COLS)
+    if row < COLS - 1: neighbors.append(target + COLS)
+    if col > 0: neighbors.append(target - 1)
+    if col < COLS - 1: neighbors.append(target + 1)
+
     for n in neighbors:
         expected = (nodes[n] - 1 + 4) % 4
         assert new_nodes[n] == expected

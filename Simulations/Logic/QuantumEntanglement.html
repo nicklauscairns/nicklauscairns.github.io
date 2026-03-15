@@ -87,7 +87,7 @@
 
     <script>
         const GRID_SIZE = 16;
-        const COLS = 4;
+        const COLS = Math.sqrt(GRID_SIZE);
         const STATES = 4;
         const nodes = Array(GRID_SIZE).fill(0);
         let moves = 0;
