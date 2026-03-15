@@ -515,6 +515,8 @@ Evaluate the claims, evidence, and reasoning that the complex interactions in ec
     </ul>
   </details>
 
+- [Long Island Sound Lobster Collapse](LongIslandSoundLobsterCollapse.html) - An investigative simulation exploring the causes of the American Lobster population collapse using a mystery environmental variable.
+
 ### HS-LS2-7
 Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment and biodiversity.*
 
