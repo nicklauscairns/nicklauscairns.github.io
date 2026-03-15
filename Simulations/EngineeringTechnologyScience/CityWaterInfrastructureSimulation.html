@@ -597,7 +597,13 @@
 
             const p = document.createElement('p');
             p.className = `mb-1 border-b border-gray-100 pb-1 ${colorClass}`;
-            p.innerHTML = `<span class="font-mono text-gray-400 mr-2">[${year}]</span> ${msg}`;
+
+            const span = document.createElement('span');
+            span.className = 'font-mono text-gray-400 mr-2';
+            span.textContent = `[${year}]`;
+
+            p.append(span, ' ' + msg);
+
             logArea.prepend(p);
         }
 
